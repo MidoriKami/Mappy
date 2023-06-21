@@ -1,0 +1,137 @@
+{
+  "version": 3,
+  "targets": {
+    "net7.0-windows7.0": {
+      "DalamudPackager/2.1.11": {
+        "type": "package",
+        "build": {
+          "build/DalamudPackager.props": {},
+          "build/DalamudPackager.targets": {}
+        },
+        "buildMultiTargeting": {
+          "buildMultiTargeting/DalamudPackager.props": {}
+        }
+      },
+      "KamiLib/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v7.0",
+        "compile": {
+          "bin/placeholder/KamiLib.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/KamiLib.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "DalamudPackager/2.1.11": {
+      "sha512": "9qlAWoRRTiL/geAvuwR/g6Bcbrd/bJJgVnB/RurBiyKs6srsP0bvpoo8IK+Eg8EA6jWeM6/YJWs66w4FIAzqPw==",
+      "type": "package",
+      "path": "dalamudpackager/2.1.11",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/DalamudPackager.props",
+        "build/DalamudPackager.targets",
+        "buildMultiTargeting/DalamudPackager.props",
+        "dalamudpackager.2.1.11.nupkg.sha512",
+        "dalamudpackager.nuspec",
+        "tasks/net48/DalamudPackager.dll",
+        "tasks/net48/Newtonsoft.Json.dll",
+        "tasks/net48/YamlDotNet.dll",
+        "tasks/netstandard2.1/DalamudPackager.dll",
+        "tasks/netstandard2.1/Newtonsoft.Json.dll",
+        "tasks/netstandard2.1/YamlDotNet.dll"
+      ]
+    },
+    "KamiLib/1.0.0": {
+      "type": "project",
+      "path": "../KamiLib/KamiLib.csproj",
+      "msbuildProject": "../KamiLib/KamiLib.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net7.0-windows7.0": [
+      "DalamudPackager >= 2.1.11",
+      "KamiLib >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\Kami\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+  },
+  "project": {
+    "version": "2.0.0",
+    "restore": {
+      "projectUniqueName": "D:\\Documents\\Visual Studio 2022\\Repositories\\InternalPlugins\\Mappy\\Mappy\\Mappy.csproj",
+      "projectName": "Mappy",
+      "projectPath": "D:\\Documents\\Visual Studio 2022\\Repositories\\InternalPlugins\\Mappy\\Mappy\\Mappy.csproj",
+      "packagesPath": "C:\\Users\\Kami\\.nuget\\packages\\",
+      "outputPath": "D:\\Documents\\Visual Studio 2022\\Repositories\\InternalPlugins\\Mappy\\Mappy\\obj\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\Kami\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net7.0-windows"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net7.0-windows7.0": {
+          "targetAlias": "net7.0-windows",
+          "projectReferences": {
+            "D:\\Documents\\Visual Studio 2022\\Repositories\\InternalPlugins\\Mappy\\KamiLib\\KamiLib.csproj": {
+              "projectPath": "D:\\Documents\\Visual Studio 2022\\Repositories\\InternalPlugins\\Mappy\\KamiLib\\KamiLib.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      },
+      "restoreLockProperties": {
+        "restorePackagesWithLockFile": "true",
+        "nuGetLockFilePath": ""
+      }
+    },
+    "frameworks": {
+      "net7.0-windows7.0": {
+        "targetAlias": "net7.0-windows",
+        "dependencies": {
+          "DalamudPackager": {
+            "target": "Package",
+            "version": "[2.1.11, )"
+          }
+        },
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

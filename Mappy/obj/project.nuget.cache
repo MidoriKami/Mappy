@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "PcocV/fbAJ8eHqfUEQNCqXPi0pQd+RZRMlgmeWtdG18MD7uY6vFA+Ik0H9cxJIX3Aicr5qfnUJNDBBLzjxrxOg==",
+  "success": true,
+  "projectFilePath": "D:\\Documents\\Visual Studio 2022\\Repositories\\InternalPlugins\\Mappy\\Mappy\\Mappy.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Kami\\.nuget\\packages\\dalamudpackager\\2.1.11\\dalamudpackager.2.1.11.nupkg.sha512"
+  ],
+  "logs": []
+}
