@@ -1,9 +1,10 @@
-﻿using DailyDuty.System;
-using DailyDuty.Views.Windows;
-using Dalamud.Plugin;
+﻿using Dalamud.Plugin;
 using KamiLib;
 using KamiLib.Commands;
+using Mappy;
+using Mappy.System;
 using Mappy.System.Localization;
+using Mappy.Views.Windows;
 
 namespace DailyDuty;
 
@@ -16,7 +17,7 @@ public sealed class MappyPlugin : IDalamudPlugin
     public MappyPlugin(DalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<Service>();
-
+        
         KamiCommon.Initialize(pluginInterface, Name);
         KamiCommon.RegisterLocalizationHandler(key => Strings.ResourceManager.GetString(key, Strings.Culture));
                 

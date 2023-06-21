@@ -7,7 +7,7 @@ using KamiLib.Interfaces;
 using KamiLib.Utilities;
 using KamiLib.Windows;
 
-namespace DailyDuty.Views.Windows;
+namespace Mappy.Views.Windows;
 
 public class ConfigurationWindow : TabbedSelectionWindow
 {
