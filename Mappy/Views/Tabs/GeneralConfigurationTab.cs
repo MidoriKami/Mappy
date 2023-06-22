@@ -1,4 +1,5 @@
-﻿using KamiLib.AutomaticUserInterface;
+﻿using DailyDuty;
+using KamiLib.AutomaticUserInterface;
 using KamiLib.Interfaces;
 using Mappy.System;
 
@@ -8,5 +9,5 @@ public class GeneralConfigurationTab : ITabItem
 {
     public string TabName => "General";
     public bool Enabled => true;
-    public void Draw() => DrawableAttribute.DrawAttributes(MappySystem.Config, MappySystem.Config.Save);
+    public void Draw() => DrawableAttribute.DrawAttributes(MappySystem.SystemConfig, MappyPlugin.System.SaveConfig);
 }

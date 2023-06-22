@@ -21,7 +21,7 @@ public class ConfigurationWindow : TabbedSelectionWindow
         
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(550, 400),
+            MinimumSize = new Vector2(560, 400),
             MaximumSize = new Vector2(9999,9999),
         };
         
@@ -37,7 +37,6 @@ public class ConfigurationWindow : TabbedSelectionWindow
     public override bool DrawConditions()
     {
         if (Service.ClientState.IsPvP) return false;
-        if (!Service.ClientState.IsLoggedIn) return false;
 
         return true;
     }
@@ -51,7 +50,6 @@ public class ConfigurationWindow : TabbedSelectionWindow
     [BaseCommandHandler("OpenConfigWindow")]
     public void OpenConfigWindow()
     {
-        if (!Service.ClientState.IsLoggedIn) return;
         if (Service.ClientState.IsPvP) return;
             
         Toggle();

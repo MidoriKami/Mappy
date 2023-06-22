@@ -22,6 +22,14 @@ public class ModuleController
         }
     }
 
+    public void Draw()
+    {
+        foreach (var module in Modules.OrderBy(module => module.Configuration.Layer))
+        {
+            module.Draw();
+        }
+    }
+
     public void Unload()
     {
         foreach (var module in Modules)

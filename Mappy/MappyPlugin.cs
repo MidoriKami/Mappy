@@ -22,6 +22,7 @@ public sealed class MappyPlugin : IDalamudPlugin
         KamiCommon.RegisterLocalizationHandler(key => Strings.ResourceManager.GetString(key, Strings.Culture));
                 
         System = new MappySystem();
+        System.Load();
 
         CommandController.RegisterMainCommand("/mappy");
         
@@ -32,6 +33,6 @@ public sealed class MappyPlugin : IDalamudPlugin
     {
         KamiCommon.Dispose();
         
-        System.Dispose();
+        System.Unload();
     }
 }

@@ -10,8 +10,8 @@ public enum ModuleName
     [EnumLabel("FlagMarker")]
     FlagMarker,
     
-    [EnumLabel("GatheringMarker")]
-    GatheringMarker,
+    [EnumLabel("GatheringArea")]
+    GatheringArea,
     
     [EnumLabel("Waymarks")]
     Waymarks,
@@ -32,7 +32,7 @@ public enum ModuleName
     QuestMarkers,
     
     [EnumLabel("GatheringPoints")]
-    GatheringPoints,
+    GatheringPoint,
     
     [EnumLabel("MapMarkers")]
     MapMarkers,

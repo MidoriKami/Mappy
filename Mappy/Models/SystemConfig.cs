@@ -1,15 +1,9 @@
-﻿using System.Collections.Generic;
-using Dalamud.Configuration;
-using Dalamud.Logging;
-using KamiLib.AutomaticUserInterface;
-using Mappy.Models.Enums;
+﻿using KamiLib.AutomaticUserInterface;
 
 namespace Mappy.Models;
 
-public class Configuration : IPluginConfiguration
+public class SystemConfig
 {
-    public int Version { get; set; } = 2;
-
     [BoolConfigOption("KeepOpen", "WindowOptions", 0)]
     public bool KeepOpen = true;
     
@@ -42,12 +36,4 @@ public class Configuration : IPluginConfiguration
     
     [BoolConfigOption("HideInCombat", "DisplayOptions", 2)]
     public bool HideInCombat = false;
-
-    public Dictionary<ModuleName, ModuleConfigBase> ModuleConfigurations = new();
-
-    public void Save()
-    {
-        PluginLog.Debug("Saving Configuration.");
-        Service.PluginInterface.SavePluginConfig(this);
-    }
 }

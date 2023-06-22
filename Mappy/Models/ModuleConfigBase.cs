@@ -4,6 +4,9 @@ namespace Mappy.Models;
 
 public class ModuleConfigBase
 {
-    [BoolConfigOption("Enable", "ModuleOptions", -1)]
+    [BoolConfigOption("Enable", "ModuleOptions", -3)]
     public bool Enable = true;
+
+    [IntCounterConfigOption("Layer", "ModuleOptions", -3)]
+    public int Layer = 1;
 }

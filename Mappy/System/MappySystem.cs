@@ -1,30 +1,31 @@
-﻿using System;
+﻿using DailyDuty.System;
 using Mappy.Models;
 
 namespace Mappy.System;
 
-public class MappySystem : IDisposable
+public class MappySystem
 {
-    public static Configuration Config = null!;
+    public static SystemConfig SystemConfig = null!;
     public static ModuleController ModuleController = null!;
     
     public MappySystem()
     {
-        Config = Service.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-        Config.Save();
-
+        SystemConfig = new SystemConfig();
+        SystemConfig = LoadConfig();
+        
         ModuleController = new ModuleController();
     }
-    
-    public void Dispose() => Unload();
 
-    private void Load()
+    public void Load()
     {
         ModuleController.Load();
     }
-
-    private void Unload()
+    
+    public void Unload()
     {
         ModuleController.Unload();
     }
+
+    private SystemConfig LoadConfig() => FileController.LoadFile<SystemConfig>("System.config.json", SystemConfig);
+    public void SaveConfig() => FileController.SaveFile("System.config.json", SystemConfig.GetType(), SystemConfig);
 }
