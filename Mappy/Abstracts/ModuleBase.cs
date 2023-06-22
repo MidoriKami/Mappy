@@ -2,8 +2,10 @@
 using DailyDuty.System;
 using ImGuiNET;
 using KamiLib.AutomaticUserInterface;
+using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
 using Mappy.Models.Enums;
+using Mappy.System;
 
 namespace Mappy.Abstracts;
 
@@ -15,19 +17,19 @@ public abstract class ModuleBase
 
     // Map Marker
     public virtual void ZoneChanged(uint territoryType) { }
-    public abstract void LoadForMap(uint newMapId);
-    protected abstract void DrawMarkers();
+    public abstract void LoadForMap(MapData mapData);
+    protected abstract void DrawMarkers(Viewport viewport, Map map);
     protected virtual bool ShouldDrawMarkers()
     {
         if (!Configuration.Enable) return false;
 
         return true;
     }
-    public void Draw()
+    public void Draw(Viewport viewport, Map map)
     {
         if (!ShouldDrawMarkers()) return;
         
-        DrawMarkers();
+        DrawMarkers(viewport, map);
     }
 
     // Tooltip

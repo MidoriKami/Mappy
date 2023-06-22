@@ -2,6 +2,7 @@
 using System.Numerics;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Utilities;
+using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;
@@ -22,12 +23,12 @@ public class GatheringArea : ModuleBase
     public override ModuleName ModuleName => ModuleName.GatheringArea;
     public override ModuleConfigBase Configuration { get; protected set; } = new GatheringAreaConfig();
         
-    public override void LoadForMap(uint newMapId)
+    public override void LoadForMap(MapData mapData)
     {
         
     }
     
-    protected override void DrawMarkers()
+    protected override void DrawMarkers(Viewport viewport, Map map)
     {
         
     }

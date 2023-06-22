@@ -2,6 +2,7 @@
 using System.Numerics;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Utilities;
+using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;
@@ -19,12 +20,12 @@ public class Houses : ModuleBase
     public override ModuleName ModuleName => ModuleName.HousingMarkers;
     public override ModuleConfigBase Configuration { get; protected set; } = new HousingConfig();
     
-    public override void LoadForMap(uint newMapId)
+    public override void LoadForMap(MapData mapData)
     {
         
     }
     
-    protected override void DrawMarkers()
+    protected override void DrawMarkers(Viewport viewport, Map map)
     {
         
     }

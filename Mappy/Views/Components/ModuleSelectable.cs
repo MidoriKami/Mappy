@@ -8,7 +8,7 @@ namespace Mappy.Views.Components;
 public class ModuleSelectable : ISelectable, IDrawable
 {
     public IDrawable Contents => this;
-    public string ID => module.ModuleName.GetLabel();
+    public string ID => module.ModuleName.ToString();
     private readonly ModuleBase module;
 
     public ModuleSelectable(ModuleBase module) => this.module = module;

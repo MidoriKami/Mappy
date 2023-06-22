@@ -27,6 +27,7 @@ public sealed class MappyPlugin : IDalamudPlugin
         CommandController.RegisterMainCommand("/mappy");
         
         KamiCommon.WindowManager.AddConfigurationWindow(new ConfigurationWindow());
+        KamiCommon.WindowManager.AddWindow(new MapWindow());
     }
 
     public void Dispose()
