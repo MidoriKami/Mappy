@@ -48,22 +48,19 @@ public class MapIcons : ModuleBase
 
     private readonly ConcurrentBag<MapMarkerData> mapMarkers = new();
     
-    public override void LoadForMap(MapData mapData)
+    public override void LoadForMap(MapData mapData) => Task.Run(() =>
     {
-        Task.Run(() =>
-        {
-            mapMarkers.Clear();
+        mapMarkers.Clear();
         
-            foreach (var row in LuminaCache<MapMarker>.Instance)
+        foreach (var row in LuminaCache<MapMarker>.Instance)
+        {
+            if (row.RowId == mapData.Map.MapMarkerRange)
             {
-                if (row.RowId == mapData.Map.MapMarkerRange)
-                {
-                    mapMarkers.Add(new MapMarkerData(row, GetConfig<MapIconConfig>()));
-                }
+                mapMarkers.Add(new MapMarkerData(row, GetConfig<MapIconConfig>()));
             }
-        });
-    }
-    
+        }
+    });
+
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
         var config = GetConfig<MapIconConfig>();

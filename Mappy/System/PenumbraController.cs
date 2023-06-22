@@ -2,6 +2,7 @@
 using Dalamud.Logging;
 using Dalamud.Plugin.Ipc;
 using ImGuiScene;
+using KamiLib.Caching;
 using Lumina.Data.Files;
 
 namespace Mappy.System;
@@ -15,6 +16,8 @@ public class PenumbraController
     {
         penumbraResolveDefaultSubscriber = Service.PluginInterface.GetIpcSubscriber<string, string>("Penumbra.ResolveInterfacePath");
         penumbraGetEnabledState = Service.PluginInterface.GetIpcSubscriber<bool>("Penumbra.GetEnabledState");
+        
+        IconCache.Instance.SetAlternativeGetTextureFunc(GetTexture);
     }
     
     public TextureWrap? GetTexture(string path)
