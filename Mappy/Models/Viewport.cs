@@ -14,8 +14,8 @@ public class Viewport
     public void UpdateSize() => Size = ImGui.GetContentRegionAvail();
     public void MoveViewportCenter(Vector2 offset) => Center += offset / Scale;
     public void SetViewportCenter(Vector2 position) => Center = position;
-    public void ZoomIn(float zoomAmount) => Scale = Math.Clamp(Scale += zoomAmount, 0.20f, 10.0f);
-    public void ZoomOut(float zoomAmount) => Scale = Math.Clamp(Scale -= zoomAmount, 0.20f, 10.0f);
+    public void ZoomIn(float zoomAmount) => Scale = Math.Clamp(Scale += zoomAmount, 0.15f, 6.0f);
+    public void ZoomOut(float zoomAmount) => Scale = Math.Clamp(Scale -= zoomAmount, 0.15f, 6.0f);
     public void SetViewportZoom(float scale) => Scale = scale;
     public void SetImGuiDrawPosition() => ImGui.SetCursorPos(-Offset);
     public void SetImGuiDrawPosition(Vector2 position) => ImGui.SetCursorPos(-Offset + position);

@@ -10,6 +10,6 @@ public class IconModuleConfigBase : ModuleConfigBase
     [BoolConfigOption("ShowTooltip", "IconConfig", -2)]
     public bool ShowTooltip = true;
     
-    [FloatConfigOption("IconScale", "IconConfig", -2)]
+    [FloatConfigOption("IconScale", "IconConfig", -2, 0.25f, 2.0f)]
     public float IconScale = 0.5f;
 }

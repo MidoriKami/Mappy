@@ -8,6 +8,7 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiScene;
 using KamiLib.Caching;
 using Lumina.Excel.GeneratedSheets;
+using Mappy.Utility;
 
 namespace Mappy.System;
 public record MapData(Map Map, List<Map> Layers, TextureWrap Texture);
@@ -45,8 +46,14 @@ public unsafe class MapTextureController : IDisposable
         }
     }
 
-    public void LoadMap(uint mapId) => Task.Run(() => InternalLoadMap(mapId));
-    
+    public void LoadMap(uint mapId)
+    {
+        if (CurrentMap?.RowId != mapId)
+        {
+            Task.Run(() => InternalLoadMap(mapId));
+        }
+    }
+
     public void MoveMapToPlayer()
     {
         var agent = AgentMap.Instance();
@@ -61,9 +68,9 @@ public unsafe class MapTextureController : IDisposable
     
     private void InternalLoadMap(uint mapId)
     {
-        PluginLog.Debug($"Loading Map: {mapId}");
-
         CurrentMap = LuminaCache<Map>.Instance.GetRow(mapId)!;
+        
+        PluginLog.Debug($"Loading Map: {mapId} - {CurrentMap.GetName()}");
         
         MapLayers = Service.DataManager.GetExcelSheet<Map>()!
             .Where(eachMap => eachMap.PlaceName.Row == CurrentMap.PlaceName.Row)

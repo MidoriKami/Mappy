@@ -15,7 +15,7 @@ public class TreasureConfig : IconModuleConfigBase
     [ColorConfigOption("TooltipColor", "ModuleColors", 1, 255, 255, 255, 255)]
     public Vector4 TooltipColor = KnownColor.White.AsVector4();
 
-    [IconSelection(null, "IconSelection", 2, 60003)]
+    [IconSelection(null, "IconSelection", 2, 60003, 60354)]
     public uint SelectedIcon = 60003;
 }
 

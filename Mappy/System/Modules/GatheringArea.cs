@@ -32,4 +32,9 @@ public class GatheringArea : ModuleBase
     {
         
     }
+
+    public static void SetMarker()
+    {
+        
+    }
 }

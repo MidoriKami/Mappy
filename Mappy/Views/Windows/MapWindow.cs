@@ -145,11 +145,11 @@ public class MapWindow : Window
     {
         if (ImGui.GetIO().MouseWheel > 0) // Mouse Wheel Up
         {
-            Viewport.ZoomIn(0.20f);
+            Viewport.ZoomIn(0.15f);
         }
         else if (ImGui.GetIO().MouseWheel < 0) // Mouse Wheel Down
         {
-            Viewport.ZoomOut(0.20f);
+            Viewport.ZoomOut(0.15f);
         }
     }
 

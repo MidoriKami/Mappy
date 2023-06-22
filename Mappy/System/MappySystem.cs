@@ -13,6 +13,7 @@ public class MappySystem
     public static ModuleController ModuleController = null!;
     public static MapTextureController MapTextureController = null!;
     public static PenumbraController PenumbraController = null!;
+    public static GameIntegration GameIntegration = null!;
     
     public MappySystem()
     {
@@ -22,6 +23,7 @@ public class MappySystem
         MapTextureController = new MapTextureController();
         ModuleController = new ModuleController();
         PenumbraController = new PenumbraController();
+        GameIntegration = new GameIntegration();
         
         Service.ClientState.TerritoryChanged += ZoneChanged;
         Service.Framework.Update += FrameworkUpdate;
@@ -36,6 +38,8 @@ public class MappySystem
     {
         if (!Service.ClientState.IsLoggedIn) return;
         if (Service.ClientState.IsPvP) return;
+        
+        GameIntegration.Update();
         
         MapTextureController.Update();
         
@@ -66,6 +70,7 @@ public class MappySystem
 
         MapTextureController.Dispose();
         ModuleController.Unload();
+        GameIntegration.Dispose();
     }
 
     private SystemConfig LoadConfig() => FileController.LoadFile<SystemConfig>("System.config.json", SystemConfig);
