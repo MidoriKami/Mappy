@@ -7,7 +7,6 @@ using ImGuiNET;
 using KamiLib;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
-using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
@@ -34,11 +33,11 @@ public class PlayerConfig : IconModuleConfigBase
     [FloatConfigOption("OutlineThickness", "ModuleConfig", 0, 0.5f, 5.0f)]
     public float OutlineThickness = 2.0f;
 
-    [ColorConfigOption("OutlineColor", "ModuleColors", 1, 128, 128, 128, 255)]
-    public Vector4 OutlineColor = KnownColor.Gray.AsVector4();
+    [ColorConfigOption("OutlineColor", "ModuleColors", 1, 0, 0, 0, 88)]
+    public Vector4 OutlineColor = new(0.0f, 0.0f, 0.0f, 0.345f);
     
-    [ColorConfigOption("FillColor", "ModuleColors", 1, 173, 216, 230, 45)]
-    public Vector4 FillColor = KnownColor.LightBlue.AsVector4() with { W = 45 };
+    [ColorConfigOption("FillColor", "ModuleColors", 1, 163, 219, 255, 80)]
+    public Vector4 FillColor = new(0.639f, 0.858f, 1.0f, 0.313f);
 }
 
 public unsafe class Player : ModuleBase
