@@ -114,6 +114,24 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Icon Configuration.
+        /// </summary>
+        internal static string IconConfig {
+            get {
+                return ResourceManager.GetString("IconConfig", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scale.
+        /// </summary>
+        internal static string IconScale {
+            get {
+                return ResourceManager.GetString("IconScale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Map Markers.
         /// </summary>
         internal static string MapMarkers {
@@ -146,6 +164,24 @@ namespace Mappy.System.Localization {
         internal static string QuestMarkers {
             get {
                 return ResourceManager.GetString("QuestMarkers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Icon.
+        /// </summary>
+        internal static string ShowIcon {
+            get {
+                return ResourceManager.GetString("ShowIcon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Tooltip.
+        /// </summary>
+        internal static string ShowTooltip {
+            get {
+                return ResourceManager.GetString("ShowTooltip", resourceCulture);
             }
         }
         

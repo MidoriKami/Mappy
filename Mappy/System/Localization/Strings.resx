@@ -54,4 +54,16 @@
     <data name="FATEs" xml:space="preserve">
         <value>FATEs</value>
     </data>
+    <data name="ShowIcon" xml:space="preserve">
+        <value>Show Icon</value>
+    </data>
+    <data name="IconConfig" xml:space="preserve">
+        <value>Icon Configuration</value>
+    </data>
+    <data name="ShowTooltip" xml:space="preserve">
+        <value>Show Tooltip</value>
+    </data>
+    <data name="IconScale" xml:space="preserve">
+        <value>Scale</value>
+    </data>
 </root>
