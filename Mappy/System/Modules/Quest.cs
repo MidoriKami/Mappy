@@ -149,15 +149,14 @@ public unsafe class Quest : ModuleBase
     private void DrawObjective(Level level, CustomQuestSheet quest, Viewport viewport, Map map)
     {
         var questData = LuminaCache<CustomQuestSheet>.Instance.GetRow(quest.RowId)!;
-        var config = GetConfig<QuestConfig>();    
         
         DrawRing(level, viewport, map);
-        DrawIcon(level, quest, viewport, map);
+        DrawIcon(level, quest, map);
         
         DrawUtilities.DrawTooltip(questData.Name.ToDalamudString().TextValue, KnownColor.White.AsVector4());
     }
     
-    private void DrawIcon(Level level, CustomQuestSheet quest, Viewport viewport, Map map)
+    private void DrawIcon(Level level, CustomQuestSheet quest, Map map)
     {
         var position = Position.GetTextureOffsetPosition(new Vector2(level.X, level.Z), map);
         var config = GetConfig<QuestConfig>();
