@@ -15,7 +15,6 @@ namespace Mappy.DataModels;
 
 public enum MapMarkerType
 {
-    Unknown = -1,
     Standard,
     MapLink,
     InstanceLink,
@@ -91,7 +90,7 @@ public class MapMarkerData
     private void MapLinkAction() => MappySystem.MapTextureController.LoadMap(DataMap.RowId);
     private void AetheryteAction() => TeleporterController.Instance.Teleport(DataAetheryte);
     
-    private string? GetDisplayString() => (MapMarkerType?) DataType switch
+    private string? GetDisplayString() => (MapMarkerType) DataType switch
     {
         MapMarkerType.Standard => GetStandardMarkerString(),
         MapMarkerType.MapLink => PlaceName.Name.ToDalamudString().TextValue,
@@ -101,7 +100,7 @@ public class MapMarkerData
         _ => null
     };
 
-    private Vector4 GetDisplayColor() => (MapMarkerType?) DataType switch
+    private Vector4 GetDisplayColor() => (MapMarkerType) DataType switch
     {
         MapMarkerType.Standard => settings.StandardColor,
         MapMarkerType.MapLink => settings.MapLinkColor,
