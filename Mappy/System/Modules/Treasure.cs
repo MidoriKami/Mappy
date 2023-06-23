@@ -65,7 +65,7 @@ public class Treasure : ModuleBase
 
         if (Service.ClientState.LocalPlayer is not { } player) return false;
         
-        if (Vector3.Distance(player.Position, gameObject.Position) < 30.0f)
+        if (Vector3.Distance(player.Position, gameObject.Position) < 20.0f)
         {
             return ((ClientStructGameObject*) gameObject.Address)->GetIsTargetable();
         }
