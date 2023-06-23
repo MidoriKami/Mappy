@@ -18,4 +18,40 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
+    <data name="Player" xml:space="preserve">
+        <value>Player</value>
+    </data>
+    <data name="FlagMarker" xml:space="preserve">
+        <value>Flag Marker</value>
+    </data>
+    <data name="GatheringArea" xml:space="preserve">
+        <value>Gathering Area</value>
+    </data>
+    <data name="Waymarks" xml:space="preserve">
+        <value>Waymarks</value>
+    </data>
+    <data name="Pets" xml:space="preserve">
+        <value>Pets</value>
+    </data>
+    <data name="AllianceMembers" xml:space="preserve">
+        <value>Alliance Members</value>
+    </data>
+    <data name="TreasureMarkers" xml:space="preserve">
+        <value>Treasure Chests</value>
+    </data>
+    <data name="QuestMarkers" xml:space="preserve">
+        <value>Quests</value>
+    </data>
+    <data name="GatheringPoints" xml:space="preserve">
+        <value>Gathering Points</value>
+    </data>
+    <data name="MapMarkers" xml:space="preserve">
+        <value>Map Markers</value>
+    </data>
+    <data name="HousingMarkers" xml:space="preserve">
+        <value>Houses</value>
+    </data>
+    <data name="FATEs" xml:space="preserve">
+        <value>FATEs</value>
+    </data>
 </root>

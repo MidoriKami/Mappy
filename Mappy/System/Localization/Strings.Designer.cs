@@ -58,5 +58,113 @@ namespace Mappy.System.Localization {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alliance Members.
+        /// </summary>
+        internal static string AllianceMembers {
+            get {
+                return ResourceManager.GetString("AllianceMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FATEs.
+        /// </summary>
+        internal static string FATEs {
+            get {
+                return ResourceManager.GetString("FATEs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flag Marker.
+        /// </summary>
+        internal static string FlagMarker {
+            get {
+                return ResourceManager.GetString("FlagMarker", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gathering Area.
+        /// </summary>
+        internal static string GatheringArea {
+            get {
+                return ResourceManager.GetString("GatheringArea", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gathering Points.
+        /// </summary>
+        internal static string GatheringPoints {
+            get {
+                return ResourceManager.GetString("GatheringPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Houses.
+        /// </summary>
+        internal static string HousingMarkers {
+            get {
+                return ResourceManager.GetString("HousingMarkers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Map Markers.
+        /// </summary>
+        internal static string MapMarkers {
+            get {
+                return ResourceManager.GetString("MapMarkers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pets.
+        /// </summary>
+        internal static string Pets {
+            get {
+                return ResourceManager.GetString("Pets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Player.
+        /// </summary>
+        internal static string Player {
+            get {
+                return ResourceManager.GetString("Player", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quests.
+        /// </summary>
+        internal static string QuestMarkers {
+            get {
+                return ResourceManager.GetString("QuestMarkers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Treasure Chests.
+        /// </summary>
+        internal static string TreasureMarkers {
+            get {
+                return ResourceManager.GetString("TreasureMarkers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Waymarks.
+        /// </summary>
+        internal static string Waymarks {
+            get {
+                return ResourceManager.GetString("Waymarks", resourceCulture);
+            }
+        }
     }
 }
