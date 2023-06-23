@@ -15,9 +15,9 @@ public record MapData(Map Map);
 
 public unsafe class MapTextureController : IDisposable
 {
-    public List<Map>? MapLayers { get; protected set; }
-    public Map? CurrentMap { get; protected set; }
-    public TextureWrap? MapTexture { get; protected set; }
+    public List<Map>? MapLayers { get; private set; }
+    public Map? CurrentMap { get; private set; }
+    public TextureWrap? MapTexture { get; private set; }
 
     [MemberNotNullWhen(true, "MapLayers", "CurrentMap", "MapTexture")]
     public bool Ready => MapTexture is not null && CurrentMap is not null && MapLayers is not null;

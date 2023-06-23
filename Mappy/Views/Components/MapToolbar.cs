@@ -8,6 +8,7 @@ using ImGuiNET;
 using KamiLib;
 using KamiLib.Utilities;
 using Mappy.System;
+using Mappy.System.Localization;
 using Mappy.Utility;
 using Mappy.Views.Windows;
 
@@ -95,7 +96,7 @@ public class MapToolbar
 
         ImGui.PopFont();
         
-        if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip("Follow Player", KnownColor.White.AsVector4());
+        if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip(Strings.FollowPlayer, KnownColor.White.AsVector4());
 
         ImGui.PopID();
     }
@@ -119,7 +120,7 @@ public class MapToolbar
 
         ImGui.PopFont();
         
-        if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip("Center on Player", KnownColor.White.AsVector4());
+        if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip(Strings.CenterOnPlayer, KnownColor.White.AsVector4());
 
         ImGui.PopID();
     }
@@ -140,7 +141,7 @@ public class MapToolbar
 
         ImGui.PopFont();
                 
-        if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip("Settings", KnownColor.White.AsVector4());
+        if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip(Strings.Settings, KnownColor.White.AsVector4());
 
         ImGui.PopID();
     }
@@ -161,7 +162,7 @@ public class MapToolbar
             }
             ImGui.PopFont();
             
-            if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip("Show and Unlock", KnownColor.White.AsVector4());
+            if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip(Strings.ShowAndUnlock, KnownColor.White.AsVector4());
             ImGui.PopID();
         }
         else
@@ -176,7 +177,7 @@ public class MapToolbar
             }
             ImGui.PopFont();
             
-            if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip("Hide and Unlock", KnownColor.White.AsVector4());
+            if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip(Strings.HideAndLock, KnownColor.White.AsVector4());
             ImGui.PopID();
         }
         

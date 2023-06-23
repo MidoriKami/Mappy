@@ -166,11 +166,11 @@ public class MapWindow : Window
     {
         if (ImGui.GetIO().MouseWheel > 0) // Mouse Wheel Up
         {
-            Viewport.ZoomIn(0.15f);
+            Viewport.ZoomIn(MappySystem.SystemConfig.ZoomSpeed);
         }
         else if (ImGui.GetIO().MouseWheel < 0) // Mouse Wheel Down
         {
-            Viewport.ZoomOut(0.15f);
+            Viewport.ZoomOut(MappySystem.SystemConfig.ZoomSpeed);
         }
     }
 

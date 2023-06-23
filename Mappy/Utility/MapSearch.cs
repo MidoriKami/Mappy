@@ -18,8 +18,7 @@ public static class MapSearch
             .Where(map => map.PlaceName.Value is not null)
             .GroupBy(map => map.PlaceName.Value!.Name.ToDalamudString().TextValue)
             .Select(map => map.First())
-            .Where(map =>
-                map.PlaceName.Value!.Name.ToDalamudString().TextValue.ToLower().Contains(searchTerms.ToLower()))
+            .Where(map => map.PlaceName.Value!.Name.ToDalamudString().TextValue.ToLower().Contains(searchTerms.ToLower()))
             .Select(map => new SearchResult(map.PlaceName.Value!.Name.ToDalamudString().TextValue, map.RowId))
             .OrderBy(searchResult => searchResult.Label)
             .Take(numResults);

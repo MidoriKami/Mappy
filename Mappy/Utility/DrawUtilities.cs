@@ -70,13 +70,7 @@ public class DrawUtilities
         ImGui.EndTooltip();
     }
 
-    private static float GetObjectRotation(GameObject gameObject)
-    {
-        return -gameObject.Rotation + 0.5f * MathF.PI;
-    }
-    
-    private static Vector2 ImRotate(Vector2 v, float cosA, float sinA) 
-    { 
-        return new Vector2(v.X * cosA - v.Y * sinA, v.X * sinA + v.Y * cosA);
-    }
+    private static float GetObjectRotation(GameObject gameObject) => -gameObject.Rotation + 0.5f * MathF.PI;
+
+    private static Vector2 ImRotate(Vector2 v, float cosA, float sinA) => new(v.X * cosA - v.Y * sinA, v.X * sinA + v.Y * cosA);
 }

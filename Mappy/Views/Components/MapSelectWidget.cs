@@ -7,6 +7,7 @@ using Dalamud.Logging;
 using ImGuiNET;
 using KamiLib.Utilities;
 using Mappy.System;
+using Mappy.System.Localization;
 using Mappy.Utility;
 
 namespace Mappy.Views.Components;
@@ -39,7 +40,7 @@ public class MapSelectWidget
         if (ImGui.IsItemHovered())
         {
             ImGui.BeginTooltip();
-            ImGui.TextColored(KnownColor.White.AsVector4(), "Search for map");
+            ImGui.TextColored(KnownColor.White.AsVector4(), Strings.SearchForMap);
             ImGui.EndTooltip();
         }
 
@@ -71,7 +72,7 @@ public class MapSelectWidget
             shouldFocusMapSearch = false;
         }
         
-        if (ImGui.InputTextWithHint("###MapSearch", "Search...", ref searchString, 60, ImGuiInputTextFlags.AutoSelectAll))
+        if (ImGui.InputTextWithHint("###MapSearch", Strings.SearchHint, ref searchString, 60, ImGuiInputTextFlags.AutoSelectAll))
         {
             searchResults = MapSearch.Search(searchString, 10);
             PluginLog.Debug("Refreshing Search Results");

@@ -114,6 +114,24 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot teleport in this situation..
+        /// </summary>
+        internal static string CannotTeleport {
+            get {
+                return ResourceManager.GetString("CannotTeleport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Center on Player.
+        /// </summary>
+        internal static string CenterOnPlayer {
+            get {
+                return ResourceManager.GetString("CenterOnPlayer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Circle Color.
         /// </summary>
         internal static string CircleColor {
@@ -294,11 +312,29 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to General.
+        /// </summary>
+        internal static string General {
+            get {
+                return ResourceManager.GetString("General", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hide Accepted Quests.
         /// </summary>
         internal static string HideAcceptedQuests {
             get {
                 return ResourceManager.GetString("HideAcceptedQuests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide and Unlock.
+        /// </summary>
+        internal static string HideAndLock {
+            get {
+                return ResourceManager.GetString("HideAndLock", resourceCulture);
             }
         }
         
@@ -520,6 +556,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Modules.
+        /// </summary>
+        internal static string Modules {
+            get {
+                return ResourceManager.GetString("Modules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Outline Color.
         /// </summary>
         internal static string OutlineColor {
@@ -592,6 +637,42 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search for map.
+        /// </summary>
+        internal static string SearchForMap {
+            get {
+                return ResourceManager.GetString("SearchForMap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search....
+        /// </summary>
+        internal static string SearchHint {
+            get {
+                return ResourceManager.GetString("SearchHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        internal static string Settings {
+            get {
+                return ResourceManager.GetString("Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show and Unlock.
+        /// </summary>
+        internal static string ShowAndUnlock {
+            get {
+                return ResourceManager.GetString("ShowAndUnlock", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Cone.
         /// </summary>
         internal static string ShowCone {
@@ -637,6 +718,42 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Teleport.
+        /// </summary>
+        internal static string Teleport {
+            get {
+                return ResourceManager.GetString("Teleport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To use the teleport function, you must install the &apos;Teleporter&apos; plugin.
+        /// </summary>
+        internal static string TeleporterMissingError {
+            get {
+                return ResourceManager.GetString("TeleporterMissingError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Teleporting to {0}..
+        /// </summary>
+        internal static string TeleportingToLocation {
+            get {
+                return ResourceManager.GetString("TeleportingToLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Teleport IPC not found.
+        /// </summary>
+        internal static string TeleportIPCNotFound {
+            get {
+                return ResourceManager.GetString("TeleportIPCNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tooltip Color.
         /// </summary>
         internal static string TooltipColor {
@@ -669,6 +786,15 @@ namespace Mappy.System.Localization {
         internal static string WindowOptions {
             get {
                 return ResourceManager.GetString("WindowOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zoom Speed.
+        /// </summary>
+        internal static string ZoomSpeed {
+            get {
+                return ResourceManager.GetString("ZoomSpeed", resourceCulture);
             }
         }
     }

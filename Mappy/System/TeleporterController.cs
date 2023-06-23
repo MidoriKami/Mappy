@@ -4,6 +4,7 @@ using Dalamud.Plugin.Ipc.Exceptions;
 using KamiLib.ChatCommands;
 using Lumina.Excel.GeneratedSheets;
 using Mappy;
+using Mappy.System.Localization;
 
 namespace DailyDuty.System;
 
@@ -30,17 +31,17 @@ public class TeleporterController
 
             if (!didTeleport)
             {
-                UserError("Cannot teleport in this situation.");
+                UserError(Strings.CannotTeleport);
             }
             else if (showMessage)
             {
-                Chat.Print("Teleport", $"Teleporting to {aetheryte.PlaceName.Value?.Name ?? "Unable to read name"}.");
+                Chat.Print(Strings.Teleport, string.Format(Strings.TeleportingToLocation, aetheryte.PlaceName.Value?.Name ?? "Unable to read name"));
             }
         }
         catch (IpcNotReadyError)
         {
-            PluginLog.Error("Teleport IPC not found");
-            UserError("To use the teleport function, you must install the 'Teleporter' plugin");
+            PluginLog.Error(Strings.TeleportIPCNotFound);
+            UserError(Strings.TeleporterMissingError);
         }
     }
 

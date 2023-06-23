@@ -223,4 +223,46 @@ Recommended to disable if using Chat2</value>
     <data name="RemoveGatheringArea" xml:space="preserve">
         <value>Remove Gathering Area</value>
     </data>
+    <data name="CannotTeleport" xml:space="preserve">
+        <value>Cannot teleport in this situation.</value>
+    </data>
+    <data name="Teleport" xml:space="preserve">
+        <value>Teleport</value>
+    </data>
+    <data name="TeleportIPCNotFound" xml:space="preserve">
+        <value>Teleport IPC not found</value>
+    </data>
+    <data name="TeleporterMissingError" xml:space="preserve">
+        <value>To use the teleport function, you must install the 'Teleporter' plugin</value>
+    </data>
+    <data name="TeleportingToLocation" xml:space="preserve">
+        <value>Teleporting to {0}.</value>
+    </data>
+    <data name="SearchForMap" xml:space="preserve">
+        <value>Search for map</value>
+    </data>
+    <data name="SearchHint" xml:space="preserve">
+        <value>Search...</value>
+    </data>
+    <data name="CenterOnPlayer" xml:space="preserve">
+        <value>Center on Player</value>
+    </data>
+    <data name="Settings" xml:space="preserve">
+        <value>Settings</value>
+    </data>
+    <data name="ShowAndUnlock" xml:space="preserve">
+        <value>Show and Unlock</value>
+    </data>
+    <data name="HideAndLock" xml:space="preserve">
+        <value>Hide and Unlock</value>
+    </data>
+    <data name="General" xml:space="preserve">
+        <value>General</value>
+    </data>
+    <data name="Modules" xml:space="preserve">
+        <value>Modules</value>
+    </data>
+    <data name="ZoomSpeed" xml:space="preserve">
+        <value>Zoom Speed</value>
+    </data>
 </root>

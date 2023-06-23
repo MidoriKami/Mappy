@@ -24,6 +24,9 @@ public class SystemConfig
     
     [FloatConfigOption("FadePercent", "WindowOptions", 0)]
     public float FadePercent = 0.60f;
+
+    [FloatConfigOption("ZoomSpeed", "WindowOptions", 0, 0.05f, 0.40f)]
+    public float ZoomSpeed = 0.15f;
     
     [BoolDescriptionConfigOption("EnableIntegrations", "GameIntegrations", 1, "IntegrationsDescription")]
     public bool EnableIntegrations = true;

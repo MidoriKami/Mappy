@@ -27,7 +27,7 @@ public class PenumbraController
             if (penumbraGetEnabledState.InvokeFunc())
             {
                 var resolvedPath = ResolvePenumbraPath(path);
-                PluginLog.Verbose($"Loading Texture from Penumbra: {path} -> {resolvedPath}");
+                PluginLog.Debug($"Loading Texture from Penumbra: {path} -> {resolvedPath}");
                 return GetTextureForPath(resolvedPath);
             }
         }
