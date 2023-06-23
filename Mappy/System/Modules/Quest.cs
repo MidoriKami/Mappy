@@ -1,12 +1,13 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Drawing;
-using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Hooking;
 using Dalamud.Logging;
 using Dalamud.Utility;
 using Dalamud.Utility.Signatures;
+using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
@@ -14,7 +15,6 @@ using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
 using KamiLib.Hooking;
 using KamiLib.Utilities;
-using KamiLib.Windows;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
@@ -31,13 +31,16 @@ public class QuestConfig : IconModuleConfigBase
     [BoolConfigOption("HideAcceptedQuests", "ModuleConfig", 1)]
     public bool HideAcceptedQuests = false;
 
+    [BoolConfigOption("HideLeveQuests", "ModuleConfig", 1)]
+    public bool HideLeveQuests = false;
+
     [ColorConfigOption("InProgressColor", "ColorConfig", 2, 255, 69, 0, 45)]
     public Vector4 InProgressColor = KnownColor.OrangeRed.AsVector4() with { W = 0.33f };
 }
 
 public unsafe class Quest : ModuleBase
 {
-    private record AllowedQuestInfo(uint MapIcon, uint QuestId);
+    private record AllowedQuestInfo(uint MapIcon, uint Level, uint QuestId, byte Flags);
     
     public override ModuleName ModuleName => ModuleName.QuestMarkers;
     public override ModuleConfigBase Configuration { get; protected set; } = new QuestConfig();
@@ -70,25 +73,18 @@ public unsafe class Quest : ModuleBase
             foreach(var index in Enumerable.Range(0, numEntries))
             {
                 var markerId = ((uint*) questMapIconIdArray)[index];
-                var location = ((uint*) eventHandlerValueArray)[index];
+                var levelRowId = ((uint*) eventHandlerValueArray)[index];
                 var questId = ((uint*) questIdArray)[index];
-                var unknown = ((byte*) unknownArray)[index];
+                var flags = ((byte*) unknownArray)[index];
 
                 allowedQuests.TryRemove(questId, out _);
-                allowedQuests.TryAdd(questId, new AllowedQuestInfo(markerId, questId));
+                allowedQuests.TryAdd(questId, new AllowedQuestInfo(markerId, levelRowId, questId, flags));
             }
         });
 
         return receiveMarkersHook!.Original(questMapIconIdArray, eventHandlerValueArray, questIdArray, unknownArray, numEntries);
     }
-
-    protected override bool ShouldDrawMarkers(Map map)
-    {
-        if (!IsPlayerInCurrentMap(map)) return false;
-        
-        return base.ShouldDrawMarkers(map);
-    }
-
+    
     public override void ZoneChanged(uint territoryType) => allowedQuests.Clear();
 
     public override void LoadForMap(MapData mapData)
@@ -103,20 +99,54 @@ public unsafe class Quest : ModuleBase
         if (!config.HideUnacceptedQuests) DrawUnacceptedQuests(map);
 
         if (!config.HideAcceptedQuests) DrawAcceptedQuests(viewport, map);
+
+        if (!config.HideLeveQuests) DrawLeveQuests(viewport, map);
     }
     
+    private void DrawLeveQuests(Viewport viewport, Map map)
+    {
+        foreach (var quest in QuestManager.Instance()->LeveQuestsSpan)
+        {
+            if(quest.LeveId is 0) continue;
+            
+            var luminaData = LuminaCache<Leve>.Instance.GetRow(quest.LeveId)!;
+            var level = LuminaCache<Level>.Instance.GetRow(luminaData.LevelLevemete.Row)!;
+            var journalGenre = LuminaCache<JournalGenre>.Instance.GetRow(luminaData.JournalGenre.Row)!;
+            if(level.Map.Row != map.RowId) continue;
+            
+            var name = luminaData.Name.RawString;
+            var position = Position.GetTextureOffsetPosition(new Vector2(level.X, level.Z), map);
+            
+            DrawCircle(position, 50.0f, new Vector4(104, 43, 176, 45));
+            DrawObjective(level, (uint)journalGenre.Icon, name, viewport, map);
+        }
+    }
+
     private void DrawUnacceptedQuests(Map map)
     {
-        foreach (var (_, quest) in allowedQuests)
+        foreach (var (_ ,(mapIcon, level, questId, flags)) in allowedQuests)
         {
-            var icon = IconCache.Instance.GetIcon(quest.MapIcon);
-            var questInfo = LuminaCache<CustomQuestSheet>.Instance.GetRow(quest.QuestId);
+            if(flags is 6) continue;
+            
+            var levelInfo = LuminaCache<Level>.Instance.GetRow(level)!;
+            if(levelInfo.Map.Row != map.RowId) continue;
+            
+            var position = Position.GetObjectPosition(new Vector2(levelInfo.X, levelInfo.Z), map);
 
-            if (questInfo?.IssuerLocation.Value is not {} location) continue;
-            var position = Position.GetObjectPosition(new Vector2(location.X, location.Z), map);
+            DrawUtilities.DrawIcon(mapIcon, position);
 
-            DrawUtilities.DrawIcon(icon, position);
-            DrawUtilities.DrawTooltip($"Lv. {questInfo.ClassJobLevel0} {questInfo.Name.RawString}", KnownColor.White.AsVector4());
+            switch (questId)
+            {
+                case > 0x10000 and < 0x20000:
+                    var questInfo = LuminaCache<CustomQuestSheet>.Instance.GetRow(questId)!;
+                    DrawUtilities.DrawTooltip($"Lv. {questInfo.ClassJobLevel0} {questInfo.Name.RawString}", KnownColor.White.AsVector4());
+                    break;
+                
+                case > 0x60000 and < 0x70000:
+                    var leveInfo = LuminaCache<GuildleveAssignment>.Instance.GetRow(questId)!;
+                    DrawUtilities.DrawTooltip($"{leveInfo.Type.RawString}", KnownColor.White.AsVector4());
+                    break;
+            }
         }
     }
 
@@ -125,43 +155,32 @@ public unsafe class Quest : ModuleBase
         foreach (var quest in QuestManager.Instance()->NormalQuestsSpan)
         {
             if (quest.QuestId is 0) continue;
-            DebugWindow.Print(quest.QuestId.ToString());
-            
-            var luminaQuest = LuminaCache<CustomQuestSheet>.Instance.GetRow(quest.QuestId + 65536u)!;
-            
-            var activeLevels = Enumerable.Range(0, 24).Where(index => luminaQuest.ToDoCompleteSeq[index] == quest.Sequence);
 
-            foreach (var index in activeLevels)
+            foreach (var level in GetActiveLevelsForQuest(quest, map.RowId))
             {
-                foreach (var levelRow in Enumerable.Range(0, 8))
-                {
-                    var level = luminaQuest.ToDoLocation[index, levelRow];
-                    if (level.Value is null) continue;
-                    
-                    if(level.Value.Map.Row != AgentMap.Instance()->CurrentMapId) continue;
-                    
-                    DrawObjective(level.Value, luminaQuest, viewport, map);
-                }
+                var luminaQuest = LuminaCache<CustomQuestSheet>.Instance.GetRow(quest.QuestId + 65536u)!;
+                var journalIcon = luminaQuest.JournalGenre.Value?.Icon;
+                if (journalIcon is null) continue;
+
+                DrawObjective(level, (uint)journalIcon, luminaQuest.Name.RawString, viewport, map);
             }
         }
     }
     
-    private void DrawObjective(Level level, CustomQuestSheet quest, Viewport viewport, Map map)
+    private void DrawObjective(Level level, uint iconId, string label, Viewport viewport, Map map)
     {
-        var questData = LuminaCache<CustomQuestSheet>.Instance.GetRow(quest.RowId)!;
-        
         DrawRing(level, viewport, map);
-        DrawIcon(level, quest, map);
+        DrawIcon(level, iconId, map);
         
-        DrawUtilities.DrawTooltip(questData.Name.ToDalamudString().TextValue, KnownColor.White.AsVector4());
+        DrawUtilities.DrawTooltip(label, KnownColor.White.AsVector4());
     }
     
-    private void DrawIcon(Level level, CustomQuestSheet quest, Map map)
+    private void DrawIcon(Level level, uint iconId, Map map)
     {
         var position = Position.GetTextureOffsetPosition(new Vector2(level.X, level.Z), map);
         var config = GetConfig<QuestConfig>();
-        
-        DrawUtilities.DrawIcon(quest.Icon, position, config.IconScale);
+
+        DrawUtilities.DrawIcon(iconId, position, config.IconScale);
     }
 
     private void DrawRing(Level positionInfo, Viewport viewport, Map map)
@@ -170,13 +189,56 @@ public unsafe class Quest : ModuleBase
         
         var position = Position.GetTextureOffsetPosition(new Vector2(positionInfo.X, positionInfo.Z), map);
         var drawPosition = viewport.GetImGuiWindowDrawPosition(position);
-
         var radius = positionInfo.Radius * viewport.Scale / 7.0f;
-        var color = ImGui.GetColorU32(config.InProgressColor);
-                
+
+        DrawCircle(drawPosition, radius, config.InProgressColor);
+    }
+
+    private void DrawCircle(Vector2 position, float radius, Vector4 color)
+    {
+        var imGuiColor = ImGui.GetColorU32(color);
+        
         ImGui.BeginGroup();
-        ImGui.GetWindowDrawList().AddCircleFilled(drawPosition, radius, color);
-        ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, color, 0, 4);
+        ImGui.GetWindowDrawList().AddCircleFilled(position, radius, imGuiColor);
+        ImGui.GetWindowDrawList().AddCircle(position, radius, imGuiColor, 0, 4);
         ImGui.EndGroup();
+    }
+
+    public static IEnumerable<Level>? GetActiveLevelsForQuest(string questName, uint mapId)
+    {
+        return 
+            (from quest in GetAcceptedQuests()
+            let luminaData = LuminaCache<CustomQuestSheet>.Instance.GetRow(quest.QuestId + 65536u)!
+            where luminaData.Name.ToDalamudString().TextValue == questName
+            select GetActiveLevelsForQuest(quest, mapId))
+            .FirstOrDefault();
+    }
+    
+    private static IEnumerable<QuestWork> GetAcceptedQuests()
+    {
+        var list = new List<QuestWork>();
+        
+        foreach (var quest in QuestManager.Instance()->NormalQuestsSpan)
+        {
+            if (quest is { IsHidden: false, QuestId: > 0 })
+            {
+                list.Add(quest);
+            }
+        }
+
+        return list;
+    }
+
+    private static IEnumerable<Level> GetActiveLevelsForQuest(QuestWork quest, uint? madId = null)
+    {
+        var luminaQuest = LuminaCache<CustomQuestSheet>.Instance.GetRow(quest.QuestId + 65536u)!;
+        var currentMapId = madId ?? AgentMap.Instance()->CurrentMapId;    
+        
+        return 
+            from index in Enumerable.Range(0, 24).Where(index => luminaQuest.ToDoCompleteSeq[index] == quest.Sequence) // For each of the possible 24 sequence steps, get all active indexes
+            from levelRow in Enumerable.Range(0, 8) // Check all 8 sub locations
+            select luminaQuest.ToDoLocation[index, levelRow] into level // Get each of the 8 levels
+            where level.Value?.Map.Row == currentMapId // If this level is for the current map
+            select level.Value;
     }
 }

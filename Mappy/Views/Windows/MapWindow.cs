@@ -12,7 +12,7 @@ namespace Mappy.Views.Windows;
 
 public class MapWindow : Window
 {
-    public readonly Viewport Viewport = new();
+    public Viewport Viewport = new();
     private Vector2 mouseDragStart;
     private bool dragStarted;
     private Vector2 lastWindowSize = Vector2.Zero;

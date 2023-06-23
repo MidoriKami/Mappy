@@ -11,7 +11,7 @@ using Lumina.Excel.GeneratedSheets;
 using Mappy.Utility;
 
 namespace Mappy.System;
-public record MapData(Map Map, List<Map> Layers, TextureWrap Texture);
+public record MapData(Map Map);
 
 public unsafe class MapTextureController : IDisposable
 {
@@ -78,9 +78,9 @@ public unsafe class MapTextureController : IDisposable
             .OrderBy(eachMap => eachMap.MapIndex)
             .ToList();
 
+        MapLoaded?.Invoke(this, new MapData(CurrentMap));
+        
         MapTexture = MappySystem.PenumbraController.GetTexture(GetPathFromMap(CurrentMap))!;
-
-        MapLoaded?.Invoke(this, new MapData(CurrentMap, MapLayers, MapTexture));
     }
     
     private static string GetPathFromMap(Map map)

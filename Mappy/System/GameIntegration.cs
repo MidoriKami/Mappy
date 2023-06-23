@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Hooking;
 using Dalamud.Logging;
@@ -130,6 +131,8 @@ public unsafe class GameIntegration : IDisposable
         if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is {} mapWindow)
         {
             ImGui.SetWindowFocus(mapWindow.WindowName);
+            mapWindow.IsOpen = true;
+            
             var map = LuminaCache<Map>.Instance.GetRow(mapInfo->MapId)!;
 
             MappySystem.SystemConfig.FollowPlayer = false;
@@ -142,8 +145,10 @@ public unsafe class GameIntegration : IDisposable
                     mapWindow.Viewport.SetViewportCenter(flagPosition);
                     break;
                 
-                case MapType.QuestLog:// when GetQuestLocation(mapInfo) is {} questLocation:
+                case MapType.QuestLog when GetQuestLocation(mapInfo) is {} questLocation:
                     MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
+                    var questPosition = Position.GetTextureOffsetPosition(questLocation, map);
+                    mapWindow.Viewport.SetViewportCenter(questPosition);
                     break;
                 
                 case MapType.GatheringLog when GatheringArea.TempMapMarker is {} area:
@@ -160,18 +165,18 @@ public unsafe class GameIntegration : IDisposable
 
     }, "Exception during OpenMap");
 
-    // private Vector2? GetQuestLocation(OpenMapInfo* mapInfo)
-    // {
-    //     var targetLevels = Service.QuestManager.GetActiveLevelsForQuest(mapInfo->TitleString.ToString(), mapInfo->MapId);
-    //     var focusLevel = targetLevels?.Where(level => level.Map.Row == mapInfo->MapId && level.Map.Row != 0).FirstOrDefault();
-    //
-    //     if (focusLevel is not null)
-    //     {
-    //         return new Vector2(focusLevel.X, focusLevel.Z);
-    //     }
-    //
-    //     return null;
-    // }
+    private Vector2? GetQuestLocation(OpenMapInfo* mapInfo)
+    {
+        var targetLevels = Quest.GetActiveLevelsForQuest(mapInfo->TitleString.ToString(), mapInfo->MapId);
+        var focusLevel = targetLevels?.Where(level => level.Map.Row == mapInfo->MapId && level.Map.Row != 0).FirstOrDefault();
+    
+        if (focusLevel is not null)
+        {
+            return new Vector2(focusLevel.X, focusLevel.Z);
+        }
+    
+        return null;
+    }
     
     private void OnShowHook(AgentInterface* agent, bool a1, bool a2) => Safety.ExecuteSafe(() =>
     {
