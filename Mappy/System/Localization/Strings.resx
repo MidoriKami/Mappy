@@ -214,4 +214,13 @@ Recommended to disable if using Chat2</value>
     <data name="InProgressColor" xml:space="preserve">
         <value>Active Quest Color</value>
     </data>
+    <data name="AddFlag" xml:space="preserve">
+        <value>Add Flag</value>
+    </data>
+    <data name="RemoveFlag" xml:space="preserve">
+        <value>Remove Flag</value>
+    </data>
+    <data name="RemoveGatheringArea" xml:space="preserve">
+        <value>Remove Gathering Area</value>
+    </data>
 </root>

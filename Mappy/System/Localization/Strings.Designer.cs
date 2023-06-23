@@ -60,6 +60,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Flag.
+        /// </summary>
+        internal static string AddFlag {
+            get {
+                return ResourceManager.GetString("AddFlag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Aethernet Color.
         /// </summary>
         internal static string AethernetColor {
@@ -561,6 +570,24 @@ namespace Mappy.System.Localization {
         internal static string QuestMarkers {
             get {
                 return ResourceManager.GetString("QuestMarkers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Flag.
+        /// </summary>
+        internal static string RemoveFlag {
+            get {
+                return ResourceManager.GetString("RemoveFlag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Gathering Area.
+        /// </summary>
+        internal static string RemoveGatheringArea {
+            get {
+                return ResourceManager.GetString("RemoveGatheringArea", resourceCulture);
             }
         }
         

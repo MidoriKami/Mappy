@@ -2,6 +2,7 @@
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using KamiLib;
+using Mappy.System.Localization;
 using Mappy.System.Modules;
 using Mappy.Utility;
 using Mappy.Views.Windows;
@@ -58,7 +59,7 @@ public class ContextMenuController
     {
         if (ImGui.BeginPopupContextWindow("###GeneralRightClickContext"))
         {
-            if (ImGui.Selectable("Add Flag"))
+            if (ImGui.Selectable(Strings.AddFlag))
             {
                 if(MappySystem.MapTextureController is {Ready: true, CurrentMap: var map})
                 {
@@ -80,7 +81,7 @@ public class ContextMenuController
     {
         if (ImGui.BeginPopupContextWindow("###FlagContext"))
         {
-            if (ImGui.Selectable("Remove Flag"))
+            if (ImGui.Selectable(Strings.RemoveFlag))
             {
                 Flag.RemoveFlagMarker();
             }
@@ -93,7 +94,7 @@ public class ContextMenuController
     {
         if (ImGui.BeginPopupContextWindow("###GatheringContext"))
         {
-            if (ImGui.Selectable("Remove Gathering Area"))
+            if (ImGui.Selectable(Strings.RemoveGatheringArea))
             {
                 GatheringArea.RemoveGatheringAreaMarker();
             }

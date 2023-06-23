@@ -218,7 +218,7 @@ public unsafe class GameIntegration : IDisposable
             
     }, "Exception during SetGatheringMarker");
 
-    public void InsertFlagInChat() => insertFlagTextCommand?.Invoke(ChatAgent, 1048u, 0);
+    public void InsertFlagInChat() => insertFlagTextCommand?.Invoke(ChatAgent, 1048u);
 
     private OpenMapInfo* GetGatheringAreaMapInfo()
     {
