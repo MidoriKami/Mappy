@@ -69,11 +69,47 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Always Show Toolbar.
+        /// </summary>
+        internal static string AlwaysShowToolbar {
+            get {
+                return ResourceManager.GetString("AlwaysShowToolbar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable.
         /// </summary>
         internal static string Enable {
             get {
                 return ResourceManager.GetString("Enable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable Integrations.
+        /// </summary>
+        internal static string EnableIntegrations {
+            get {
+                return ResourceManager.GetString("EnableIntegrations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fade Opacity.
+        /// </summary>
+        internal static string FadePercent {
+            get {
+                return ResourceManager.GetString("FadePercent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fade When Unfocused.
+        /// </summary>
+        internal static string FadeWhenUnfocused {
+            get {
+                return ResourceManager.GetString("FadeWhenUnfocused", resourceCulture);
             }
         }
         
@@ -96,6 +132,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Follow Player.
+        /// </summary>
+        internal static string FollowPlayer {
+            get {
+                return ResourceManager.GetString("FollowPlayer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Gathering Area.
         /// </summary>
         internal static string GatheringArea {
@@ -110,6 +155,42 @@ namespace Mappy.System.Localization {
         internal static string GatheringPoints {
             get {
                 return ResourceManager.GetString("GatheringPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide Between Areas.
+        /// </summary>
+        internal static string HideBetweenAreas {
+            get {
+                return ResourceManager.GetString("HideBetweenAreas", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide in Combat.
+        /// </summary>
+        internal static string HideInCombat {
+            get {
+                return ResourceManager.GetString("HideInCombat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide in Duties.
+        /// </summary>
+        internal static string HideInDuties {
+            get {
+                return ResourceManager.GetString("HideInDuties", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide Window Frame.
+        /// </summary>
+        internal static string HideWindowFrame {
+            get {
+                return ResourceManager.GetString("HideWindowFrame", resourceCulture);
             }
         }
         
@@ -141,6 +222,43 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to When placing a flag on the map, insert &lt;flag&gt; into chat
+        ///Recommended to disable if using Chat2.
+        /// </summary>
+        internal static string InsertFlagHelp {
+            get {
+                return ResourceManager.GetString("InsertFlagHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert &lt;flag&gt; in chat.
+        /// </summary>
+        internal static string InsertFlagInChat {
+            get {
+                return ResourceManager.GetString("InsertFlagInChat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Replaces all of the games normal map functions with Mappy functions instead.
+        /// </summary>
+        internal static string IntegrationsDescription {
+            get {
+                return ResourceManager.GetString("IntegrationsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keep Open.
+        /// </summary>
+        internal static string KeepOpwn {
+            get {
+                return ResourceManager.GetString("KeepOpwn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Layer.
         /// </summary>
         internal static string Layer {
@@ -159,6 +277,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lock Window Position.
+        /// </summary>
+        internal static string LockWindow {
+            get {
+                return ResourceManager.GetString("LockWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Map Markers.
         /// </summary>
         internal static string MapMarkers {
@@ -173,6 +300,15 @@ namespace Mappy.System.Localization {
         internal static string ModuleOptions {
             get {
                 return ResourceManager.GetString("ModuleOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Party Members.
+        /// </summary>
+        internal static string PartyMembers {
+            get {
+                return ResourceManager.GetString("PartyMembers", resourceCulture);
             }
         }
         
@@ -236,6 +372,15 @@ namespace Mappy.System.Localization {
         internal static string Waymarks {
             get {
                 return ResourceManager.GetString("Waymarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Map Window Options.
+        /// </summary>
+        internal static string WindowOptions {
+            get {
+                return ResourceManager.GetString("WindowOptions", resourceCulture);
             }
         }
     }

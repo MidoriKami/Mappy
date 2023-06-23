@@ -25,7 +25,7 @@ public class SystemConfig
     [FloatConfigOption("FadePercent", "WindowOptions", 0)]
     public float FadePercent = 0.60f;
     
-    [BoolConfigOption("EnableIntegrations", "GameIntegrations", 1)]
+    [BoolDescriptionConfigOption("EnableIntegrations", "GameIntegrations", 1, "IntegrationsDescription")]
     public bool EnableIntegrations = true;
     
     [BoolConfigOption("InsertFlagInChat", "GameIntegrations", 1)]

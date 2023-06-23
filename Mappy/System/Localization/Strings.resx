@@ -78,4 +78,53 @@
     <data name="LayerHelp" xml:space="preserve">
         <value>Controls the order that markers are drawn, higher values will be shown on top of lower values.</value>
     </data>
+    <data name="KeepOpwn" xml:space="preserve">
+        <value>Keep Open</value>
+    </data>
+    <data name="FollowPlayer" xml:space="preserve">
+        <value>Follow Player</value>
+    </data>
+    <data name="LockWindow" xml:space="preserve">
+        <value>Lock Window Position</value>
+    </data>
+    <data name="HideWindowFrame" xml:space="preserve">
+        <value>Hide Window Frame</value>
+    </data>
+    <data name="FadeWhenUnfocused" xml:space="preserve">
+        <value>Fade When Unfocused</value>
+    </data>
+    <data name="AlwaysShowToolbar" xml:space="preserve">
+        <value>Always Show Toolbar</value>
+    </data>
+    <data name="FadePercent" xml:space="preserve">
+        <value>Fade Opacity</value>
+    </data>
+    <data name="WindowOptions" xml:space="preserve">
+        <value>Map Window Options</value>
+    </data>
+    <data name="EnableIntegrations" xml:space="preserve">
+        <value>Enable Integrations</value>
+    </data>
+    <data name="IntegrationsDescription" xml:space="preserve">
+        <value>Replaces all of the games normal map functions with Mappy functions instead</value>
+    </data>
+    <data name="InsertFlagInChat" xml:space="preserve">
+        <value>Insert &lt;flag&gt; in chat</value>
+    </data>
+    <data name="PartyMembers" xml:space="preserve">
+        <value>Party Members</value>
+    </data>
+    <data name="InsertFlagHelp" xml:space="preserve">
+        <value>When placing a flag on the map, insert &lt;flag&gt; into chat
+Recommended to disable if using Chat2</value>
+    </data>
+    <data name="HideBetweenAreas" xml:space="preserve">
+        <value>Hide Between Areas</value>
+    </data>
+    <data name="HideInDuties" xml:space="preserve">
+        <value>Hide in Duties</value>
+    </data>
+    <data name="HideInCombat" xml:space="preserve">
+        <value>Hide in Combat</value>
+    </data>
 </root>
