@@ -80,7 +80,13 @@ public unsafe class Houses : ModuleBase
         if (housingSizeInfo is null) return;
         var config = GetConfig<HousingConfig>();    
 
-        var iconId = marker.SubRowId is 60 or 61 ? 60789 : GetIconID(marker.SubRowId);
+        var iconId = GetIconID( marker.SubRowId switch
+        {
+            60 => 128,
+            61 => 129,
+            _ => marker.SubRowId
+        } );
+        
         var position = Position.GetObjectPosition(new Vector2(marker.X, marker.Z), map);
 
         DrawUtilities.DrawIcon(iconId, position, config.IconScale + 0.15f);
