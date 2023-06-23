@@ -69,6 +69,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable.
+        /// </summary>
+        internal static string Enable {
+            get {
+                return ResourceManager.GetString("Enable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FATEs.
         /// </summary>
         internal static string FATEs {
@@ -132,11 +141,38 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Layer.
+        /// </summary>
+        internal static string Layer {
+            get {
+                return ResourceManager.GetString("Layer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Controls the order that markers are drawn, higher values will be shown on top of lower values..
+        /// </summary>
+        internal static string LayerHelp {
+            get {
+                return ResourceManager.GetString("LayerHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Map Markers.
         /// </summary>
         internal static string MapMarkers {
             get {
                 return ResourceManager.GetString("MapMarkers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Module Options.
+        /// </summary>
+        internal static string ModuleOptions {
+            get {
+                return ResourceManager.GetString("ModuleOptions", resourceCulture);
             }
         }
         

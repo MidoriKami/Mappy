@@ -66,4 +66,16 @@
     <data name="IconScale" xml:space="preserve">
         <value>Scale</value>
     </data>
+    <data name="Enable" xml:space="preserve">
+        <value>Enable</value>
+    </data>
+    <data name="ModuleOptions" xml:space="preserve">
+        <value>Module Options</value>
+    </data>
+    <data name="Layer" xml:space="preserve">
+        <value>Layer</value>
+    </data>
+    <data name="LayerHelp" xml:space="preserve">
+        <value>Controls the order that markers are drawn, higher values will be shown on top of lower values.</value>
+    </data>
 </root>
