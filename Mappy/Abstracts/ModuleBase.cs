@@ -18,12 +18,7 @@ public abstract unsafe class ModuleBase
     public virtual void ZoneChanged(uint territoryType) { }
     public abstract void LoadForMap(MapData mapData);
     protected abstract void DrawMarkers(Viewport viewport, Map map);
-    protected virtual bool ShouldDrawMarkers(Map map)
-    {
-        if (!Configuration.Enable) return false;
-
-        return true;
-    }
+    protected virtual bool ShouldDrawMarkers(Map map) => Configuration.Enable;
     public void Draw(Viewport viewport, Map map)
     {
         if (!ShouldDrawMarkers(map)) return;
@@ -37,10 +32,10 @@ public abstract unsafe class ModuleBase
     public virtual void Update() { }
     public void DrawConfig() => DrawableAttribute.DrawAttributes(Configuration, SaveConfig);
     private ModuleConfigBase LoadConfig() => FileController.LoadFile<ModuleConfigBase>($"{ModuleName}.config.json", Configuration);
-    public void SaveConfig() => FileController.SaveFile($"{ModuleName}.config.json", Configuration.GetType(), Configuration);
+    private void SaveConfig() => FileController.SaveFile($"{ModuleName}.config.json", Configuration.GetType(), Configuration);
     
     // Utilities
-    protected bool IsPlayerInCurrentMap(Map map)
+    protected static bool IsPlayerInCurrentMap(Map map)
     {
         if (AgentMap.Instance() is null) return false;
         if (AgentMap.Instance()->CurrentMapId != map.RowId) return false;
@@ -48,5 +43,5 @@ public abstract unsafe class ModuleBase
         return true;
     }
 
-    protected bool IsLocalPlayerValid() => Service.ClientState.LocalPlayer is not null;
+    protected static bool IsLocalPlayerValid() => Service.ClientState.LocalPlayer is not null;
 }
