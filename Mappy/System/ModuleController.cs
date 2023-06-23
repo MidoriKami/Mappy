@@ -59,4 +59,12 @@ public class ModuleController
             module.ZoneChanged(newZone);
         }
     }
+
+    public void Update()
+    {
+        foreach (var module in Modules)
+        {
+            module.Update();
+        }
+    }
 }

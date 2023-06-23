@@ -41,6 +41,8 @@ public class MappySystem
         if (!Service.ClientState.IsLoggedIn) return;
         if (Service.ClientState.IsPvP) return;
         
+        ModuleController.Update();
+        
         GameIntegration.Update();
         
         MapTextureController.Update();

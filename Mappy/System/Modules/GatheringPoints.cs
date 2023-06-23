@@ -26,7 +26,14 @@ public class GatheringPoints : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.GatheringPoint;
     public override ModuleConfigBase Configuration { get; protected set; } = new GatheringPointConfig();
-    
+
+    protected override bool ShouldDrawMarkers(Map map)
+    {
+        if (!IsPlayerInCurrentMap(map)) return false;
+        
+        return base.ShouldDrawMarkers(map);
+    }
+
     public override void LoadForMap(MapData mapData)
     {
         // Do Nothing.

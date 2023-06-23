@@ -34,6 +34,7 @@ public abstract unsafe class ModuleBase
     // File IO
     public virtual void Load() => Configuration = LoadConfig();
     public virtual void Unload() { }
+    public virtual void Update() { }
     public void DrawConfig() => DrawableAttribute.DrawAttributes(Configuration, SaveConfig);
     private ModuleConfigBase LoadConfig() => FileController.LoadFile<ModuleConfigBase>($"{ModuleName}.config.json", Configuration);
     public void SaveConfig() => FileController.SaveFile($"{ModuleName}.config.json", Configuration.GetType(), Configuration);

@@ -3,6 +3,8 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using Dalamud.Utility.Signatures;
+using FFXIVClientStructs.FFXIV.Client.Game.Housing;
 using ImGuiNET;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
@@ -22,16 +24,23 @@ public class HousingConfig : IconModuleConfigBase
     public Vector4 TooltipColor = KnownColor.White.AsVector4();
 }
 
-public class Houses : ModuleBase
+public unsafe class Houses : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.HousingMarkers;
     public override ModuleConfigBase Configuration { get; protected set; } = new HousingConfig();
     
+    private delegate uint GetPlotIconIdDelegate(HousingTerritory* outdoorTerritory, byte plotIndex);
+
+    [Signature("40 56 57 48 83 EC 38 0F B6 FA")]
+    private readonly GetPlotIconIdDelegate? getPlotIconId = null;
+
     private readonly ConcurrentBag<HousingMapMarkerInfo> housingMarkers = new();
     private HousingLandSet? housingSizeInfo;
 
     private bool isHousingDistrict;
 
+    public Houses() => SignatureHelper.Initialise(this);
+    
     protected override bool ShouldDrawMarkers(Map map)
     {
         if (!isHousingDistrict) return false;
@@ -71,7 +80,7 @@ public class Houses : ModuleBase
         if (housingSizeInfo is null) return;
         var config = GetConfig<HousingConfig>();    
 
-        var iconId = marker.SubRowId is 60 or 61 ? 60789 : GetIconID(housingSizeInfo.PlotSize[marker.SubRowId]);
+        var iconId = marker.SubRowId is 60 or 61 ? 60789 : GetIconID(marker.SubRowId);
         var position = Position.GetObjectPosition(new Vector2(marker.X, marker.Z), map);
 
         DrawUtilities.DrawIcon(iconId, position, config.IconScale + 0.15f);
@@ -86,13 +95,21 @@ public class Houses : ModuleBase
         DrawUtilities.DrawTooltip($"{marker.SubRowId + 1}", config.TooltipColor);
     }
 
-    private uint GetIconID(byte housingSize) => housingSize switch
+    private uint GetIconID(uint housingIndex)
     {
-        0 => 60754, // Small House
-        1 => 60755, // Medium House
-        2 => 60756, // Large House
-        _ => 60750  // Housing Placeholder Marker
-    };
+        if (HousingManager.Instance() is null || HousingManager.Instance()->OutdoorTerritory is null)
+        {
+            return housingSizeInfo?.PlotSize[housingIndex] switch
+            {
+                0 => 60754, // Small House
+                1 => 60755, // Medium House
+                2 => 60756, // Large House
+                _ => 60750  // Housing Placeholder Marker
+            };
+        }
+        
+        return getPlotIconId?.Invoke(HousingManager.Instance()->OutdoorTerritory, (byte) housingIndex) ?? 0;
+    }
 
     private static uint GetHousingDistrictID(ExcelRow map) => map.RowId switch
     {
