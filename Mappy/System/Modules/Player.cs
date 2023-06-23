@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Types;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using KamiLib;
@@ -46,7 +45,15 @@ public unsafe class Player : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.Player;
     public override ModuleConfigBase Configuration { get; protected set; } = new PlayerConfig();
+
+    protected override bool ShouldDrawMarkers(Map map)
+    {
+        if (!IsPlayerInCurrentMap(map)) return false;
+        if (!IsLocalPlayerValid()) return false;
         
+        return base.ShouldDrawMarkers(map);
+    }
+
     public override void LoadForMap(MapData mapData)
     {
         // Do Nothing.
@@ -56,12 +63,8 @@ public unsafe class Player : ModuleBase
     {
         var config = GetConfig<PlayerConfig>();
         
-        if (!config.Enable) return;
-        if (AgentMap.Instance()->CurrentMapId != map.RowId) return;
-        if (Service.ClientState.LocalPlayer is not { } player) return;
-        
-        if(config.ShowCone) DrawLookLine(player);
-        if(config.ShowIcon) DrawBluePlayerIcon(player);
+        if(config.ShowCone) DrawLookLine(Service.ClientState.LocalPlayer!);
+        if(config.ShowIcon) DrawBluePlayerIcon(Service.ClientState.LocalPlayer!);
     }
     
     private void DrawBluePlayerIcon(GameObject player)

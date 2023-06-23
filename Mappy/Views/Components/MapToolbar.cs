@@ -95,12 +95,7 @@ public class MapToolbar
 
         ImGui.PopFont();
         
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.BeginTooltip();
-            ImGui.TextColored(KnownColor.White.AsVector4(), "Follow Player");
-            ImGui.EndTooltip();
-        }
+        if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip("Follow Player", KnownColor.White.AsVector4());
 
         ImGui.PopID();
     }
@@ -124,12 +119,7 @@ public class MapToolbar
 
         ImGui.PopFont();
         
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.BeginTooltip();
-            ImGui.TextColored(KnownColor.White.AsVector4(), "Center on Player");
-            ImGui.EndTooltip();
-        }
+        if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip("Center on Player", KnownColor.White.AsVector4());
 
         ImGui.PopID();
     }
@@ -150,17 +140,11 @@ public class MapToolbar
 
         ImGui.PopFont();
                 
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.BeginTooltip();
-            ImGui.TextColored(KnownColor.White.AsVector4(), "Settings");
-            ImGui.EndTooltip();
-        }
-        
+        if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip("Settings", KnownColor.White.AsVector4());
+
         ImGui.PopID();
     }
-
-
+    
     private void DrawLockUnlockWidget()
     {
         ImGui.PushID("LockUnlockWidget");
@@ -177,12 +161,7 @@ public class MapToolbar
             }
             ImGui.PopFont();
             
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextColored(KnownColor.White.AsVector4(), "Show and Unlock");
-                ImGui.EndTooltip();
-            }
+            if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip("Show and Unlock", KnownColor.White.AsVector4());
             ImGui.PopID();
         }
         else
@@ -197,18 +176,13 @@ public class MapToolbar
             }
             ImGui.PopFont();
             
-            if (ImGui.IsItemHovered())
-            {
-                ImGui.BeginTooltip();
-                ImGui.TextColored(KnownColor.White.AsVector4(), "Hide and Unlock");
-                ImGui.EndTooltip();
-            }
+            if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip("Hide and Unlock", KnownColor.White.AsVector4());
             ImGui.PopID();
         }
         
         ImGui.PopID();
     }
-
+    
     private void DrawCursorPosition()
     {
         if (MapSelect.ShowMapSelectOverlay) return;

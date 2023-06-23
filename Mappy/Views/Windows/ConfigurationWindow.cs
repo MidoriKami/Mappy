@@ -21,7 +21,7 @@ public class ConfigurationWindow : TabbedSelectionWindow
         
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(560, 400),
+            MinimumSize = new Vector2(560, 450),
             MaximumSize = new Vector2(9999,9999),
         };
         

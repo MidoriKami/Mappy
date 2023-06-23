@@ -1,6 +1,8 @@
 ﻿using Dalamud.Data;
 using Dalamud.Game;
 using Dalamud.Game.ClientState;
+using Dalamud.Game.ClientState.Objects;
+using Dalamud.Game.ClientState.Party;
 using Dalamud.Game.Gui;
 using Dalamud.Game.Gui.Toast;
 using Dalamud.IoC;
@@ -16,4 +18,6 @@ public sealed class Service
     [PluginService] public static DataManager DataManager { get; set; } = null!;
     [PluginService] public static ChatGui Chat { get; set; } = null!;
     [PluginService] public static ToastGui Toast { get; set; } = null!;
+    [PluginService] public static PartyList PartyList { get; set; } = null!;
+    [PluginService] public static ObjectTable ObjectTable { get; set; } = null!;
 }

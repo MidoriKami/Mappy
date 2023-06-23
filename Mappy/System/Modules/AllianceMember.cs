@@ -1,11 +1,14 @@
 ﻿using System.Drawing;
 using System.Numerics;
+using Dalamud.Memory;
+using FFXIVClientStructs.FFXIV.Client.Game.Group;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;
+using Mappy.Utility;
 using Mappy.Views.Attributes;
 
 namespace Mappy.System.Modules;
@@ -19,18 +22,36 @@ public class AllianceConfig : IconModuleConfigBase
     public uint SelectedIcon = 60358;
 }
 
-public class AllianceMember : ModuleBase
+public unsafe class AllianceMember : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.AllianceMembers;
     public override ModuleConfigBase Configuration { get; protected set; } = new AllianceConfig();
-    
+
+    protected override bool ShouldDrawMarkers(Map map)
+    {
+        if (!DutyLists.Instance.IsType(Service.ClientState.TerritoryType, DutyType.Alliance)) return false;
+        
+        return base.ShouldDrawMarkers(map);
+    }
+
     public override void LoadForMap(MapData mapData)
     {
-        
+        // Do Nothing.
     }
     
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
+        var config = GetConfig<AllianceConfig>();
         
+        foreach (var member in GroupManager.Instance()->AllianceMembersSpan)
+        {
+            if (member.ObjectID is 0xE0000000 or 0) continue;
+            
+            var memberPosition = new Vector2(member.X, member.Z);
+            var objectPosition = Position.GetObjectPosition(memberPosition, map);
+            
+            if(config.ShowIcon) DrawUtilities.DrawIcon(config.SelectedIcon, objectPosition, config.IconScale);
+            if(config.ShowTooltip) DrawUtilities.DrawTooltip(MemoryHelper.ReadStringNullTerminated((nint)member.Name), config.TooltipColor);
+        }
     }
 }

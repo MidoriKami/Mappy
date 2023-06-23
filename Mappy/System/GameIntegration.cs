@@ -11,6 +11,9 @@ using ImGuiNET;
 using KamiLib;
 using KamiLib.Caching;
 using KamiLib.Hooking;
+using Mappy.Models;
+using Mappy.Models.Enums;
+using Mappy.System.Modules;
 using Mappy.Utility;
 using Mappy.Views.Windows;
 using Map = Lumina.Excel.GeneratedSheets.Map;
@@ -133,19 +136,20 @@ public unsafe class GameIntegration : IDisposable
             
             switch (mapInfo->Type)
             {
-                case MapType.FlagMarker when AgentMap.Instance()->FlagMapMarker is var flag:
+                case MapType.FlagMarker when Flag.TempMapMarker is { } flag:
                     MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
-                    mapWindow.Viewport.SetViewportCenter(new Vector2(flag.XFloat, flag.YFloat));
+                    var flagPosition = Position.GetTextureOffsetPosition(flag.Position, map);
+                    mapWindow.Viewport.SetViewportCenter(flagPosition);
                     break;
                 
                 case MapType.QuestLog:// when GetQuestLocation(mapInfo) is {} questLocation:
                     MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
                     break;
                 
-                case MapType.GatheringLog when AgentMap.Instance()->TempMapMarkerArraySpan[0] is var area:
+                case MapType.GatheringLog when GatheringArea.TempMapMarker is {} area:
                     MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
-                    var texturePosition = Position.GetTextureOffsetPosition(new Vector2(area.MapMarker.X, area.MapMarker.Y) / 10.0f, map);
-                    mapWindow.Viewport.SetViewportCenter(texturePosition);
+                    var gatherAreaPosition = Position.GetTextureOffsetPosition(area.Position, map);
+                    mapWindow.Viewport.SetViewportCenter(gatherAreaPosition);
                     break;
                 
                 default:
@@ -176,24 +180,19 @@ public unsafe class GameIntegration : IDisposable
             ImGui.SetWindowFocus(mapWindow.WindowName);
             mapWindow.IsOpen = !mapWindow.IsOpen;
         }
-
-        InsertFlagInChat();
     }, "Exception during OnShowHook");
 
-    public void SetFlagMarker(AgentMap* agent, uint territoryId, uint mapId, float mapX, float mapY, uint iconId) => Safety.ExecuteSafe(() =>
+    private void SetFlagMarker(AgentMap* agent, uint territoryId, uint mapId, float mapX, float mapY, uint iconId) => Safety.ExecuteSafe(() =>
     {
         PluginLog.Debug($"SetFlagMarker");
-            
-        // todo: wire this up to Flag.cs to place a marker
-        // FlagMarker.SetFlag(new TempMarker
-        // {
-        //     Type = MarkerType.Flag,
-        //     MapID = mapId,
-        //     IconID = iconId,
-        //     Position = new Vector2(mapX, mapY)
-        // });
-            
-        InsertFlagInChat();
+        
+        Flag.SetFlagMarker( new TemporaryMapMarker
+        {
+            Type = MarkerType.Flag,
+            MapID = mapId,
+            IconID = iconId,
+            Position = new Vector2(mapX, mapY)
+        });
 
         setFlagMarkerHook!.Original(agent, territoryId, mapId, mapX, mapY, iconId);
     }, "Exception during SetFlagMarker");
@@ -202,26 +201,19 @@ public unsafe class GameIntegration : IDisposable
     {
         PluginLog.Debug("SetGatheringMarker");
 
-        // todo: wire this up to GatheringArea.cs to place a marker
-            
-        // GatheringAreaMarker.SetGatheringArea(new TempMarker
-        // {
-        //     Type = MarkerType.Gathering,
-        //     MapID = GetGatheringAreaMapInfo()->MapId,
-        //     IconID = iconID,
-        //     Radius = radius,
-        //     Position = new Vector2(mapX, mapY),
-        //     TooltipText = tooltip->ToString(),
-        // });
+        GatheringArea.SetGatheringAreaMarker(new TemporaryMapMarker
+        {
+            Type = MarkerType.Gathering,
+            MapID = GetGatheringAreaMapInfo()->MapId,
+            IconID = iconID,
+            Radius = radius,
+            Position = new Vector2(mapX, mapY),
+            TooltipText = tooltip->ToString(),
+        });
             
     }, "Exception during SetGatheringMarker");
 
-    public void InsertFlagInChat()
-    {
-        PluginLog.Debug("Inserting Param: 1048");
-        
-        insertFlagTextCommand?.Invoke(ChatAgent, 1048u, 0);
-    }
+    public void InsertFlagInChat() => insertFlagTextCommand?.Invoke(ChatAgent, 1048u, 0);
 
     private OpenMapInfo* GetGatheringAreaMapInfo()
     {

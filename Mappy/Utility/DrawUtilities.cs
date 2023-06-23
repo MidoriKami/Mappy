@@ -5,6 +5,7 @@ using ImGuiNET;
 using ImGuiScene;
 using KamiLib;
 using KamiLib.Caching;
+using Lumina.Excel.GeneratedSheets;
 using Mappy.System;
 using Mappy.Views.Windows;
 
@@ -25,10 +26,8 @@ public class DrawUtilities
     
     public static void DrawIcon(uint iconId, Vector2 position, float scale = 0.50f) => DrawIcon(IconCache.Instance.GetIcon(iconId), position, scale);
 
-    public static void DrawIcon(uint iconId, GameObject gameObject, float scale = 0.50f)
+    public static void DrawIcon(uint iconId, GameObject gameObject, Map map, float scale = 0.50f)
     {
-        if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
-        
         var icon = IconCache.Instance.GetIcon(iconId);
         var position = Position.GetObjectPosition(gameObject, map);
         
@@ -66,7 +65,9 @@ public class DrawUtilities
     {
         if (!ImGui.IsItemHovered()) return;
         
-        DrawUtilities.DrawTooltip(text, color);
+        ImGui.BeginTooltip();
+        ImGui.TextColored(color, text);
+        ImGui.EndTooltip();
     }
 
     private static float GetObjectRotation(GameObject gameObject)

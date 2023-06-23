@@ -14,6 +14,7 @@ public class MappySystem
     public static MapTextureController MapTextureController = null!;
     public static PenumbraController PenumbraController = null!;
     public static GameIntegration GameIntegration = null!;
+    public static ContextMenuController ContextMenuController = null!;
     
     public MappySystem()
     {
@@ -24,11 +25,12 @@ public class MappySystem
         ModuleController = new ModuleController();
         PenumbraController = new PenumbraController();
         GameIntegration = new GameIntegration();
+        ContextMenuController = new ContextMenuController();
         
         Service.ClientState.TerritoryChanged += ZoneChanged;
         Service.Framework.Update += FrameworkUpdate;
     }
-    
+
     private void ZoneChanged(object? sender, ushort newZone)
     {
         ModuleController.ZoneChanged(newZone);

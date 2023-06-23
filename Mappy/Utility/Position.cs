@@ -9,8 +9,10 @@ public class Position
 {
     public static Vector2 GetObjectPosition(GameObject gameObject, Map map) => 
         GetObjectPosition(gameObject.Position, map);
+    
     public static Vector2 GetObjectPosition(Vector3 position, Map map) => 
         GetObjectPosition(new Vector2(position.X, position.Z), map);
+    
     public static Vector2 GetObjectPosition(Vector2 position, Map map) => 
         position * (map.SizeFactor / 100.0f) + 
         new Vector2(map.OffsetX, map.OffsetY) * (map.SizeFactor / 100.0f) + 

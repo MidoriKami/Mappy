@@ -2,6 +2,7 @@
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using KamiLib.Commands;
+using KamiLib.GameState;
 using Mappy.Models;
 using Mappy.System;
 using Mappy.Utility;
@@ -15,7 +16,7 @@ public class MapWindow : Window
     private Vector2 mouseDragStart;
     private bool dragStarted;
     private Vector2 lastWindowSize = Vector2.Zero;
-    private MapToolbar toolbar;
+    private readonly MapToolbar toolbar;
     
     public Vector2 MapContentsStart { get; private set; }
 
@@ -26,6 +27,14 @@ public class MapWindow : Window
                                                   ImGuiWindowFlags.NoScrollWithMouse |
                                                   ImGuiWindowFlags.NoDocking;
 
+    public const ImGuiWindowFlags NoDecorationFlags =
+        ImGuiWindowFlags.NoDecoration |
+        ImGuiWindowFlags.NoBackground;
+
+    public const ImGuiWindowFlags NoMoveResizeFlags =
+        ImGuiWindowFlags.NoMove |
+        ImGuiWindowFlags.NoResize;
+    
     public MapWindow() : base("Mappy - Map Window")
     {
         toolbar = new MapToolbar(this);
@@ -36,19 +45,27 @@ public class MapWindow : Window
             MaximumSize = new Vector2(9999,9999)
         };
 
-        IsOpen = true;
-        
         CommandController.RegisterCommands(this);
     }
 
+    public override void PreOpenCheck()
+    {
+        if (MappySystem.SystemConfig.KeepOpen) IsOpen = true;
+        if (Service.ClientState.IsPvP) IsOpen = false;
+        if (!Service.ClientState.IsLoggedIn) IsOpen = false;
+    }
+    
     public override bool DrawConditions()
     {
         if (!Service.ClientState.IsLoggedIn) return false;
         if (Service.ClientState.IsPvP) return false;
-
+        if (MappySystem.SystemConfig.HideInDuties && Condition.IsBoundByDuty()) return false;
+        if (MappySystem.SystemConfig.HideInCombat && Condition.IsInCombat()) return false;
+        if (MappySystem.SystemConfig.HideBetweenAreas && Condition.IsBetweenAreas()) return false;
+        
         return true;
     }
-
+    
     public override void Draw()
     {
         if (MappySystem.MapTextureController is not { Ready: true, MapTexture: var texture, CurrentMap: var map }) return;
@@ -63,11 +80,13 @@ public class MapWindow : Window
             var scaledSize = new Vector2(texture.Width, texture.Height) * Viewport.Scale;
             
             Viewport.SetImGuiDrawPosition();
-            ImGui.Image(texture.ImGuiHandle, scaledSize, Vector2.Zero, Vector2.One);
+            var fadePercent = MappySystem.SystemConfig.FadeWhenUnfocused && !IsFocused ? 1.0f - MappySystem.SystemConfig.FadePercent : 1.0f;
+            ImGui.Image(texture.ImGuiHandle, scaledSize, Vector2.Zero, Vector2.One, Vector4.One with { W = fadePercent });
 
             if (!toolbar.MapSelect.ShowMapSelectOverlay) MappySystem.ModuleController.Draw(Viewport, map);
 
             toolbar.Draw();
+            MappySystem.ContextMenuController.Draw();
         }
         ImGui.EndChild();
     }
@@ -76,6 +95,8 @@ public class MapWindow : Window
     {
         Flags = DefaultFlags;
         
+        if (MappySystem.SystemConfig.LockWindow) Flags |= NoMoveResizeFlags;
+        if (MappySystem.SystemConfig.HideWindowFrame) Flags |= NoDecorationFlags;
         if (!IsCursorInWindowHeader()) Flags |= ImGuiWindowFlags.NoMove;
     }
 
@@ -137,7 +158,7 @@ public class MapWindow : Window
     {
         if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
         {
-            // todo: show context menu
+            MappySystem.ContextMenuController.Show(ContextMenuType.General);
         }
     }
     

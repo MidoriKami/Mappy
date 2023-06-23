@@ -47,7 +47,16 @@ public class MapIcons : ModuleBase
     public override ModuleConfigBase Configuration { get; protected set; } = new MapIconConfig();
 
     private readonly ConcurrentBag<MapMarkerData> mapMarkers = new();
-    
+
+    protected override bool ShouldDrawMarkers(Map map)
+    {
+        var config = GetConfig<MapIconConfig>();
+        
+        if (!config.ShowIcon) return false;
+        
+        return base.ShouldDrawMarkers(map);
+    }
+
     public override void LoadForMap(MapData mapData) => Task.Run(() =>
     {
         mapMarkers.Clear();
@@ -65,8 +74,6 @@ public class MapIcons : ModuleBase
     {
         var config = GetConfig<MapIconConfig>();
         
-        if (!config.ShowIcon) return;
-        
         foreach (var marker in mapMarkers)
         {
             if (config.DisabledMarkers.Contains(marker.IconId)) continue;
@@ -79,6 +86,8 @@ public class MapIcons : ModuleBase
         {
             foreach (var aetheryte in mapMarkers.Where(marker => marker.Type is MapMarkerType.Aetheryte))
             {
+                if (config.DisabledMarkers.Contains(aetheryte.IconId)) continue;
+
                 aetheryte.Draw();
             }
         }

@@ -1,6 +1,5 @@
-﻿using System.Numerics;
-using DailyDuty.System;
-using ImGuiNET;
+﻿using DailyDuty.System;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiLib.AutomaticUserInterface;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
@@ -9,7 +8,7 @@ using Mappy.System;
 
 namespace Mappy.Abstracts;
 
-public abstract class ModuleBase
+public abstract unsafe class ModuleBase
 {
     public abstract ModuleName ModuleName { get; }
     public abstract ModuleConfigBase Configuration { get; protected set; }
@@ -19,7 +18,7 @@ public abstract class ModuleBase
     public virtual void ZoneChanged(uint territoryType) { }
     public abstract void LoadForMap(MapData mapData);
     protected abstract void DrawMarkers(Viewport viewport, Map map);
-    protected virtual bool ShouldDrawMarkers()
+    protected virtual bool ShouldDrawMarkers(Map map)
     {
         if (!Configuration.Enable) return false;
 
@@ -27,27 +26,26 @@ public abstract class ModuleBase
     }
     public void Draw(Viewport viewport, Map map)
     {
-        if (!ShouldDrawMarkers()) return;
+        if (!ShouldDrawMarkers(map)) return;
         
         DrawMarkers(viewport, map);
     }
 
-    // Tooltip
-    public virtual bool HasTooltip { get; protected set; } = true;
-    public virtual bool ShouldShowTooltip() { return true; }
-    protected void DrawTooltip(string text, Vector4 color)
-    {
-        if (!ImGui.IsItemHovered()) return;
-        
-        ImGui.BeginTooltip();
-        ImGui.TextColored(color, text);
-        ImGui.EndTooltip();
-    }
-    
     // File IO
     public virtual void Load() => Configuration = LoadConfig();
     public virtual void Unload() { }
     public void DrawConfig() => DrawableAttribute.DrawAttributes(Configuration, SaveConfig);
     private ModuleConfigBase LoadConfig() => FileController.LoadFile<ModuleConfigBase>($"{ModuleName}.config.json", Configuration);
     public void SaveConfig() => FileController.SaveFile($"{ModuleName}.config.json", Configuration.GetType(), Configuration);
+    
+    // Utilities
+    protected bool IsPlayerInCurrentMap(Map map)
+    {
+        if (AgentMap.Instance() is null) return false;
+        if (AgentMap.Instance()->CurrentMapId != map.RowId) return false;
+
+        return true;
+    }
+
+    protected bool IsLocalPlayerValid() => Service.ClientState.LocalPlayer is not null;
 }
