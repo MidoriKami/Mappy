@@ -78,7 +78,7 @@
     <data name="LayerHelp" xml:space="preserve">
         <value>Controls the order that markers are drawn, higher values will be shown on top of lower values.</value>
     </data>
-    <data name="KeepOpwn" xml:space="preserve">
+    <data name="KeepOpen" xml:space="preserve">
         <value>Keep Open</value>
     </data>
     <data name="FollowPlayer" xml:space="preserve">
@@ -126,5 +126,92 @@ Recommended to disable if using Chat2</value>
     </data>
     <data name="HideInCombat" xml:space="preserve">
         <value>Hide in Combat</value>
+    </data>
+    <data name="TooltipColor" xml:space="preserve">
+        <value>Tooltip Color</value>
+    </data>
+    <data name="ModuleConfig" xml:space="preserve">
+        <value>Module Config</value>
+    </data>
+    <data name="IconSelection" xml:space="preserve">
+        <value>Icon Selection</value>
+    </data>
+    <data name="ShowRing" xml:space="preserve">
+        <value>Show Ring</value>
+    </data>
+    <data name="ExpiringWarning" xml:space="preserve">
+        <value>Expiring Warning</value>
+    </data>
+    <data name="EarlyWarningTime" xml:space="preserve">
+        <value>Early Warning Time</value>
+    </data>
+    <data name="CircleColor" xml:space="preserve">
+        <value>Circle Color</value>
+    </data>
+    <data name="ExpiringColor" xml:space="preserve">
+        <value>ExpiringColor</value>
+    </data>
+    <data name="Default" xml:space="preserve">
+        <value>Default</value>
+    </data>
+    <data name="GameIntegrations" xml:space="preserve">
+        <value>Game Integrations</value>
+    </data>
+    <data name="DisplayOptions" xml:space="preserve">
+        <value>DisplayOptions</value>
+    </data>
+    <data name="ModuleColors" xml:space="preserve">
+        <value>Module Colors</value>
+    </data>
+    <data name="AetherytesOnTop" xml:space="preserve">
+        <value>Draw Aetherytes on Top</value>
+    </data>
+    <data name="StandardColor" xml:space="preserve">
+        <value>Standard Marker Color</value>
+    </data>
+    <data name="MapLinkColor" xml:space="preserve">
+        <value>Map Link Color</value>
+    </data>
+    <data name="InstanceLinkColor" xml:space="preserve">
+        <value>Instance Link Color</value>
+    </data>
+    <data name="AetheryteColor" xml:space="preserve">
+        <value>Aetheryte Color</value>
+    </data>
+    <data name="AethernetColor" xml:space="preserve">
+        <value>Aethernet Color</value>
+    </data>
+    <data name="DisplayedMarkers" xml:space="preserve">
+        <value>Displayed Markers</value>
+    </data>
+    <data name="ShowCone" xml:space="preserve">
+        <value>Show Cone</value>
+    </data>
+    <data name="ConeRadius" xml:space="preserve">
+        <value>Cone Radius</value>
+    </data>
+    <data name="ConeAngle" xml:space="preserve">
+        <value>Cone Angle</value>
+    </data>
+    <data name="OutlineThickness" xml:space="preserve">
+        <value>Outline Thickness</value>
+    </data>
+    <data name="OutlineColor" xml:space="preserve">
+        <value>Outline Color</value>
+    </data>
+    <data name="FillColor" xml:space="preserve">
+        <value>Fill Color</value>
+    </data>
+    <data name="HideUnacceptedQuests" xml:space="preserve">
+        <value>Hide Unaccepted Quests</value>
+    </data>
+    <data name="HideAcceptedQuests" xml:space="preserve">
+        <value>Hide Accepted Quests</value>
+    </data>
+    <data name="HideLeveQuests" xml:space="preserve">
+        <value>Hide Levequests</value>
+    </data>
+    <data name="InProgressColor" xml:space="preserve">
+        <value>Active Quest Color</value>
     </data>
 </root>

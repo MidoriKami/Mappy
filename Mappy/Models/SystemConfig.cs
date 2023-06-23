@@ -28,7 +28,7 @@ public class SystemConfig
     [BoolDescriptionConfigOption("EnableIntegrations", "GameIntegrations", 1, "IntegrationsDescription")]
     public bool EnableIntegrations = true;
     
-    [BoolConfigOption("InsertFlagInChat", "GameIntegrations", 1)]
+    [BoolConfigOption("InsertFlagInChat", "GameIntegrations", 1, "InsertFlagHelp")]
     public bool InsertFlagInChat = true;
     
     [BoolConfigOption("HideBetweenAreas", "DisplayOptions", 2)]

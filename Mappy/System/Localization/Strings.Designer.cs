@@ -60,6 +60,33 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Aethernet Color.
+        /// </summary>
+        internal static string AethernetColor {
+            get {
+                return ResourceManager.GetString("AethernetColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aetheryte Color.
+        /// </summary>
+        internal static string AetheryteColor {
+            get {
+                return ResourceManager.GetString("AetheryteColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Draw Aetherytes on Top.
+        /// </summary>
+        internal static string AetherytesOnTop {
+            get {
+                return ResourceManager.GetString("AetherytesOnTop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alliance Members.
         /// </summary>
         internal static string AllianceMembers {
@@ -78,6 +105,69 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Circle Color.
+        /// </summary>
+        internal static string CircleColor {
+            get {
+                return ResourceManager.GetString("CircleColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cone Angle.
+        /// </summary>
+        internal static string ConeAngle {
+            get {
+                return ResourceManager.GetString("ConeAngle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cone Radius.
+        /// </summary>
+        internal static string ConeRadius {
+            get {
+                return ResourceManager.GetString("ConeRadius", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default.
+        /// </summary>
+        internal static string Default {
+            get {
+                return ResourceManager.GetString("Default", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Displayed Markers.
+        /// </summary>
+        internal static string DisplayedMarkers {
+            get {
+                return ResourceManager.GetString("DisplayedMarkers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DisplayOptions.
+        /// </summary>
+        internal static string DisplayOptions {
+            get {
+                return ResourceManager.GetString("DisplayOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Early Warning Time.
+        /// </summary>
+        internal static string EarlyWarningTime {
+            get {
+                return ResourceManager.GetString("EarlyWarningTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable.
         /// </summary>
         internal static string Enable {
@@ -92,6 +182,24 @@ namespace Mappy.System.Localization {
         internal static string EnableIntegrations {
             get {
                 return ResourceManager.GetString("EnableIntegrations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExpiringColor.
+        /// </summary>
+        internal static string ExpiringColor {
+            get {
+                return ResourceManager.GetString("ExpiringColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expiring Warning.
+        /// </summary>
+        internal static string ExpiringWarning {
+            get {
+                return ResourceManager.GetString("ExpiringWarning", resourceCulture);
             }
         }
         
@@ -123,6 +231,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fill Color.
+        /// </summary>
+        internal static string FillColor {
+            get {
+                return ResourceManager.GetString("FillColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Flag Marker.
         /// </summary>
         internal static string FlagMarker {
@@ -141,6 +258,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Game Integrations.
+        /// </summary>
+        internal static string GameIntegrations {
+            get {
+                return ResourceManager.GetString("GameIntegrations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Gathering Area.
         /// </summary>
         internal static string GatheringArea {
@@ -155,6 +281,15 @@ namespace Mappy.System.Localization {
         internal static string GatheringPoints {
             get {
                 return ResourceManager.GetString("GatheringPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide Accepted Quests.
+        /// </summary>
+        internal static string HideAcceptedQuests {
+            get {
+                return ResourceManager.GetString("HideAcceptedQuests", resourceCulture);
             }
         }
         
@@ -182,6 +317,24 @@ namespace Mappy.System.Localization {
         internal static string HideInDuties {
             get {
                 return ResourceManager.GetString("HideInDuties", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide Levequests.
+        /// </summary>
+        internal static string HideLeveQuests {
+            get {
+                return ResourceManager.GetString("HideLeveQuests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide Unaccepted Quests.
+        /// </summary>
+        internal static string HideUnacceptedQuests {
+            get {
+                return ResourceManager.GetString("HideUnacceptedQuests", resourceCulture);
             }
         }
         
@@ -222,6 +375,24 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Icon Selection.
+        /// </summary>
+        internal static string IconSelection {
+            get {
+                return ResourceManager.GetString("IconSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Active Quest Color.
+        /// </summary>
+        internal static string InProgressColor {
+            get {
+                return ResourceManager.GetString("InProgressColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to When placing a flag on the map, insert &lt;flag&gt; into chat
         ///Recommended to disable if using Chat2.
         /// </summary>
@@ -241,6 +412,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Instance Link Color.
+        /// </summary>
+        internal static string InstanceLinkColor {
+            get {
+                return ResourceManager.GetString("InstanceLinkColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Replaces all of the games normal map functions with Mappy functions instead.
         /// </summary>
         internal static string IntegrationsDescription {
@@ -252,9 +432,9 @@ namespace Mappy.System.Localization {
         /// <summary>
         ///   Looks up a localized string similar to Keep Open.
         /// </summary>
-        internal static string KeepOpwn {
+        internal static string KeepOpen {
             get {
-                return ResourceManager.GetString("KeepOpwn", resourceCulture);
+                return ResourceManager.GetString("KeepOpen", resourceCulture);
             }
         }
         
@@ -286,6 +466,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Map Link Color.
+        /// </summary>
+        internal static string MapLinkColor {
+            get {
+                return ResourceManager.GetString("MapLinkColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Map Markers.
         /// </summary>
         internal static string MapMarkers {
@@ -295,11 +484,47 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Module Colors.
+        /// </summary>
+        internal static string ModuleColors {
+            get {
+                return ResourceManager.GetString("ModuleColors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Module Config.
+        /// </summary>
+        internal static string ModuleConfig {
+            get {
+                return ResourceManager.GetString("ModuleConfig", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Module Options.
         /// </summary>
         internal static string ModuleOptions {
             get {
                 return ResourceManager.GetString("ModuleOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Outline Color.
+        /// </summary>
+        internal static string OutlineColor {
+            get {
+                return ResourceManager.GetString("OutlineColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Outline Thickness.
+        /// </summary>
+        internal static string OutlineThickness {
+            get {
+                return ResourceManager.GetString("OutlineThickness", resourceCulture);
             }
         }
         
@@ -340,6 +565,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Cone.
+        /// </summary>
+        internal static string ShowCone {
+            get {
+                return ResourceManager.GetString("ShowCone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Icon.
         /// </summary>
         internal static string ShowIcon {
@@ -349,11 +583,38 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Ring.
+        /// </summary>
+        internal static string ShowRing {
+            get {
+                return ResourceManager.GetString("ShowRing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Tooltip.
         /// </summary>
         internal static string ShowTooltip {
             get {
                 return ResourceManager.GetString("ShowTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Standard Marker Color.
+        /// </summary>
+        internal static string StandardColor {
+            get {
+                return ResourceManager.GetString("StandardColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tooltip Color.
+        /// </summary>
+        internal static string TooltipColor {
+            get {
+                return ResourceManager.GetString("TooltipColor", resourceCulture);
             }
         }
         

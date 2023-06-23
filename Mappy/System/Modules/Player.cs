@@ -34,10 +34,10 @@ public class PlayerConfig : IconModuleConfigBase
     [FloatConfigOption("OutlineThickness", "ModuleConfig", 0, 0.5f, 5.0f)]
     public float OutlineThickness = 2.0f;
 
-    [ColorConfigOption("OutlineColor", "ColorOptions", 1, 128, 128, 128, 255)]
+    [ColorConfigOption("OutlineColor", "ModuleColors", 1, 128, 128, 128, 255)]
     public Vector4 OutlineColor = KnownColor.Gray.AsVector4();
     
-    [ColorConfigOption("FillColor", "ColorOptions", 1, 173, 216, 230, 45)]
+    [ColorConfigOption("FillColor", "ModuleColors", 1, 173, 216, 230, 45)]
     public Vector4 FillColor = KnownColor.LightBlue.AsVector4() with { W = 45 };
 }
 

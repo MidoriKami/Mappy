@@ -34,7 +34,7 @@ public class QuestConfig : IconModuleConfigBase
     [BoolConfigOption("HideLeveQuests", "ModuleConfig", 1)]
     public bool HideLeveQuests = false;
 
-    [ColorConfigOption("InProgressColor", "ColorConfig", 2, 255, 69, 0, 45)]
+    [ColorConfigOption("InProgressColor", "ModuleColors", 2, 255, 69, 0, 45)]
     public Vector4 InProgressColor = KnownColor.OrangeRed.AsVector4() with { W = 0.33f };
 }
 
