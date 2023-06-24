@@ -64,9 +64,7 @@ public class MapMarkerData
         
         if (displayString is not null && displayString != string.Empty)
         {
-            ImGui.BeginTooltip();
-            ImGui.TextColored(GetDisplayColor(), displayString);
-            ImGui.EndTooltip();
+            DrawUtilities.DrawTooltip(displayString, GetDisplayColor());
         }
     }
 

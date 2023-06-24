@@ -37,12 +37,7 @@ public class MapSelectWidget
 
         ImGui.PopFont();
         
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.BeginTooltip();
-            ImGui.TextColored(KnownColor.White.AsVector4(), Strings.SearchForMap);
-            ImGui.EndTooltip();
-        }
+        if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip(Strings.SearchForMap, KnownColor.White.AsVector4());
 
         ImGui.PopID();
     }
