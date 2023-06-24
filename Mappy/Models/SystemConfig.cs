@@ -21,6 +21,9 @@ public class SystemConfig
     
     [BoolConfigOption("AlwaysShowToolbar", "WindowOptions", 0)]
     public bool AlwaysShowToolbar = false;
+
+    [BoolConfigOption("ShowToolbarOnHover", "WindowOptions", 0)]
+    public bool ShowToolbarOnHover = false;
     
     [FloatConfigOption("FadePercent", "WindowOptions", 0)]
     public float FadePercent = 0.60f;

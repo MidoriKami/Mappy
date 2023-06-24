@@ -700,6 +700,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Toolbar on Hover.
+        /// </summary>
+        internal static string ShowToolbarOnHover {
+            get {
+                return ResourceManager.GetString("ShowToolbarOnHover", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Tooltip.
         /// </summary>
         internal static string ShowTooltip {

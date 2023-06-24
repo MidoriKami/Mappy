@@ -24,8 +24,12 @@ public class MapToolbar
     public void Draw()
     {
         if (!owner.IsFocused) MapSelect.ShowMapSelectOverlay = false;
+
+        var hoverShow = MappySystem.SystemConfig.ShowToolbarOnHover && MapWindow.IsCursorInWindow();
+        var alwaysShow = MappySystem.SystemConfig.AlwaysShowToolbar;
+        var focusedShow = owner.IsFocused;
         
-        if (owner.IsFocused || MappySystem.SystemConfig.AlwaysShowToolbar)
+        if (focusedShow || alwaysShow || hoverShow)
         {
             var regionAvailable = ImGui.GetContentRegionAvail();
             

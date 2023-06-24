@@ -174,7 +174,7 @@ public class MapWindow : Window
         }
     }
 
-    private static bool IsCursorInWindow()
+    public static bool IsCursorInWindow()
     {
         var windowStart = ImGui.GetWindowPos();
         var windowSize = ImGui.GetWindowSize();

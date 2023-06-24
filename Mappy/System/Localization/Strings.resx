@@ -265,4 +265,7 @@ Recommended to disable if using Chat2</value>
     <data name="ZoomSpeed" xml:space="preserve">
         <value>Zoom Speed</value>
     </data>
+    <data name="ShowToolbarOnHover" xml:space="preserve">
+        <value>Show Toolbar on Hover</value>
+    </data>
 </root>
