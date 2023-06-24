@@ -5,7 +5,6 @@ using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using KamiLib.AutomaticUserInterface;
-using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
@@ -17,8 +16,8 @@ namespace Mappy.System.Modules;
 
 public class PetConfig : IconModuleConfigBase
 {
-    [ColorConfigOption("TooltipColor", "ModuleColors", 1, 128, 0, 128, 255)]
-    public Vector4 TooltipColor = KnownColor.Purple.AsVector4();
+    [ColorConfigOption("TooltipColor", "ModuleColors", 1, 0.765f, 0.260f, 0.765f, 1.00f)]
+    public Vector4 TooltipColor = new(0.765f, 0.260f, 0.765f, 1.00f);
 
     [IconSelection("SelectedIcon", "IconSelection", 1, 60961)]
     public uint SelectedIcon = 60961;
