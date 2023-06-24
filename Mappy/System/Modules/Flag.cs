@@ -1,5 +1,6 @@
 ﻿using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
+using KamiLib.AutomaticUserInterface;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
@@ -8,10 +9,19 @@ using Mappy.Utility;
 
 namespace Mappy.System.Modules;
 
+public class FlagConfig : IconModuleConfigBase
+{
+    [Disabled]
+    public new bool ShowIcon = false;
+
+    [Disabled]
+    public new bool ShowTooltip = false;
+}
+
 public unsafe class Flag : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.FlagMarker;
-    public override ModuleConfigBase Configuration { get; protected set; } = new IconModuleConfigBase();
+    public override ModuleConfigBase Configuration { get; protected set; } = new FlagConfig();
 
     public static TemporaryMapMarker? TempMapMarker { get; private set; }
 
