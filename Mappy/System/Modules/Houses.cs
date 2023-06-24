@@ -78,14 +78,22 @@ public unsafe class Houses : ModuleBase
     private void DrawHousingMapMarker(HousingMapMarkerInfo marker, Map map)
     {
         if (housingSizeInfo is null) return;
-        var config = GetConfig<HousingConfig>();    
-
-        var iconId = GetIconID( marker.SubRowId switch
+        var config = GetConfig<HousingConfig>();
+        uint iconId;
+        
+        if (IsHousingManagerValid())
         {
-            60 => 128,
-            61 => 129,
-            _ => marker.SubRowId
-        } );
+            iconId = GetIconID( marker.SubRowId switch
+            {
+                60 => 128,
+                61 => 129,
+                _ => marker.SubRowId
+            } );
+        }
+        else
+        {
+            iconId = marker.SubRowId is 60 or 61 ? 60789 : GetIconID(housingSizeInfo.PlotSize[marker.SubRowId]);
+        }
         
         var position = Position.GetObjectPosition(new Vector2(marker.X, marker.Z), map);
 
@@ -103,7 +111,7 @@ public unsafe class Houses : ModuleBase
 
     private uint GetIconID(uint housingIndex)
     {
-        if (HousingManager.Instance() is null || HousingManager.Instance()->OutdoorTerritory is null)
+        if (!IsHousingManagerValid())
         {
             return housingSizeInfo?.PlotSize[housingIndex] switch
             {
@@ -115,6 +123,14 @@ public unsafe class Houses : ModuleBase
         }
         
         return getPlotIconId?.Invoke(HousingManager.Instance()->OutdoorTerritory, (byte) housingIndex) ?? 0;
+    }
+
+    private bool IsHousingManagerValid()
+    {
+        if (HousingManager.Instance() is null) return false;
+        if (HousingManager.Instance()->OutdoorTerritory is null) return false;
+
+        return true;
     }
 
     private static uint GetHousingDistrictID(ExcelRow map) => map.RowId switch
