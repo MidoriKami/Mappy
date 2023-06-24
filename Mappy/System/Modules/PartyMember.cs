@@ -20,7 +20,7 @@ public class PartyMemberConfig : IconModuleConfigBase
     [ColorConfigOption("TooltipColor", "ModuleColors", 1, 65, 105, 225, 255)]
     public Vector4 TooltipColor = KnownColor.RoyalBlue.AsVector4();
 
-    [IconSelection("SelectedIcon", "IconSelection", 2, 60421)]
+    [IconSelection("SelectedIcon", "IconSelection", 2, 60421, 63940, 63944, 63937, 63946)]
     public uint SelectedIcon = 60421;
 }
 
