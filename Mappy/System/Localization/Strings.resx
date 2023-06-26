@@ -268,4 +268,10 @@ Recommended to disable if using Chat2</value>
     <data name="ShowToolbarOnHover" xml:space="preserve">
         <value>Show Toolbar on Hover</value>
     </data>
+    <data name="HideWithGameGui" xml:space="preserve">
+        <value>Hide With Game GUI</value>
+    </data>
+    <data name="LeveQuestColor" xml:space="preserve">
+        <value>Levequest Color</value>
+    </data>
 </root>

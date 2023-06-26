@@ -6,6 +6,7 @@ using ImGuiScene;
 using KamiLib;
 using KamiLib.Caching;
 using Lumina.Excel.GeneratedSheets;
+using Mappy.Models;
 using Mappy.System;
 using Mappy.Views.Windows;
 
@@ -24,7 +25,8 @@ public class DrawUtilities
         ImGui.Image(iconTexture.ImGuiHandle, iconSize);
     }
     
-    public static void DrawIcon(uint iconId, Vector2 position, float scale = 0.50f) => DrawIcon(IconCache.Instance.GetIcon(iconId), position, scale);
+    public static void DrawIcon(uint iconId, Vector2 position, float scale = 0.50f) 
+        => DrawIcon(IconCache.Instance.GetIcon(iconId), position, scale);
 
     public static void DrawIcon(uint iconId, GameObject gameObject, Map map, float scale = 0.50f)
     {
@@ -32,6 +34,34 @@ public class DrawUtilities
         var position = Position.GetObjectPosition(gameObject, map);
         
         DrawIcon(icon, position, scale);
+    }
+
+    public static void DrawLevelRing(Level level, Viewport viewport, Map map, Vector4 color, float extraRadius = 0.0f)
+    {
+        var position = Position.GetTextureOffsetPosition(new Vector2(level.X, level.Z), map);
+        var drawPosition = viewport.GetImGuiWindowDrawPosition(position);
+        var radius = level.Radius * viewport.Scale / 7.0f + extraRadius * viewport.Scale;
+        
+        var imGuiColor = ImGui.GetColorU32(color);
+        
+        ImGui.BeginGroup();
+        ImGui.GetWindowDrawList().AddCircleFilled(drawPosition, radius, imGuiColor);
+        ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, imGuiColor, 0, 4);
+        ImGui.EndGroup();
+    }
+    
+    public static void DrawLevelObjective(Level level, uint iconId, string label, Vector4 ringColor, Vector4 tooltipColor, Viewport viewport, Map map, float scale = 0.50f, float extraRadius = 0.0f)
+    {
+        DrawLevelRing(level, viewport, map, ringColor, extraRadius);
+        DrawLevelIcon(level, iconId, viewport, map, scale);
+        DrawTooltip(label, tooltipColor);
+    }
+
+    public static void DrawLevelIcon(Level level, uint iconId, Viewport viewport, Map map, float scale = 0.50f)
+    {
+        var position = Position.GetTextureOffsetPosition(new Vector2(level.X, level.Z), map);
+
+        DrawIcon(iconId, position, scale);
     }
     
     public static void DrawImageRotated(TextureWrap? texture, GameObject gameObject, float iconScale = 0.5f)
@@ -70,7 +100,9 @@ public class DrawUtilities
         ImGui.EndTooltip();
     }
 
-    private static float GetObjectRotation(GameObject gameObject) => -gameObject.Rotation + 0.5f * MathF.PI;
+    private static float GetObjectRotation(GameObject gameObject) 
+        => -gameObject.Rotation + 0.5f * MathF.PI;
 
-    private static Vector2 ImRotate(Vector2 v, float cosA, float sinA) => new(v.X * cosA - v.Y * sinA, v.X * sinA + v.Y * cosA);
+    private static Vector2 ImRotate(Vector2 v, float cosA, float sinA) 
+        => new(v.X * cosA - v.Y * sinA, v.X * sinA + v.Y * cosA);
 }

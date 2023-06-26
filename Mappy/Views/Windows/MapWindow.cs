@@ -1,6 +1,8 @@
 ﻿using System.Numerics;
 using Dalamud.Interface.Windowing;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
+using KamiLib.Atk;
 using KamiLib.Commands;
 using KamiLib.GameState;
 using Mappy.Models;
@@ -10,8 +12,10 @@ using Mappy.Views.Components;
 
 namespace Mappy.Views.Windows;
 
-public class MapWindow : Window
+public unsafe class MapWindow : Window
 {
+    private static AtkUnitBase* NameplateAddon => (AtkUnitBase*) Service.GameGui.GetAddonByName("NamePlate");
+    
     public Viewport Viewport = new();
     private Vector2 mouseDragStart;
     private bool dragStarted;
@@ -62,6 +66,7 @@ public class MapWindow : Window
         if (MappySystem.SystemConfig.HideInDuties && Condition.IsBoundByDuty()) return false;
         if (MappySystem.SystemConfig.HideInCombat && Condition.IsInCombat()) return false;
         if (MappySystem.SystemConfig.HideBetweenAreas && Condition.IsBetweenAreas()) return false;
+        if (MappySystem.SystemConfig.HideWithGameGui && Node.IsAddonReady(NameplateAddon) && !NameplateAddon->RootNode->IsVisible) return false;
         
         return true;
     }

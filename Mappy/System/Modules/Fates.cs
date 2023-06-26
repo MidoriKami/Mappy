@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Numerics;
+using Dalamud.Game.ClientState.Fates;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using ImGuiNET;
 using KamiLib.AutomaticUserInterface;
@@ -83,9 +84,9 @@ public unsafe class Fates : ModuleBase
             color = ImGui.GetColorU32(config.ExpiringColor);
         }
 
-        switch (fate->State)
+        switch ((FateState)fate->State)
         {
-            case 2:
+            case FateState.Running:
                 var position = Position.GetObjectPosition(fate->Location, map);
                 var drawPosition = viewport.GetImGuiWindowDrawPosition(position);
 
@@ -104,9 +105,9 @@ public unsafe class Fates : ModuleBase
 
         ImGui.BeginTooltip();
 
-        switch (fate->State)
+        switch ((FateState)fate->State)
         {
-            case 2:
+            case FateState.Running:
                 var remainingTime = GetTimeFormatted(GetTimeRemaining(fate));
 
                 ImGui.TextColored(config.TooltipColor,
@@ -115,7 +116,7 @@ public unsafe class Fates : ModuleBase
                     $"Progress: {fate->Progress}%%");
                 break;
 
-            case 7:
+            case FateState.Preparation:
                 ImGui.TextColored(config.TooltipColor,
                     $"Level {fate->Level} {fate->Name}");
                 break;

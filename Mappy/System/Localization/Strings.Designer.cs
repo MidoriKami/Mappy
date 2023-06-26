@@ -393,6 +393,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide With Game GUI.
+        /// </summary>
+        internal static string HideWithGameGui {
+            get {
+                return ResourceManager.GetString("HideWithGameGui", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Houses.
         /// </summary>
         internal static string HousingMarkers {
@@ -498,6 +507,15 @@ namespace Mappy.System.Localization {
         internal static string LayerHelp {
             get {
                 return ResourceManager.GetString("LayerHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Levequest Color.
+        /// </summary>
+        internal static string LeveQuestColor {
+            get {
+                return ResourceManager.GetString("LeveQuestColor", resourceCulture);
             }
         }
         

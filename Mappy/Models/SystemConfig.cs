@@ -36,6 +36,9 @@ public class SystemConfig
     
     [BoolConfigOption("InsertFlagInChat", "GameIntegrations", 1, "InsertFlagHelp")]
     public bool InsertFlagInChat = true;
+
+    [BoolConfigOption("HideWithGameGui", "DisplayOptions", 2)]
+    public bool HideWithGameGui = false;
     
     [BoolConfigOption("HideBetweenAreas", "DisplayOptions", 2)]
     public bool HideBetweenAreas = false;
