@@ -19,7 +19,88 @@ public class MapToolbar
     private readonly Window owner;
     public MapSelectWidget MapSelect { get; } = new();
 
-    public MapToolbar(Window owner) => this.owner = owner;
+    private readonly DefaultIconSfxButton followPlayerButton;
+    private readonly DefaultIconSfxButton centerOnPlayerButton;
+    private readonly DefaultIconSfxButton configurationButton;
+    private readonly DefaultIconSfxButton OpenLockButton;
+    private readonly DefaultIconSfxButton CloseLockButton;
+
+    public MapToolbar(Window owner)
+    {
+        this.owner = owner;
+
+        followPlayerButton = new DefaultIconSfxButton
+        {
+            ClickAction = () =>
+            {
+                MappySystem.MapTextureController.MoveMapToPlayer();
+                MappySystem.SystemConfig.FollowPlayer = !MappySystem.SystemConfig.FollowPlayer;
+                MappyPlugin.System.SaveConfig();
+            },
+            Label = FontAwesomeIcon.MapMarkerAlt.ToIconString() + "##FollowPlayerButton",
+            TooltipText = Strings.FollowPlayer,
+            Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
+        };
+
+        centerOnPlayerButton = new DefaultIconSfxButton
+        {
+            ClickAction = () =>
+            {
+                if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
+                
+                MappySystem.MapTextureController.MoveMapToPlayer();
+
+                if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is { } window && Service.ClientState.LocalPlayer is {} player)
+                {
+                    window.Viewport.SetViewportCenter(Position.GetObjectPosition(player.Position, map));
+                }
+            },
+            Label = FontAwesomeIcon.Crosshairs.ToIconString() + "##CenterOnPlayerButton",
+            TooltipText = Strings.CenterOnPlayer,
+            Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
+        };
+
+        configurationButton = new DefaultIconSfxButton
+        {
+            ClickAction = () =>
+            {
+                if (KamiCommon.WindowManager.GetWindowOfType<ConfigurationWindow>() is {} configurationWindow)
+                {
+                    configurationWindow.IsOpen = !configurationWindow.IsOpen;
+                    configurationWindow.Collapsed = false;
+                }
+            },
+            Label = FontAwesomeIcon.Cog.ToIconString() + "##OpenConfigWindowButton",
+            TooltipText = Strings.OpenConfigWindow,
+            Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
+        };
+
+        OpenLockButton = new DefaultIconSfxButton
+        {
+            ClickAction = () =>
+            {
+                MappySystem.SystemConfig.HideWindowFrame = false;
+                MappySystem.SystemConfig.LockWindow = false;
+                MappyPlugin.System.SaveConfig();
+            },
+            Label = FontAwesomeIcon.Unlock.ToIconString() + "##OpenLockButton",
+            TooltipText = Strings.ShowAndUnlock,
+            Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
+        };
+        
+        CloseLockButton = new DefaultIconSfxButton
+        {
+            ClickAction = () =>
+            {
+                MappySystem.SystemConfig.HideWindowFrame = true;
+                MappySystem.SystemConfig.LockWindow = true;
+                MappyPlugin.System.SaveConfig();
+            },
+            Label = FontAwesomeIcon.Lock.ToIconString() + "##CloseLockButton",
+            TooltipText = Strings.HideAndLock,
+            Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
+        };
+    }
 
     public void Draw()
     {
@@ -84,108 +165,33 @@ public class MapToolbar
 
     private void DrawFollowPlayerWidget()
     {
-        ImGui.PushID("FollowPlayerButton");
-        ImGui.PushFont(UiBuilder.IconFont);
-
         var followPlayer = MappySystem.SystemConfig.FollowPlayer;
 
         if (followPlayer) ImGui.PushStyleColor(ImGuiCol.Button, KnownColor.Red.AsVector4());
-        if (ImGui.Button(FontAwesomeIcon.MapMarkerAlt.ToIconString(), ImGuiHelpers.ScaledVector2(23.0f)))
-        {
-            MappySystem.MapTextureController.MoveMapToPlayer();
-            MappySystem.SystemConfig.FollowPlayer = !MappySystem.SystemConfig.FollowPlayer;
-            MappyPlugin.System.SaveConfig();
-        }
+        followPlayerButton.Draw();
         if (followPlayer) ImGui.PopStyleColor();
-
-        ImGui.PopFont();
-        
-        if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip(Strings.FollowPlayer, KnownColor.White.AsVector4());
-
-        ImGui.PopID();
     }
 
     private void DrawRecenterOnPlayerWidget()
     {
-        if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
-        
-        ImGui.PushID("CenterOnPlayer");
-        ImGui.PushFont(UiBuilder.IconFont);
-
-        if (ImGui.Button(FontAwesomeIcon.Crosshairs.ToIconString(), ImGuiHelpers.ScaledVector2(23.0f)))
-        {
-            MappySystem.MapTextureController.MoveMapToPlayer();
-
-            if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is { } window && Service.ClientState.LocalPlayer is {} player)
-            {
-                window.Viewport.SetViewportCenter(Position.GetObjectPosition(player.Position, map));
-            }
-        }
-
-        ImGui.PopFont();
-        
-        if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip(Strings.CenterOnPlayer, KnownColor.White.AsVector4());
-
-        ImGui.PopID();
+        centerOnPlayerButton.Draw();
     }
 
     private void DrawConfigurationButton()
     {
-        ImGui.PushID("ConfigurationButton");
-        ImGui.PushFont(UiBuilder.IconFont);
-
-        if (ImGui.Button(FontAwesomeIcon.Cog.ToIconString(), ImGuiHelpers.ScaledVector2(25.0f, 23.0f)))
-        {
-            if (KamiCommon.WindowManager.GetWindowOfType<ConfigurationWindow>() is {} configurationWindow)
-            {
-                configurationWindow.IsOpen = !configurationWindow.IsOpen;
-                configurationWindow.Collapsed = false;
-            }
-        }
-
-        ImGui.PopFont();
-                
-        if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip(Strings.Settings, KnownColor.White.AsVector4());
-
-        ImGui.PopID();
+        configurationButton.Draw();
     }
     
     private void DrawLockUnlockWidget()
     {
-        ImGui.PushID("LockUnlockWidget");
-
         if (MappySystem.SystemConfig.HideWindowFrame)
         {
-            ImGui.PushFont(UiBuilder.IconFont);
-            ImGui.PushID("OpenLock");
-            if (ImGui.Button(FontAwesomeIcon.Unlock.ToIconString(), ImGuiHelpers.ScaledVector2(25.0f, 23.0f)))
-            {
-                MappySystem.SystemConfig.HideWindowFrame = false;
-                MappySystem.SystemConfig.LockWindow = false;
-                MappyPlugin.System.SaveConfig();
-            }
-            ImGui.PopFont();
-            
-            if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip(Strings.ShowAndUnlock, KnownColor.White.AsVector4());
-            ImGui.PopID();
+           OpenLockButton.Draw();
         }
         else
         {
-            ImGui.PushFont(UiBuilder.IconFont);
-            ImGui.PushID("ClosedLock");
-            if (ImGui.Button(FontAwesomeIcon.Lock.ToIconString(), ImGuiHelpers.ScaledVector2(25.0f, 23.0f)))
-            {
-                MappySystem.SystemConfig.HideWindowFrame = true;
-                MappySystem.SystemConfig.LockWindow = true;
-                MappyPlugin.System.SaveConfig();
-            }
-            ImGui.PopFont();
-            
-            if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip(Strings.HideAndLock, KnownColor.White.AsVector4());
-            ImGui.PopID();
+            CloseLockButton.Draw();
         }
-        
-        ImGui.PopID();
     }
     
     private void DrawCursorPosition()

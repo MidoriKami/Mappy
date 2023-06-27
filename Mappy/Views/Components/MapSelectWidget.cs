@@ -20,31 +20,41 @@ public class MapSelectWidget
     private bool shouldFocusMapSearch;
     private string searchString = string.Empty;
 
+    private DefaultIconSfxButton MapSelectButton;
+
+    public MapSelectWidget()
+    {
+        MapSelectButton = new DefaultIconSfxButton
+        {
+            ClickAction = () =>
+            {
+                ShowMapSelectOverlay = !ShowMapSelectOverlay;
+                shouldFocusMapSearch = true;
+            },
+            Label = FontAwesomeIcon.Map.ToIconString() + "##MapSelectButton",
+            TooltipText = Strings.SearchForMap,
+            Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
+        };
+    }
+    
     public void DrawWidget()
     {
-        ImGui.PushID("FindMapWidget");
-        ImGui.PushFont(UiBuilder.IconFont);
-
         var showOverlay = ShowMapSelectOverlay;
 
         if (showOverlay) ImGui.PushStyleColor(ImGuiCol.Button, KnownColor.Red.AsVector4());
-        if (ImGui.Button(FontAwesomeIcon.Map.ToIconString(), ImGuiHelpers.ScaledVector2(26.0f, 23.0f)))
-        {
-            ShowMapSelectOverlay = !ShowMapSelectOverlay;
-            shouldFocusMapSearch = true;
-        }
+        MapSelectButton.Draw();
         if (showOverlay) ImGui.PopStyleColor();
-
-        ImGui.PopFont();
-        
-        if (ImGui.IsItemHovered()) DrawUtilities.DrawTooltip(Strings.SearchForMap, KnownColor.White.AsVector4());
-
-        ImGui.PopID();
     }
     
     public void Draw()
     {
         if (!ShowMapSelectOverlay) return;
+
+        if (ImGui.IsKeyPressed(ImGuiKey.Escape))
+        {
+            ShowMapSelectOverlay = false;
+            return;
+        }
         
         var searchWidth = 250.0f * ImGuiHelpers.GlobalScale;
         
