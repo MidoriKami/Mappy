@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using Dalamud.Interface.Windowing;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using KamiLib.Atk;
@@ -70,7 +71,12 @@ public unsafe class MapWindow : Window
         
         return true;
     }
-    
+
+    public override void OnOpen()
+    {
+        UIModule.PlaySound(23u, 0, 0, 0);
+    }
+
     public override void Draw()
     {
         if (MappySystem.MapTextureController is not { Ready: true, MapTexture: var texture, CurrentMap: var map }) return;
@@ -95,7 +101,12 @@ public unsafe class MapWindow : Window
         }
         ImGui.EndChild();
     }
-    
+
+    public override void OnClose()
+    {
+        UIModule.PlaySound(24u, 0, 0, 0);
+    }
+
     private void SetWindowFlags()
     {
         Flags = DefaultFlags;
