@@ -124,8 +124,9 @@ public unsafe class Quest : ModuleBase
             var position = Position.GetObjectPosition(new Vector2(levelInfo.X, levelInfo.Z), map);
             var showTooltip = GetConfig<QuestConfig>().ShowTooltip;
             var tooltipColor = GetConfig<QuestConfig>().TooltipColor;
+            var scale = flags is 1 ? GetConfig<QuestConfig>().IconScale / 2.0f : GetConfig<QuestConfig>().IconScale;
             
-            DrawUtilities.DrawIcon(mapIcon, position);
+            DrawUtilities.DrawIcon(mapIcon, position, scale);
 
             if (showTooltip)
             {
@@ -134,7 +135,7 @@ public unsafe class Quest : ModuleBase
                     case > 0xB0000 and < 0xC0000: // CustomTalk
                         var customTalk = LuminaCache<CustomTalk>.Instance.GetRow(questId)!;
                         var customTalkLabel = customTalk.MainOption.RawString != string.Empty ? customTalk.MainOption.RawString : customTalk.SubOption.RawString;
-                        DrawUtilities.DrawTooltip(customTalkLabel, tooltipColor, customTalk.IconMap);
+                        DrawUtilities.DrawTooltip(customTalkLabel, tooltipColor, mapIcon);
                         break;
 
                     case > 0x230000 and < 0x240000: // Triple Triad
