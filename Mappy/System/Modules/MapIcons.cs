@@ -52,7 +52,7 @@ public class MapIconConfig : IModuleConfig, IIconConfig, ITooltipConfig, IMapIco
     public bool AetherytesOnTop { get; set; } = true;
     
     [BoolConfig("ShowMiscTooltips", "ShowMiscTooltipsHelp")]
-    public bool ShowMiscTooltips { get; set; } = false;
+    public bool ShowMiscTooltips { get; set; } = true;
     
     [MapMarkerSelection]
     public HashSet<uint> DisabledMarkers { get; set; } = new();
