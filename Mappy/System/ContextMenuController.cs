@@ -59,7 +59,9 @@ public class ContextMenuController
     {
         if (ImGui.BeginPopupContextWindow("###GeneralRightClickContext"))
         {
-            if (ImGui.Selectable(Strings.AddFlag))
+            var label = AgentMap.Instance()->IsFlagMarkerSet is 0 ? Strings.AddFlag : Strings.MoveFlag; 
+            
+            if (ImGui.Selectable(label))
             {
                 if(MappySystem.MapTextureController is {Ready: true, CurrentMap: var map})
                 {
