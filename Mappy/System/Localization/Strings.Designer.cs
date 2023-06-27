@@ -321,6 +321,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Display this help message.
+        /// </summary>
+        internal static string HelpText {
+            get {
+                return ResourceManager.GetString("HelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hide Accepted Quests.
         /// </summary>
         internal static string HideAcceptedQuests {
@@ -592,6 +601,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open Configuration Window.
+        /// </summary>
+        internal static string OpenConfigWindow {
+            get {
+                return ResourceManager.GetString("OpenConfigWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Outline Color.
         /// </summary>
         internal static string OutlineColor {
@@ -813,6 +831,15 @@ namespace Mappy.System.Localization {
         internal static string TooltipColor {
             get {
                 return ResourceManager.GetString("TooltipColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tooltip Config.
+        /// </summary>
+        internal static string TooltipConfig {
+            get {
+                return ResourceManager.GetString("TooltipConfig", resourceCulture);
             }
         }
         

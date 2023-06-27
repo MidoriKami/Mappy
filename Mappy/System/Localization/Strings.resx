@@ -283,4 +283,13 @@ Recommended to disable if using Chat2</value>
     <data name="ShowMiscTooltipsHelp" xml:space="preserve">
         <value>Shows tooltips for map icons such as "Repair", "Shop", "Trader</value>
     </data>
+    <data name="TooltipConfig" xml:space="preserve">
+        <value>Tooltip Config</value>
+    </data>
+    <data name="HelpText" xml:space="preserve">
+        <value>Display this help message</value>
+    </data>
+    <data name="OpenConfigWindow" xml:space="preserve">
+        <value>Open Configuration Window</value>
+    </data>
 </root>
