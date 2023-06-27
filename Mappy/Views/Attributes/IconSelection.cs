@@ -14,12 +14,12 @@ public class IconSelection : DrawableAttribute
 {
     private readonly uint[] options;
     
-    public IconSelection(string? label, string category, int group, params uint[] options) : base(label, category, group)
+    public IconSelection(params uint[] options) : base(null)
     {
         this.options = options;
     }
     
-    protected override void Draw(object obj, FieldInfo field, Action? saveAction = null)
+    protected override void Draw(object obj, MemberInfo field, Action? saveAction = null)
     {
         var value = GetValue<uint>(obj, field);
         var totalSize = 0.0f;

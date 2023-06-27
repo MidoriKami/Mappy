@@ -15,9 +15,9 @@ namespace Mappy.Views.Attributes;
 
 public class MapMarkerSelection : DrawableAttribute
 {
-    public MapMarkerSelection(string? label, string category, int group) : base(label, category, group) { }
+    public MapMarkerSelection() : base(null) { }
     
-    protected override void Draw(object obj, FieldInfo field, Action? saveAction = null)
+    protected override void Draw(object obj, MemberInfo field, Action? saveAction = null)
     {
         var disabledMarkers = GetValue<HashSet<uint>>(obj, field);
         var allMarkers = LuminaCache<MapSymbol>.Instance
