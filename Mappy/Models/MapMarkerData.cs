@@ -36,7 +36,9 @@ public class MapMarkerData
     private byte DataType => data.DataType;
     public MapMarkerType Type => (MapMarkerType) data.DataType;
     public uint IconId => data.Icon;
-    
+
+    private static readonly Dictionary<uint, string> MiscIconNameCache = new();
+
     [MemberNotNullWhen(true, nameof(Icon))]
     private bool HasIcon => Icon != null && data.Icon != 0;
     
@@ -60,11 +62,22 @@ public class MapMarkerData
         if (!HasIcon) return;
         if (!ImGui.IsItemHovered()) return;
 
-        var displayString = GetDisplayString();
-        
-        if (displayString is not null && displayString != string.Empty)
+        if (GetDisplayString() is null && settings.ShowMiscTooltips)
         {
-            DrawUtilities.DrawTooltip(displayString, GetDisplayColor());
+            if (!MiscIconNameCache.ContainsKey(IconId))
+            {
+                if (LuminaCache<MapSymbol>.Instance.FirstOrDefault(symbol => symbol.Icon == IconId) is { PlaceName.Value.Name: { } name })
+                {
+                    MiscIconNameCache.Add(IconId, name);
+                }
+            }
+
+            DrawUtilities.DrawTooltip(MiscIconNameCache[IconId], GetDisplayColor(), data.Icon);
+        }
+        
+        else if (GetDisplayString() is { } displayString)
+        {
+            DrawUtilities.DrawTooltip(displayString, GetDisplayColor(), data.Icon);
         }
     }
 
