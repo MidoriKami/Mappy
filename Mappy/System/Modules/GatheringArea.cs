@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Numerics;
+using Dalamud.Utility;
 using ImGuiNET;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Utilities;
@@ -11,19 +12,24 @@ using Mappy.Utility;
 
 namespace Mappy.System.Modules;
 
-public class GatheringAreaConfig : IconModuleConfigBase
+[Category("ModuleColors")]
+public class GatheringAreaConfig : IModuleConfig, IIconConfig, ITooltipConfig
 {
-    [ColorConfigOption("CircleColor", "ModuleColors", 1, 65, 105, 225, 45)]
-    public Vector4 CircleColor = KnownColor.RoyalBlue.AsVector4() with { W = 0.33f };
+    public bool Enable { get; set; } = true;
+    public int Layer { get; set; } = 12;
+    public bool ShowIcon { get; set; } = true;
+    public float IconScale { get; set; } = 0.75f;
+    public bool ShowTooltip { get; set; } = true;
+    public Vector4 TooltipColor { get; set; } = KnownColor.LightSkyBlue.AsVector4();
     
-    [ColorConfigOption("TooltipColor", "ModuleColors", 1, 1.0f, 1.0f, 1.0f, 1.0f)]
-    public Vector4 TooltipColor = KnownColor.White.AsVector4();
+    [ColorConfig("CircleColor", 65, 105, 225, 45)]
+    public Vector4 CircleColor { get; set; } = KnownColor.RoyalBlue.AsVector4() with { W = 0.33f };
 }
 
 public class GatheringArea : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.GatheringArea;
-    public override ModuleConfigBase Configuration { get; protected set; } = new GatheringAreaConfig();
+    public override IModuleConfig Configuration { get; protected set; } = new GatheringAreaConfig();
         
     public static TemporaryMapMarker? TempMapMarker { get; private set; }
     
@@ -49,7 +55,7 @@ public class GatheringArea : ModuleBase
         var markerPosition = Position.GetTextureOffsetPosition(TempMapMarker.Position, map);
         
         DrawRing(viewport, map);
-        DrawUtilities.DrawIcon(TempMapMarker.IconID, markerPosition, config.IconScale);
+        if (config.ShowIcon) DrawUtilities.DrawIcon(TempMapMarker.IconID, markerPosition, config.IconScale);
         DrawTooltip();
         ShowContextMenu();
     }
@@ -79,12 +85,11 @@ public class GatheringArea : ModuleBase
     private void DrawTooltip()
     {
         if (TempMapMarker is null) return;
-        if (TempMapMarker.TooltipText == string.Empty) return;
+        if (TempMapMarker.TooltipText.IsNullOrEmpty()) return;
         if (!ImGui.IsItemHovered()) return;
         
         var config = GetConfig<GatheringAreaConfig>();
-        
-        DrawUtilities.DrawTooltip(TempMapMarker.TooltipText, config.TooltipColor);
+        if(config.ShowTooltip) DrawUtilities.DrawTooltip(TempMapMarker.TooltipText, config.TooltipColor, TempMapMarker.IconID);
     }
     
     public static void SetGatheringAreaMarker(TemporaryMapMarker marker) => TempMapMarker = marker;

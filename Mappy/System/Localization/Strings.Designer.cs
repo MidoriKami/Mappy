@@ -583,6 +583,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Move Flag Here.
+        /// </summary>
+        internal static string MoveFlag {
+            get {
+                return ResourceManager.GetString("MoveFlag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Outline Color.
         /// </summary>
         internal static string OutlineColor {
@@ -709,7 +718,25 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show Ring.
+        ///   Looks up a localized string similar to Show Misc Tooltips.
+        /// </summary>
+        internal static string ShowMiscTooltips {
+            get {
+                return ResourceManager.GetString("ShowMiscTooltips", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shows tooltips for map icons such as &quot;Repair&quot;, &quot;Shop&quot;, &quot;Trader.
+        /// </summary>
+        internal static string ShowMiscTooltipsHelp {
+            get {
+                return ResourceManager.GetString("ShowMiscTooltipsHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Circle.
         /// </summary>
         internal static string ShowRing {
             get {

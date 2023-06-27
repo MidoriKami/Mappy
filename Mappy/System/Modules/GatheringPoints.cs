@@ -4,7 +4,6 @@ using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using ImGuiNET;
-using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
 using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
@@ -12,20 +11,23 @@ using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.Utility;
-using ClientStructGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 namespace Mappy.System.Modules;
 
-public class GatheringPointConfig : IconModuleConfigBase
+public class GatheringPointConfig : IModuleConfig, IIconConfig, ITooltipConfig
 {
-    [ColorConfigOption("TooltipColor", "ModuleColors", 1, 1.0f, 1.0f, 1.0f, 1.0f)]
-    public Vector4 TooltipColor = KnownColor.White.AsVector4();
+    public bool Enable { get; set; } = true;
+    public int Layer { get; set; } = 5;
+    public bool ShowIcon { get; set; } = true;
+    public float IconScale { get; set; } = 0.50f;
+    public bool ShowTooltip { get; set; } = true;
+    public Vector4 TooltipColor { get; set; } = KnownColor.White.AsVector4();
 }
 
 public class GatheringPoints : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.GatheringPoint;
-    public override ModuleConfigBase Configuration { get; protected set; } = new GatheringPointConfig();
+    public override IModuleConfig Configuration { get; protected set; } = new GatheringPointConfig();
 
     protected override bool ShouldDrawMarkers(Map map)
     {
@@ -64,18 +66,12 @@ public class GatheringPoints : ModuleBase
         var gatheringPoint = LuminaCache<GatheringPoint>.Instance.GetRow(gameObject.DataId)!;
         var gatheringPointBase = LuminaCache<GatheringPointBase>.Instance.GetRow(gatheringPoint.GatheringPointBase.Row)!;
         
-        var displayString = $"Level {gatheringPointBase.GatheringLevel} {gameObject.Name.TextValue}";
-        if (displayString != string.Empty) DrawUtilities.DrawTooltip(displayString, config.TooltipColor);
+        var displayString = $"Lv. {gatheringPointBase.GatheringLevel} {gameObject.Name.TextValue}";
+        if (displayString != string.Empty) DrawUtilities.DrawTooltip(displayString, config.TooltipColor, GetIconIdForGatheringNode(gameObject));
     }
 
-    private unsafe bool IsTargetable(GameObject gameObject)
-    {
-        if (gameObject.Address == IntPtr.Zero) return false;
+    private bool IsTargetable(GameObject gameObject) => gameObject.IsTargetable;
 
-        var csObject = (ClientStructGameObject*)gameObject.Address;
-        return csObject->GetIsTargetable();
-    }
-    
     private uint GetIconIdForGatheringNode(GameObject gameObject)
     {
         var gatheringPoint = LuminaCache<GatheringPoint>.Instance.GetRow(gameObject.DataId)!;

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.Game.Housing;
 using ImGuiNET;
-using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
 using KamiLib.Utilities;
 using Lumina.Excel;
@@ -18,16 +17,20 @@ using Mappy.Utility;
 
 namespace Mappy.System.Modules;
 
-public class HousingConfig : IconModuleConfigBase
+public class HousingConfig : IModuleConfig, IIconConfig, ITooltipConfig
 {
-    [ColorConfigOption("TooltipColor", "ModuleColors", 1, 1.0f, 1.0f, 1.0f, 1.0f)]
-    public Vector4 TooltipColor = KnownColor.White.AsVector4();
+    public bool Enable { get; set; } = true;
+    public int Layer { get; set; } = 2;
+    public bool ShowIcon { get; set; } = true;
+    public float IconScale { get; set; } = 0.65f;
+    public bool ShowTooltip { get; set; } = true;
+    public Vector4 TooltipColor { get; set; } = KnownColor.White.AsVector4();
 }
 
 public unsafe class Houses : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.HousingMarkers;
-    public override ModuleConfigBase Configuration { get; protected set; } = new HousingConfig();
+    public override IModuleConfig Configuration { get; protected set; } = new HousingConfig();
     
     private delegate uint GetPlotIconIdDelegate(HousingTerritory* outdoorTerritory, byte plotIndex);
 
@@ -79,25 +82,32 @@ public unsafe class Houses : ModuleBase
     {
         if (housingSizeInfo is null) return;
         var config = GetConfig<HousingConfig>();
+        var iconId = GetIconId(marker);
+
+        var position = Position.GetObjectPosition(new Vector2(marker.X, marker.Z), map);
+
+        DrawUtilities.DrawIcon(iconId, position, config.IconScale + 0.15f);
+    }
+    
+    private uint GetIconId(ExcelRow marker)
+    {
+        if (housingSizeInfo is null) return 0;
         uint iconId;
-        
+
         if (IsHousingManagerValid())
         {
-            iconId = GetIconID( marker.SubRowId switch
+            iconId = GetIconID(marker.SubRowId switch
             {
                 60 => 128,
                 61 => 129,
                 _ => marker.SubRowId
-            } );
+            });
         }
         else
         {
             iconId = marker.SubRowId is 60 or 61 ? 60789 : GetIconID(housingSizeInfo.PlotSize[marker.SubRowId]);
         }
-        
-        var position = Position.GetObjectPosition(new Vector2(marker.X, marker.Z), map);
-
-        DrawUtilities.DrawIcon(iconId, position, config.IconScale + 0.15f);
+        return iconId;
     }
 
     private void DrawTooltip(ExcelRow marker)
@@ -106,7 +116,7 @@ public unsafe class Houses : ModuleBase
         if (marker.SubRowId is 60 or 61) return;
         var config = GetConfig<HousingConfig>();    
         
-        DrawUtilities.DrawTooltip($"{marker.SubRowId + 1}", config.TooltipColor);
+        DrawUtilities.DrawTooltip($"Plot {marker.SubRowId + 1, 2}", config.TooltipColor, GetIconId(marker));
     }
 
     private uint GetIconID(uint housingIndex)

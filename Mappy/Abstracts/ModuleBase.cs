@@ -11,8 +11,8 @@ namespace Mappy.Abstracts;
 public abstract unsafe class ModuleBase
 {
     public abstract ModuleName ModuleName { get; }
-    public abstract ModuleConfigBase Configuration { get; protected set; }
-    protected T GetConfig<T>() where T : ModuleConfigBase => (T) Configuration;
+    public abstract IModuleConfig Configuration { get; protected set; }
+    protected T GetConfig<T>() where T : IModuleConfig => (T) Configuration;
 
     // Map Marker
     public virtual void ZoneChanged(uint territoryType) { }
@@ -31,7 +31,7 @@ public abstract unsafe class ModuleBase
     public virtual void Unload() { }
     public virtual void Update() { }
     public void DrawConfig() => DrawableAttribute.DrawAttributes(Configuration, SaveConfig);
-    private ModuleConfigBase LoadConfig() => FileController.LoadFile<ModuleConfigBase>($"{ModuleName}.config.json", Configuration);
+    private IModuleConfig LoadConfig() => FileController.LoadFile<IModuleConfig>($"{ModuleName}.config.json", Configuration);
     private void SaveConfig() => FileController.SaveFile($"{ModuleName}.config.json", Configuration.GetType(), Configuration);
     
     // Utilities

@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using KamiLib.AutomaticUserInterface;
+using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
@@ -13,19 +15,24 @@ using Mappy.Views.Attributes;
 
 namespace Mappy.System.Modules;
 
-public class PetConfig : IconModuleConfigBase
+[Category("IconSelection")]
+public class PetConfig : IModuleConfig, IIconConfig, ITooltipConfig
 {
-    [ColorConfigOption("TooltipColor", "ModuleColors", 1, 0.765f, 0.260f, 0.765f, 1.00f)]
-    public Vector4 TooltipColor = new(0.765f, 0.260f, 0.765f, 1.00f);
-
-    [IconSelection("SelectedIcon", "IconSelection", 1, 60961)]
-    public uint SelectedIcon = 60961;
+    public bool Enable { get; set; } = true;
+    public int Layer { get; set; } = 5;
+    public bool ShowIcon { get; set; } = true;
+    public float IconScale { get; set; } = 0.50f;
+    public bool ShowTooltip { get; set; } = true;
+    public Vector4 TooltipColor { get; set; } = KnownColor.MediumPurple.AsVector4();
+    
+    [IconSelection(60961)]
+    public uint SelectedIcon { get; set; } = 60961;
 }
 
 public class Pet : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.Pets;
-    public override ModuleConfigBase Configuration { get; protected set; } = new PetConfig();
+    public override IModuleConfig Configuration { get; protected set; } = new PetConfig();
 
     protected override bool ShouldDrawMarkers(Map map)
     {
@@ -59,7 +66,7 @@ public class Pet : ModuleBase
         foreach (var obj in OwnedPets(ownerID))
         {
             if(config.ShowIcon) DrawUtilities.DrawIcon(config.SelectedIcon, obj, map, config.IconScale + 0.25f);
-            if(config.ShowTooltip) DrawUtilities.DrawTooltip(obj.Name.TextValue, config.TooltipColor);
+            if(config.ShowTooltip) DrawUtilities.DrawTooltip(obj.Name.TextValue, config.TooltipColor, config.SelectedIcon);
         }
     }
     

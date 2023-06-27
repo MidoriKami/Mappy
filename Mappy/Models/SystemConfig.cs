@@ -1,51 +1,25 @@
-﻿using KamiLib.AutomaticUserInterface;
+﻿namespace Mappy.Models;
 
-namespace Mappy.Models;
-
-public class SystemConfig
+public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDisplayConfig
 {
-    [BoolConfigOption("KeepOpen", "WindowOptions", 0)]
-    public bool KeepOpen = true;
+    // IWindowConfig
+    public bool KeepOpen { get; set; } = true;
+    public bool FollowPlayer { get; set; } = true;
+    public bool LockWindow { get; set; } = false;
+    public bool HideWindowFrame { get; set; } = false;
+    public bool FadeWhenUnfocused { get; set; } = false;
+    public bool AlwaysShowToolbar { get; set; } = false;
+    public bool ShowToolbarOnHover { get; set; } = false;
+    public float FadePercent { get; set; } = 0.60f;
+    public float ZoomSpeed { get; set; } = 0.15f;
     
-    [BoolConfigOption("FollowPlayer", "WindowOptions", 0)]
-    public bool FollowPlayer = false;
+    // IGameIntegrationsConfig
+    public bool EnableIntegrations  { get; set; } = true;
+    public bool InsertFlagInChat  { get; set; } = true;
     
-    [BoolConfigOption("LockWindow", "WindowOptions", 0)]
-    public bool LockWindow = false;
-    
-    [BoolConfigOption("HideWindowFrame", "WindowOptions", 0)]
-    public bool HideWindowFrame = false;
-    
-    [BoolConfigOption("FadeWhenUnfocused", "WindowOptions", 0)]
-    public bool FadeWhenUnfocused = true;
-    
-    [BoolConfigOption("AlwaysShowToolbar", "WindowOptions", 0)]
-    public bool AlwaysShowToolbar = false;
-
-    [BoolConfigOption("ShowToolbarOnHover", "WindowOptions", 0)]
-    public bool ShowToolbarOnHover = false;
-    
-    [FloatConfigOption("FadePercent", "WindowOptions", 0)]
-    public float FadePercent = 0.60f;
-
-    [FloatConfigOption("ZoomSpeed", "WindowOptions", 0, 0.05f, 0.40f)]
-    public float ZoomSpeed = 0.15f;
-    
-    [BoolDescriptionConfigOption("EnableIntegrations", "GameIntegrations", 1, "IntegrationsDescription")]
-    public bool EnableIntegrations = true;
-    
-    [BoolConfigOption("InsertFlagInChat", "GameIntegrations", 1, "InsertFlagHelp")]
-    public bool InsertFlagInChat = true;
-
-    [BoolConfigOption("HideWithGameGui", "DisplayOptions", 2)]
-    public bool HideWithGameGui = false;
-    
-    [BoolConfigOption("HideBetweenAreas", "DisplayOptions", 2)]
-    public bool HideBetweenAreas = false;
-    
-    [BoolConfigOption("HideInDuties", "DisplayOptions", 2)]
-    public bool HideInDuties = false;
-    
-    [BoolConfigOption("HideInCombat", "DisplayOptions", 2)]
-    public bool HideInCombat = false;
+    // IWindowDisplayConfig
+    public bool HideWithGameGui { get; set; } = false;
+    public bool HideBetweenAreas { get; set; } = false;
+    public bool HideInDuties { get; set; } = false;
+    public bool HideInCombat { get; set; } = false;
 }

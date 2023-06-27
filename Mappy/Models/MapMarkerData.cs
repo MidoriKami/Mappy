@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Numerics;
 using DailyDuty.System;
 using Dalamud.Utility;
@@ -113,12 +115,12 @@ public class MapMarkerData
 
     private Vector4 GetDisplayColor() => (MapMarkerType) DataType switch
     {
-        MapMarkerType.Standard => settings.StandardColor,
+        MapMarkerType.Standard => settings.TooltipColor,
         MapMarkerType.MapLink => settings.MapLinkColor,
         MapMarkerType.InstanceLink => settings.InstanceLinkColor,
         MapMarkerType.Aetheryte => settings.AetheryteColor,
         MapMarkerType.Aethernet => settings.AethernetColor,
-        _ => settings.StandardColor
+        _ => settings.TooltipColor
     };
 
     private string? GetStandardMarkerString()

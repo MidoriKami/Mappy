@@ -5,6 +5,7 @@ using Dalamud.Game.ClientState.Fates;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using ImGuiNET;
 using KamiLib.AutomaticUserInterface;
+using KamiLib.Caching;
 using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
@@ -14,31 +15,42 @@ using Mappy.Utility;
 
 namespace Mappy.System.Modules;
 
-public class FateConfig : IconModuleConfigBase
+[Category("ModuleColors")]
+public interface IFateColorsConfig
 {
-    [BoolConfigOption("ShowRing", "ModuleConfig", 0)]
-    public bool ShowRing = true;
+    [ColorConfig("CircleColor", 0.58f, 0.388f, 0.827f, 0.33f)]
+    public Vector4 CircleColor { get; set; }
     
-    [BoolConfigOption("ExpiringWarning", "ModuleConfig", 0)]
-    public bool ExpiringWarning = false;
+    [ColorConfig("ExpiringColor", 1.0f, 0.0f, 0.0f, 0.33f)]
+    public Vector4 ExpiringColor { get; set; }
+}
 
-    [IntCounterConfigOption("EarlyWarningTime", "ModuleConfig", 0, false)]
-    public int EarlyWarningTime = 300;
+[Category("ModuleConfig")]
+public class FateConfig : IModuleConfig, IIconConfig, ITooltipConfig, IFateColorsConfig
+{
+    public bool Enable { get; set; } = true;
+    public int Layer { get; set; } = 3;
+    public bool ShowIcon { get; set; } = true;
+    public float IconScale { get; set; } = 0.50f;
+    public bool ShowTooltip { get; set; } = true;
+    public Vector4 TooltipColor { get; set; } = KnownColor.White.AsVector4();
+    public Vector4 CircleColor { get; set; } = new(0.58f, 0.388f, 0.827f, 0.33f);
+    public Vector4 ExpiringColor { get; set; } = KnownColor.Red.AsVector4() with { W = 0.33f };
     
-    [ColorConfigOption("TooltipColor", "ModuleColors", 1, 1.0f, 1.0f, 1.0f, 1.0f)]
-    public Vector4 TooltipColor = KnownColor.White.AsVector4();
+    [BoolConfig("ShowRing")]
+    public bool ShowRing { get; set; } = true;
     
-    [ColorConfigOption("CircleColor", "ModuleColors", 1, 0.58f, 0.388f, 0.827f, 0.33f)]
-    public Vector4 CircleColor = new(0.58f, 0.388f, 0.827f, 0.33f);
+    [BoolConfig("ExpiringWarning")]
+    public bool ExpiringWarning { get; set; } = false;
 
-    [ColorConfigOption("ExpiringColor", "ModuleColors", 1, 1.0f, 0.0f, 0.0f, 0.33f)]
-    public Vector4 ExpiringColor = KnownColor.Red.AsVector4() with { W = 0.33f };
+    [IntCounterConfig("EarlyWarningTime", false)]
+    public int EarlyWarningTime { get; set; } = 300;
 }
 
 public unsafe class Fates : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.FATEs;
-    public override ModuleConfigBase Configuration { get; protected set; } = new FateConfig();
+    public override IModuleConfig Configuration { get; protected set; } = new FateConfig();
 
     protected override bool ShouldDrawMarkers(Map map)
     {
@@ -105,20 +117,35 @@ public unsafe class Fates : ModuleBase
 
         ImGui.BeginTooltip();
 
+        if (IconCache.Instance.GetIcon(fate->IconId) is {} icon)
+        {
+            ImGui.Image(icon.ImGuiHandle, new Vector2(24.0f));
+                
+            ImGui.SameLine();
+            var cursorPosition = ImGui.GetCursorPos();
+            const float offset = 3.0f;
+            ImGui.SetCursorPos(cursorPosition with { Y = cursorPosition.Y + offset });
+        }
+        
         switch ((FateState)fate->State)
         {
             case FateState.Running:
                 var remainingTime = GetTimeFormatted(GetTimeRemaining(fate));
 
+                var cursorPos = ImGui.GetCursorPos();
                 ImGui.TextColored(config.TooltipColor,
-                    $"Level {fate->Level} {fate->Name}\n" +
-                    $"Time Remaining: {remainingTime}\n" +
-                    $"Progress: {fate->Progress}%%");
+                    $"Lv. {fate->Level} {fate->Name}");
+                    
+                ImGui.SameLine();
+                ImGui.SetCursorPos(cursorPos with { Y = ImGui.GetCursorPos().Y + 5.0f } );
+                ImGui.TextColored(config.TooltipColor with { W = 0.45f },
+                    $"\nTime Remaining: {remainingTime}\n" +
+                    $"Progress: {fate->Progress, 3}%%");
                 break;
 
             case FateState.Preparation:
                 ImGui.TextColored(config.TooltipColor,
-                    $"Level {fate->Level} {fate->Name}");
+                    $"Lv. {fate->Level} {fate->Name}");
                 break;
         }
 

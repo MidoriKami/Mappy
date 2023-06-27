@@ -1,6 +1,5 @@
 ﻿using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
-using KamiLib.AutomaticUserInterface;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
@@ -9,19 +8,18 @@ using Mappy.Utility;
 
 namespace Mappy.System.Modules;
 
-public class FlagConfig : IconModuleConfigBase
+public class FlagConfig : IModuleConfig, IIconConfig
 {
-    [Disabled]
-    public new bool ShowIcon = false;
-
-    [Disabled]
-    public new bool ShowTooltip = false;
+    public bool Enable { get; set; } = true;
+    public int Layer { get; set; } = 13;
+    public bool ShowIcon { get; set; } = true;
+    public float IconScale { get; set; } = 0.50f;
 }
 
 public unsafe class Flag : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.FlagMarker;
-    public override ModuleConfigBase Configuration { get; protected set; } = new FlagConfig();
+    public override IModuleConfig Configuration { get; protected set; } = new FlagConfig();
 
     public static TemporaryMapMarker? TempMapMarker { get; private set; }
 
@@ -42,13 +40,13 @@ public unsafe class Flag : ModuleBase
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
         if (TempMapMarker is null) return;
-        var config = GetConfig<IconModuleConfigBase>();
+        var config = GetConfig<FlagConfig>();
 
         var iconId = TempMapMarker.IconID;
         var rawPosition = TempMapMarker.Position;
         var position = Position.GetTextureOffsetPosition(rawPosition, map);
         
-        DrawUtilities.DrawIcon(iconId, position, config.IconScale);
+        if(GetConfig<FlagConfig>().ShowIcon) DrawUtilities.DrawIcon(iconId, position, config.IconScale);
         ShowContextMenu();
     }
 

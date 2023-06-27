@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
 using Mappy.Abstracts;
 using Mappy.Models;
@@ -12,22 +11,25 @@ using Map = Lumina.Excel.GeneratedSheets.Map;
 
 namespace Mappy.System.Modules;
 
-public class WaymarkConfig : IconModuleConfigBase
+public class WaymarkConfig : IModuleConfig, IIconConfig
 {
-    [Disabled]
-    public new bool ShowTooltip = false;
+    public bool Enable { get; set; } = true;
+    public int Layer { get; set; } = 9;
+    public bool ShowIcon { get; set; } = true;
+    public float IconScale { get; set; } = 0.50f;
 }
 
 public unsafe class Waymark : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.Waymarks;
-    public override ModuleConfigBase Configuration { get; protected set; } = new WaymarkConfig();
+    public override IModuleConfig Configuration { get; protected set; } = new WaymarkConfig();
 
     private readonly List<FieldMarker> fieldMarkers = LuminaCache<FieldMarker>.Instance.Where(marker => marker.MapIcon is not 0).ToList();
 
     protected override bool ShouldDrawMarkers(Map map)
     {
         if (!IsPlayerInCurrentMap(map)) return false;
+        if (!GetConfig<WaymarkConfig>().ShowIcon) return false;
         
         return base.ShouldDrawMarkers(map);
     }

@@ -137,7 +137,7 @@ Recommended to disable if using Chat2</value>
         <value>Icon Selection</value>
     </data>
     <data name="ShowRing" xml:space="preserve">
-        <value>Show Ring</value>
+        <value>Show Circle</value>
     </data>
     <data name="ExpiringWarning" xml:space="preserve">
         <value>Expiring Warning</value>
@@ -273,5 +273,14 @@ Recommended to disable if using Chat2</value>
     </data>
     <data name="LeveQuestColor" xml:space="preserve">
         <value>Levequest Color</value>
+    </data>
+    <data name="MoveFlag" xml:space="preserve">
+        <value>Move Flag Here</value>
+    </data>
+    <data name="ShowMiscTooltips" xml:space="preserve">
+        <value>Show Misc Tooltips</value>
+    </data>
+    <data name="ShowMiscTooltipsHelp" xml:space="preserve">
+        <value>Shows tooltips for map icons such as "Repair", "Shop", "Trader</value>
     </data>
 </root>

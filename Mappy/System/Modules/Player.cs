@@ -15,34 +15,43 @@ using Mappy.Views.Windows;
 
 namespace Mappy.System.Modules;
 
-public class PlayerConfig : IconModuleConfigBase
+[Category("ModuleColors")]
+public interface IPlayerColorConfig
 {
-    [Disabled]
-    public new bool ShowTooltip = false;
+    [ColorConfig("OutlineColor", 0, 0, 0, 88)]
+    public Vector4 OutlineColor { get; set; }
     
-    [BoolConfigOption("ShowCone", "ModuleConfig", 0)]
-    public bool ShowCone = true;
+    [ColorConfig("FillColor", 163, 219, 255, 80)]
+    public Vector4 FillColor { get; set; }
+}
 
-    [FloatConfigOption("ConeRadius", "ModuleConfig", 0, 0.0f, 360.0f)]
-    public float ConeRadius = 90.0f;
-
-    [FloatConfigOption("ConeAngle", "ModuleConfig", 0, 0.0f, 180.0f)]
-    public float ConeAngle = 90.0f;
-
-    [FloatConfigOption("OutlineThickness", "ModuleConfig", 0, 0.5f, 5.0f)]
-    public float OutlineThickness = 2.0f;
-
-    [ColorConfigOption("OutlineColor", "ModuleColors", 1, 0, 0, 0, 88)]
-    public Vector4 OutlineColor = new(0.0f, 0.0f, 0.0f, 0.345f);
+[Category("ModuleConfig")]
+public class PlayerConfig : IModuleConfig, IIconConfig, IPlayerColorConfig
+{
+    public bool Enable { get; set; } = true;
+    public int Layer { get; set; } = 10;
+    public bool ShowIcon { get; set; } = true;
+    public float IconScale { get; set; } = 0.40f;
+    public Vector4 OutlineColor { get; set; } = new(0.0f, 0.0f, 0.0f, 0.345f);
+    public Vector4 FillColor { get; set; } = new(0.639f, 0.858f, 1.0f, 0.313f);
     
-    [ColorConfigOption("FillColor", "ModuleColors", 1, 163, 219, 255, 80)]
-    public Vector4 FillColor = new(0.639f, 0.858f, 1.0f, 0.313f);
+    [BoolConfig("ShowCone")]
+    public bool ShowCone { get; set; } = true;
+
+    [FloatConfig("ConeRadius", 0.0f, 360.0f)]
+    public float ConeRadius { get; set; } = 90.0f;
+
+    [FloatConfig("ConeAngle", 0.0f, 180.0f)]
+    public float ConeAngle { get; set; } = 90.0f;
+
+    [FloatConfig("OutlineThickness", 0.5f, 5.0f)]
+    public float OutlineThickness { get; set; } = 2.0f;
 }
 
 public unsafe class Player : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.Player;
-    public override ModuleConfigBase Configuration { get; protected set; } = new PlayerConfig();
+    public override IModuleConfig Configuration { get; protected set; } = new PlayerConfig();
 
     protected override bool ShouldDrawMarkers(Map map)
     {

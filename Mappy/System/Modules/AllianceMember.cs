@@ -13,19 +13,24 @@ using Mappy.Views.Attributes;
 
 namespace Mappy.System.Modules;
 
-public class AllianceConfig : IconModuleConfigBase
+[Category("ModuleConfig")]
+public class AllianceConfig : IModuleConfig, IIconConfig, ITooltipConfig
 {
-    [ColorConfigOption("TooltipColor", "ModuleConfig", 0, 0.133f, 0.545f, 0.133f, 1.0f)]
-    public Vector4 TooltipColor = KnownColor.ForestGreen.AsVector4();
+    public bool Enable { get; set; } = true;
+    public int Layer { get; set; } = 7;
+    public bool ShowIcon { get; set; } = true;
+    public float IconScale { get; set; } = 0.50f;
+    public bool ShowTooltip { get; set; } = true;
+    public Vector4 TooltipColor { get; set; } = KnownColor.LightGreen.AsVector4();
     
-    [IconSelection(null, "IconSelection", 0, 60358, 60359, 60360, 60361)]
-    public uint SelectedIcon = 60358;
+    [IconSelection(60358, 60359, 60360, 60361)]
+    public uint SelectedIcon { get; set; } = 60358;
 }
 
 public unsafe class AllianceMember : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.AllianceMembers;
-    public override ModuleConfigBase Configuration { get; protected set; } = new AllianceConfig();
+    public override IModuleConfig Configuration { get; protected set; } = new AllianceConfig();
 
     protected override bool ShouldDrawMarkers(Map map)
     {
@@ -51,7 +56,7 @@ public unsafe class AllianceMember : ModuleBase
             var objectPosition = Position.GetObjectPosition(memberPosition, map);
             
             if(config.ShowIcon) DrawUtilities.DrawIcon(config.SelectedIcon, objectPosition, config.IconScale);
-            if(config.ShowTooltip) DrawUtilities.DrawTooltip(MemoryHelper.ReadStringNullTerminated((nint)member.Name), config.TooltipColor);
+            if(config.ShowTooltip) DrawUtilities.DrawTooltip(MemoryHelper.ReadStringNullTerminated((nint)member.Name), config.TooltipColor, config.SelectedIcon);
         }
     }
 }

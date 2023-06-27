@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
@@ -11,23 +12,27 @@ using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.Utility;
 using Mappy.Views.Attributes;
-using ClientStructGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 namespace Mappy.System.Modules;
 
-public class TreasureConfig : IconModuleConfigBase
+[Category("IconSelection")]
+public class TreasureConfig : IModuleConfig, IIconConfig, ITooltipConfig
 {
-    [ColorConfigOption("TooltipColor", "ModuleColors", 1, 255, 255, 255, 255)]
-    public Vector4 TooltipColor = KnownColor.White.AsVector4();
-
-    [IconSelection(null, "IconSelection", 2, 60003, 60354)]
-    public uint SelectedIcon = 60003;
+    public bool Enable { get; set; } = true;
+    public int Layer { get; set; } = 4;
+    public bool ShowIcon { get; set; } = true;
+    public float IconScale { get; set; } = 0.50f;
+    public bool ShowTooltip { get; set; } = true;
+    public Vector4 TooltipColor { get; set; } = KnownColor.White.AsVector4();
+    
+    [IconSelection(60003, 60354)]
+    public uint SelectedIcon { get; set; } = 60003;
 }
 
 public class Treasure : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.TreasureMarkers;
-    public override ModuleConfigBase Configuration { get; protected set; } = new TreasureConfig();
+    public override IModuleConfig Configuration { get; protected set; } = new TreasureConfig();
     
     public override void LoadForMap(MapData mapData)
     {
@@ -55,19 +60,20 @@ public class Treasure : ModuleBase
         
         if (gameObject.Name.TextValue is {Length: > 0} name)
         {
-            DrawUtilities.DrawTooltip(name, config.TooltipColor);
+            DrawUtilities.DrawTooltip(name, config.TooltipColor, config.SelectedIcon);
         }
     }
 
-    private unsafe bool IsTargetable(GameObject gameObject)
+    private static bool IsTargetable(GameObject gameObject)
     {
         if (gameObject.Address == nint.Zero) return false;
 
         if (Service.ClientState.LocalPlayer is not { } player) return false;
-        
-        if (Vector3.Distance(player.Position, gameObject.Position) < 20.0f)
+
+        // Limit height delta to 20yalms
+        if (Math.Abs(player.Position.Y - gameObject.Position.Y) < 20.0f)
         {
-            return ((ClientStructGameObject*) gameObject.Address)->GetIsTargetable();
+            return gameObject.IsTargetable;
         }
 
         return false;

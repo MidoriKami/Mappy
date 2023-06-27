@@ -15,19 +15,24 @@ using ClientStructPartyMember = FFXIVClientStructs.FFXIV.Client.Game.Group.Party
 
 namespace Mappy.System.Modules;
 
-public class PartyMemberConfig : IconModuleConfigBase
+[Category("ModuleConfig")]
+public class PartyMemberConfig : IModuleConfig, IIconConfig, ITooltipConfig
 {
-    [ColorConfigOption("TooltipColor", "ModuleColors", 1, 65, 105, 225, 255)]
-    public Vector4 TooltipColor = KnownColor.RoyalBlue.AsVector4();
-
-    [IconSelection("SelectedIcon", "IconSelection", 2, 60421, 63940, 63944, 63937, 63946)]
-    public uint SelectedIcon = 60421;
+    public bool Enable { get; set; } = true;
+    public int Layer { get; set; } = 7;
+    public bool ShowIcon { get; set; } = true;
+    public float IconScale { get; set; } = 0.50f;
+    public bool ShowTooltip { get; set; } = true;
+    public Vector4 TooltipColor { get; set; } = KnownColor.DodgerBlue.AsVector4();
+    
+    [IconSelection(60421, 63940, 63944, 63937, 63946)]
+    public uint SelectedIcon { get; set; } = 60421;
 }
 
 public unsafe class PartyMember : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.PartyMembers;
-    public override ModuleConfigBase Configuration { get; protected set; } = new PartyMemberConfig();
+    public override IModuleConfig Configuration { get; protected set; } = new PartyMemberConfig();
 
     protected override bool ShouldDrawMarkers(Map map)
     {
@@ -53,7 +58,7 @@ public unsafe class PartyMember : ModuleBase
             var objectPosition = Position.GetObjectPosition(memberPosition, map);
             
             if(config.ShowIcon) DrawUtilities.DrawIcon(config.SelectedIcon, objectPosition, config.IconScale);
-            if(config.ShowTooltip) DrawUtilities.DrawTooltip(MemoryHelper.ReadStringNullTerminated((nint)member.Name), config.TooltipColor);
+            if(config.ShowTooltip) DrawUtilities.DrawTooltip(MemoryHelper.ReadStringNullTerminated((nint)member.Name), config.TooltipColor, config.SelectedIcon);
         }
     }
 
