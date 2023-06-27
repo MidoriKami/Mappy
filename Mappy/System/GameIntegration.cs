@@ -167,7 +167,7 @@ public unsafe class GameIntegration : IDisposable
 
     private Vector2? GetQuestLocation(OpenMapInfo* mapInfo)
     {
-        var targetLevels = Quest.GetActiveLevelsForQuest(mapInfo->TitleString.ToString(), mapInfo->MapId);
+        var targetLevels = QuestHelpers.GetActiveLevelsForQuest(mapInfo->TitleString.ToString(), mapInfo->MapId);
         var focusLevel = targetLevels?.Where(level => level.Map.Row == mapInfo->MapId && level.Map.Row != 0).FirstOrDefault();
     
         if (focusLevel is not null)
