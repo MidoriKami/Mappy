@@ -36,7 +36,7 @@ public class DrawUtilities
         DrawIcon(icon, position, scale);
     }
 
-    public static void DrawLevelRing(Level level, Viewport viewport, Map map, Vector4 color, float extraRadius = 0.0f)
+    private static void DrawLevelRing(Level level, Viewport viewport, Map map, Vector4 color, float extraRadius = 0.0f)
     {
         var position = Position.GetTextureOffsetPosition(new Vector2(level.X, level.Z), map);
         var drawPosition = viewport.GetImGuiWindowDrawPosition(position);
@@ -50,14 +50,14 @@ public class DrawUtilities
         ImGui.EndGroup();
     }
     
-    public static void DrawLevelObjective(Level level, uint iconId, string label, Vector4 ringColor, Vector4 tooltipColor, Viewport viewport, Map map, float scale = 0.50f, float extraRadius = 0.0f)
+    public static void DrawLevelObjective(Level level, uint iconId, string label, Vector4 ringColor, Vector4 tooltipColor, Viewport viewport, Map map, bool showTooltip, float scale = 0.50f, float extraRadius = 0.0f)
     {
         DrawLevelRing(level, viewport, map, ringColor, extraRadius);
-        DrawLevelIcon(level, iconId, viewport, map, scale);
-        DrawTooltip(label, tooltipColor);
+        DrawLevelIcon(level, iconId, map, scale);
+        if(showTooltip) DrawTooltip(label, tooltipColor, iconId);
     }
 
-    public static void DrawLevelIcon(Level level, uint iconId, Viewport viewport, Map map, float scale = 0.50f)
+    private static void DrawLevelIcon(Level level, uint iconId, Map map, float scale = 0.50f)
     {
         var position = Position.GetTextureOffsetPosition(new Vector2(level.X, level.Z), map);
 
@@ -96,6 +96,25 @@ public class DrawUtilities
         if (!ImGui.IsItemHovered()) return;
         
         ImGui.BeginTooltip();
+        ImGui.TextColored(color, text);
+        ImGui.EndTooltip();
+    }
+    
+    public static void DrawTooltip(string text, Vector4 color, uint iconId)
+    {
+        if (!ImGui.IsItemHovered()) return;
+        ImGui.BeginTooltip();
+
+        if (IconCache.Instance.GetIcon(iconId) is { } icon)
+        {
+            ImGui.Image(icon.ImGuiHandle, new Vector2(24.0f));
+                
+            ImGui.SameLine();
+            var cursorPosition = ImGui.GetCursorPos();
+            const float offset = 3.0f;
+            ImGui.SetCursorPos(cursorPosition with { Y = cursorPosition.Y + offset });
+        }
+        
         ImGui.TextColored(color, text);
         ImGui.EndTooltip();
     }
