@@ -79,7 +79,9 @@ public unsafe class Quest : ModuleBase
             if (quest.Flags is 44) continue; // Complete
             
             var luminaData = LuminaCache<Leve>.Instance.GetRow(quest.LeveId)!;
-            var level = LuminaCache<Level>.Instance.GetRow(luminaData.LevelStart.Row)!;
+            var level = LuminaCache<Level>.Instance.GetRow(luminaData.LevelStart.Row);
+            if (level is null) continue;
+            
             var journalGenre = LuminaCache<JournalGenre>.Instance.GetRow(luminaData.JournalGenre.Row)!;
             if (level.Map.Row != map.RowId) continue;
             
