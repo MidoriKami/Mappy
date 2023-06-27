@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Numerics;
+using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
@@ -82,6 +83,8 @@ public unsafe class Quest : ModuleBase
             var journalGenre = LuminaCache<JournalGenre>.Instance.GetRow(luminaData.JournalGenre.Row)!;
             if (level.Map.Row != map.RowId) continue;
             
+            DebugWindow.Print(quest.Flags + luminaData.Name.RawString);
+            
             var icon = (uint) journalGenre.Icon;
             var tooltip = luminaData.Name.RawString;
             var ringColor = GetConfig<QuestConfig>().LeveQuestColor;
@@ -92,6 +95,7 @@ public unsafe class Quest : ModuleBase
             DrawUtilities.DrawLevelObjective(level, icon, tooltip, ringColor, tooltipColor, viewport, map, showTooltip, scale, 50.0f);
 
             if (quest.Flags is not 32) continue; // InProgress
+            
             anyActive = true;
             foreach (var activeLevel in MappySystem.QuestController.ActiveLevequestLevels)
             {
