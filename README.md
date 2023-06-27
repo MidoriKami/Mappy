@@ -11,7 +11,6 @@ Integrates seamlessly into the games built in functions, for example pressing `m
 
 ![image](https://github.com/MidoriKami/Mappy/assets/9083275/a1328788-4fca-49a1-883f-420820e81682)
 
-![image](https://github.com/MidoriKami/Mappy/assets/9083275/73980602-974c-4166-943e-1be862bfa2da)
-
 ![image](https://github.com/MidoriKami/Mappy/assets/9083275/41357ae5-5e1d-4b27-8cc4-a409bf6042b9)
 
+![image](https://github.com/MidoriKami/Mappy/assets/9083275/73980602-974c-4166-943e-1be862bfa2da)
