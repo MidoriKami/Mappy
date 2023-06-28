@@ -8,6 +8,7 @@ public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDispl
     public bool LockWindow { get; set; } = false;
     public bool HideWindowFrame { get; set; } = false;
     public bool FadeWhenUnfocused { get; set; } = false;
+    public bool FadeWhenMoving { get; set; } = false;
     public bool AlwaysShowToolbar { get; set; } = false;
     public bool ShowToolbarOnHover { get; set; } = false;
     public float FadePercent { get; set; } = 0.60f;

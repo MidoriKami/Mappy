@@ -20,6 +20,9 @@ public interface IWindowConfig
     [BoolConfig("FadeWhenUnfocused")]
     public bool FadeWhenUnfocused { get; set; }
     
+    [BoolConfig("FadeWhenMoving")]
+    public bool FadeWhenMoving { get; set; }
+    
     [BoolConfig("AlwaysShowToolbar")]
     public bool AlwaysShowToolbar { get; set; }
 

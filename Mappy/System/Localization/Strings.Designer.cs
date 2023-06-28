@@ -240,6 +240,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fade When Moving.
+        /// </summary>
+        internal static string FadeWhenMoving {
+            get {
+                return ResourceManager.GetString("FadeWhenMoving", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fade When Unfocused.
         /// </summary>
         internal static string FadeWhenUnfocused {

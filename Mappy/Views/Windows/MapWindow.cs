@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using KamiLib.Atk;
@@ -91,7 +92,10 @@ public unsafe class MapWindow : Window
             var scaledSize = new Vector2(texture.Width, texture.Height) * Viewport.Scale;
             
             Viewport.SetImGuiDrawPosition();
-            var fadePercent = MappySystem.SystemConfig.FadeWhenUnfocused && !IsFocused ? 1.0f - MappySystem.SystemConfig.FadePercent : 1.0f;
+            var unfocusedFade = MappySystem.SystemConfig.FadeWhenUnfocused && !IsFocused;
+            var movementFade = MappySystem.SystemConfig.FadeWhenMoving && AgentMap.Instance()->IsPlayerMoving == 1;
+            
+            var fadePercent = unfocusedFade || movementFade ? 1.0f - MappySystem.SystemConfig.FadePercent : 1.0f;
             ImGui.Image(texture.ImGuiHandle, scaledSize, Vector2.Zero, Vector2.One, Vector4.One with { W = fadePercent });
 
             if (!toolbar.MapSelect.ShowMapSelectOverlay) MappySystem.ModuleController.Draw(Viewport, map);
