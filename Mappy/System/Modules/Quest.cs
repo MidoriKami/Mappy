@@ -145,9 +145,9 @@ public unsafe class Quest : ModuleBase
                         DrawUtilities.DrawTooltip(label, tooltipColor, mapIcon);
                         break;
                     
-                    case > 0x10000 and < 0x20000: // Quest
-                        var questInfo = LuminaCache<CustomQuestSheet>.Instance.GetRow(questId)!;
-                        DrawUtilities.DrawTooltip($"Lv. {questInfo.ClassJobLevel0} {questInfo.Name.RawString}", tooltipColor, mapIcon);
+                    case > 0x10000 and < 0x20000 when LuminaCache<CustomQuestSheet>.Instance.GetRow(questId) is { Name.RawString: var name, ClassJobLevel0: var classJobLevel } && !name.IsNullOrEmpty(): // Quest
+                        DrawUtilities.DrawIcon(mapIcon, position, scale);
+                        DrawUtilities.DrawTooltip($"Lv. {classJobLevel} {name}", tooltipColor, mapIcon);
                         break;
                     
                     case > 0x60000 and < 0x70000: // Levequest Icon (vendor)
