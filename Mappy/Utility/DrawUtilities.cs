@@ -112,14 +112,15 @@ public class DrawUtilities
         ImGui.TextColored(color, text);
         ImGui.EndTooltip();
     }
-    
-    public static void DrawTooltip(string text, Vector4 color, uint iconId)
+
+    public static void DrawTooltip(string text, Vector4 color, uint iconId, uint? secondIconId = null)
     {
         if (!ImGui.IsItemHovered()) return;
         ImGui.BeginTooltip();
 
         DrawTooltipIcon(iconId);
-        
+        if (secondIconId is not null) DrawTooltipIcon(secondIconId.Value);
+
         ImGui.TextColored(color, text);
         ImGui.EndTooltip();
     }
