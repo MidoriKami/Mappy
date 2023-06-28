@@ -7,14 +7,19 @@ using Dalamud.Logging;
 using Dalamud.Utility.Signatures;
 using KamiLib.Caching;
 using KamiLib.Hooking;
+using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets;
 
 namespace Mappy.System;
 
+public record NetworkMarkerInfo(uint MapIcon, uint LevelRowId, uint ObjectiveId, byte Flags)
+{
+    public T? GetLuminaData<T>() where T : ExcelRow => LuminaCache<T>.Instance.GetRow(ObjectiveId);
+    public Level? GetLevelData() => LuminaCache<Level>.Instance.GetRow(LevelRowId);
+}
+
 public unsafe class QuestController : IDisposable
 {
-    public record AllowedQuestInfo(uint MapIcon, uint Level, uint QuestId, byte Flags);
-
     private delegate nint ReceiveMarkersDelegate(nint a1, nint a2, nint a3, nint a4, int a5);
     private delegate void ReceiveLevequestAreasDelegate(nint a1, uint a2);
     
@@ -24,9 +29,15 @@ public unsafe class QuestController : IDisposable
     [Signature("40 56 41 56 48 81 EC ?? ?? ?? ?? 48 8B F1", DetourName = nameof(ReceiveLevequestArea))]
     private readonly Hook<ReceiveLevequestAreasDelegate>? receiveLevequestAreasHook = null;
     
-    public ConcurrentDictionary<uint, AllowedQuestInfo> AllowedQuests { get; } = new();
+    private ConcurrentDictionary<uint, NetworkMarkerInfo> ReceivedMarkers { get; } = new();
     public HashSet<uint> ActiveLevequestLevels { get; } = new();
-    
+
+    public IEnumerable<NetworkMarkerInfo> CustomTalkMarkers => ReceivedMarkers.Values.Where(networkData => networkData.ObjectiveId is > 0xB0000 and < 0xC0000);
+    public IEnumerable<NetworkMarkerInfo> TripleTriadMarkers => ReceivedMarkers.Values.Where(networkData => networkData.ObjectiveId is > 0x230000 and < 0x240000);
+    public IEnumerable<NetworkMarkerInfo> QuestMarkers => ReceivedMarkers.Values.Where(networkData => networkData.ObjectiveId is > 0x10000 and < 0x20000);
+    public IEnumerable<NetworkMarkerInfo> GuildleveAssignmentMarkers => ReceivedMarkers.Values.Where(networkData => networkData.ObjectiveId is > 0x60000 and < 0x70000);
+    public IEnumerable<NetworkMarkerInfo> MiscNetworkMarkers => ReceivedMarkers.Values.Where(networkData => networkData.ObjectiveId is > 0x170000 and < 0x180000);
+
     public QuestController()
     {
         SignatureHelper.Initialise(this);
@@ -42,7 +53,7 @@ public unsafe class QuestController : IDisposable
 
     public void ZoneChanged()
     {
-        AllowedQuests.Clear();
+        ReceivedMarkers.Clear();
     }
     
     private nint ReceiveMarkers(nint questMapIconIdArray, nint eventHandlerValueArray, nint questIdArray, nint unknownArray, int numEntries)
@@ -58,8 +69,8 @@ public unsafe class QuestController : IDisposable
                 var questId = ((uint*) questIdArray)[index];
                 var flags = ((byte*) unknownArray)[index];
 
-                AllowedQuests.TryRemove(questId, out _);
-                AllowedQuests.TryAdd(questId, new AllowedQuestInfo(markerId, levelRowId, questId, flags));
+                ReceivedMarkers.TryRemove(questId, out _);
+                ReceivedMarkers.TryAdd(questId, new NetworkMarkerInfo(markerId, levelRowId, questId, flags));
 
                 var location = LuminaCache<Level>.Instance.GetRow(levelRowId)!;
 
