@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
+using System.Linq;
 using System.Numerics;
-using Dalamud.Logging;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
@@ -128,21 +129,19 @@ public unsafe class Quest : ModuleBase
             var tooltipColor = GetConfig<QuestConfig>().TooltipColor;
             var scale = flags is 1 ? GetConfig<QuestConfig>().IconScale / 2.0f : GetConfig<QuestConfig>().IconScale;
             
-            DrawUtilities.DrawIcon(mapIcon, position, scale);
-
             if (showTooltip)
             {
                 switch (questId)
                 {
-                    case > 0xB0000 and < 0xC0000: // CustomTalk
-                        var customTalk = LuminaCache<CustomTalk>.Instance.GetRow(questId)!;
-                        var customTalkLabel = customTalk.MainOption.RawString != string.Empty ? customTalk.MainOption.RawString : customTalk.SubOption.RawString;
-                        DrawUtilities.DrawTooltip(customTalkLabel, tooltipColor, mapIcon);
+                    case > 0xB0000 and < 0xC0000 when LuminaCache<CustomTalk>.Instance.GetRow(questId) is { MainOption.RawString: var mainOption, SubOption.RawString: var subOption }: // CustomTalk
+                        var customTalkTooltip = mainOption.IsNullOrEmpty() ? subOption : mainOption;
+                        DrawUtilities.DrawIcon(mapIcon, position, scale);
+                        DrawUtilities.DrawTooltip(customTalkTooltip, tooltipColor, mapIcon);
                         break;
 
-                    case > 0x230000 and < 0x240000: // Triple Triad
-                        var label = LuminaCache<Addon>.Instance.GetRow(9224)!.Text.RawString;
-                        DrawUtilities.DrawTooltip(label, tooltipColor, mapIcon);
+                    case > 0x230000 and < 0x240000 when LuminaCache<TripleTriad>.Instance.GetRow(questId) is { } triadInfo: // Triple Triad
+                        DrawUtilities.DrawIcon(mapIcon, position, scale);
+                        DrawTriadTooltip(triadInfo, tooltipColor, mapIcon);
                         break;
                     
                     case > 0x10000 and < 0x20000 when LuminaCache<CustomQuestSheet>.Instance.GetRow(questId) is { Name.RawString: var name, ClassJobLevel0: var classJobLevel } && !name.IsNullOrEmpty(): // Quest
@@ -150,17 +149,20 @@ public unsafe class Quest : ModuleBase
                         DrawUtilities.DrawTooltip($"Lv. {classJobLevel} {name}", tooltipColor, mapIcon);
                         break;
                     
-                    case > 0x60000 and < 0x70000: // Levequest Icon (vendor)
-                        var leveInfo = LuminaCache<GuildleveAssignment>.Instance.GetRow(questId)!;
-                        DrawUtilities.DrawTooltip($"{leveInfo.Type.RawString}", tooltipColor, mapIcon);
+                    case > 0x60000 and < 0x70000 when LuminaCache<GuildleveAssignment>.Instance.GetRow(questId) is { Type.RawString: var leveTooltip}: // Levequest Icon (vendor)
+                        DrawUtilities.DrawIcon(mapIcon, position, scale);
+                        DrawUtilities.DrawTooltip(leveTooltip, tooltipColor, mapIcon);
                         break;
                     
                     case > 0x170000 and < 0x180000:
+                        DrawUtilities.DrawIcon(mapIcon, position, scale);
                         // 0x170001 - "Guildhests"
                         break;
                 
                     default:
+                        #if DEBUG
                         DebugWindow.Print($"0x{questId:X} - {questId} :: {mapIcon}");
+                        #endif
                         break;
                 }
             }
@@ -189,5 +191,17 @@ public unsafe class Quest : ModuleBase
                 DrawUtilities.DrawLevelObjective(level, icon, tooltip, ringColor, tooltipColor, viewport, map, showTooltip, scale);
             }
         }
+    }
+
+    private void DrawTriadTooltip(TripleTriad triadInfo, Vector4 tooltipColor, uint mapIcon)
+    {
+        var tripleTriadMatchString = LuminaCache<Addon>.Instance.GetRow(9224)!.Text.RawString;
+        var cardRewards = triadInfo.ItemPossibleReward
+            .Where(reward => reward.Row is not 0)
+            .Select(reward => reward.Value)
+            .OfType<Item>()
+            .Select(item => item.Name.RawString);
+        
+        DrawUtilities.DrawMultiTooltip(tripleTriadMatchString, string.Join("\n", cardRewards), tooltipColor, mapIcon);
     }
 }
