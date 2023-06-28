@@ -295,4 +295,7 @@ Recommended to disable if using Chat2</value>
     <data name="FadeWhenMoving" xml:space="preserve">
         <value>Fade When Moving</value>
     </data>
+    <data name="MiscMarkers" xml:space="preserve">
+        <value>Misc Markers</value>
+    </data>
 </root>

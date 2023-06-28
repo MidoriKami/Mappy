@@ -565,6 +565,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Misc Markers.
+        /// </summary>
+        internal static string MiscMarkers {
+            get {
+                return ResourceManager.GetString("MiscMarkers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Module Colors.
         /// </summary>
         internal static string ModuleColors {
