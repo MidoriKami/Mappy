@@ -1,13 +1,16 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using Dalamud.Interface.Windowing;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
+using KamiLib;
 using KamiLib.Atk;
 using KamiLib.Commands;
 using KamiLib.GameState;
 using Mappy.Models;
+using Mappy.Models.Enums;
 using Mappy.System;
 using Mappy.Utility;
 using Mappy.Views.Components;
@@ -93,11 +96,7 @@ public unsafe class MapWindow : Window
             var scaledSize = new Vector2(texture.Width, texture.Height) * Viewport.Scale;
             
             Viewport.SetImGuiDrawPosition();
-            var unfocusedFade = MappySystem.SystemConfig.FadeWhenUnfocused && !IsFocused;
-            var movementFade = MappySystem.SystemConfig.FadeWhenMoving && AgentMap.Instance()->IsPlayerMoving == 1;
-            
-            var fadePercent = unfocusedFade || movementFade ? 1.0f - MappySystem.SystemConfig.FadePercent : 1.0f;
-            ImGui.Image(texture.ImGuiHandle, scaledSize, Vector2.Zero, Vector2.One, Vector4.One with { W = fadePercent });
+            ImGui.Image(texture.ImGuiHandle, scaledSize, Vector2.Zero, Vector2.One, Vector4.One with { W = GetFadePercent() });
 
             if (!toolbar.MapSelect.ShowMapSelectOverlay) MappySystem.ModuleController.Draw(Viewport, map);
 
@@ -110,6 +109,28 @@ public unsafe class MapWindow : Window
     public override void OnClose()
     {
         UIModule.PlaySound(24u, 0, 0, 0);
+    }
+
+    private float GetFadePercent() => ShouldFade() ? 1.0f - MappySystem.SystemConfig.FadePercent : 1.0f;
+
+    private bool ShouldFade()
+    {
+        foreach (var flag in Enum.GetValues<FadeMode>())
+        {
+            if (MappySystem.SystemConfig.FadeMode.HasFlag(flag))
+            {
+                switch (flag)
+                {
+                    case FadeMode.Always:
+                    case FadeMode.WhenFocused when KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is { IsFocused: true }:
+                    case FadeMode.WhenUnFocused when KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is { IsFocused: false }:
+                    case FadeMode.WhenMoving when AgentMap.Instance()->IsPlayerMoving == 1:
+                        return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private void SetWindowFlags()

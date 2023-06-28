@@ -298,4 +298,22 @@ Recommended to disable if using Chat2</value>
     <data name="MiscMarkers" xml:space="preserve">
         <value>Misc Markers</value>
     </data>
+    <data name="Never" xml:space="preserve">
+        <value>Never</value>
+    </data>
+    <data name="Always" xml:space="preserve">
+        <value>Always</value>
+    </data>
+    <data name="WhenMoving" xml:space="preserve">
+        <value>When Moving</value>
+    </data>
+    <data name="WhenFocused" xml:space="preserve">
+        <value>When Focused</value>
+    </data>
+    <data name="WhenUnFocused" xml:space="preserve">
+        <value>When Unfocused</value>
+    </data>
+    <data name="FadeMode" xml:space="preserve">
+        <value>Fade Mode</value>
+    </data>
 </root>

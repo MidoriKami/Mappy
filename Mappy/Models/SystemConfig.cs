@@ -1,4 +1,6 @@
-﻿namespace Mappy.Models;
+﻿using Mappy.Models.Enums;
+
+namespace Mappy.Models;
 
 public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDisplayConfig
 {
@@ -7,8 +9,7 @@ public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDispl
     public bool FollowPlayer { get; set; } = true;
     public bool LockWindow { get; set; } = false;
     public bool HideWindowFrame { get; set; } = false;
-    public bool FadeWhenUnfocused { get; set; } = false;
-    public bool FadeWhenMoving { get; set; } = false;
+    public FadeMode FadeMode { get; set; } = FadeMode.WhenUnFocused | FadeMode.WhenMoving;
     public bool AlwaysShowToolbar { get; set; } = false;
     public bool ShowToolbarOnHover { get; set; } = false;
     public float FadePercent { get; set; } = 0.60f;

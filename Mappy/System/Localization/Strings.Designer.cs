@@ -105,6 +105,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Always.
+        /// </summary>
+        internal static string Always {
+            get {
+                return ResourceManager.GetString("Always", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Always Show Toolbar.
         /// </summary>
         internal static string AlwaysShowToolbar {
@@ -227,6 +236,15 @@ namespace Mappy.System.Localization {
         internal static string ExpiringWarning {
             get {
                 return ResourceManager.GetString("ExpiringWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fade Mode.
+        /// </summary>
+        internal static string FadeMode {
+            get {
+                return ResourceManager.GetString("FadeMode", resourceCulture);
             }
         }
         
@@ -619,6 +637,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Never.
+        /// </summary>
+        internal static string Never {
+            get {
+                return ResourceManager.GetString("Never", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open Configuration Window.
         /// </summary>
         internal static string OpenConfigWindow {
@@ -876,6 +903,33 @@ namespace Mappy.System.Localization {
         internal static string Waymarks {
             get {
                 return ResourceManager.GetString("Waymarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When Focused.
+        /// </summary>
+        internal static string WhenFocused {
+            get {
+                return ResourceManager.GetString("WhenFocused", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When Moving.
+        /// </summary>
+        internal static string WhenMoving {
+            get {
+                return ResourceManager.GetString("WhenMoving", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When Unfocused.
+        /// </summary>
+        internal static string WhenUnFocused {
+            get {
+                return ResourceManager.GetString("WhenUnFocused", resourceCulture);
             }
         }
         
