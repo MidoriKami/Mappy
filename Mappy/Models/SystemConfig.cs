@@ -19,7 +19,7 @@ public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDispl
     public bool InsertFlagInChat  { get; set; } = true;
     
     // IWindowDisplayConfig
-    public bool HideWithGameGui { get; set; } = false;
+    public bool HideWithGameGui { get; set; } = true;
     public bool HideBetweenAreas { get; set; } = false;
     public bool HideInDuties { get; set; } = false;
     public bool HideInCombat { get; set; } = false;
