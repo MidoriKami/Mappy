@@ -5,7 +5,6 @@ using Dalamud.Game.ClientState.Fates;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using ImGuiNET;
 using KamiLib.AutomaticUserInterface;
-using KamiLib.Caching;
 using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
@@ -115,41 +114,22 @@ public unsafe class Fates : ModuleBase
         if (!ImGui.IsItemHovered()) return;
         var config = GetConfig<FateConfig>();
 
-        ImGui.BeginTooltip();
-
-        if (IconCache.Instance.GetIcon(fate->IconId) is {} icon)
-        {
-            ImGui.Image(icon.ImGuiHandle, new Vector2(24.0f));
-                
-            ImGui.SameLine();
-            var cursorPosition = ImGui.GetCursorPos();
-            const float offset = 3.0f;
-            ImGui.SetCursorPos(cursorPosition with { Y = cursorPosition.Y + offset });
-        }
-        
         switch ((FateState)fate->State)
         {
             case FateState.Running:
                 var remainingTime = GetTimeFormatted(GetTimeRemaining(fate));
 
-                var cursorPos = ImGui.GetCursorPos();
-                ImGui.TextColored(config.TooltipColor,
-                    $"Lv. {fate->Level} {fate->Name}");
-                    
-                ImGui.SameLine();
-                ImGui.SetCursorPos(cursorPos with { Y = ImGui.GetCursorPos().Y + 5.0f } );
-                ImGui.TextColored(config.TooltipColor with { W = 0.45f },
-                    $"\nTime Remaining: {remainingTime}\n" +
-                    $"Progress: {fate->Progress, 3}%%");
+                DrawUtilities.DrawMultiTooltip(
+                    $"Lv. {fate->Level} {fate->Name}", 
+                    $"Time Remaining: {remainingTime}\nProgress: {fate->Progress, 3}%%",
+                    config.TooltipColor,
+                    fate->IconId);
                 break;
 
             case FateState.Preparation:
-                ImGui.TextColored(config.TooltipColor,
-                    $"Lv. {fate->Level} {fate->Name}");
+                DrawUtilities.DrawTooltip($"Lv. {fate->Level} {fate->Name}", config.TooltipColor, fate->IconId);
                 break;
         }
-
-        ImGui.EndTooltip();
     }
 
     private TimeSpan GetTimeRemaining(FateContext* fate)

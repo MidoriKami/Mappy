@@ -91,6 +91,19 @@ public class DrawUtilities
         windowDrawList.AddImageQuad(texture.ImGuiHandle, vectors[0], vectors[1], vectors[2], vectors[3]);
     }
     
+    public static void DrawTooltipIcon(uint mapIcon)
+    {
+        if (IconCache.Instance.GetIcon(mapIcon) is { } icon)
+        {
+            ImGui.Image(icon.ImGuiHandle, new Vector2(24.0f));
+
+            ImGui.SameLine();
+            var cursorPosition = ImGui.GetCursorPos();
+            const float offset = 3.0f;
+            ImGui.SetCursorPos(cursorPosition with { Y = cursorPosition.Y + offset });
+        }
+    }
+    
     public static void DrawTooltip(string text, Vector4 color)
     {
         if (!ImGui.IsItemHovered()) return;
@@ -105,17 +118,25 @@ public class DrawUtilities
         if (!ImGui.IsItemHovered()) return;
         ImGui.BeginTooltip();
 
-        if (IconCache.Instance.GetIcon(iconId) is { } icon)
-        {
-            ImGui.Image(icon.ImGuiHandle, new Vector2(24.0f));
-                
-            ImGui.SameLine();
-            var cursorPosition = ImGui.GetCursorPos();
-            const float offset = 3.0f;
-            ImGui.SetCursorPos(cursorPosition with { Y = cursorPosition.Y + offset });
-        }
+        DrawTooltipIcon(iconId);
         
         ImGui.TextColored(color, text);
+        ImGui.EndTooltip();
+    }
+
+    public static void DrawMultiTooltip(string primaryText, string extraText, Vector4 color, uint iconId)
+    {
+        if (!ImGui.IsItemHovered()) return;
+
+        ImGui.BeginTooltip();
+        
+        DrawTooltipIcon(iconId);
+        
+        var cursorPos = ImGui.GetCursorPos();
+        ImGui.TextColored(color, primaryText);
+        ImGui.SameLine();
+        ImGui.SetCursorPos(cursorPos with { Y = ImGui.GetCursorPos().Y + 5.0f } );
+        ImGui.TextColored(color with { W = 0.45f }, $"\n{extraText}");
         ImGui.EndTooltip();
     }
 
