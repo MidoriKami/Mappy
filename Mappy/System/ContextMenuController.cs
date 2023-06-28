@@ -71,7 +71,7 @@ public class ContextMenuController
 
                     if (MappySystem.SystemConfig.InsertFlagInChat)
                     {
-                        MappySystem.GameIntegration.InsertFlagInChat();
+                        AgentChatLog.Instance()->InsertTextCommandParam(1048, false);
                     }
                 }
             }
