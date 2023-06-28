@@ -26,12 +26,13 @@ public unsafe class MapWindow : Window
     
     public Vector2 MapContentsStart { get; private set; }
 
-    private const ImGuiWindowFlags DefaultFlags = ImGuiWindowFlags.NoFocusOnAppearing |
-                                                  ImGuiWindowFlags.NoNav |
-                                                  ImGuiWindowFlags.NoBringToFrontOnFocus |
-                                                  ImGuiWindowFlags.NoScrollbar |
-                                                  ImGuiWindowFlags.NoScrollWithMouse |
-                                                  ImGuiWindowFlags.NoDocking;
+    private const ImGuiWindowFlags DefaultFlags = 
+        ImGuiWindowFlags.NoFocusOnAppearing |
+        ImGuiWindowFlags.NoNav |
+        ImGuiWindowFlags.NoBringToFrontOnFocus |
+        ImGuiWindowFlags.NoScrollbar |
+        ImGuiWindowFlags.NoScrollWithMouse |
+        ImGuiWindowFlags.NoDocking;
 
     public const ImGuiWindowFlags NoDecorationFlags =
         ImGuiWindowFlags.NoDecoration |
@@ -117,7 +118,7 @@ public unsafe class MapWindow : Window
         
         if (MappySystem.SystemConfig.LockWindow) Flags |= NoMoveResizeFlags;
         if (MappySystem.SystemConfig.HideWindowFrame) Flags |= NoDecorationFlags;
-        if (!IsCursorInWindowHeader()) Flags |= ImGuiWindowFlags.NoMove;
+        if (!Bound.IsCursorInWindowHeader()) Flags |= ImGuiWindowFlags.NoMove;
     }
 
     private void ReadMouseInputs()
@@ -125,7 +126,7 @@ public unsafe class MapWindow : Window
         if (!ImGui.IsWindowFocused(ImGuiFocusedFlags.AnyWindow) || IsFocused)
         {
             // Only allow Context, Zoom, an DragStart if cursor is over the map
-            if (IsCursorInWindow() && !IsCursorInWindowHeader())
+            if (Bound.IsCursorInWindow() && !Bound.IsCursorInWindowHeader())
             {
                 ProcessContextMenu();
                 ProcessZoomChange();
@@ -193,23 +194,7 @@ public unsafe class MapWindow : Window
             Viewport.ZoomOut(MappySystem.SystemConfig.ZoomSpeed);
         }
     }
-
-    public static bool IsCursorInWindow()
-    {
-        var windowStart = ImGui.GetWindowPos();
-        var windowSize = ImGui.GetWindowSize();
-
-        return Bound.IsBoundedBy(ImGui.GetMousePos(), windowStart, windowStart + windowSize);
-    }
     
-    private static bool IsCursorInWindowHeader()
-    {
-        var windowStart = ImGui.GetWindowPos();
-        var headerSize = ImGui.GetWindowSize() with { Y = ImGui.GetWindowContentRegionMin().Y };
-        
-        return Bound.IsBoundedBy(ImGui.GetMousePos(), windowStart, windowStart + headerSize);
-    }
-
     [DoubleTierCommandHandler("GoToCommandHelp", "map", "goto")]
     private void GoToCommand(params string[] args)
     {
@@ -220,8 +205,8 @@ public unsafe class MapWindow : Window
 
         if (MappySystem.MapTextureController is { Ready: true, CurrentMap: var map })
         {
-            var worldX = ConvertMapToWorld(x, map.SizeFactor, map.OffsetX);
-            var worldY = ConvertMapToWorld(y, map.SizeFactor, map.OffsetY);
+            var worldX = Utility.Position.MapToWorld(x, map.SizeFactor, map.OffsetX);
+            var worldY = Utility.Position.MapToWorld(y, map.SizeFactor, map.OffsetY);
 
             MappySystem.SystemConfig.FollowPlayer = false;
             IsOpen = true;
@@ -243,12 +228,5 @@ public unsafe class MapWindow : Window
             //     MapID = map.RowId
             // });
         }
-    }
-    
-    private static float ConvertMapToWorld(float value, uint scale, int offset)
-    {
-        var scaleFactor = scale / 100.0f;
-       
-        return - offset * scaleFactor + 50.0f * (value - 1) * scaleFactor;
     }
 }
