@@ -42,4 +42,7 @@ public enum ModuleName
     
     [EnumLabel("FATEs")]
     FATEs,
+    
+    [EnumLabel("MiscMarkers")]
+    MiscMarkers,
 }
