@@ -22,8 +22,8 @@ public class MapToolbar
     private readonly DefaultIconSfxButton followPlayerButton;
     private readonly DefaultIconSfxButton centerOnPlayerButton;
     private readonly DefaultIconSfxButton configurationButton;
-    private readonly DefaultIconSfxButton OpenLockButton;
-    private readonly DefaultIconSfxButton CloseLockButton;
+    private readonly DefaultIconSfxButton openLockButton;
+    private readonly DefaultIconSfxButton closeLockButton;
 
     public MapToolbar(Window owner)
     {
@@ -75,7 +75,7 @@ public class MapToolbar
             Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
         };
 
-        OpenLockButton = new DefaultIconSfxButton
+        openLockButton = new DefaultIconSfxButton
         {
             ClickAction = () =>
             {
@@ -88,7 +88,7 @@ public class MapToolbar
             Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
         };
         
-        CloseLockButton = new DefaultIconSfxButton
+        closeLockButton = new DefaultIconSfxButton
         {
             ClickAction = () =>
             {
@@ -106,7 +106,7 @@ public class MapToolbar
     {
         if (!owner.IsFocused) MapSelect.ShowMapSelectOverlay = false;
 
-        var hoverShow = MappySystem.SystemConfig.ShowToolbarOnHover && MapWindow.IsCursorInWindow();
+        var hoverShow = MappySystem.SystemConfig.ShowToolbarOnHover && Bound.IsCursorInWindow();
         var alwaysShow = MappySystem.SystemConfig.AlwaysShowToolbar;
         var focusedShow = owner.IsFocused;
         
@@ -186,11 +186,11 @@ public class MapToolbar
     {
         if (MappySystem.SystemConfig.HideWindowFrame)
         {
-           OpenLockButton.Draw();
+           openLockButton.Draw();
         }
         else
         {
-            CloseLockButton.Draw();
+            closeLockButton.Draw();
         }
     }
     
