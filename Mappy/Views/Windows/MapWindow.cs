@@ -205,4 +205,46 @@ public unsafe class MapWindow : Window
         
         return Bound.IsBoundedBy(ImGui.GetMousePos(), windowStart, windowStart + headerSize);
     }
+
+    [DoubleTierCommandHandler("GoToCommandHelp", "map", "goto")]
+    private void GoToCommand(params string[] args)
+    {
+        if (args.Length is not 2) return;
+        
+        var x = float.Parse(args[0]);
+        var y = float.Parse(args[1]);
+
+        if (MappySystem.MapTextureController is { Ready: true, CurrentMap: var map })
+        {
+            var worldX = ConvertMapToWorld(x, map.SizeFactor, map.OffsetX);
+            var worldY = ConvertMapToWorld(y, map.SizeFactor, map.OffsetY);
+
+            MappySystem.SystemConfig.FollowPlayer = false;
+            IsOpen = true;
+                
+            Viewport.SetViewportCenter(new Vector2(worldX, worldY));
+            Viewport.SetViewportZoom(2.0f);
+            
+            // todo: add custom flag marker where focus becomes
+            //
+            // PluginLog.Debug(Utility.Position.GetObjectPosition(Viewport.Center, map).ToString());
+            //
+            // GatheringArea.SetGatheringAreaMarker(new TemporaryMapMarker
+            // {
+            //     Position = Utility.Position.GetObjectPosition(Viewport.Center, map) - new Vector2(2048.0f),
+            //     TooltipText = "Goto Command",
+            //     IconID = 60561, // Flag Marker
+            //     Radius = 50.0f,
+            //     Type = MarkerType.Flag,
+            //     MapID = map.RowId
+            // });
+        }
+    }
+    
+    private static float ConvertMapToWorld(float value, uint scale, int offset)
+    {
+        var scaleFactor = scale / 100.0f;
+       
+        return - offset * scaleFactor + 50.0f * (value - 1) * scaleFactor;
+    }
 }
