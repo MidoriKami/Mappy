@@ -3,8 +3,6 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Hooking;
 using Dalamud.Logging;
-using Dalamud.Utility.Signatures;
-using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -28,28 +26,18 @@ public unsafe class GameIntegration : IDisposable
     private delegate void SetFlagMarkerDelegate(AgentMap* agent, uint territoryId, uint mapId, float mapX, float mapY, uint iconId);
     private delegate void SetGatheringMarkerDelegate(AgentMap* agent, uint styleFlags, int mapX, int mapY, uint iconID, int radius, Utf8String* tooltip);
     private delegate void ShowMapDelegate(AgentInterface* agentMap, bool a1, bool a2);
-    private delegate byte InsertTextCommand(AgentInterface* agent, uint paramID, byte a3 = 0);
 
     private readonly Hook<OpenMapByIdDelegate>? openMapByIdHook;
     private readonly Hook<OpenMapDelegate>? openMapHook;
     private readonly Hook<SetFlagMarkerDelegate>? setFlagMarkerHook;
     private readonly Hook<SetGatheringMarkerDelegate>? setGatheringMarkerHook;
+    private readonly Hook<ShowMapDelegate>? showHook;
     
-    [Signature("E8 ?? ?? ?? ?? 40 B6 01 C7 44 24 ?? ?? ?? ?? ?? BA ?? ?? ?? ?? 48 8B CF E8 ?? ?? ?? ?? 84 C0 74 15", DetourName = nameof(OnShowHook))]
-    private readonly Hook<ShowMapDelegate>? showHook = null;
-    
-    [Signature("E8 ?? ?? ?? ?? E9 ?? ?? ?? ?? 49 8D 8E")]
-    private readonly InsertTextCommand? insertFlagTextCommand = null;
-
-    private AgentInterface* ChatAgent => Framework.Instance()->UIModule->GetAgentModule()->GetAgentByInternalId(AgentId.ChatLog);
-    private AgentInterface* GatheringNoteAgent => Framework.Instance()->UIModule->GetAgentModule()->GetAgentByInternalId(AgentId.GatheringNote);
-
     private bool integrationsEnabled;
     
     public GameIntegration()
     {
-        SignatureHelper.Initialise(this);
-
+        showHook ??= Hook<ShowMapDelegate>.FromAddress((nint) AgentMap.Addresses.ShowMap.Value, OnShowHook);
         openMapByIdHook ??= Hook<OpenMapByIdDelegate>.FromAddress((nint)AgentMap.Addresses.OpenMapByMapId.Value, OpenMapById);
         openMapHook ??= Hook<OpenMapDelegate>.FromAddress((nint)AgentMap.Addresses.OpenMap.Value, OpenMap);
         setFlagMarkerHook ??= Hook<SetFlagMarkerDelegate>.FromAddress((nint)AgentMap.Addresses.SetFlagMapMarker.Value, SetFlagMarker);
@@ -78,6 +66,8 @@ public unsafe class GameIntegration : IDisposable
 
     public void Enable()
     {
+        PluginLog.Debug("Enabling Integrations");
+        
         openMapByIdHook?.Enable();
         openMapHook?.Enable();
         setFlagMarkerHook?.Enable();
@@ -89,6 +79,8 @@ public unsafe class GameIntegration : IDisposable
 
     public void Disable()
     {
+        PluginLog.Debug("Disabling Integrations");
+        
         openMapByIdHook?.Disable();
         openMapHook?.Disable();
         setFlagMarkerHook?.Disable();
@@ -189,7 +181,7 @@ public unsafe class GameIntegration : IDisposable
 
     private void SetFlagMarker(AgentMap* agent, uint territoryId, uint mapId, float mapX, float mapY, uint iconId) => Safety.ExecuteSafe(() =>
     {
-        PluginLog.Debug($"SetFlagMarker");
+        PluginLog.Debug($"SetFlagMarker : {mapX} {mapY}");
         
         Flag.SetFlagMarker( new TemporaryMapMarker
         {
@@ -209,7 +201,7 @@ public unsafe class GameIntegration : IDisposable
         GatheringArea.SetGatheringAreaMarker(new TemporaryMapMarker
         {
             Type = MarkerType.Gathering,
-            MapID = GetGatheringAreaMapInfo()->MapId,
+            MapID = AgentGatheringNote.Instance()->GatheringAreaInfo->OpenMapInfo.MapId,
             IconID = iconID,
             Radius = radius,
             Position = new Vector2(mapX, mapY),
@@ -217,19 +209,4 @@ public unsafe class GameIntegration : IDisposable
         });
             
     }, "Exception during SetGatheringMarker");
-
-    public void InsertFlagInChat() => insertFlagTextCommand?.Invoke(ChatAgent, 1048u);
-
-    private OpenMapInfo* GetGatheringAreaMapInfo()
-    {
-        // GatheringNoteAgent+184 is a pointer to where the OpenMapInfo block is roughly located
-        var agentPointer = new IntPtr(GatheringNoteAgent);
-        var agentOffsetPointer = agentPointer + 184;
-
-        // OpenMapInfo is allocated 16bytes from this address
-        var dataBlockPointer = new IntPtr(*(long*) agentOffsetPointer);
-        var dataBlock = dataBlockPointer + 16;
-        
-        return (OpenMapInfo*) dataBlock;
-    }
 }
