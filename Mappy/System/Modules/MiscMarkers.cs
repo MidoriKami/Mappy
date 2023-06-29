@@ -130,7 +130,7 @@ public class MiscMarkers : ModuleBase
         
         DrawUtilities.DrawIcon(markerInfo.MapIcon, position, scale);
 
-        if (secondaryTooltip is null && config.ShowTooltip) DrawUtilities.DrawTooltip(tooltip, config.TooltipColor, markerInfo.MapIcon);
+        if (secondaryTooltip is null && config.ShowTooltip && !tooltip.IsNullOrEmpty()) DrawUtilities.DrawTooltip(tooltip, config.TooltipColor, markerInfo.MapIcon);
         if (secondaryTooltip is not null && config.ShowTooltip) DrawUtilities.DrawMultiTooltip(tooltip, secondaryTooltip, config.TooltipColor, markerInfo.MapIcon);
     }
 }
