@@ -198,15 +198,33 @@ public unsafe class GameIntegration : IDisposable
     {
         PluginLog.Debug("SetGatheringMarker");
 
-        GatheringArea.SetGatheringAreaMarker(new TemporaryMapMarker
+        if (AgentGatheringNote.Instance()->GatheringAreaInfo is not null)
         {
-            Type = MarkerType.Gathering,
-            MapID = AgentGatheringNote.Instance()->GatheringAreaInfo->OpenMapInfo.MapId,
-            IconID = iconID,
-            Radius = radius,
-            Position = new Vector2(mapX, mapY),
-            TooltipText = tooltip->ToString(),
-        });
+            GatheringArea.SetGatheringAreaMarker(new TemporaryMapMarker
+            {
+                Type = MarkerType.Gathering,
+                MapID = AgentGatheringNote.Instance()->GatheringAreaInfo->OpenMapInfo.MapId,
+                IconID = iconID,
+                Radius = radius,
+                Position = new Vector2(mapX, mapY),
+                TooltipText = tooltip->ToString(),
+            });
+        }
+        else
+        {
+            if (MappySystem.MapTextureController is { Ready: true, CurrentMap: var map })
+            {
+                GatheringArea.SetGatheringAreaMarker(new TemporaryMapMarker
+                {
+                    Type = MarkerType.Gathering,
+                    MapID = map.RowId,
+                    IconID = iconID,
+                    Radius = radius,
+                    Position = new Vector2(mapX, mapY),
+                    TooltipText = tooltip->ToString(),
+                });
+            }
+        }
             
     }, "Exception during SetGatheringMarker");
 }
