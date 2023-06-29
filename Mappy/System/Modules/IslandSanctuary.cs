@@ -63,8 +63,6 @@ public unsafe class IslandSanctuary : ModuleBase
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
         DrawGatheringIcons(viewport, map);
-
-        DrawUtilities.DrawLevelObjective(LuminaCache<Level>.Instance.GetRow(10011038), 60987, "TEST", KnownColor.Red.AsVector4(), KnownColor.White.AsVector4(), viewport, map, true);
     }
     
     private void DrawGatheringIcons(Viewport viewport, Map map)
