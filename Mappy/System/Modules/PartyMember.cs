@@ -48,11 +48,13 @@ public unsafe class PartyMember : ModuleBase
     
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
+        if (Service.ClientState.LocalPlayer is not { ObjectId: var playerObjectId }) return;
         var config = GetConfig<PartyMemberConfig>();
-        
+
         foreach (var member in AdjustedPartyMemberSpan)
         {
             if (member.ObjectID is 0xE0000000 or 0) continue;
+            if (member.ObjectID == playerObjectId) continue;
             
             var memberPosition = new Vector2(member.X, member.Z);
             var objectPosition = Position.GetObjectPosition(memberPosition, map);
