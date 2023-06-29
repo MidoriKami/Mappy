@@ -45,4 +45,7 @@ public enum ModuleName
     
     [EnumLabel("MiscMarkers")]
     MiscMarkers,
+    
+    [EnumLabel("IslandSanctuary")]
+    IslandSanctuary,
 }
