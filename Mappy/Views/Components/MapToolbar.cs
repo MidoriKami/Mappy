@@ -153,7 +153,7 @@ public class MapToolbar
                     
                 if(subAreaName == string.Empty) continue;
 
-                if (ImGui.Selectable(subAreaName, layer.RowId == map.RowId))
+                if (ImGui.Selectable($"{subAreaName}##{layer.Id.RawString}", layer.RowId == map.RowId))
                 {
                     MappySystem.MapTextureController.LoadMap(layer.RowId);
                 }
