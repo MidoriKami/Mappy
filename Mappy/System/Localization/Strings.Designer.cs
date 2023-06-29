@@ -520,6 +520,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Island Sanctuary.
+        /// </summary>
+        internal static string IslandSanctuary {
+            get {
+                return ResourceManager.GetString("IslandSanctuary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Keep Open.
         /// </summary>
         internal static string KeepOpen {

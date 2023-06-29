@@ -316,4 +316,7 @@ Recommended to disable if using Chat2</value>
     <data name="FadeMode" xml:space="preserve">
         <value>Fade Mode</value>
     </data>
+    <data name="IslandSanctuary" xml:space="preserve">
+        <value>Island Sanctuary</value>
+    </data>
 </root>
