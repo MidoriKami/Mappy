@@ -1,6 +1,7 @@
 ﻿using DailyDuty.System;
 using Dalamud.Game;
 using KamiLib;
+using KamiLib.Utilities;
 using Mappy.Models;
 using Mappy.Utility;
 using Mappy.Views.Windows;
@@ -19,6 +20,8 @@ public class MappySystem
     
     public MappySystem()
     {
+        var _ = DutyLists.Instance; // Initialize Duty lists on Construction
+        
         SystemConfig = new SystemConfig();
         SystemConfig = LoadConfig();
 
