@@ -233,6 +233,7 @@ public unsafe class MapWindow : Window
         }
     }
     
+    // ReSharper disable once UnusedMember.Local
     [DoubleTierCommandHandler("GoToCommandHelp", "map", "goto")]
     private void GoToCommand(params string[] args)
     {
