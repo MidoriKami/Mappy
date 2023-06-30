@@ -81,7 +81,11 @@ public unsafe class MapWindow : Window
     {
         UIModule.PlaySound(23u, 0, 0, 0);
 
-        if (MappySystem.SystemConfig.CenterOnOpen) MappySystem.SystemConfig.FollowPlayer = true;
+        if (MappySystem.SystemConfig.CenterOnOpen)
+        {
+            MappySystem.MapTextureController.MoveMapToPlayer();
+            MappySystem.SystemConfig.FollowPlayer = true;
+        }
     }
 
     public override void Draw()
