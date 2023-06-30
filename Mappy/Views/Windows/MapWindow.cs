@@ -12,6 +12,7 @@ using KamiLib.GameState;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.System;
+using Mappy.System.Modules;
 using Mappy.Utility;
 using Mappy.Views.Components;
 
@@ -26,7 +27,8 @@ public unsafe class MapWindow : Window
     private bool dragStarted;
     private Vector2 lastWindowSize = Vector2.Zero;
     private readonly MapToolbar toolbar;
-    
+    private bool processingCommand;
+
     public Vector2 MapContentsStart { get; private set; }
 
     private const ImGuiWindowFlags DefaultFlags = 
@@ -81,11 +83,13 @@ public unsafe class MapWindow : Window
     {
         UIModule.PlaySound(23u, 0, 0, 0);
 
-        if (MappySystem.SystemConfig.CenterOnOpen)
+        if (MappySystem.SystemConfig.CenterOnOpen && !processingCommand)
         {
             MappySystem.MapTextureController.MoveMapToPlayer();
             MappySystem.SystemConfig.FollowPlayer = true;
         }
+        
+        processingCommand = false;
     }
 
     public override void Draw()
@@ -115,6 +119,8 @@ public unsafe class MapWindow : Window
     public override void OnClose()
     {
         UIModule.PlaySound(24u, 0, 0, 0);
+
+        processingCommand = false;
     }
 
     private float GetFadePercent() => ShouldFade() ? 1.0f - MappySystem.SystemConfig.FadePercent : 1.0f;
@@ -237,28 +243,27 @@ public unsafe class MapWindow : Window
 
         if (MappySystem.MapTextureController is { Ready: true, CurrentMap: var map })
         {
+            processingCommand = true;
             var worldX = Utility.Position.MapToWorld(x, map.SizeFactor, map.OffsetX);
             var worldY = Utility.Position.MapToWorld(y, map.SizeFactor, map.OffsetY);
 
-            MappySystem.SystemConfig.FollowPlayer = false;
             IsOpen = true;
-                
+            MappySystem.SystemConfig.FollowPlayer = false;
+
             Viewport.SetViewportCenter(new Vector2(worldX, worldY));
             Viewport.SetViewportZoom(2.0f);
             
-            // todo: add custom flag marker where focus becomes
-            //
-            // PluginLog.Debug(Utility.Position.GetObjectPosition(Viewport.Center, map).ToString());
-            //
-            // GatheringArea.SetGatheringAreaMarker(new TemporaryMapMarker
-            // {
-            //     Position = Utility.Position.GetObjectPosition(Viewport.Center, map) - new Vector2(2048.0f),
-            //     TooltipText = "Goto Command",
-            //     IconID = 60561, // Flag Marker
-            //     Radius = 50.0f,
-            //     Type = MarkerType.Flag,
-            //     MapID = map.RowId
-            // });
+            ImGui.SetWindowFocus(WindowName);
+
+            GatheringArea.SetGatheringAreaMarker(new TemporaryMapMarker
+            {
+                Position = new Vector2(worldX, worldY) / (map.SizeFactor / 100.0f) - new Vector2(1024.0f, 1024.0f) / (map.SizeFactor / 100.0f),
+                TooltipText = "Goto Command",
+                IconID = 60561, // Flag Marker
+                Radius = 50.0f,
+                Type = MarkerType.Flag,
+                MapID = map.RowId
+            });
         }
     }
 }
