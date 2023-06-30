@@ -20,8 +20,8 @@ public record NetworkMarkerInfo(uint MapIcon, uint LevelRowId, uint ObjectiveId,
 
 public unsafe class QuestController : IDisposable
 {
-    private delegate nint ReceiveMarkersDelegate(nint a1, nint a2, nint a3, nint a4, int a5);
-    private delegate void ReceiveLevequestAreasDelegate(nint a1, uint a2);
+    private delegate nint ReceiveMarkersDelegate(uint* mapIconArray, uint* levelArray, uint* questIdArray, byte* flagArray, int numEntries);
+    private delegate void ReceiveLevequestAreasDelegate(nint a1, uint levelId);
     
     [Signature("E8 ?? ?? ?? ?? E9 ?? ?? ?? ?? 0F B6 43 10 4C 8D 4B 44", DetourName = nameof(ReceiveMarkers))]
     private readonly Hook<ReceiveMarkersDelegate>? receiveMarkersHook = null;
@@ -56,35 +56,45 @@ public unsafe class QuestController : IDisposable
         ReceivedMarkers.Clear();
     }
     
-    private nint ReceiveMarkers(nint questMapIconIdArray, nint eventHandlerValueArray, nint questIdArray, nint unknownArray, int numEntries)
+    private nint ReceiveMarkers(uint* mapIconArray, uint* levelArray, uint* questIdArray, byte* flagArray, int numEntries)
     {
         Safety.ExecuteSafe(() =>
         {
             PluginLog.Debug($"Received QuestMarkers: {numEntries}");
-            
-            foreach(var index in Enumerable.Range(0, numEntries))
+
+            var markers = GenerateMarkerList(mapIconArray, levelArray, questIdArray, flagArray, numEntries).ToList();
+            markers.ForEach(LogMarker);
+
+            if (!markers.All(marker => marker.Flags is 6))
             {
-                var markerId = ((uint*) questMapIconIdArray)[index];
-                var levelRowId = ((uint*) eventHandlerValueArray)[index];
-                var questId = ((uint*) questIdArray)[index];
-                var flags = ((byte*) unknownArray)[index];
+                ReceivedMarkers.Clear();
 
-                ReceivedMarkers.TryRemove(questId, out _);
-                ReceivedMarkers.TryAdd(questId, new NetworkMarkerInfo(markerId, levelRowId, questId, flags));
-
-                var location = LuminaCache<Level>.Instance.GetRow(levelRowId)!;
-
-                PluginLog.Debug($"[{markerId, 5}] [{levelRowId, 7}] [{questId, 7}] [{flags, 4}] - {location.Territory.Value?.PlaceName.Value?.Name ?? "Null Name"}");
+                foreach (var marker in markers)
+                {
+                    ReceivedMarkers.TryAdd(marker.ObjectiveId, marker);
+                }
             }
         });
 
-        return receiveMarkersHook!.Original(questMapIconIdArray, eventHandlerValueArray, questIdArray, unknownArray, numEntries);
+        return receiveMarkersHook!.Original(mapIconArray, levelArray, questIdArray, flagArray, numEntries);
+    }
+
+    private IEnumerable<NetworkMarkerInfo> GenerateMarkerList(uint* mapIconArray, uint* levelArray, uint* questIdArray, byte* flagArray, int numEntries) 
+        => Enumerable.Range(0, numEntries).Select(index => new NetworkMarkerInfo(mapIconArray[index], levelArray[index], questIdArray[index], flagArray[index]));
+
+    private void LogMarker(NetworkMarkerInfo marker)
+    {
+        var location = LuminaCache<Level>.Instance.GetRow(marker.LevelRowId);
+
+        PluginLog.Debug($"[{marker.MapIcon, 5}] [{marker.LevelRowId, 7}] [{marker.ObjectiveId, 7}] [{marker.Flags, 4}] - {location?.Territory.Value?.PlaceName.Value?.Name ?? "Null Name"}");
     }
     
     private void ReceiveLevequestArea(nint a1, uint a2)
     {
         Safety.ExecuteSafe(() =>
         {
+            PluginLog.Debug("Received Levequest Area");
+            
             ActiveLevequestLevels.Add(a2);
         });
 

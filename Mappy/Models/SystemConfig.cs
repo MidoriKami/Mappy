@@ -7,6 +7,7 @@ public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDispl
     // IWindowConfig
     public bool KeepOpen { get; set; } = true;
     public bool FollowPlayer { get; set; } = true;
+    public bool CenterOnOpen { get; set; } = false;
     public bool LockWindow { get; set; } = false;
     public bool HideWindowFrame { get; set; } = false;
     public FadeMode FadeMode { get; set; } = FadeMode.WhenUnFocused | FadeMode.WhenMoving;

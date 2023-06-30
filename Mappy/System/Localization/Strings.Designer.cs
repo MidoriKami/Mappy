@@ -132,6 +132,24 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Center on Open.
+        /// </summary>
+        internal static string CenterOnOpen {
+            get {
+                return ResourceManager.GetString("CenterOnOpen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Centers the map on the player, and enables Follow Player when opening the map.
+        /// </summary>
+        internal static string CenterOnOpenHelp {
+            get {
+                return ResourceManager.GetString("CenterOnOpenHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Center on Player.
         /// </summary>
         internal static string CenterOnPlayer {

@@ -12,6 +12,9 @@ public interface IWindowConfig
     [BoolConfig("FollowPlayer")]
     public bool FollowPlayer { get; set; }
     
+    [BoolConfig("CenterOnOpen", "CenterOnOpenHelp")]
+    public bool CenterOnOpen { get; set; }
+    
     [BoolConfig("LockWindow")]
     public bool LockWindow { get; set; }
     

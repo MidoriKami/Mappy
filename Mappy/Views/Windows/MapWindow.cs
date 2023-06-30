@@ -80,6 +80,8 @@ public unsafe class MapWindow : Window
     public override void OnOpen()
     {
         UIModule.PlaySound(23u, 0, 0, 0);
+
+        if (MappySystem.SystemConfig.CenterOnOpen) MappySystem.SystemConfig.FollowPlayer = true;
     }
 
     public override void Draw()
