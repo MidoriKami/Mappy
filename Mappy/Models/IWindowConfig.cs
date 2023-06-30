@@ -27,6 +27,9 @@ public interface IWindowConfig
     [BoolConfig("ShowToolbarOnHover")]
     public bool ShowToolbarOnHover { get; set; }
     
+    [BoolConfig("AllowZoomOnHover")]
+    public bool AllowZoomOnHover { get; set; }
+    
     [FloatConfig("ZoomSpeed", 0.05f, 0.40f)]
     public float ZoomSpeed { get; set; }
     

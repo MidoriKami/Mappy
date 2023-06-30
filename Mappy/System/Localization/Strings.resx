@@ -325,4 +325,7 @@ Recommended to disable if using Chat2</value>
     <data name="CenterOnOpenHelp" xml:space="preserve">
         <value>Centers the map on the player, and enables Follow Player when opening the map</value>
     </data>
+    <data name="AllowZoomOnHover" xml:space="preserve">
+        <value>Allow Zoom on Hover</value>
+    </data>
 </root>

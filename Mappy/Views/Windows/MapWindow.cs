@@ -150,6 +150,11 @@ public unsafe class MapWindow : Window
 
     private void ReadMouseInputs()
     {
+        if (MappySystem.SystemConfig.AllowZoomOnHover && !IsFocused && Bound.IsCursorInWindow() && !ImGui.IsWindowFocused(ImGuiFocusedFlags.AnyWindow))
+        {
+            ProcessZoomChange();
+        }
+        
         if (!ImGui.IsWindowFocused(ImGuiFocusedFlags.AnyWindow) || IsFocused)
         {
             // Only allow Context, Zoom, an DragStart if cursor is over the map

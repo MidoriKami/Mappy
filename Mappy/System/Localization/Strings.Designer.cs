@@ -105,6 +105,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Allow Zoom on Hover.
+        /// </summary>
+        internal static string AllowZoomOnHover {
+            get {
+                return ResourceManager.GetString("AllowZoomOnHover", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Always.
         /// </summary>
         internal static string Always {
