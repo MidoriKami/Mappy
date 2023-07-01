@@ -41,8 +41,8 @@ public unsafe class QuestHelpers
         return 
             from index in Enumerable.Range(0, 24).Where(index => luminaQuest.ToDoCompleteSeq[index] == quest.Sequence) // For each of the possible 24 sequence steps, get all active indexes
             from levelRow in Enumerable.Range(0, 8) // Check all 8 sub locations
-            select luminaQuest.ToDoLocation[index, levelRow] into level // Get each of the 8 levels
-            where level.Value?.Map.Row == currentMapId // If this level is for the current map
-            select level.Value;
+            select LuminaCache<Level>.Instance.GetRow(luminaQuest.ToDoLocation[index, levelRow].Row) into level // Get each of the 8 levels
+            where level?.Map.Row == currentMapId // If this level is for the current map
+            select level;
     }
 }
