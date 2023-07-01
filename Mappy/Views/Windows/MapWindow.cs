@@ -257,13 +257,13 @@ public unsafe class MapWindow : Window
             
             ImGui.SetWindowFocus(WindowName);
 
-            GatheringArea.SetGatheringAreaMarker(new TemporaryMapMarker
+            TemporaryMarkers.SetMarker(new TemporaryMapMarker
             {
                 Position = new Vector2(worldX, worldY) / (map.SizeFactor / 100.0f) - new Vector2(1024.0f, 1024.0f) / (map.SizeFactor / 100.0f),
                 TooltipText = "Goto Command",
                 IconID = 60561, // Flag Marker
                 Radius = 50.0f,
-                Type = MarkerType.Flag,
+                Type = MarkerType.Command,
                 MapID = map.RowId
             });
         }

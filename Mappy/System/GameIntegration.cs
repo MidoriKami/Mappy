@@ -16,6 +16,7 @@ using Mappy.System.Modules;
 using Mappy.Utility;
 using Mappy.Views.Windows;
 using Map = Lumina.Excel.GeneratedSheets.Map;
+using Quest = Lumina.Excel.GeneratedSheets.Quest;
 
 namespace Mappy.System;
 
@@ -131,7 +132,7 @@ public unsafe class GameIntegration : IDisposable
             
             switch (mapInfo->Type)
             {
-                case MapType.FlagMarker when Flag.TempMapMarker is { } flag:
+                case MapType.FlagMarker when TemporaryMarkers.TempMapMarker is { Type: MarkerType.Flag } flag:
                     MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
                     var flagPosition = Position.GetTextureOffsetPosition(flag.Position, map);
                     mapWindow.Viewport.SetViewportCenter(flagPosition);
@@ -143,7 +144,7 @@ public unsafe class GameIntegration : IDisposable
                     mapWindow.Viewport.SetViewportCenter(questPosition);
                     break;
                 
-                case MapType.GatheringLog when GatheringArea.TempMapMarker is {} area:
+                case MapType.GatheringLog when TemporaryMarkers.TempMapMarker is { Type: MarkerType.Gathering } area:
                     MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
                     var gatherAreaPosition = Position.GetTextureOffsetPosition(area.Position, map);
                     mapWindow.Viewport.SetViewportCenter(gatherAreaPosition);
@@ -166,6 +167,29 @@ public unsafe class GameIntegration : IDisposable
         {
             return new Vector2(focusLevel.X, focusLevel.Z);
         }
+        else // This quest isn't accepted yet
+        {
+            bool MatchQuestName(Quest quest1, OpenMapInfo* mapData) => string.Equals(quest1.Name.RawString, mapData->TitleString.ToString(), StringComparison.OrdinalIgnoreCase);
+
+            if (LuminaCache<Quest>.Instance.FirstOrDefault(quest => MatchQuestName(quest, mapInfo)) is {
+                    IssuerLocation.Value: { } issuerLocation,
+                    JournalGenre.Value: { } journalInfo })
+            {
+                var levelLocation = new Vector2(issuerLocation.X, issuerLocation.Z);
+                
+                TemporaryMarkers.SetMarker(new TemporaryMapMarker
+                {
+                    Position = levelLocation,
+                    TooltipText = mapInfo->TitleString.ToString(),
+                    IconID = (uint) journalInfo.Icon,
+                    Radius = 50.0f,
+                    Type = MarkerType.Quest,
+                    MapID = mapInfo->MapId,
+                });
+
+                return levelLocation; 
+            }
+        }
     
         return null;
     }
@@ -183,7 +207,7 @@ public unsafe class GameIntegration : IDisposable
     {
         PluginLog.Debug($"SetFlagMarker : {mapX} {mapY}");
         
-        Flag.SetFlagMarker( new TemporaryMapMarker
+        TemporaryMarkers.SetMarker( new TemporaryMapMarker
         {
             Type = MarkerType.Flag,
             MapID = mapId,
@@ -200,7 +224,7 @@ public unsafe class GameIntegration : IDisposable
 
         if (AgentGatheringNote.Instance()->GatheringAreaInfo is not null)
         {
-            GatheringArea.SetGatheringAreaMarker(new TemporaryMapMarker
+            TemporaryMarkers.SetMarker(new TemporaryMapMarker
             {
                 Type = MarkerType.Gathering,
                 MapID = AgentGatheringNote.Instance()->GatheringAreaInfo->OpenMapInfo.MapId,
@@ -214,7 +238,7 @@ public unsafe class GameIntegration : IDisposable
         {
             if (MappySystem.MapTextureController is { Ready: true, CurrentMap: var map })
             {
-                GatheringArea.SetGatheringAreaMarker(new TemporaryMapMarker
+                TemporaryMarkers.SetMarker(new TemporaryMapMarker
                 {
                     Type = MarkerType.Gathering,
                     MapID = map.RowId,

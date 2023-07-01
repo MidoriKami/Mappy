@@ -4,5 +4,7 @@ public enum MarkerType
 {
     Unknown,
     Flag,
-    Gathering
+    Gathering,
+    Command,
+    Quest,
 }

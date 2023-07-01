@@ -40,11 +40,6 @@ public class Pet : ModuleBase
 
         return base.ShouldDrawMarkers(map);
     }
-
-    public override void LoadForMap(MapData mapData)
-    {
-        // Do Nothing.
-    }
     
     protected override void DrawMarkers(Viewport viewport, Map map)
     {

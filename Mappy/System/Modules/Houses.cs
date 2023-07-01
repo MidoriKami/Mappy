@@ -131,7 +131,7 @@ public unsafe class Houses : ModuleBase
                 _ => 60750  // Housing Placeholder Marker
             };
         }
-        
+
         return getPlotIconId?.Invoke(HousingManager.Instance()->OutdoorTerritory, (byte) housingIndex) ?? 0;
     }
 

@@ -328,4 +328,10 @@ Recommended to disable if using Chat2</value>
     <data name="AllowZoomOnHover" xml:space="preserve">
         <value>Allow Zoom on Hover</value>
     </data>
+    <data name="RemoveCommandMarker" xml:space="preserve">
+        <value>Remove Command Marker</value>
+    </data>
+    <data name="RemoveQuestMarker" xml:space="preserve">
+        <value>Remove Quest Marker</value>
+    </data>
 </root>

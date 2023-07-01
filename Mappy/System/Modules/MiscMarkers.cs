@@ -36,8 +36,6 @@ public class MiscMarkers : ModuleBase
         return base.ShouldDrawMarkers(map);
     }
     
-    public override void LoadForMap(MapData mapData) { }
-    
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
         DrawCustomTalkMarkers(map);

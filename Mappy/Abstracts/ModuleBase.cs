@@ -16,7 +16,7 @@ public abstract unsafe class ModuleBase
 
     // Map Marker
     public virtual void ZoneChanged(uint territoryType) { }
-    public abstract void LoadForMap(MapData mapData);
+    public virtual void LoadForMap(MapData mapData) { }
     protected abstract void DrawMarkers(Viewport viewport, Map map);
     protected virtual bool ShouldDrawMarkers(Map map) => Configuration.Enable;
     public void Draw(Viewport viewport, Map map)

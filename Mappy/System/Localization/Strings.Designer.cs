@@ -745,6 +745,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove Command Marker.
+        /// </summary>
+        internal static string RemoveCommandMarker {
+            get {
+                return ResourceManager.GetString("RemoveCommandMarker", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove Flag.
         /// </summary>
         internal static string RemoveFlag {
@@ -759,6 +768,15 @@ namespace Mappy.System.Localization {
         internal static string RemoveGatheringArea {
             get {
                 return ResourceManager.GetString("RemoveGatheringArea", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Quest Marker.
+        /// </summary>
+        internal static string RemoveQuestMarker {
+            get {
+                return ResourceManager.GetString("RemoveQuestMarker", resourceCulture);
             }
         }
         

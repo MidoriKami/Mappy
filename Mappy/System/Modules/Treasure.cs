@@ -33,12 +33,7 @@ public class Treasure : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.TreasureMarkers;
     public override IModuleConfig Configuration { get; protected set; } = new TreasureConfig();
-    
-    public override void LoadForMap(MapData mapData)
-    {
-        // Do Nothing.
-    }
-    
+
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
         foreach (var obj in Service.ObjectTable)

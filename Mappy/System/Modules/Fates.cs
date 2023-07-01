@@ -58,11 +58,6 @@ public unsafe class Fates : ModuleBase
         return base.ShouldDrawMarkers(map);
     }
 
-    public override void LoadForMap(MapData mapData)
-    {
-        // Do Nothing.
-    }
-    
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
         foreach (var fate in FateManager.Instance()->Fates.Span)

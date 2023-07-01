@@ -52,8 +52,6 @@ public unsafe class Quest : ModuleBase
     public override ModuleName ModuleName => ModuleName.QuestMarkers;
     public override IModuleConfig Configuration { get; protected set; } = new QuestConfig();
 
-    public override void LoadForMap(MapData mapData) { }
-
     protected override bool ShouldDrawMarkers(Map map)
     {
         if (!GetConfig<QuestConfig>().ShowIcon) return false;

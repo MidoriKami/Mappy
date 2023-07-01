@@ -39,11 +39,6 @@ public unsafe class AllianceMember : ModuleBase
         return base.ShouldDrawMarkers(map);
     }
 
-    public override void LoadForMap(MapData mapData)
-    {
-        // Do Nothing.
-    }
-    
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
         var config = GetConfig<AllianceConfig>();

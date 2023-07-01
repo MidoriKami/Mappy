@@ -2,6 +2,7 @@
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using KamiLib;
+using Mappy.Models.Enums;
 using Mappy.System.Localization;
 using Mappy.System.Modules;
 using Mappy.Utility;
@@ -15,6 +16,8 @@ public enum ContextMenuType
     General,
     Flag,
     GatheringArea,
+    Command,
+    Quest,
 }
 
 public class ContextMenuController
@@ -45,12 +48,8 @@ public class ContextMenuController
                 DrawGeneralContext();
                 break;
             
-            case ContextMenuType.Flag:
-                DrawFlagContext();
-                break;
-            
-            case ContextMenuType.GatheringArea:
-                DrawGatheringContext();
+            case ContextMenuType.Flag or ContextMenuType.GatheringArea or ContextMenuType.Quest or ContextMenuType.Command:
+                DrawTemporaryMarkerContext();
                 break;
         }
     }
@@ -79,26 +78,22 @@ public class ContextMenuController
         }
     }
 
-    private void DrawFlagContext()
+    private void DrawTemporaryMarkerContext()
     {
-        if (ImGui.BeginPopupContextWindow("###FlagContext"))
+        if (ImGui.BeginPopupContextWindow("###TemporaryMarkerContext"))
         {
-            if (ImGui.Selectable(Strings.RemoveFlag))
+            var label = TemporaryMarkers.TempMapMarker?.Type switch
             {
-                Flag.RemoveFlagMarker();
-            }
+                MarkerType.Command => Strings.RemoveCommandMarker,
+                MarkerType.Flag => Strings.RemoveFlag,
+                MarkerType.Gathering => Strings.RemoveGatheringArea,
+                MarkerType.Quest => Strings.RemoveQuestMarker,
+                _ => "Unknown Marker Type"
+            };
 
-            ImGui.EndPopup();
-        }
-    }
-
-    private void DrawGatheringContext()
-    {
-        if (ImGui.BeginPopupContextWindow("###GatheringContext"))
-        {
-            if (ImGui.Selectable(Strings.RemoveGatheringArea))
+            if (ImGui.Selectable(label))
             {
-                GatheringArea.RemoveGatheringAreaMarker();
+                TemporaryMarkers.RemoveMarker();
             }
 
             ImGui.EndPopup();

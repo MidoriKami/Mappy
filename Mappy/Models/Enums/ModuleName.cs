@@ -7,11 +7,8 @@ public enum ModuleName
     [EnumLabel("Player")]
     Player,
     
-    [EnumLabel("FlagMarker")]
-    FlagMarker,
-    
-    [EnumLabel("GatheringArea")]
-    GatheringArea,
+    [EnumLabel("TemporaryMarkers")]
+    TemporaryMarkers,
     
     [EnumLabel("Waymarks")]
     Waymarks,

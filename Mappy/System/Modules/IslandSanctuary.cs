@@ -58,8 +58,6 @@ public unsafe class IslandSanctuary : ModuleBase
         return base.ShouldDrawMarkers(map);
     }
 
-    public override void LoadForMap(MapData mapData) { }
-    
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
         DrawGatheringIcons(viewport, map);
