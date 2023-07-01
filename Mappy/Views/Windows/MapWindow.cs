@@ -90,6 +90,7 @@ public unsafe class MapWindow : Window
         }
         
         processingCommand = false;
+        ImGui.SetWindowFocus(WindowName);
     }
 
     public override void Draw()
