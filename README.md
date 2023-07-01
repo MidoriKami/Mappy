@@ -13,4 +13,4 @@ Integrates seamlessly into the games built in functions, for example pressing `m
 
 ![image](https://github.com/MidoriKami/Mappy/assets/9083275/41357ae5-5e1d-4b27-8cc4-a409bf6042b9)
 
-![image](https://github.com/MidoriKami/Mappy/assets/9083275/73980602-974c-4166-943e-1be862bfa2da)
+![image](https://github.com/MidoriKami/Mappy/assets/9083275/574c6494-796c-44f6-8229-dc05beec1784)
