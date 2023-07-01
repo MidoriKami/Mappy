@@ -84,6 +84,7 @@ public class GatheringPoints : ModuleBase
             1 => 60437,
             2 => 60433,
             3 => 60432,
+            5 => 60445,
             _ => throw new ArgumentOutOfRangeException()
         };
     }
