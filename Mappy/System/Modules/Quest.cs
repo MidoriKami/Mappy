@@ -76,7 +76,7 @@ public unsafe class Quest : ModuleBase
         {
             if (quest is { QuestId: 0 }) continue;
 
-            foreach (var level in QuestHelpers.GetActiveLevelsForQuest(quest, map.RowId))
+            foreach (var level in QuestHelpers.GetActiveLevelsForQuest(quest, map.RowId).Where(levelRow => levelRow.RowId is not 0))
             {
                 if (LuminaCache<CustomQuestSheet>.Instance.GetRow(quest.QuestId + 65536u) is not { JournalGenre.Value.Icon: var journalIcon, Name.RawString: var questName }) continue;
                 
