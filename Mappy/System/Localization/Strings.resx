@@ -334,4 +334,7 @@ Recommended to disable if using Chat2</value>
     <data name="RemoveQuestMarker" xml:space="preserve">
         <value>Remove Quest Marker</value>
     </data>
+    <data name="TemporaryMarkers" xml:space="preserve">
+        <value>Temporary Markers</value>
+    </data>
 </root>

@@ -925,6 +925,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Temporary Markers.
+        /// </summary>
+        internal static string TemporaryMarkers {
+            get {
+                return ResourceManager.GetString("TemporaryMarkers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tooltip Color.
         /// </summary>
         internal static string TooltipColor {
