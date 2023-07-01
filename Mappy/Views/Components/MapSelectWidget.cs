@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Logging;
@@ -20,11 +21,11 @@ public class MapSelectWidget
     private bool shouldFocusMapSearch;
     private string searchString = string.Empty;
 
-    private DefaultIconSfxButton MapSelectButton;
+    private readonly DefaultIconSfxButton mapSelectButton;
 
     public MapSelectWidget()
     {
-        MapSelectButton = new DefaultIconSfxButton
+        mapSelectButton = new DefaultIconSfxButton
         {
             ClickAction = () =>
             {
@@ -42,7 +43,7 @@ public class MapSelectWidget
         var showOverlay = ShowMapSelectOverlay;
 
         if (showOverlay) ImGui.PushStyleColor(ImGuiCol.Button, KnownColor.Red.AsVector4());
-        MapSelectButton.Draw();
+        mapSelectButton.Draw();
         if (showOverlay) ImGui.PopStyleColor();
     }
     
@@ -54,6 +55,15 @@ public class MapSelectWidget
         {
             ShowMapSelectOverlay = false;
             return;
+        }
+
+        if (ImGui.IsKeyPressed(ImGuiKey.Enter) || ImGui.IsKeyPressed(ImGuiKey.KeypadEnter))
+        {
+            if (searchResults?.Any() ?? false)
+            {
+                MappySystem.MapTextureController.LoadMap(searchResults.First().MapID);
+                ShowMapSelectOverlay = false;
+            }
         }
         
         var searchWidth = 250.0f * ImGuiHelpers.GlobalScale;
