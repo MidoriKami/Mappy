@@ -32,6 +32,7 @@ public class GatheringPoints : ModuleBase
     protected override bool ShouldDrawMarkers(Map map)
     {
         if (!IsPlayerInCurrentMap(map)) return false;
+        if (Service.ClientState.LocalPlayer is not { ClassJob.Id: 16 or 17 or 18 }) return false;
         
         return base.ShouldDrawMarkers(map);
     }
