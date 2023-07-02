@@ -87,9 +87,8 @@ public unsafe class Quest : ModuleBase
     {
         var mapData = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
         
-        foreach (var markerInfo in mapData->QuestMarkerData.MarkerDataSpan)
+        foreach (var markerInfo in mapData->QuestMarkerData.DataSpan)
         {
-            if (markerInfo.Value is null) continue;
             if (LuminaCache<Level>.Instance.GetRow(markerInfo.Value->LevelId) is not { Map.Row: var levelMap} levelData) continue;
             if (levelMap != map.RowId) continue;
             if (LuminaCache<CustomQuestSheet>.Instance.GetRow(markerInfo.Value->ObjectiveId) is not { ClassJobLevel0: var questLevel, Name.RawString: var questName } ) continue;
@@ -116,7 +115,7 @@ public unsafe class Quest : ModuleBase
             }
         }
         
-        foreach (var markerInfo in mapData->LevequestMarkerData.Span)
+        foreach (var markerInfo in mapData->ActiveLevequestMarkerData.Span)
         {
             if(LuminaCache<Level>.Instance.GetRow(markerInfo.LevelId) is not { Map.Row: var levelMap } levelData ) continue;
             if(levelMap != map.RowId) continue;

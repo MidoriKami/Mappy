@@ -48,10 +48,8 @@ public unsafe class MiscMarkers : ModuleBase
     {
         var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
 
-        foreach (var markerData in data->CustomTalkMarkerData.MarkerDataSpan)
+        foreach (var markerData in data->CustomTalkMarkerData.DataSpan)
         {
-            if (markerData.Value is null) continue;
-            
             if (LuminaCache<CustomTalk>.Instance.GetRow(markerData.Value->ObjectiveId) is not { } customTalkData) return;
             if (customTalkData is not { MainOption.RawString: var mainOption, SubOption.RawString: var subOption }) return;
 
@@ -86,10 +84,8 @@ public unsafe class MiscMarkers : ModuleBase
     {
         var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
 
-        foreach (var markerData in data->GuildLeveAssignmentMarkerData.MarkerDataSpan)
+        foreach (var markerData in data->GuildLeveAssignmentMarkerData.DataSpan)
         {
-            if (markerData.Value is null) continue;
-            
             if (LuminaCache<GuildleveAssignment>.Instance.GetRow(markerData.Value->ObjectiveId) is not { Type.RawString: var markerTooltip }) return;
         
             DrawObjective(markerData, map, markerTooltip);
@@ -108,7 +104,7 @@ public unsafe class MiscMarkers : ModuleBase
         }
     }
     
-    private void DrawObjective(SpecialMarker* specialMarker, Map map, string tooltip, string? secondaryTooltip = null)
+    private void DrawObjective(NonstandardMarker* specialMarker, Map map, string tooltip, string? secondaryTooltip = null)
     {
         if (LuminaCache<Level>.Instance.GetRow(specialMarker->MarkerData->LevelId) is not { } levelData) return;
         if (levelData.Map.Row != map.RowId) return;
@@ -116,7 +112,7 @@ public unsafe class MiscMarkers : ModuleBase
         DrawObjective(levelData, map, tooltip, specialMarker->MarkerData->IconId, 0, secondaryTooltip);
     }
     
-    private void DrawObjective(MapMarkerData* markerInfo, Map map, string tooltip, string? secondaryTooltip = null)
+    private void DrawObjective(StandardMapMarkerData* markerInfo, Map map, string tooltip, string? secondaryTooltip = null)
     {
         if (LuminaCache<Level>.Instance.GetRow(markerInfo->LevelId) is not { } levelData) return;
         if (levelData.Map.Row != map.RowId) return;
