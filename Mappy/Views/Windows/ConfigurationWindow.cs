@@ -42,8 +42,9 @@ public class ConfigurationWindow : TabbedSelectionWindow
 
     protected override void DrawWindowExtras()
     {
-        base.DrawWindowExtras();
         PluginVersion.Instance.DrawVersionText();
+        
+        base.DrawWindowExtras();
     }
     
     [BaseCommandHandler("OpenConfigWindow")]
