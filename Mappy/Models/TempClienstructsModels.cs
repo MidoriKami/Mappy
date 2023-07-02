@@ -29,6 +29,7 @@ public unsafe partial struct ClientStructsMapData
     [FieldOffset(0x1B60)] public MapDataContainer<StandardMapMarkerData> GuildLeveAssignmentMarkerData;
     [FieldOffset(0x3EA8)] public MapDataContainer<StandardMapMarkerData> CustomTalkMarkerData;
     [FieldOffset(0x3E90)] public NonstandardMapMarkerContainer TripleTriadMarkerData;
+    [FieldOffset(0x3F50)] public MapDataContainer<StandardMapMarkerData> BicolorGemstoneVendorMarkerData;
 
     public Span<QuestInfo> QuestDataSpan => new(Unsafe.AsPointer(ref QuestData[0]), 30);
 

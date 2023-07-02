@@ -42,6 +42,7 @@ public unsafe class MiscMarkers : ModuleBase
         DrawTripleTriadMarkers(map);
         DrawGuildleveAssignmentMarkers(map);
         DrawMiscMarkers(map);
+        DrawBicolorGemstoneMarkers(map);
     }
 
     private void DrawCustomTalkMarkers(Map map)
@@ -50,10 +51,7 @@ public unsafe class MiscMarkers : ModuleBase
 
         foreach (var markerData in data->CustomTalkMarkerData.DataSpan)
         {
-            if (LuminaCache<CustomTalk>.Instance.GetRow(markerData.Value->ObjectiveId) is not { } customTalkData) return;
-            if (customTalkData is not { MainOption.RawString: var mainOption, SubOption.RawString: var subOption }) return;
-
-            var tooltip = mainOption.IsNullOrEmpty() ? subOption : mainOption;
+            var tooltip = GetCustomTalkString(markerData.Value->ObjectiveId);
 
             DrawObjective(markerData, map, tooltip);
         }
@@ -104,12 +102,32 @@ public unsafe class MiscMarkers : ModuleBase
         }
     }
     
+    private void DrawBicolorGemstoneMarkers(Map map)
+    {
+        var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
+
+        foreach (var markerData in data->BicolorGemstoneVendorMarkerData.DataSpan)
+        {
+            var tooltip = GetCustomTalkString(markerData.Value->ObjectiveId);
+            
+            DrawObjective(markerData, map, tooltip);
+        }
+    }
+
+    private string GetCustomTalkString(uint rowId)
+    {
+        if (LuminaCache<CustomTalk>.Instance.GetRow(rowId) is not { } customTalkData) return string.Empty;
+        if (customTalkData is not { MainOption.RawString: var mainOption, SubOption.RawString: var subOption }) return string.Empty;
+
+        return mainOption.IsNullOrEmpty() ? subOption : mainOption;
+    }
+    
     private void DrawObjective(NonstandardMarker* specialMarker, Map map, string tooltip, string? secondaryTooltip = null)
     {
         if (LuminaCache<Level>.Instance.GetRow(specialMarker->MarkerData->LevelId) is not { } levelData) return;
         if (levelData.Map.Row != map.RowId) return;
         
-        DrawObjective(levelData, map, tooltip, specialMarker->MarkerData->IconId, 0, secondaryTooltip);
+        DrawObjective(levelData, map, tooltip, specialMarker->MarkerData->IconId, secondaryTooltip);
     }
     
     private void DrawObjective(StandardMapMarkerData* markerInfo, Map map, string tooltip, string? secondaryTooltip = null)
@@ -117,10 +135,10 @@ public unsafe class MiscMarkers : ModuleBase
         if (LuminaCache<Level>.Instance.GetRow(markerInfo->LevelId) is not { } levelData) return;
         if (levelData.Map.Row != map.RowId) return;
         
-        DrawObjective(levelData, map, tooltip, markerInfo->IconId, markerInfo->Flags, secondaryTooltip);
+        DrawObjective(levelData, map, tooltip, markerInfo->IconId, secondaryTooltip);
     }
 
-    private void DrawObjective(Level levelData, Map map, string tooltip, uint iconId, int flags, string? secondaryTooltip = null)
+    private void DrawObjective(Level levelData, Map map, string tooltip, uint iconId, string? secondaryTooltip = null)
     {
         var config = GetConfig<MiscConfig>();
         var position = Position.GetObjectPosition(new Vector2(levelData.X, levelData.Z), map);
