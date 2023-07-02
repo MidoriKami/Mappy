@@ -24,7 +24,7 @@ public class MiscConfig : IModuleConfig, IIconConfig, ITooltipConfig
     public Vector4 TooltipColor { get; set; } = KnownColor.White.AsVector4();
 }
 
-public class MiscMarkers : ModuleBase
+public unsafe class MiscMarkers : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.MiscMarkers;
     public override IModuleConfig Configuration { get; protected set; } = new MiscConfig();
@@ -46,89 +46,92 @@ public class MiscMarkers : ModuleBase
 
     private void DrawCustomTalkMarkers(Map map)
     {
-        foreach (var marker in MappySystem.QuestController.CustomTalkMarkers)
+        var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
+
+        foreach (var markerData in data->CustomTalkMarkerData.MarkerDataSpan)
         {
-            DrawCustomTalkMarker(marker, map);
+            if (markerData.Value is null) continue;
+            
+            if (LuminaCache<CustomTalk>.Instance.GetRow(markerData.Value->ObjectiveId) is not { } customTalkData) return;
+            if (customTalkData is not { MainOption.RawString: var mainOption, SubOption.RawString: var subOption }) return;
+
+            var tooltip = mainOption.IsNullOrEmpty() ? subOption : mainOption;
+
+            DrawObjective(markerData, map, tooltip);
         }
     }
     
     private void DrawTripleTriadMarkers(Map map)
     {
-        foreach (var marker in MappySystem.QuestController.TripleTriadMarkers)
+        var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
+
+        foreach (var markerData in data->TripleTriadMarkerData.DataSpan)
         {
-            DrawTripleTriadMarker(marker, map);
+            if (markerData.Value is null) continue;
+            
+            if (LuminaCache<TripleTriad>.Instance.GetRow(markerData.Value->ObjectiveId) is not { } triadInfo ) return;
+            if (LuminaCache<Addon>.Instance.GetRow(9224) is not { Text.RawString: var triadMatch }) return;
+        
+            var cardRewards = triadInfo.ItemPossibleReward
+                .Where(reward => reward.Row is not 0)
+                .Select(reward => reward.Value)
+                .OfType<Item>()
+                .Select(item => item.Name.RawString);
+        
+            DrawObjective(markerData, map, triadMatch, string.Join("\n", cardRewards));
         }
     }
     
     private void DrawGuildleveAssignmentMarkers(Map map)
     {
-        foreach (var marker in MappySystem.QuestController.GuildleveAssignmentMarkers)
+        var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
+
+        foreach (var markerData in data->GuildLeveAssignmentMarkerData.MarkerDataSpan)
         {
-            DrawGuildleveAssignmentMarker(marker, map);
+            if (markerData.Value is null) continue;
+            
+            if (LuminaCache<GuildleveAssignment>.Instance.GetRow(markerData.Value->ObjectiveId) is not { Type.RawString: var markerTooltip }) return;
+        
+            DrawObjective(markerData, map, markerTooltip);
         }
     }
 
     private void DrawMiscMarkers(Map map)
     {
-        foreach (var marker in MappySystem.QuestController.MiscNetworkMarkers)
+        var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
+
+        foreach (var markerData in data->GuildOrderGuideMarkerData.DataSpan)
         {
-            DrawMiscMarker(marker, map);
+            if (markerData.Value is null) continue;
+
+            DrawObjective(markerData, map, markerData.Value->Tooltip.ToString());
         }
     }
-
-    private void DrawCustomTalkMarker(NetworkMarkerInfo markerInfo, Map map)
-    {
-        if (markerInfo.GetLuminaData<CustomTalk>() is not { } customTalkData) return;
-        if (customTalkData is not { MainOption.RawString: var mainOption, SubOption.RawString: var subOption }) return;
-
-        var tooltip = mainOption.IsNullOrEmpty() ? subOption : mainOption;
-
-        DrawObjective(markerInfo, map, tooltip);
-    }
-
-    private void DrawTripleTriadMarker(NetworkMarkerInfo markerInfo, Map map)
-    {
-        if (markerInfo.GetLuminaData<TripleTriad>() is not { } triadInfo ) return;
-        if (LuminaCache<Addon>.Instance.GetRow(9224) is not { Text.RawString: var triadMatch }) return;
-        
-        var cardRewards = triadInfo.ItemPossibleReward
-            .Where(reward => reward.Row is not 0)
-            .Select(reward => reward.Value)
-            .OfType<Item>()
-            .Select(item => item.Name.RawString);
-        
-        DrawObjective(markerInfo, map, triadMatch, string.Join("\n", cardRewards));
-    }
     
-    private void DrawGuildleveAssignmentMarker(NetworkMarkerInfo markerInfo, Map map)
+    private void DrawObjective(SpecialMarker* specialMarker, Map map, string tooltip, string? secondaryTooltip = null)
     {
-        if (markerInfo.GetLuminaData<GuildleveAssignment>() is not { Type.RawString: var markerTooltip }) return;
-        
-        DrawObjective(markerInfo, map, markerTooltip);
-    }
-    
-    private void DrawMiscMarker(NetworkMarkerInfo marker, Map map)
-    {
-        switch (marker.ObjectiveId)
-        {
-            case 0x170001:
-                DrawObjective(marker, map, "Guildhests");
-                break;
-        }
-    }
-
-    private void DrawObjective(NetworkMarkerInfo markerInfo, Map map, string tooltip, string? secondaryTooltip = null)
-    {
-        if (markerInfo.GetLevelData() is not { } levelData) return;
+        if (LuminaCache<Level>.Instance.GetRow(specialMarker->MarkerData->LevelId) is not { } levelData) return;
         if (levelData.Map.Row != map.RowId) return;
         
+        DrawObjective(levelData, map, tooltip, specialMarker->MarkerData->IconId, 0, secondaryTooltip);
+    }
+    
+    private void DrawObjective(MapMarkerData* markerInfo, Map map, string tooltip, string? secondaryTooltip = null)
+    {
+        if (LuminaCache<Level>.Instance.GetRow(markerInfo->LevelId) is not { } levelData) return;
+        if (levelData.Map.Row != map.RowId) return;
+        
+        DrawObjective(levelData, map, tooltip, markerInfo->IconId, markerInfo->Flags, secondaryTooltip);
+    }
+
+    private void DrawObjective(Level levelData, Map map, string tooltip, uint iconId, int flags, string? secondaryTooltip = null)
+    {
         var config = GetConfig<MiscConfig>();
         var position = Position.GetObjectPosition(new Vector2(levelData.X, levelData.Z), map);
-        var scale = markerInfo.Flags is 1 ? config.IconScale / 2.0f : config.IconScale;
         
-        DrawUtilities.DrawIcon(markerInfo.MapIcon, position, scale);
+        DrawUtilities.DrawIcon(iconId, position);
 
-        if (secondaryTooltip is null && config.ShowTooltip && !tooltip.IsNullOrEmpty()) DrawUtilities.DrawTooltip(tooltip, config.TooltipColor, markerInfo.MapIcon);
-        if (secondaryTooltip is not null && config.ShowTooltip) DrawUtilities.DrawMultiTooltip(tooltip, secondaryTooltip, config.TooltipColor, markerInfo.MapIcon);
+        if (secondaryTooltip is null && config.ShowTooltip && !tooltip.IsNullOrEmpty()) DrawUtilities.DrawTooltip(tooltip, config.TooltipColor, iconId);
+        if (secondaryTooltip is not null && config.ShowTooltip) DrawUtilities.DrawMultiTooltip(tooltip, secondaryTooltip, config.TooltipColor, iconId);
     }
 }

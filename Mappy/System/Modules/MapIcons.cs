@@ -14,6 +14,7 @@ using Mappy.DataModels;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.Views.Attributes;
+using MapMarkerData = Mappy.DataModels.MapMarkerData;
 
 namespace Mappy.System.Modules;
 

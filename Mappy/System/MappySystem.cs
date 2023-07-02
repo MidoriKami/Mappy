@@ -16,7 +16,6 @@ public class MappySystem
     public static PenumbraController PenumbraController = null!;
     public static GameIntegration GameIntegration = null!;
     public static ContextMenuController ContextMenuController = null!;
-    public static QuestController QuestController = null!;
     
     public MappySystem()
     {
@@ -30,7 +29,6 @@ public class MappySystem
         PenumbraController = new PenumbraController();
         GameIntegration = new GameIntegration();
         ContextMenuController = new ContextMenuController();
-        QuestController = new QuestController();
         
         Service.ClientState.TerritoryChanged += ZoneChanged;
         Service.Framework.Update += FrameworkUpdate;
@@ -39,8 +37,6 @@ public class MappySystem
     private void ZoneChanged(object? sender, ushort newZone)
     {
         ModuleController.ZoneChanged(newZone);
-        
-        QuestController.ZoneChanged();
     }
     
     private void FrameworkUpdate(Framework framework)
@@ -82,7 +78,6 @@ public class MappySystem
         MapTextureController.Dispose();
         ModuleController.Unload();
         GameIntegration.Dispose();
-        QuestController.Dispose();
     }
 
     private SystemConfig LoadConfig() => FileController.LoadFile<SystemConfig>("System.config.json", SystemConfig);

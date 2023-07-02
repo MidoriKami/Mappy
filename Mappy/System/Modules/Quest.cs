@@ -1,12 +1,9 @@
 ﻿using System.Drawing;
-using System.Linq;
 using System.Numerics;
 using Dalamud.Utility;
-using FFXIVClientStructs.FFXIV.Client.Game;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
 using KamiLib.Utilities;
-using KamiLib.Windows;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
@@ -58,7 +55,7 @@ public unsafe class Quest : ModuleBase
         
         return base.ShouldDrawMarkers(map);
     }
-
+    
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
         var config = GetConfig<QuestConfig>();
@@ -70,60 +67,61 @@ public unsafe class Quest : ModuleBase
     
     private void DrawAcceptedQuests(Viewport viewport, Map map)
     {
-        foreach (var quest in QuestManager.Instance()->NormalQuestsSpan)
-        {
-            if (quest is { QuestId: 0 }) continue;
+        var mapData = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
 
-            foreach (var level in QuestHelpers.GetActiveLevelsForQuest(quest, map.RowId).Where(levelRow => levelRow.RowId is not 0))
+        foreach (var quest in mapData->QuestDataSpan)
+        {
+            if (quest is { QuestID: 0 }) continue;
+        
+            foreach (var questInfo in quest.MarkerData.Span)
             {
-                if (LuminaCache<CustomQuestSheet>.Instance.GetRow(quest.QuestId + 65536u) is not { JournalGenre.Value.Icon: var journalIcon, Name.RawString: var questName }) continue;
+                if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap } levelData ) continue;
+                if (levelMap != map.RowId) continue;
                 
-                DrawRegularObjective((uint) journalIcon, questName, level, viewport, map);
+                DrawRegularObjective(questInfo.IconId, quest.Name.ToString(), levelData, viewport, map);
             }
         }
     }
     
     private void DrawUnacceptedQuests(Viewport viewport, Map map)
     {
-        foreach (var markerInfo in MappySystem.QuestController.QuestMarkers)
+        var mapData = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
+        
+        foreach (var markerInfo in mapData->QuestMarkerData.MarkerDataSpan)
         {
-            if (markerInfo is {Flags: 6}) continue;
-            if (markerInfo.GetLevelData() is not { Map.Row: var levelMap } levelData) continue;
+            if (markerInfo.Value is null) continue;
+            if (LuminaCache<Level>.Instance.GetRow(markerInfo.Value->LevelId) is not { Map.Row: var levelMap} levelData) continue;
             if (levelMap != map.RowId) continue;
-            if (LuminaCache<CustomQuestSheet>.Instance.GetRow(markerInfo.ObjectiveId) is not { ClassJobLevel0: var questLevel, Name.RawString: var questName } ) continue;
+            if (LuminaCache<CustomQuestSheet>.Instance.GetRow(markerInfo.Value->ObjectiveId) is not { ClassJobLevel0: var questLevel, Name.RawString: var questName } ) continue;
+            if (questName.IsNullOrEmpty()) continue;
             
-            DrawRegularObjective(markerInfo.MapIcon, $"Lv. {questLevel} {questName}", levelData, viewport, map);
+            DrawRegularObjective(markerInfo.Value->IconId, $"Lv. {questLevel} {questName}", levelData, viewport, map);
         }
     }
     
     private void DrawLeveQuests(Viewport viewport, Map map)
     {
-        var anyActive = false;
-        
-        foreach (var quest in QuestManager.Instance()->LeveQuestsSpan)
-        {
-            if(quest is { LeveId: 0 } or { Flags:44 } ) continue; // 44 = LeveComplete
-            if (LuminaCache<Leve>.Instance.GetRow(quest.LeveId) is not { LevelStart.Row: var leveLevelStart, JournalGenre.Row: var leveJournalGenre, Name.RawString: var leveQuestName }) continue;
-            if (LuminaCache<Level>.Instance.GetRow(leveLevelStart) is not { Map.Row: var levelMap } levelData ) continue;
-            if (levelMap != map.RowId) continue;
-            if (LuminaCache<JournalGenre>.Instance.GetRow(leveJournalGenre) is not { Icon: var genreIcon }) continue;
-            
-            DrawLeveObjective((uint) genreIcon, leveQuestName, levelData, viewport, map);
+        var mapData = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
 
-            if(quest is not { Flags: 32 }) continue; // In Progress
-            
-            anyActive = true;
-            foreach (var activeLevel in MappySystem.QuestController.ActiveLevequestLevels)
+        foreach (var quest in mapData->LevequestDataSpan)
+        {
+            if (quest is { QuestID: 0 }) continue;
+        
+            foreach (var questInfo in quest.MarkerData.Span)
             {
-                if (LuminaCache<Level>.Instance.GetRow(activeLevel) is not { } activeLevelData) continue;
+                if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap } levelData ) continue;
+                if (levelMap != map.RowId) continue;
                 
-                DrawLeveObjective((uint)genreIcon, leveQuestName, activeLevelData, viewport, map);
+                DrawLeveObjective(questInfo.IconId, quest.Name.ToString(), levelData, viewport, map);
             }
         }
-
-        if (!anyActive && MappySystem.QuestController.ActiveLevequestLevels.Count > 0)
+        
+        foreach (var markerInfo in mapData->LevequestMarkerData.Span)
         {
-            MappySystem.QuestController.ActiveLevequestLevels.Clear();
+            if(LuminaCache<Level>.Instance.GetRow(markerInfo.LevelId) is not { Map.Row: var levelMap } levelData ) continue;
+            if(levelMap != map.RowId) continue;
+            
+            DrawLeveObjective(markerInfo.IconId, markerInfo.Tooltip->ToString(), levelData, viewport, map);
         }
     }
 

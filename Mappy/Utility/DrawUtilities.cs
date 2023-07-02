@@ -52,6 +52,8 @@ public class DrawUtilities
     
     public static void DrawLevelObjective(Level level, uint iconId, string label, Vector4 ringColor, Vector4 tooltipColor, Viewport viewport, Map map, bool showTooltip, float scale = 0.50f, float extraRadius = 0.0f)
     {
+        iconId = iconId is 60492 or 60491 ? 060071 : iconId; // Replace nonexistent markers with our custom ? marker
+        
         DrawLevelRing(level, viewport, map, ringColor, extraRadius);
         DrawLevelIcon(level, iconId, map, scale);
         if(showTooltip) DrawTooltip(label, tooltipColor, iconId);

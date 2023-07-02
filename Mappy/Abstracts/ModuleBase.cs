@@ -4,7 +4,7 @@ using KamiLib.AutomaticUserInterface;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
 using Mappy.Models.Enums;
-using Mappy.System;
+using MapData = Mappy.System.MapData;
 
 namespace Mappy.Abstracts;
 
