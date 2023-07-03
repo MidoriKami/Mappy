@@ -125,7 +125,8 @@ public unsafe class GameIntegration : IDisposable
         {
             ImGui.SetWindowFocus(mapWindow.WindowName);
             mapWindow.IsOpen = true;
-            
+            mapWindow.ProcessingCommand = true;
+
             var map = LuminaCache<Map>.Instance.GetRow(mapInfo->MapId)!;
 
             MappySystem.SystemConfig.FollowPlayer = false;

@@ -71,14 +71,14 @@ public unsafe class Quest : ModuleBase
 
         foreach (var quest in mapData->QuestDataSpan)
         {
-            if (quest is { QuestID: 0 }) continue;
+            if (quest is { ObjectiveId: 0 }) continue;
         
             foreach (var questInfo in quest.MarkerData.Span)
             {
                 if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap } levelData ) continue;
                 if (levelMap != map.RowId) continue;
                 
-                DrawRegularObjective(questInfo.IconId, quest.Name.ToString(), levelData, viewport, map);
+                DrawRegularObjective(questInfo.IconId, quest.Label.ToString(), levelData, viewport, map);
             }
         }
     }
@@ -87,15 +87,15 @@ public unsafe class Quest : ModuleBase
     {
         var mapData = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
         
-        foreach (var markerInfo in mapData->QuestMarkerData.DataSpan)
-        {
-            if (LuminaCache<Level>.Instance.GetRow(markerInfo.Value->LevelId) is not { Map.Row: var levelMap} levelData) continue;
-            if (levelMap != map.RowId) continue;
-            if (LuminaCache<CustomQuestSheet>.Instance.GetRow(markerInfo.Value->ObjectiveId) is not { ClassJobLevel0: var questLevel, Name.RawString: var questName } ) continue;
-            if (questName.IsNullOrEmpty()) continue;
-            
-            DrawRegularObjective(markerInfo.Value->IconId, $"Lv. {questLevel} {questName}", levelData, viewport, map);
-        }
+        // foreach (var markerInfo in mapData->QuestMarkerData.DataSpan)
+        // {
+        //     if (LuminaCache<Level>.Instance.GetRow(markerInfo.Value->LevelId) is not { Map.Row: var levelMap} levelData) continue;
+        //     if (levelMap != map.RowId) continue;
+        //     if (LuminaCache<CustomQuestSheet>.Instance.GetRow(markerInfo.Value->ObjectiveId) is not { ClassJobLevel0: var questLevel, Name.RawString: var questName } ) continue;
+        //     if (questName.IsNullOrEmpty()) continue;
+        //     
+        //     DrawRegularObjective(markerInfo.Value->IconId, $"Lv. {questLevel} {questName}", levelData, viewport, map);
+        // }
     }
     
     private void DrawLeveQuests(Viewport viewport, Map map)
@@ -104,14 +104,14 @@ public unsafe class Quest : ModuleBase
 
         foreach (var quest in mapData->LevequestDataSpan)
         {
-            if (quest is { QuestID: 0 }) continue;
+            if (quest is { ObjectiveId: 0 }) continue;
         
             foreach (var questInfo in quest.MarkerData.Span)
             {
                 if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap } levelData ) continue;
                 if (levelMap != map.RowId) continue;
                 
-                DrawLeveObjective(questInfo.IconId, quest.Name.ToString(), levelData, viewport, map);
+                DrawLeveObjective(questInfo.IconId, quest.Label.ToString(), levelData, viewport, map);
             }
         }
         
@@ -120,7 +120,7 @@ public unsafe class Quest : ModuleBase
             if(LuminaCache<Level>.Instance.GetRow(markerInfo.LevelId) is not { Map.Row: var levelMap } levelData ) continue;
             if(levelMap != map.RowId) continue;
             
-            DrawLeveObjective(markerInfo.IconId, markerInfo.Tooltip->ToString(), levelData, viewport, map);
+            DrawLeveObjective(markerInfo.IconId, markerInfo.TooltipString->ToString(), levelData, viewport, map);
         }
     }
 

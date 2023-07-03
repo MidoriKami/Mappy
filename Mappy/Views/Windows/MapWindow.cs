@@ -15,6 +15,7 @@ using Mappy.System;
 using Mappy.System.Modules;
 using Mappy.Utility;
 using Mappy.Views.Components;
+using Node = KamiLib.Atk.Node;
 
 namespace Mappy.Views.Windows;
 
@@ -27,7 +28,7 @@ public unsafe class MapWindow : Window
     private bool dragStarted;
     private Vector2 lastWindowSize = Vector2.Zero;
     private readonly MapToolbar toolbar;
-    private bool processingCommand;
+    public bool ProcessingCommand;
 
     public Vector2 MapContentsStart { get; private set; }
 
@@ -83,13 +84,13 @@ public unsafe class MapWindow : Window
     {
         UIModule.PlaySound(23u, 0, 0, 0);
 
-        if (MappySystem.SystemConfig.CenterOnOpen && !processingCommand)
+        if (MappySystem.SystemConfig.CenterOnOpen && !ProcessingCommand)
         {
             MappySystem.MapTextureController.MoveMapToPlayer();
             MappySystem.SystemConfig.FollowPlayer = true;
         }
         
-        processingCommand = false;
+        ProcessingCommand = false;
         ImGui.SetWindowFocus(WindowName);
     }
 
@@ -121,7 +122,7 @@ public unsafe class MapWindow : Window
     {
         UIModule.PlaySound(24u, 0, 0, 0);
 
-        processingCommand = false;
+        ProcessingCommand = false;
     }
 
     private float GetFadePercent() => ShouldFade() ? 1.0f - MappySystem.SystemConfig.FadePercent : 1.0f;
@@ -245,7 +246,7 @@ public unsafe class MapWindow : Window
 
         if (MappySystem.MapTextureController is { Ready: true, CurrentMap: var map })
         {
-            processingCommand = true;
+            ProcessingCommand = true;
             var worldX = Utility.Position.MapToWorld(x, map.SizeFactor, map.OffsetX);
             var worldY = Utility.Position.MapToWorld(y, map.SizeFactor, map.OffsetY);
 
