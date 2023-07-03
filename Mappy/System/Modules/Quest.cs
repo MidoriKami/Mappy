@@ -1,6 +1,8 @@
 ﻿using System.Drawing;
 using System.Numerics;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
 using KamiLib.Utilities;
@@ -71,14 +73,12 @@ public unsafe class Quest : ModuleBase
 
         foreach (var quest in mapData->QuestDataSpan)
         {
-            if (quest is { QuestID: 0 }) continue;
-        
             foreach (var questInfo in quest.MarkerData.Span)
             {
                 if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap } levelData ) continue;
                 if (levelMap != map.RowId) continue;
                 
-                DrawRegularObjective(questInfo.IconId, quest.Name.ToString(), levelData, viewport, map);
+                DrawRegularObjective(questInfo.IconId, quest.Label.ToString(), levelData, viewport, map);
             }
         }
     }
@@ -87,14 +87,16 @@ public unsafe class Quest : ModuleBase
     {
         var mapData = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
         
-        foreach (var markerInfo in mapData->QuestMarkerData.DataSpan)
+        foreach (var markerInfo in mapData->QuestMarkerData.GetAllMarkers())
         {
-            if (LuminaCache<Level>.Instance.GetRow(markerInfo.Value->LevelId) is not { Map.Row: var levelMap} levelData) continue;
-            if (levelMap != map.RowId) continue;
-            if (LuminaCache<CustomQuestSheet>.Instance.GetRow(markerInfo.Value->ObjectiveId) is not { ClassJobLevel0: var questLevel, Name.RawString: var questName } ) continue;
-            if (questName.IsNullOrEmpty()) continue;
-            
-            DrawRegularObjective(markerInfo.Value->IconId, $"Lv. {questLevel} {questName}", levelData, viewport, map);
+            foreach (var markerData in markerInfo.MarkerData.Span)
+            {
+                if (LuminaCache<Level>.Instance.GetRow(markerData.LevelId) is not { Map.Row: var levelMap} levelData) continue;
+                if (levelMap != map.RowId) continue;
+                // if (markerData.TooltipString->ToString().IsNullOrEmpty()) continue;
+
+                DrawRegularObjective(markerData.IconId, $"Lv. {markerData.RecommendedLevel} {markerData.TooltipString->ToString()}", levelData, viewport, map);
+            }
         }
     }
     
@@ -104,14 +106,13 @@ public unsafe class Quest : ModuleBase
 
         foreach (var quest in mapData->LevequestDataSpan)
         {
-            if (quest is { QuestID: 0 }) continue;
-        
             foreach (var questInfo in quest.MarkerData.Span)
             {
+                if (FindLevework(quest.ObjectiveId) is not { Flags: not 32 } ) continue;
                 if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap } levelData ) continue;
                 if (levelMap != map.RowId) continue;
                 
-                DrawLeveObjective(questInfo.IconId, quest.Name.ToString(), levelData, viewport, map);
+                DrawLeveObjective(questInfo.IconId, quest.Label.ToString(), levelData, viewport, map);
             }
         }
         
@@ -120,8 +121,18 @@ public unsafe class Quest : ModuleBase
             if(LuminaCache<Level>.Instance.GetRow(markerInfo.LevelId) is not { Map.Row: var levelMap } levelData ) continue;
             if(levelMap != map.RowId) continue;
             
-            DrawLeveObjective(markerInfo.IconId, markerInfo.Tooltip->ToString(), levelData, viewport, map);
+            DrawLeveObjective(markerInfo.IconId, markerInfo.TooltipString->ToString(), levelData, viewport, map);
         }
+    }
+
+    private LeveWork? FindLevework(uint id)
+    {
+        foreach (var levework in QuestManager.Instance()->LeveQuestsSpan)
+        {
+            if (levework.LeveId == id) return levework;
+        }
+
+        return null;
     }
 
     private void DrawRegularObjective(uint icon, string tooltip, Level levelData, Viewport viewport, Map map)

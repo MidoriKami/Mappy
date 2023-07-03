@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Utility;
@@ -28,7 +29,8 @@ public unsafe class MiscMarkers : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.MiscMarkers;
     public override IModuleConfig Configuration { get; protected set; } = new MiscConfig();
-    
+    private Dictionary<uint, string> CardRewardCache = new();
+
     protected override bool ShouldDrawMarkers(Map map)
     {
         if (!GetConfig<MiscConfig>().ShowIcon) return false;
@@ -38,106 +40,61 @@ public unsafe class MiscMarkers : ModuleBase
     
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
-        DrawCustomTalkMarkers(map);
-        DrawTripleTriadMarkers(map);
-        DrawGuildleveAssignmentMarkers(map);
-        DrawMiscMarkers(map);
-        DrawBicolorGemstoneMarkers(map);
-    }
-
-    private void DrawCustomTalkMarkers(Map map)
-    {
         var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
-
-        foreach (var markerData in data->CustomTalkMarkerData.DataSpan)
-        {
-            var tooltip = GetCustomTalkString(markerData.Value->ObjectiveId);
-
-            DrawObjective(markerData, map, tooltip);
-        }
+        
+        DrawMapMarkerContainer(data->CustomTalkMarkerData, map);
+        DrawMapMarkerContainer(data->GuildLeveAssignmentMapMarkerData, map);
+        DrawMapMarkerContainer(data->GuildOrderGuideMarkerData, map);
+        DrawMapMarkerContainer(data->GemstoneTraderMarkerData, map);
+        
+        DrawTripleTriadMarkers(map);
     }
     
     private void DrawTripleTriadMarkers(Map map)
     {
         var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
 
-        foreach (var markerData in data->TripleTriadMarkerData.DataSpan)
+        foreach (var markerInfo in data->TripleTriadMarkerData.GetAllMarkers())
         {
-            if (markerData.Value is null) continue;
-            
-            if (LuminaCache<TripleTriad>.Instance.GetRow(markerData.Value->ObjectiveId) is not { } triadInfo ) return;
-            if (LuminaCache<Addon>.Instance.GetRow(9224) is not { Text.RawString: var triadMatch }) return;
-        
-            var cardRewards = triadInfo.ItemPossibleReward
-                .Where(reward => reward.Row is not 0)
-                .Select(reward => reward.Value)
-                .OfType<Item>()
-                .Select(item => item.Name.RawString);
-        
-            DrawObjective(markerData, map, triadMatch, string.Join("\n", cardRewards));
+            foreach (var subLocation in markerInfo.MarkerData.Span)
+            {
+                if (!CardRewardCache.ContainsKey(subLocation.ObjectiveId))
+                {
+                    if (LuminaCache<TripleTriad>.Instance.GetRow(subLocation.ObjectiveId) is not { } triadInfo) continue;
+                    
+                    var cardRewards = triadInfo.ItemPossibleReward
+                        .Where(reward => reward.Row is not 0)
+                        .Select(reward => reward.Value)
+                        .OfType<Item>()
+                        .Select(item => item.Name.RawString);
+                    
+                    CardRewardCache.Add(subLocation.ObjectiveId, string.Join("\n", cardRewards));
+                }
+                
+                DrawObjective(subLocation, map, subLocation.TooltipString->ToString(), CardRewardCache[subLocation.ObjectiveId]);
+            }
         }
     }
     
-    private void DrawGuildleveAssignmentMarkers(Map map)
+    private void DrawMapMarkerContainer(MapMarkerContainer container, Map map)
     {
-        var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
-
-        foreach (var markerData in data->GuildLeveAssignmentMarkerData.DataSpan)
+        foreach (var markerInfo in container.GetAllMarkers())
         {
-            if (LuminaCache<GuildleveAssignment>.Instance.GetRow(markerData.Value->ObjectiveId) is not { Type.RawString: var markerTooltip }) return;
-        
-            DrawObjective(markerData, map, markerTooltip);
-        }
-    }
-
-    private void DrawMiscMarkers(Map map)
-    {
-        var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
-
-        foreach (var markerData in data->GuildOrderGuideMarkerData.DataSpan)
-        {
-            if (markerData.Value is null) continue;
-
-            DrawObjective(markerData, map, markerData.Value->Tooltip.ToString());
+            foreach (var subLocation in markerInfo.MarkerData.Span)
+            {
+                DrawObjective(subLocation, map, subLocation.TooltipString->ToString());
+            }
         }
     }
     
-    private void DrawBicolorGemstoneMarkers(Map map)
+    private void DrawObjective(MapMarkerData markerInfo, Map map, string tooltip, string? secondaryTooltip = null)
     {
-        var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
-
-        foreach (var markerData in data->BicolorGemstoneVendorMarkerData.DataSpan)
-        {
-            var tooltip = GetCustomTalkString(markerData.Value->ObjectiveId);
-            
-            DrawObjective(markerData, map, tooltip);
-        }
-    }
-
-    private string GetCustomTalkString(uint rowId)
-    {
-        if (LuminaCache<CustomTalk>.Instance.GetRow(rowId) is not { } customTalkData) return string.Empty;
-        if (customTalkData is not { MainOption.RawString: var mainOption, SubOption.RawString: var subOption }) return string.Empty;
-
-        return mainOption.IsNullOrEmpty() ? subOption : mainOption;
-    }
-    
-    private void DrawObjective(NonstandardMarker* specialMarker, Map map, string tooltip, string? secondaryTooltip = null)
-    {
-        if (LuminaCache<Level>.Instance.GetRow(specialMarker->MarkerData->LevelId) is not { } levelData) return;
+        if (LuminaCache<Level>.Instance.GetRow(markerInfo.LevelId) is not { } levelData) return;
         if (levelData.Map.Row != map.RowId) return;
         
-        DrawObjective(levelData, map, tooltip, specialMarker->MarkerData->IconId, secondaryTooltip);
+        DrawObjective(levelData, map, tooltip, markerInfo.IconId, secondaryTooltip);
     }
     
-    private void DrawObjective(StandardMapMarkerData* markerInfo, Map map, string tooltip, string? secondaryTooltip = null)
-    {
-        if (LuminaCache<Level>.Instance.GetRow(markerInfo->LevelId) is not { } levelData) return;
-        if (levelData.Map.Row != map.RowId) return;
-        
-        DrawObjective(levelData, map, tooltip, markerInfo->IconId, secondaryTooltip);
-    }
-
     private void DrawObjective(Level levelData, Map map, string tooltip, uint iconId, string? secondaryTooltip = null)
     {
         var config = GetConfig<MiscConfig>();
