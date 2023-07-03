@@ -172,9 +172,7 @@ public unsafe class GameIntegration : IDisposable
         {
             bool MatchQuestName(Quest quest1, OpenMapInfo* mapData) => string.Equals(quest1.Name.RawString, mapData->TitleString.ToString(), StringComparison.OrdinalIgnoreCase);
 
-            if (LuminaCache<Quest>.Instance.FirstOrDefault(quest => MatchQuestName(quest, mapInfo)) is {
-                    IssuerLocation.Value: { } issuerLocation,
-                    JournalGenre.Value: { } journalInfo })
+            if (LuminaCache<Quest>.Instance.FirstOrDefault(quest => MatchQuestName(quest, mapInfo)) is { IssuerLocation.Value: { } issuerLocation, JournalGenre.Value: { } journalInfo })
             {
                 var levelLocation = new Vector2(issuerLocation.X, issuerLocation.Z);
                 
