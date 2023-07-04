@@ -66,7 +66,7 @@ public class Treasure : ModuleBase
         if (Service.ClientState.LocalPlayer is not { } player) return false;
 
         // Limit height delta to 20yalms
-        if (Math.Abs(player.Position.Y - gameObject.Position.Y) < 20.0f)
+        if (Math.Abs(player.Position.Y - gameObject.Position.Y) < 15.0f)
         {
             return gameObject.IsTargetable;
         }
