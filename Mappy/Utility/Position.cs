@@ -30,4 +30,17 @@ public class Position
     
     public static float MapToWorld(float value, uint scale, int offset) 
         => - offset *  ( scale / 100.0f ) + 50.0f * (value - 1) * ( scale / 100.0f );
+
+    public static Vector2 MapToWorld(Vector2 coordinates, Map map)
+    {
+        var scalar = map.SizeFactor / 100.0f;
+        
+        var xWorldCoord = MapToWorld(coordinates.X, map.SizeFactor, map.OffsetX);
+        var yWorldCoord = MapToWorld(coordinates.Y, map.SizeFactor, map.OffsetY);
+
+        var objectPosition = new Vector2(xWorldCoord, yWorldCoord);
+        var center = new Vector2(1024.0f, 1024.0f);
+        
+        return objectPosition / scalar - center / scalar;
+    }
 }

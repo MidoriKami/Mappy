@@ -45,4 +45,7 @@ public enum ModuleName
     
     [EnumLabel("IslandSanctuary")]
     IslandSanctuary,
+    
+    [EnumLabel("PluginIntegrations")]
+    PluginIntegrations,
 }
