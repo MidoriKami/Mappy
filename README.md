@@ -62,4 +62,5 @@ Be sure to save the ID's of the generated markers so you can remove them when yo
 ```
 
 
-![image](https://github.com/MidoriKami/Mappy/assets/9083275/328eb0c8-3243-4803-b336-faf982f4d291)
+![image](https://github.com/MidoriKami/Mappy/assets/9083275/160308b3-287c-4103-812d-08bef3277658)
+
