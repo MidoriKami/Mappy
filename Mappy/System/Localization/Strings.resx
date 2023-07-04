@@ -337,4 +337,7 @@ Recommended to disable if using Chat2</value>
     <data name="TemporaryMarkers" xml:space="preserve">
         <value>Temporary Markers</value>
     </data>
+    <data name="PluginIntegrations" xml:space="preserve">
+        <value>Plugin Integrations</value>
+    </data>
 </root>

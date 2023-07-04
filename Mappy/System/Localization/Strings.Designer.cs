@@ -736,6 +736,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Plugin Integrations.
+        /// </summary>
+        internal static string PluginIntegrations {
+            get {
+                return ResourceManager.GetString("PluginIntegrations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Quests.
         /// </summary>
         internal static string QuestMarkers {
