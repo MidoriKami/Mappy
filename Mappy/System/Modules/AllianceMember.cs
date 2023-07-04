@@ -13,8 +13,15 @@ using Mappy.Views.Attributes;
 
 namespace Mappy.System.Modules;
 
+[Category("IconSelection", 1)]
+public interface IAllianceMemberIconSelection
+{
+    [IconSelection(60358, 60359, 60360, 60361)]
+    public uint SelectedIcon { get; set; }
+}
+
 [Category("ModuleConfig")]
-public class AllianceConfig : IModuleConfig, IIconConfig, ITooltipConfig
+public class AllianceMemberConfig : IModuleConfig, IIconConfig, ITooltipConfig, IAllianceMemberIconSelection
 {
     public bool Enable { get; set; } = true;
     public int Layer { get; set; } = 7;
@@ -23,14 +30,16 @@ public class AllianceConfig : IModuleConfig, IIconConfig, ITooltipConfig
     public bool ShowTooltip { get; set; } = true;
     public Vector4 TooltipColor { get; set; } = KnownColor.LightGreen.AsVector4();
     
-    [IconSelection(60358, 60359, 60360, 60361)]
     public uint SelectedIcon { get; set; } = 60358;
+    
+    [BoolConfig("DisplayJobIcons", "DisplayJobIconsHelp")]
+    public bool DisplayJobIcons { get; set; } = false;
 }
 
 public unsafe class AllianceMember : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.AllianceMembers;
-    public override IModuleConfig Configuration { get; protected set; } = new AllianceConfig();
+    public override IModuleConfig Configuration { get; protected set; } = new AllianceMemberConfig();
 
     protected override bool ShouldDrawMarkers(Map map)
     {
@@ -41,7 +50,7 @@ public unsafe class AllianceMember : ModuleBase
 
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
-        var config = GetConfig<AllianceConfig>();
+        var config = GetConfig<AllianceMemberConfig>();
         
         foreach (var member in GroupManager.Instance()->AllianceMembersSpan)
         {
@@ -50,7 +59,9 @@ public unsafe class AllianceMember : ModuleBase
             var memberPosition = new Vector2(member.X, member.Z);
             var objectPosition = Position.GetObjectPosition(memberPosition, map);
             
-            if(config.ShowIcon) DrawUtilities.DrawIcon(config.SelectedIcon, objectPosition, config.IconScale);
+            var mapIcon = config.DisplayJobIcons ? member.ClassJob + 62000u : config.SelectedIcon;
+            
+            if(config.ShowIcon) DrawUtilities.DrawIcon(mapIcon, objectPosition, config.IconScale);
             if(config.ShowTooltip) DrawUtilities.DrawTooltip(MemoryHelper.ReadStringNullTerminated((nint)member.Name), config.TooltipColor, config.SelectedIcon, member.ClassJob + 62000u);
         }
     }

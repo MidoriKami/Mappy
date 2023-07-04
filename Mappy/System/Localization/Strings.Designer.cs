@@ -213,6 +213,24 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Display Job Icons.
+        /// </summary>
+        internal static string DisplayJobIcons {
+            get {
+                return ResourceManager.GetString("DisplayJobIcons", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Displays the players job icon on the map instead of the selected icon.
+        /// </summary>
+        internal static string DisplayJobIconsHelp {
+            get {
+                return ResourceManager.GetString("DisplayJobIconsHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DisplayOptions.
         /// </summary>
         internal static string DisplayOptions {

@@ -340,4 +340,10 @@ Recommended to disable if using Chat2</value>
     <data name="PluginIntegrations" xml:space="preserve">
         <value>Plugin Integrations</value>
     </data>
+    <data name="DisplayJobIcons" xml:space="preserve">
+        <value>Display Job Icons</value>
+    </data>
+    <data name="DisplayJobIconsHelp" xml:space="preserve">
+        <value>Displays the players job icon on the map instead of the selected icon</value>
+    </data>
 </root>

@@ -15,8 +15,15 @@ using ClientStructPartyMember = FFXIVClientStructs.FFXIV.Client.Game.Group.Party
 
 namespace Mappy.System.Modules;
 
+[Category("IconSelection", 1)]
+public interface IPartyMemberIconSelection
+{
+    [IconSelection(60421, 63940, 63944, 63937, 63946)]
+    public uint SelectedIcon { get; set; }
+}
+
 [Category("ModuleConfig")]
-public class PartyMemberConfig : IModuleConfig, IIconConfig, ITooltipConfig
+public class PartyMemberConfig : IModuleConfig, IIconConfig, ITooltipConfig, IPartyMemberIconSelection
 {
     public bool Enable { get; set; } = true;
     public int Layer { get; set; } = 7;
@@ -24,9 +31,11 @@ public class PartyMemberConfig : IModuleConfig, IIconConfig, ITooltipConfig
     public float IconScale { get; set; } = 0.50f;
     public bool ShowTooltip { get; set; } = true;
     public Vector4 TooltipColor { get; set; } = KnownColor.DodgerBlue.AsVector4();
-    
-    [IconSelection(60421, 63940, 63944, 63937, 63946)]
+
     public uint SelectedIcon { get; set; } = 60421;
+    
+    [BoolConfig("DisplayJobIcons", "DisplayJobIconsHelp")]
+    public bool DisplayJobIcons { get; set; } = false;
 }
 
 public unsafe class PartyMember : ModuleBase
@@ -53,8 +62,10 @@ public unsafe class PartyMember : ModuleBase
             
             var memberPosition = new Vector2(member.X, member.Z);
             var objectPosition = Position.GetObjectPosition(memberPosition, map);
+
+            var mapIcon = config.DisplayJobIcons ? member.ClassJob + 62000u : config.SelectedIcon;
             
-            if(config.ShowIcon) DrawUtilities.DrawIcon(config.SelectedIcon, objectPosition, config.IconScale);
+            if(config.ShowIcon) DrawUtilities.DrawIcon(mapIcon, objectPosition, config.IconScale);
             if(config.ShowTooltip) DrawUtilities.DrawTooltip(MemoryHelper.ReadStringNullTerminated((nint)member.Name), config.TooltipColor, config.SelectedIcon, member.ClassJob + 62000u);
         }
     }
