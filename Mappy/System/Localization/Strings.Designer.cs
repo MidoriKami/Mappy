@@ -339,6 +339,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fishing.
+        /// </summary>
+        internal static string Fishing {
+            get {
+                return ResourceManager.GetString("Fishing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Flag Marker.
         /// </summary>
         internal static string FlagMarker {
@@ -389,6 +398,15 @@ namespace Mappy.System.Localization {
         internal static string General {
             get {
                 return ResourceManager.GetString("General", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Harvesting.
+        /// </summary>
+        internal static string Harvesting {
+            get {
+                return ResourceManager.GetString("Harvesting", resourceCulture);
             }
         }
         
@@ -619,6 +637,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Logging.
+        /// </summary>
+        internal static string Logging {
+            get {
+                return ResourceManager.GetString("Logging", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Map Link Color.
         /// </summary>
         internal static string MapLinkColor {
@@ -633,6 +660,15 @@ namespace Mappy.System.Localization {
         internal static string MapMarkers {
             get {
                 return ResourceManager.GetString("MapMarkers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mining.
+        /// </summary>
+        internal static string Mining {
+            get {
+                return ResourceManager.GetString("Mining", resourceCulture);
             }
         }
         
@@ -759,6 +795,15 @@ namespace Mappy.System.Localization {
         internal static string PluginIntegrations {
             get {
                 return ResourceManager.GetString("PluginIntegrations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quarrying.
+        /// </summary>
+        internal static string Quarrying {
+            get {
+                return ResourceManager.GetString("Quarrying", resourceCulture);
             }
         }
         

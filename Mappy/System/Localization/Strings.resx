@@ -346,4 +346,19 @@ Recommended to disable if using Chat2</value>
     <data name="DisplayJobIconsHelp" xml:space="preserve">
         <value>Displays the players job icon on the map instead of the selected icon</value>
     </data>
+    <data name="Logging" xml:space="preserve">
+        <value>Logging</value>
+    </data>
+    <data name="Harvesting" xml:space="preserve">
+        <value>Harvesting</value>
+    </data>
+    <data name="Quarrying" xml:space="preserve">
+        <value>Quarrying</value>
+    </data>
+    <data name="Mining" xml:space="preserve">
+        <value>Mining</value>
+    </data>
+    <data name="Fishing" xml:space="preserve">
+        <value>Fishing</value>
+    </data>
 </root>

@@ -126,21 +126,3 @@ public unsafe partial struct MapMarkerData
     [FieldOffset(0x10)] public uint IconId;
     [FieldOffset(0x3C)] public ushort RecommendedLevel;
 }
-
-// [StructLayout(LayoutKind.Explicit, Size = 0x90)]
-// public struct QuestInfo
-// {
-//     [FieldOffset(0x04)] public uint QuestID;
-//     [FieldOffset(0x08)] public Utf8String Name;
-//     [FieldOffset(0x70)] public StdVector<QuestMarkerInfo> MarkerData;
-//     [FieldOffset(0x88)] public ushort RecommendedLevel;
-//     [FieldOffset(0x8B)] public byte ShouldRender;
-// }
-//
-// [StructLayout(LayoutKind.Explicit, Size = 0x48)]
-// public unsafe partial struct QuestMarkerInfo
-// {
-//     [FieldOffset(0x00)] public uint LevelId;
-//     [FieldOffset(0x08)] public Utf8String* Tooltip;
-//     [FieldOffset(0x10)] public uint IconId;
-// }
