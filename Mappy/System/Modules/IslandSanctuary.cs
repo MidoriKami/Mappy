@@ -60,10 +60,10 @@ public unsafe class IslandSanctuary : ModuleBase
 
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
-        DrawGatheringIcons(viewport, map);
+        DrawGatheringIcons(map);
     }
     
-    private void DrawGatheringIcons(Viewport viewport, Map map)
+    private void DrawGatheringIcons(Map map)
     {
         if (MJIManager.Instance()->CurrentMode is not 1) return; // If not in GatherMode
         var config = GetConfig<IslandSanctuaryConfig>();
@@ -87,6 +87,5 @@ public unsafe class IslandSanctuary : ModuleBase
             if(config.ShowIcon) DrawUtilities.DrawGameObjectIcon(mapIcon, obj, map, config.IconScale);
             if(config.ShowTooltip) DrawUtilities.DrawTooltip(mapIcon, config.TooltipColor, obj.Name.TextValue);
         }
-
     }
 }

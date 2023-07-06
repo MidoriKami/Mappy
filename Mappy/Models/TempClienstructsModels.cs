@@ -15,7 +15,7 @@ namespace Mappy.Models;
 /// If you need more advanced information, use the MapMarkerContainer fields instead if applicable.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
-public unsafe partial struct SimpleMapMarkerContainer
+public unsafe struct SimpleMapMarkerContainer
 {
     public ulong CurrentSize;
     public nint InternalPointer;
@@ -41,7 +41,7 @@ public unsafe partial struct SimpleMapMarkerContainer
 /// This container uses a linked list internally to contain Map Markers that contain tooltip information.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
-public unsafe partial struct MapMarkerContainer
+public unsafe struct MapMarkerContainer
 {
     public LinkedList* List;
     public int Size;
@@ -62,14 +62,14 @@ public unsafe partial struct MapMarkerContainer
 }
 
 [StructLayout(LayoutKind.Sequential)]
-public unsafe partial struct LinkedList
+public unsafe struct LinkedList
 {
     public Node* First;
     public Node* Last;
 }
 
 [StructLayout(LayoutKind.Sequential)]
-public unsafe partial struct Node
+public unsafe struct Node
 {
     public Node* Next;
     public Node* Previous;
@@ -78,7 +78,7 @@ public unsafe partial struct Node
 }
 
 [StructLayout(LayoutKind.Explicit)]
-public unsafe partial struct ClientStructsMapData
+public unsafe struct ClientStructsMapData
 {
     [FieldOffset(0x90)] public fixed byte QuestData[0x90 * 30];
     [FieldOffset(0x1170)] public fixed byte LevequestData[0x90 * 16];
@@ -99,7 +99,7 @@ public unsafe partial struct ClientStructsMapData
 }
 
 [StructLayout(LayoutKind.Explicit, Size = 0x10)]
-public unsafe partial struct SimpleMapMarkerData
+public struct SimpleMapMarkerData
 {
     [FieldOffset(0x00)] public uint IconId;
     [FieldOffset(0x04)] public uint LevelId; // RowId into the 'Level' sheet
@@ -108,7 +108,7 @@ public unsafe partial struct SimpleMapMarkerData
 }
 
 [StructLayout(LayoutKind.Explicit, Size = 0x90)]
-public unsafe partial struct MarkerInfo
+public struct MarkerInfo
 {
     [FieldOffset(0x04)] public uint ObjectiveId;
     [FieldOffset(0x08)] public Utf8String Label;
@@ -118,7 +118,7 @@ public unsafe partial struct MarkerInfo
 }
 
 [StructLayout(LayoutKind.Explicit, Size = 0x48)]
-public unsafe partial struct MapMarkerData
+public unsafe struct MapMarkerData
 {
     [FieldOffset(0x00)] public uint LevelId;
     [FieldOffset(0x04)] public uint ObjectiveId;

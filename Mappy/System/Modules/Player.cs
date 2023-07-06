@@ -73,8 +73,7 @@ public unsafe class Player : ModuleBase
     {
         var config = GetConfig<PlayerConfig>();
         
-        var icon = IconCache.Instance.GetIcon(60443); 
-        DrawUtilities.DrawTextureRotated(icon, player, config.IconScale);
+        DrawUtilities.DrawIconRotated(60443, player, config.IconScale);
     }
 
     private void DrawLookLine(GameObject player)

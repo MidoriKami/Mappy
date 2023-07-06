@@ -15,8 +15,6 @@ public partial class DrawUtilities
 {
     public static void DrawGameObjectIcon(uint iconId, GameObject gameObject, Map map, float scale)
     {
-        if (IconCache.Instance.GetIcon(iconId) is not { } icon) return;
-
         var objectPosition = Position.GetObjectPosition(gameObject, map);
         
         DrawIcon(iconId, objectPosition, scale);
@@ -72,9 +70,9 @@ public partial class DrawUtilities
     public static void DrawLevelTooltip(Level level, Viewport viewport, Map map, float extraRadius, uint iconId, Vector4 color, string primaryText, string secondaryText)
         => DrawLevelTooltipInternal(level, viewport, map, extraRadius, iconId, color, primaryText, secondaryText);
     
-    public static void DrawTextureRotated(TextureWrap? texture, GameObject gameObject, float iconScale)
+    public static void DrawIconRotated(uint iconId, GameObject gameObject, float iconScale)
     {
-        if (texture is null) return;
+        if (IconCache.Instance.GetIcon(iconId) is not {} texture) return;
         if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
         if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { } mapWindow) return;
         
