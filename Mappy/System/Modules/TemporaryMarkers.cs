@@ -67,7 +67,7 @@ public unsafe class TemporaryMarkers : ModuleBase
             case MarkerType.Gathering:
             case MarkerType.Quest:
             case MarkerType.Command:
-                DrawTooltip();
+                DrawTooltip(viewport, map);
                 break;
         }
         
@@ -106,14 +106,14 @@ public unsafe class TemporaryMarkers : ModuleBase
         ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, color, 0, 4);
     }
         
-    private void DrawTooltip()
+    private void DrawTooltip(Viewport viewport, Map map)
     {
         if (TempMapMarker is null) return;
         if (TempMapMarker.TooltipText.IsNullOrEmpty()) return;
-        if (!ImGui.IsItemHovered()) return;
         
         var config = GetConfig<TemporaryMarkersConfig>();
-        if (config.ShowTooltip) DrawUtilities.DrawTooltip(TempMapMarker.IconID, config.TooltipColor, TempMapMarker.TooltipText);
+        if (config.ShowTooltip && TempMapMarker.Radius < 5.0f) DrawUtilities.DrawTooltip(TempMapMarker.IconID, config.TooltipColor, TempMapMarker.TooltipText);
+        if (config.ShowTooltip && TempMapMarker.Radius >= 5.0f) DrawUtilities.DrawLevelTooltip(TempMapMarker.Position, TempMapMarker.Radius * viewport.Scale, viewport, map, 0.0f, TempMapMarker.IconID, config.TooltipColor, TempMapMarker.TooltipText);
     }
     
     public static void SetMarker(TemporaryMapMarker marker) => TempMapMarker = marker;
