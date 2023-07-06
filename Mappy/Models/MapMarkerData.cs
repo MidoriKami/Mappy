@@ -54,7 +54,7 @@ public class MapMarkerData
     {
         if (!HasIcon) return;
         
-        DrawUtilities.DrawIcon(Icon, Position, settings.IconScale);
+        DrawUtilities.DrawIconTexture(Icon, Position, settings.IconScale);
         if(settings.ShowTooltip) DrawTooltip();
         OnClick();
     }
@@ -74,12 +74,11 @@ public class MapMarkerData
                 }
             }
 
-            DrawUtilities.DrawTooltip(MiscIconNameCache[IconId], GetDisplayColor(), data.Icon);
+            DrawUtilities.DrawTooltip(data.Icon, GetDisplayColor(), MiscIconNameCache[IconId]);
         }
-        
         else if (GetDisplayString() is { } displayString)
         {
-            DrawUtilities.DrawTooltip(displayString, GetDisplayColor(), data.Icon);
+            DrawUtilities.DrawTooltip(data.Icon, GetDisplayColor(), displayString);
         }
     }
 

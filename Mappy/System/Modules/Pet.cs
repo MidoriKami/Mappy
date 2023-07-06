@@ -60,8 +60,8 @@ public class Pet : ModuleBase
         
         foreach (var obj in OwnedPets(ownerID))
         {
-            if(config.ShowIcon) DrawUtilities.DrawIcon(config.SelectedIcon, obj, map, config.IconScale + 0.25f);
-            if(config.ShowTooltip) DrawUtilities.DrawTooltip(obj.Name.TextValue, config.TooltipColor, config.SelectedIcon);
+            if(config.ShowIcon) DrawUtilities.DrawGameObjectIcon(config.SelectedIcon, obj, map, config.IconScale + 0.25f);
+            if(config.ShowTooltip) DrawUtilities.DrawTooltip(config.SelectedIcon, config.TooltipColor, obj.Name.TextValue);
         }
     }
     

@@ -116,7 +116,7 @@ public unsafe class Houses : ModuleBase
         if (marker.SubRowId is 60 or 61) return;
         var config = GetConfig<HousingConfig>();    
         
-        DrawUtilities.DrawTooltip($"Plot {marker.SubRowId + 1, 2}", config.TooltipColor, GetIconId(marker));
+        DrawUtilities.DrawTooltip(GetIconId(marker), config.TooltipColor, $"Plot {marker.SubRowId + 1, 2}");
     }
 
     private uint GetIconID(uint housingIndex)

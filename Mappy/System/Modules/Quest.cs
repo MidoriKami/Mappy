@@ -134,23 +134,21 @@ public unsafe class Quest : ModuleBase
         return null;
     }
 
-    private void DrawRegularObjective(uint icon, string tooltip, Level levelData, Viewport viewport, Map map)
+    private void DrawRegularObjective(uint icon, string tooltip, Level level, Viewport viewport, Map map)
     {
-        var ringColor = GetConfig<QuestConfig>().InProgressColor;
-        var tooltipColor =  GetConfig<QuestConfig>().TooltipColor;
-        var scale = GetConfig<QuestConfig>().IconScale;
-        var showTooltip = GetConfig<QuestConfig>().ShowTooltip;
+        var config = GetConfig<QuestConfig>();
         
-        DrawUtilities.DrawLevelObjective(levelData, icon, tooltip, ringColor, tooltipColor, viewport, map, showTooltip, scale);
+        DrawUtilities.DrawLevelIcon(level, viewport, map, icon, config.InProgressColor, config.IconScale, 0.0f);
+        
+        if(config.ShowTooltip && level.Radius < 5.0f) DrawUtilities.DrawTooltip(icon, config.TooltipColor, tooltip);
+        if(config.ShowTooltip && level.Radius >= 5.0f) DrawUtilities.DrawLevelTooltip(level, viewport, map, 0.0f, icon, config.TooltipColor, tooltip);
     }
     
-    private void DrawLeveObjective(uint icon, string tooltip, Level levelData, Viewport viewport, Map map)
+    private void DrawLeveObjective(uint icon, string tooltip, Level level, Viewport viewport, Map map)
     {
-        var ringColor = GetConfig<QuestConfig>().LeveQuestColor;
-        var tooltipColor =  GetConfig<QuestConfig>().TooltipColor;
-        var scale = GetConfig<QuestConfig>().IconScale;
-        var showTooltip = GetConfig<QuestConfig>().ShowTooltip;
+        var config = GetConfig<QuestConfig>();
         
-        DrawUtilities.DrawLevelObjective(levelData, icon, tooltip, ringColor, tooltipColor, viewport, map, showTooltip, scale, 50.0f);
+        DrawUtilities.DrawLevelIcon(level, viewport, map, icon, config.InProgressColor, config.IconScale, 0.0f);
+        if(config.ShowTooltip) DrawUtilities.DrawLevelTooltip(level, viewport, map, 50.0f, icon, config.TooltipColor, tooltip);
     }
 }

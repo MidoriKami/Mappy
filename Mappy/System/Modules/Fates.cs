@@ -74,7 +74,7 @@ public unsafe class Fates : ModuleBase
 
         if (config.ShowRing) DrawRing(fate, viewport, map);
         if (config.ShowIcon) DrawUtilities.DrawIcon(fate->IconId, position, config.IconScale);
-        if (config.ShowTooltip) DrawTooltip(fate);
+        if (config.ShowTooltip) DrawUtilities.DrawLevelTooltip(new Vector2(fate->Location.X, fate->Location.Z), fate->Radius * viewport.Scale, viewport, map, 0.0f, fate->IconId, config.TooltipColor, GetFatePrimaryTooltip(fate), GetFateSecondaryTooltip(fate));
     }
 
     private void DrawRing(FateContext* fate, Viewport viewport, Map map)
@@ -103,29 +103,9 @@ public unsafe class Fates : ModuleBase
                 break;
         }
     }
-
-    private void DrawTooltip(FateContext* fate)
-    {
-        if (!ImGui.IsItemHovered()) return;
-        var config = GetConfig<FateConfig>();
-
-        switch ((FateState)fate->State)
-        {
-            case FateState.Running:
-                var remainingTime = GetTimeFormatted(GetTimeRemaining(fate));
-
-                DrawUtilities.DrawMultiTooltip(
-                    $"Lv. {fate->Level} {fate->Name}", 
-                    $"Time Remaining: {remainingTime}\nProgress: {fate->Progress, 3}%%",
-                    config.TooltipColor,
-                    fate->IconId);
-                break;
-
-            case FateState.Preparation:
-                DrawUtilities.DrawTooltip($"Lv. {fate->Level} {fate->Name}", config.TooltipColor, fate->IconId);
-                break;
-        }
-    }
+    
+    private string GetFatePrimaryTooltip(FateContext* fate) => $"Lv. {fate->Level} {fate->Name}";
+    private string GetFateSecondaryTooltip(FateContext* fate) => (FateState) fate->State != FateState.Running ? string.Empty : $"Time Remaining: {GetTimeFormatted(GetTimeRemaining(fate))}\nProgress: {fate->Progress,3}%%";
 
     private TimeSpan GetTimeRemaining(FateContext* fate)
     {

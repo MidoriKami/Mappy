@@ -113,7 +113,7 @@ public unsafe class TemporaryMarkers : ModuleBase
         if (!ImGui.IsItemHovered()) return;
         
         var config = GetConfig<TemporaryMarkersConfig>();
-        if(config.ShowTooltip) DrawUtilities.DrawTooltip(TempMapMarker.TooltipText, config.TooltipColor, TempMapMarker.IconID);
+        if (config.ShowTooltip) DrawUtilities.DrawTooltip(TempMapMarker.IconID, config.TooltipColor, TempMapMarker.TooltipText);
     }
     
     public static void SetMarker(TemporaryMapMarker marker) => TempMapMarker = marker;

@@ -58,8 +58,7 @@ public class PluginIntegrations : ModuleBase
             };
             
             if(config.ShowIcon) DrawUtilities.DrawIcon(marker.IconId, location, config.IconScale);
-            if(config.ShowTooltip && marker.Tooltip != string.Empty && marker.Description != string.Empty) DrawUtilities.DrawMultiTooltip(marker.Tooltip, marker.Description, config.TooltipColor, marker.IconId);
-            if(config.ShowTooltip && marker.Tooltip != string.Empty && marker.Description == string.Empty) DrawUtilities.DrawTooltip(marker.Tooltip, config.TooltipColor, marker.IconId);
+            if(config.ShowTooltip) DrawUtilities.DrawTooltip(marker.IconId, config.TooltipColor, marker.Tooltip, marker.Description);
         }
     }
 }

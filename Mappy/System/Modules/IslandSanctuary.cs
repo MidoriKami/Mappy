@@ -84,8 +84,8 @@ public unsafe class IslandSanctuary : ModuleBase
                     continue;
             }
             
-            if(config.ShowIcon) DrawUtilities.DrawIcon(mapIcon,obj, map, config.IconScale);
-            if(config.ShowTooltip) DrawUtilities.DrawTooltip(obj.Name.TextValue, config.TooltipColor, mapIcon);
+            if(config.ShowIcon) DrawUtilities.DrawGameObjectIcon(mapIcon, obj, map, config.IconScale);
+            if(config.ShowTooltip) DrawUtilities.DrawTooltip(mapIcon, config.TooltipColor, obj.Name.TextValue);
         }
 
     }

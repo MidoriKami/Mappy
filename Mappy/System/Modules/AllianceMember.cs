@@ -62,7 +62,7 @@ public unsafe class AllianceMember : ModuleBase
             var mapIcon = config.DisplayJobIcons ? member.ClassJob + 62000u : config.SelectedIcon;
             
             if(config.ShowIcon) DrawUtilities.DrawIcon(mapIcon, objectPosition, config.IconScale);
-            if(config.ShowTooltip) DrawUtilities.DrawTooltip(MemoryHelper.ReadStringNullTerminated((nint)member.Name), config.TooltipColor, config.SelectedIcon, member.ClassJob + 62000u);
+            if(config.ShowTooltip) DrawUtilities.DrawTooltip(config.SelectedIcon, member.ClassJob + 62000u, config.TooltipColor, MemoryHelper.ReadStringNullTerminated((nint)member.Name));
         }
     }
 }

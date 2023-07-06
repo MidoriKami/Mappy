@@ -49,10 +49,6 @@ public class SfxButton
             isMouseOver = false;
         }
 
-        if (TooltipText is not null)
-        {
-            DrawUtilities.DrawTooltip(TooltipText, KnownColor.White.AsVector4());
-        }
-        
+        if (TooltipText is not null) DrawUtilities.DrawTooltip(KnownColor.White.AsVector4(), TooltipText);
     }
 }

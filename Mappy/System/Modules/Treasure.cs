@@ -43,7 +43,7 @@ public class Treasure : ModuleBase
 
             if(!IsTargetable(obj)) continue;
             
-            if(config.ShowIcon) DrawUtilities.DrawIcon(config.SelectedIcon, obj, map, config.IconScale);
+            if(config.ShowIcon) DrawUtilities.DrawGameObjectIcon(config.SelectedIcon, obj, map, config.IconScale);
             if(config.ShowTooltip) DrawTooltip(obj);
         }
     }
@@ -53,9 +53,9 @@ public class Treasure : ModuleBase
         if (!ImGui.IsItemHovered()) return;
         var config = GetConfig<TreasureConfig>();
         
-        if (gameObject.Name.TextValue is {Length: > 0} name)
+        if (gameObject.Name.TextValue is { Length: > 0 } name)
         {
-            DrawUtilities.DrawTooltip(name, config.TooltipColor, config.SelectedIcon);
+            DrawUtilities.DrawTooltip(config.SelectedIcon, config.TooltipColor, name);
         }
     }
 

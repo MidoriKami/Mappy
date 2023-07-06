@@ -49,7 +49,7 @@ public class GatheringPoints : ModuleBase
             
             var iconId = GetIconIdForGatheringNode(obj);
             
-            if(config.ShowIcon) DrawUtilities.DrawIcon(iconId, obj, map, config.IconScale);
+            if(config.ShowIcon) DrawUtilities.DrawGameObjectIcon(iconId, obj, map, config.IconScale);
             if(config.ShowTooltip) DrawTooltip(obj);
         }
     }
@@ -63,7 +63,7 @@ public class GatheringPoints : ModuleBase
         var gatheringPointBase = LuminaCache<GatheringPointBase>.Instance.GetRow(gatheringPoint.GatheringPointBase.Row)!;
         
         var displayString = $"Lv. {gatheringPointBase.GatheringLevel} {gameObject.Name.TextValue}";
-        if (displayString != string.Empty) DrawUtilities.DrawTooltip(displayString, config.TooltipColor, GetIconIdForGatheringNode(gameObject));
+        if (displayString != string.Empty) DrawUtilities.DrawTooltip(GetIconIdForGatheringNode(gameObject), config.TooltipColor, displayString);
     }
 
     private bool IsTargetable(GameObject gameObject) => gameObject.IsTargetable;

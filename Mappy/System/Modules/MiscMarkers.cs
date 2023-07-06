@@ -100,9 +100,9 @@ public unsafe class MiscMarkers : ModuleBase
         var config = GetConfig<MiscConfig>();
         var position = Position.GetObjectPosition(new Vector2(levelData.X, levelData.Z), map);
         
-        DrawUtilities.DrawIcon(iconId, position);
+        DrawUtilities.DrawIcon(iconId, position, config.IconScale);
 
-        if (secondaryTooltip is null && config.ShowTooltip && !tooltip.IsNullOrEmpty()) DrawUtilities.DrawTooltip(tooltip, config.TooltipColor, iconId);
-        if (secondaryTooltip is not null && config.ShowTooltip) DrawUtilities.DrawMultiTooltip(tooltip, secondaryTooltip, config.TooltipColor, iconId);
+        if (secondaryTooltip is null && config.ShowTooltip && !tooltip.IsNullOrEmpty()) DrawUtilities.DrawTooltip(iconId, config.TooltipColor, tooltip);
+        if (secondaryTooltip is not null && config.ShowTooltip) DrawUtilities.DrawTooltip(iconId, config.TooltipColor, tooltip, secondaryTooltip);
     }
 }

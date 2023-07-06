@@ -1,5 +1,4 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Types;
 using ImGuiNET;
 using ImGuiScene;
@@ -12,72 +11,68 @@ using Mappy.Views.Windows;
 
 namespace Mappy.Utility;
 
-public class DrawUtilities
+public partial class DrawUtilities
 {
-    public static void DrawIcon(TextureWrap? iconTexture, Vector2 position, float scale = 0.5f)
+    public static void DrawGameObjectIcon(uint iconId, GameObject gameObject, Map map, float scale)
+    {
+        if (IconCache.Instance.GetIcon(iconId) is not { } icon) return;
+
+        var objectPosition = Position.GetObjectPosition(gameObject, map);
+        
+        DrawIcon(iconId, objectPosition, scale);
+    }
+    
+    public static void DrawIcon(uint iconId, Vector2 position, float scale)
+        => DrawIconTexture(IconCache.Instance.GetIcon(iconId), position, scale);
+    
+    public static void DrawIconTexture(TextureWrap? iconTexture, Vector2 position, float scale)
     {
         if (iconTexture is null) return;
         if (MappySystem.MapTextureController is not { Ready: true }) return;
         if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { } mapWindow) return;
         
         var iconSize = new Vector2(iconTexture.Width, iconTexture.Height) * scale;
+        
         mapWindow.Viewport.SetImGuiDrawPosition(position * mapWindow.Viewport.Scale - iconSize / 2.0f);
         ImGui.Image(iconTexture.ImGuiHandle, iconSize);
     }
-    
-    public static void DrawIcon(uint iconId, Vector2 position, float scale = 0.50f) 
-        => DrawIcon(IconCache.Instance.GetIcon(iconId), position, scale);
 
-    public static void DrawIcon(uint iconId, GameObject gameObject, Map map, float scale = 0.50f)
-    {
-        var icon = IconCache.Instance.GetIcon(iconId);
-        var position = Position.GetObjectPosition(gameObject, map);
-        
-        DrawIcon(icon, position, scale);
-    }
+    public static void DrawTooltip(Vector4 color, string primaryText)
+        => DrawStandardTooltipInternal(0, 0, color, primaryText, string.Empty);
 
-    private static void DrawLevelRing(Level level, Viewport viewport, Map map, Vector4 color, float extraRadius = 0.0f)
-    {
-        var position = Position.GetTextureOffsetPosition(new Vector2(level.X, level.Z), map);
-        var drawPosition = viewport.GetImGuiWindowDrawPosition(position);
-        var radius = level.Radius * viewport.Scale / GetRingScale(map) + extraRadius * viewport.Scale;
-        
-        var imGuiColor = ImGui.GetColorU32(color);
-        
-        ImGui.BeginGroup();
-        ImGui.GetWindowDrawList().AddCircleFilled(drawPosition, radius, imGuiColor);
-        ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, imGuiColor, 0, 4);
-        ImGui.EndGroup();
-    }
+    public static void DrawTooltip(uint iconId, Vector4 color, string primaryText)
+        => DrawStandardTooltipInternal(iconId, 0, color, primaryText, string.Empty);
 
-    public static float GetRingScale(Map map) => map.SizeFactor switch
-    {
-        100 => 4.0f,
-        200 => 1.60f,
-        _ => 1.0f,
-    };
-    
-    public static void DrawLevelObjective(Level level, uint iconId, string label, Vector4 ringColor, Vector4 tooltipColor, Viewport viewport, Map map, bool showTooltip, float scale = 0.50f, float extraRadius = 0.0f)
+    public static void DrawTooltip(uint iconId, Vector4 color, string primaryText, string secondaryText)
+        => DrawStandardTooltipInternal(iconId, 0, color, primaryText, secondaryText);
+
+    public static void DrawTooltip(uint iconId, uint secondIconId, Vector4 color, string primaryText)
+        => DrawStandardTooltipInternal(iconId, secondIconId, color, primaryText, string.Empty);
+
+    public static void DrawTooltip(uint iconId, uint secondIconId, Vector4 color, string primaryText, string secondaryText)
+        => DrawStandardTooltipInternal(iconId, secondIconId, color, primaryText, secondaryText);
+
+    public static void DrawLevelIcon(Level level, Viewport viewport, Map map, uint iconId, Vector4 color, float scale, float extraRadius)
     {
         iconId = iconId is 60492 or 60491 ? 060071 : iconId; // Replace nonexistent markers with our custom ? marker
         
-        #if DEBUG
-        label += $"#{level.RowId}:{level.Type}";
-        #endif
-        
-        DrawLevelRing(level, viewport, map, ringColor, extraRadius);
+        DrawLevelRing(level, viewport, map, color, extraRadius);
         DrawLevelIcon(level, iconId, map, scale);
-        if(showTooltip) DrawTooltip(label, tooltipColor, iconId);
     }
 
-    private static void DrawLevelIcon(Level level, uint iconId, Map map, float scale = 0.50f)
-    {
-        var position = Position.GetTextureOffsetPosition(new Vector2(level.X, level.Z), map);
-
-        DrawIcon(iconId, position, scale);
-    }
+    public static void DrawLevelTooltip(Vector2 position, float radius, Viewport viewport, Map map, float extraRadius, uint iconId, Vector4 color, string primaryText)
+        => DrawLevelTooltipInternal(position, radius, viewport, map, extraRadius, iconId, color, primaryText, string.Empty);
     
-    public static void DrawImageRotated(TextureWrap? texture, GameObject gameObject, float iconScale = 0.5f)
+    public static void DrawLevelTooltip(Vector2 position, float radius, Viewport viewport, Map map, float extraRadius, uint iconId, Vector4 color, string primaryText, string secondaryText)
+        => DrawLevelTooltipInternal(position, radius, viewport, map, extraRadius, iconId, color, primaryText, secondaryText);
+    
+    public static void DrawLevelTooltip(Level level, Viewport viewport, Map map, float extraRadius, uint iconId, Vector4 color, string primaryText)
+        => DrawLevelTooltipInternal(level, viewport, map, extraRadius, iconId, color, primaryText, string.Empty);
+    
+    public static void DrawLevelTooltip(Level level, Viewport viewport, Map map, float extraRadius, uint iconId, Vector4 color, string primaryText, string secondaryText)
+        => DrawLevelTooltipInternal(level, viewport, map, extraRadius, iconId, color, primaryText, secondaryText);
+    
+    public static void DrawTextureRotated(TextureWrap? texture, GameObject gameObject, float iconScale)
     {
         if (texture is null) return;
         if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
@@ -86,77 +81,9 @@ public class DrawUtilities
         var objectPosition = Position.GetObjectPosition(gameObject.Position, map);
         var center = mapWindow.Viewport.GetImGuiWindowDrawPosition(objectPosition);
         var angle = GetObjectRotation(gameObject);
-        
         var size = new Vector2(texture.Width, texture.Height) * iconScale;
-
-        var cosA = MathF.Cos(angle + 0.5f * MathF.PI);
-        var sinA = MathF.Sin(angle + 0.5f * MathF.PI);
-
-        Vector2[] vectors =
-        {
-            center + ImRotate(new Vector2(-size.X * 0.5f, -size.Y * 0.5f), cosA, sinA),
-            center + ImRotate(new Vector2(+size.X * 0.5f, -size.Y * 0.5f), cosA, sinA),
-            center + ImRotate(new Vector2(+size.X * 0.5f, +size.Y * 0.5f), cosA, sinA),
-            center + ImRotate(new Vector2(-size.X * 0.5f, +size.Y * 0.5f), cosA, sinA)
-        };
-
-        var windowDrawList = ImGui.GetWindowDrawList();
-        windowDrawList.AddImageQuad(texture.ImGuiHandle, vectors[0], vectors[1], vectors[2], vectors[3]);
-    }
+        var vectors = GetRotationVectors(angle, center, size);
     
-    public static void DrawTooltipIcon(uint mapIcon)
-    {
-        if (IconCache.Instance.GetIcon(mapIcon) is { } icon)
-        {
-            ImGui.Image(icon.ImGuiHandle, new Vector2(24.0f));
-
-            ImGui.SameLine();
-            var cursorPosition = ImGui.GetCursorPos();
-            const float offset = 3.0f;
-            ImGui.SetCursorPos(cursorPosition with { Y = cursorPosition.Y + offset });
-        }
+        ImGui.GetWindowDrawList().AddImageQuad(texture.ImGuiHandle, vectors[0], vectors[1], vectors[2], vectors[3]);
     }
-    
-    public static void DrawTooltip(string text, Vector4 color)
-    {
-        if (!ImGui.IsItemHovered()) return;
-        
-        ImGui.BeginTooltip();
-        ImGui.TextColored(color, text);
-        ImGui.EndTooltip();
-    }
-
-    public static void DrawTooltip(string text, Vector4 color, uint iconId, uint? secondIconId = null)
-    {
-        if (!ImGui.IsItemHovered()) return;
-        ImGui.BeginTooltip();
-
-        DrawTooltipIcon(iconId);
-        if (secondIconId is not null) DrawTooltipIcon(secondIconId.Value);
-
-        ImGui.TextColored(color, text);
-        ImGui.EndTooltip();
-    }
-
-    public static void DrawMultiTooltip(string primaryText, string extraText, Vector4 color, uint iconId)
-    {
-        if (!ImGui.IsItemHovered()) return;
-
-        ImGui.BeginTooltip();
-        
-        DrawTooltipIcon(iconId);
-        
-        var cursorPos = ImGui.GetCursorPos();
-        ImGui.TextColored(color, primaryText);
-        ImGui.SameLine();
-        ImGui.SetCursorPos(cursorPos with { Y = ImGui.GetCursorPos().Y + 5.0f } );
-        ImGui.TextColored(color with { W = 0.45f }, $"\n{extraText}");
-        ImGui.EndTooltip();
-    }
-
-    private static float GetObjectRotation(GameObject gameObject) 
-        => -gameObject.Rotation + 0.5f * MathF.PI;
-
-    private static Vector2 ImRotate(Vector2 v, float cosA, float sinA) 
-        => new(v.X * cosA - v.Y * sinA, v.X * sinA + v.Y * cosA);
 }
