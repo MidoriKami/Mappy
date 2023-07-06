@@ -93,7 +93,6 @@ public unsafe class Quest : ModuleBase
             {
                 if (LuminaCache<Level>.Instance.GetRow(markerData.LevelId) is not { Map.Row: var levelMap} levelData) continue;
                 if (levelMap != map.RowId) continue;
-                // if (markerData.TooltipString->ToString().IsNullOrEmpty()) continue;
 
                 DrawRegularObjective(markerData.IconId, $"Lv. {markerData.RecommendedLevel} {markerData.TooltipString->ToString()}", levelData, viewport, map);
             }

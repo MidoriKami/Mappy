@@ -40,7 +40,7 @@ public class DrawUtilities
     {
         var position = Position.GetTextureOffsetPosition(new Vector2(level.X, level.Z), map);
         var drawPosition = viewport.GetImGuiWindowDrawPosition(position);
-        var radius = level.Radius * viewport.Scale / 7.0f + extraRadius * viewport.Scale;
+        var radius = level.Radius * viewport.Scale / GetRingScale(map) + extraRadius * viewport.Scale;
         
         var imGuiColor = ImGui.GetColorU32(color);
         
@@ -49,10 +49,21 @@ public class DrawUtilities
         ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, imGuiColor, 0, 4);
         ImGui.EndGroup();
     }
+
+    public static float GetRingScale(Map map) => map.SizeFactor switch
+    {
+        100 => 4.0f,
+        200 => 1.60f,
+        _ => 1.0f,
+    };
     
     public static void DrawLevelObjective(Level level, uint iconId, string label, Vector4 ringColor, Vector4 tooltipColor, Viewport viewport, Map map, bool showTooltip, float scale = 0.50f, float extraRadius = 0.0f)
     {
         iconId = iconId is 60492 or 60491 ? 060071 : iconId; // Replace nonexistent markers with our custom ? marker
+        
+        #if DEBUG
+        label += $"#{level.RowId}:{level.Type}";
+        #endif
         
         DrawLevelRing(level, viewport, map, ringColor, extraRadius);
         DrawLevelIcon(level, iconId, map, scale);
