@@ -94,8 +94,6 @@ public partial class DrawUtilities
         var levelLocation = levelTextureLocation * viewport.Scale + contentsStart - viewport.Offset;
         var cursorLocation = ImGui.GetMousePos();
 
-        DebugWindow.Print(levelLocation + " " + cursorLocation + " " + Vector2.Distance(levelLocation, cursorLocation) );
-
         if (Vector2.Distance(levelLocation, cursorLocation) * viewport.Scale > radius * viewport.Scale + extraRadius * viewport.Scale) return;
         DrawTooltipInternal(iconId, 0, color, primaryText, secondaryText);
     }
