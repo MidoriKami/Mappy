@@ -92,17 +92,10 @@ public unsafe class MiscMarkers : ModuleBase
         if (LuminaCache<Level>.Instance.GetRow(markerInfo.LevelId) is not { } levelData) return;
         if (levelData.Map.Row != map.RowId) return;
         
-        DrawObjective(levelData, map, tooltip, markerInfo.IconId, secondaryTooltip);
-    }
-    
-    private void DrawObjective(Level levelData, Map map, string tooltip, uint iconId, string? secondaryTooltip = null)
-    {
         var config = GetConfig<MiscConfig>();
         var position = Position.GetObjectPosition(new Vector2(levelData.X, levelData.Z), map);
         
-        DrawUtilities.DrawIcon(iconId, position, config.IconScale);
-
-        if (secondaryTooltip is null && config.ShowTooltip && !tooltip.IsNullOrEmpty()) DrawUtilities.DrawTooltip(iconId, config.TooltipColor, tooltip);
-        if (secondaryTooltip is not null && config.ShowTooltip) DrawUtilities.DrawTooltip(iconId, config.TooltipColor, tooltip, secondaryTooltip);
+        DrawUtilities.DrawIcon(markerInfo.IconId, position, config.IconScale);
+        if(config.ShowTooltip) DrawUtilities.DrawTooltip(markerInfo.IconId, config.TooltipColor, tooltip, secondaryTooltip ?? string.Empty);
     }
 }
