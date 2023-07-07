@@ -82,10 +82,10 @@ public partial class DrawUtilities
     {
         var radius = GetLevelRingRadius(level, viewport, map, extraRadius);
         
-        DrawLevelTooltipInternal(new Vector2(level.X, level.Z), radius, viewport, map, extraRadius, iconId, color, primaryText, secondaryText);
+        DrawLevelTooltipInternal(new Vector2(level.X, level.Z), radius, viewport, map, iconId, color, primaryText, secondaryText);
     }
 
-    private static void DrawLevelTooltipInternal(Vector2 position, float radius, Viewport viewport, Map map, float extraRadius, uint iconId, Vector4 color, string primaryText, string secondaryText)
+    private static void DrawLevelTooltipInternal(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, Vector4 color, string primaryText, string secondaryText)
     {
         if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { MapContentsStart: var contentsStart }) return;
 
@@ -94,7 +94,7 @@ public partial class DrawUtilities
         var levelLocation = levelTextureLocation * viewport.Scale + contentsStart - viewport.Offset;
         var cursorLocation = ImGui.GetMousePos();
 
-        if (Vector2.Distance(levelLocation, cursorLocation) * viewport.Scale > radius * viewport.Scale + extraRadius * viewport.Scale) return;
+        if (Vector2.Distance(levelLocation, cursorLocation) * viewport.Scale > radius * viewport.Scale) return;
         DrawTooltipInternal(iconId, 0, color, primaryText, secondaryText);
     }
     

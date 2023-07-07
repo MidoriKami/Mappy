@@ -113,7 +113,7 @@ public unsafe class TemporaryMarkers : ModuleBase
         
         var config = GetConfig<TemporaryMarkersConfig>();
         if (config.ShowTooltip && TempMapMarker.Radius < 5.0f) DrawUtilities.DrawTooltip(TempMapMarker.IconID, config.TooltipColor, TempMapMarker.TooltipText);
-        if (config.ShowTooltip && TempMapMarker.Radius >= 5.0f) DrawUtilities.DrawLevelTooltip(TempMapMarker.Position, TempMapMarker.Radius * viewport.Scale, viewport, map, 0.0f, TempMapMarker.IconID, config.TooltipColor, TempMapMarker.TooltipText);
+        if (config.ShowTooltip && TempMapMarker.Radius >= 5.0f) DrawUtilities.DrawLevelTooltip(TempMapMarker.Position, TempMapMarker.Radius * viewport.Scale, viewport, map, TempMapMarker.IconID, config.TooltipColor, TempMapMarker.TooltipText);
     }
     
     public static void SetMarker(TemporaryMapMarker marker) => TempMapMarker = marker;

@@ -148,7 +148,7 @@ public unsafe class Quest : ModuleBase
     {
         var config = GetConfig<QuestConfig>();
         
-        DrawUtilities.DrawLevelIcon(level, viewport, map, icon, config.InProgressColor, config.IconScale, 0.0f);
-        if(config.ShowTooltip) DrawUtilities.DrawLevelTooltip(level, viewport, map, 50.0f, icon, config.TooltipColor, tooltip);
+        DrawUtilities.DrawLevelIcon(level, viewport, map, icon, config.LeveQuestColor, config.IconScale, 50.0f);
+        if(config.ShowTooltip) DrawUtilities.DrawLevelTooltip(level, viewport, map, 50.0f, icon, config.TooltipColor, tooltip + $" :: {level.RowId}");
     }
 }

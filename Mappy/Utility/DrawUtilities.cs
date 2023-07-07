@@ -58,11 +58,11 @@ public partial class DrawUtilities
         DrawLevelIcon(level, iconId, map, scale);
     }
 
-    public static void DrawLevelTooltip(Vector2 position, float radius, Viewport viewport, Map map, float extraRadius, uint iconId, Vector4 color, string primaryText)
-        => DrawLevelTooltipInternal(position, radius, viewport, map, extraRadius, iconId, color, primaryText, string.Empty);
+    public static void DrawLevelTooltip(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, Vector4 color, string primaryText)
+        => DrawLevelTooltipInternal(position, radius, viewport, map, iconId, color, primaryText, string.Empty);
     
-    public static void DrawLevelTooltip(Vector2 position, float radius, Viewport viewport, Map map, float extraRadius, uint iconId, Vector4 color, string primaryText, string secondaryText)
-        => DrawLevelTooltipInternal(position, radius, viewport, map, extraRadius, iconId, color, primaryText, secondaryText);
+    public static void DrawLevelTooltip(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, Vector4 color, string primaryText, string secondaryText)
+        => DrawLevelTooltipInternal(position, radius, viewport, map, iconId, color, primaryText, secondaryText);
     
     public static void DrawLevelTooltip(Level level, Viewport viewport, Map map, float extraRadius, uint iconId, Vector4 color, string primaryText)
         => DrawLevelTooltipInternal(level, viewport, map, extraRadius, iconId, color, primaryText, string.Empty);
