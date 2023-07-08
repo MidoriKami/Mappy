@@ -158,7 +158,7 @@ Recommended to disable if using Chat2</value>
         <value>Game Integrations</value>
     </data>
     <data name="DisplayOptions" xml:space="preserve">
-        <value>DisplayOptions</value>
+        <value>Display Options</value>
     </data>
     <data name="ModuleColors" xml:space="preserve">
         <value>Module Colors</value>

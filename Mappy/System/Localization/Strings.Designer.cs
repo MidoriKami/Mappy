@@ -231,7 +231,7 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DisplayOptions.
+        ///   Looks up a localized string similar to Display Options.
         /// </summary>
         internal static string DisplayOptions {
             get {
