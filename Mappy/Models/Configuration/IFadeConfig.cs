@@ -4,7 +4,7 @@ using Mappy.Models.Enums;
 
 namespace Mappy.Models;
 
-[Category("FadeOptions", 3)]
+[Category("FadeOptions", 2)]
 public interface IFadeConfig
 {
     [EnumToggle("FadeMode")]

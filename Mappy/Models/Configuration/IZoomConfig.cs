@@ -2,7 +2,7 @@
 
 namespace Mappy.Models;
 
-[Category("ZoomOptions", 4)]
+[Category("ZoomOptions", 3)]
 public interface IZoomConfig
 {
     [BoolConfig("AllowZoomOnHover")]
