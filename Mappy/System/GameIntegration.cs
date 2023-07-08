@@ -35,6 +35,7 @@ public unsafe class GameIntegration : IDisposable
     private readonly Hook<ShowMapDelegate>? showHook;
     
     private bool integrationsEnabled;
+    private bool temporaryMarkerSet;
     
     public GameIntegration()
     {
@@ -126,6 +127,12 @@ public unsafe class GameIntegration : IDisposable
             ImGui.SetWindowFocus(mapWindow.WindowName);
             mapWindow.IsOpen = true;
             mapWindow.ProcessingCommand = true;
+            
+            if (temporaryMarkerSet && TemporaryMarkers.TempMapMarker is {} tempMarker)
+            {
+                tempMarker.MapID = mapInfo->MapId;
+                temporaryMarkerSet = false;
+            }
 
             var map = LuminaCache<Map>.Instance.GetRow(mapInfo->MapId)!;
 
@@ -235,19 +242,17 @@ public unsafe class GameIntegration : IDisposable
         }
         else
         {
-            if (MappySystem.MapTextureController is { Ready: true, CurrentMap: var map })
+            TemporaryMarkers.SetMarker(new TemporaryMapMarker
             {
-                TemporaryMarkers.SetMarker(new TemporaryMapMarker
-                {
-                    Type = MarkerType.Gathering,
-                    MapID = map.RowId,
-                    IconID = iconID,
-                    Radius = radius,
-                    Position = new Vector2(mapX, mapY),
-                    TooltipText = tooltip->ToString(),
-                });
-            }
+                Type = MarkerType.Gathering,
+                IconID = iconID,
+                Radius = radius,
+                Position = new Vector2(mapX, mapY),
+                TooltipText = tooltip->ToString(),
+            });
         }
-            
+
+        temporaryMarkerSet = true;
+
     }, "Exception during SetGatheringMarker");
 }
