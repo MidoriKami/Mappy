@@ -361,4 +361,19 @@ Recommended to disable if using Chat2</value>
     <data name="Fishing" xml:space="preserve">
         <value>Fishing</value>
     </data>
+    <data name="FadeOptions" xml:space="preserve">
+        <value>Fade Options</value>
+    </data>
+    <data name="ToolbarOptions" xml:space="preserve">
+        <value>Toolbar Options</value>
+    </data>
+    <data name="ZoomOptions" xml:space="preserve">
+        <value>Zoom Options</value>
+    </data>
+    <data name="IgnoreEscapeKey" xml:space="preserve">
+        <value>Ignore Escape Key</value>
+    </data>
+    <data name="IgnoreEscapeKeyHelp" xml:space="preserve">
+        <value>Prevents the escape key from closing the Map Window</value>
+    </data>
 </root>

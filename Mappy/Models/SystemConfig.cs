@@ -2,9 +2,8 @@
 
 namespace Mappy.Models;
 
-public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDisplayConfig
+public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDisplayConfig, IToolbarConfig, IZoomConfig, IFadeOptions
 {
-    // IWindowConfig
     public bool KeepOpen { get; set; } = true;
     public bool FollowPlayer { get; set; } = true;
     public bool CenterOnOpen { get; set; } = false;
@@ -16,12 +15,8 @@ public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDispl
     public bool AllowZoomOnHover { get; set; } = true;
     public float FadePercent { get; set; } = 0.60f;
     public float ZoomSpeed { get; set; } = 0.15f;
-    
-    // IGameIntegrationsConfig
     public bool EnableIntegrations  { get; set; } = true;
     public bool InsertFlagInChat  { get; set; } = true;
-    
-    // IWindowDisplayConfig
     public bool HideWithGameGui { get; set; } = true;
     public bool HideBetweenAreas { get; set; } = false;
     public bool HideInDuties { get; set; } = false;

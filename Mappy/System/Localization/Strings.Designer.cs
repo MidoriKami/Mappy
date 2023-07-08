@@ -294,6 +294,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fade Options.
+        /// </summary>
+        internal static string FadeOptions {
+            get {
+                return ResourceManager.GetString("FadeOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fade Opacity.
         /// </summary>
         internal static string FadePercent {
@@ -533,6 +542,24 @@ namespace Mappy.System.Localization {
         internal static string IconSelection {
             get {
                 return ResourceManager.GetString("IconSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ignore Escape Key.
+        /// </summary>
+        internal static string IgnoreEscapeKey {
+            get {
+                return ResourceManager.GetString("IgnoreEscapeKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prevents the escape key from closing the Map Window.
+        /// </summary>
+        internal static string IgnoreEscapeKeyHelp {
+            get {
+                return ResourceManager.GetString("IgnoreEscapeKeyHelp", resourceCulture);
             }
         }
         
@@ -1006,6 +1033,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Toolbar Options.
+        /// </summary>
+        internal static string ToolbarOptions {
+            get {
+                return ResourceManager.GetString("ToolbarOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tooltip Color.
         /// </summary>
         internal static string TooltipColor {
@@ -1074,6 +1110,15 @@ namespace Mappy.System.Localization {
         internal static string WindowOptions {
             get {
                 return ResourceManager.GetString("WindowOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zoom Options.
+        /// </summary>
+        internal static string ZoomOptions {
+            get {
+                return ResourceManager.GetString("ZoomOptions", resourceCulture);
             }
         }
         

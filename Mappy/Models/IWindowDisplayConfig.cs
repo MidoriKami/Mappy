@@ -2,7 +2,7 @@
 
 namespace Mappy.Models;
 
-[Category("DisplayOptions", 2)]
+[Category("DisplayOptions", 5)]
 public interface IWindowDisplayConfig
 {
     [BoolConfig("HideWithGameGui")] 
