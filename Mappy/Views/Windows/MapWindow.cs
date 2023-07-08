@@ -40,11 +40,11 @@ public unsafe class MapWindow : Window
         ImGuiWindowFlags.NoScrollWithMouse |
         ImGuiWindowFlags.NoDocking;
 
-    public const ImGuiWindowFlags NoDecorationFlags =
+    private const ImGuiWindowFlags NoDecorationFlags =
         ImGuiWindowFlags.NoDecoration |
         ImGuiWindowFlags.NoBackground;
 
-    public const ImGuiWindowFlags NoMoveResizeFlags =
+    private const ImGuiWindowFlags NoMoveResizeFlags =
         ImGuiWindowFlags.NoMove |
         ImGuiWindowFlags.NoResize;
     
