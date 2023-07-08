@@ -6,15 +6,14 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using KamiLib;
-using KamiLib.Atk;
 using KamiLib.Commands;
-using KamiLib.GameState;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.System;
 using Mappy.System.Modules;
 using Mappy.Utility;
 using Mappy.Views.Components;
+using Condition = KamiLib.GameState.Condition;
 using Node = KamiLib.Atk.Node;
 
 namespace Mappy.Views.Windows;
@@ -29,8 +28,6 @@ public unsafe class MapWindow : Window
     private Vector2 lastWindowSize = Vector2.Zero;
     private readonly MapToolbar toolbar;
     public bool ProcessingCommand;
-
-    public Vector2 MapContentsStart { get; private set; }
 
     private const ImGuiWindowFlags DefaultFlags = 
         ImGuiWindowFlags.NoFocusOnAppearing |
@@ -101,7 +98,7 @@ public unsafe class MapWindow : Window
         SetWindowFlags();
         ReadMouseInputs();
         
-        MapContentsStart = ImGui.GetCursorScreenPos();
+        Viewport.UpdateViewportStart(ImGui.GetCursorScreenPos());
         if (ImGui.BeginChild("###MapFrame", ImGui.GetContentRegionAvail(), false, Flags))
         {
             Viewport.UpdateSize();
@@ -218,9 +215,11 @@ public unsafe class MapWindow : Window
     
     private void ProcessContextMenu()
     {
+        if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
+        
         if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
         {
-            MappySystem.ContextMenuController.Show(ContextMenuType.General);
+            MappySystem.ContextMenuController.Show(ContextMenuType.General, Viewport, map);
         }
     }
     

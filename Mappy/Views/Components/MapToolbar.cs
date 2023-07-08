@@ -202,9 +202,9 @@ public class MapToolbar
 
         var cursorScreenPosition = ImGui.GetMousePos();
 
-        if (Bound.IsBoundedBy(cursorScreenPosition, mapWindow.MapContentsStart, mapWindow.MapContentsStart + mapWindow.Viewport.Size))
+        if (Bound.IsBoundedBy(cursorScreenPosition, mapWindow.Viewport.StartPosition, mapWindow.Viewport.StartPosition + mapWindow.Viewport.Size))
         {
-            var cursorPosition = Position.GetTexturePosition(ImGui.GetMousePos() - mapWindow.MapContentsStart, map, mapWindow.Viewport);
+            var cursorPosition = Position.GetTexturePosition(ImGui.GetMousePos() - mapWindow.Viewport.StartPosition, map, mapWindow.Viewport);
 
             var mapCoordinates = MapUtil.WorldToMap(cursorPosition, map);
 

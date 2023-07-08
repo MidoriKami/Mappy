@@ -71,14 +71,21 @@ public unsafe class TemporaryMarkers : ModuleBase
                 break;
         }
         
-        ShowContextMenu();
+        ShowContextMenu(viewport, map);
     }
 
-    private void ShowContextMenu()
+    private void ShowContextMenu(Viewport viewport, Map map)
     {
-        if (!ImGui.IsItemClicked(ImGuiMouseButton.Right)) return;
+        if (!ImGui.IsMouseClicked(ImGuiMouseButton.Right)) return;
+        if (TempMapMarker is null) return;
 
-        var contextType = TempMapMarker?.Type switch
+        var markerLocation = Position.GetTextureOffsetPosition(TempMapMarker.Position, map);
+        var markerScreePosition = markerLocation * viewport.Scale + viewport.StartPosition - viewport.Offset;
+        var cursorLocation = ImGui.GetMousePos();
+
+        if (Vector2.Distance(markerScreePosition, cursorLocation) > TempMapMarker.Radius * viewport.Scale) return;
+
+        var contextType = TempMapMarker.Type switch
         {
             MarkerType.Flag => ContextMenuType.Flag,
             MarkerType.Gathering => ContextMenuType.GatheringArea,
@@ -87,7 +94,7 @@ public unsafe class TemporaryMarkers : ModuleBase
             _ => ContextMenuType.Inactive
         };
         
-        MappySystem.ContextMenuController.Show(contextType);
+        MappySystem.ContextMenuController.Show(contextType, viewport, map);
     }
     
     private void DrawRing(Viewport viewport, Map map)

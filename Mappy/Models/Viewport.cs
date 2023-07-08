@@ -10,8 +10,10 @@ public class Viewport
     public Vector2 Size { get; set; } = new(2048.0f, 2048.0f);
     public Vector2 Offset => Center * Scale - Size / 2.0f;
     public float Scale { get; private set; } = 1.0f;
+    public Vector2 StartPosition { get; private set; } = Vector2.Zero;
 
     public void UpdateSize() => Size = ImGui.GetContentRegionAvail();
+    public void UpdateViewportStart(Vector2 position) => StartPosition = position; 
     public void MoveViewportCenter(Vector2 offset) => Center += offset / Scale;
     public void SetViewportCenter(Vector2 position) => Center = position;
     public void ZoomIn(float zoomAmount) => Scale = Math.Clamp(Scale += zoomAmount, 0.15f, 6.0f);

@@ -87,11 +87,9 @@ public partial class DrawUtilities
 
     private static void DrawLevelTooltipInternal(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, Vector4 color, string primaryText, string secondaryText)
     {
-        if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { MapContentsStart: var contentsStart }) return;
-
         iconId = iconId is 60492 or 60491 ? 060071 : iconId; // Replace nonexistent markers with our custom ? marker
         var levelTextureLocation = Position.GetTextureOffsetPosition(position, map);
-        var levelLocation = levelTextureLocation * viewport.Scale + contentsStart - viewport.Offset;
+        var levelLocation = levelTextureLocation * viewport.Scale + viewport.StartPosition - viewport.Offset;
         var cursorLocation = ImGui.GetMousePos();
 
         if (Vector2.Distance(levelLocation, cursorLocation) * viewport.Scale > radius * viewport.Scale) return;

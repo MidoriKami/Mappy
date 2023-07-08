@@ -2,6 +2,8 @@
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using KamiLib;
+using Lumina.Excel.GeneratedSheets;
+using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.System.Localization;
 using Mappy.System.Modules;
@@ -25,14 +27,11 @@ public class ContextMenuController
     private Vector2 clickPosition;
     private ContextMenuType menuType;
 
-    public void Show(ContextMenuType type)
+    public void Show(ContextMenuType type, Viewport viewport, Map map)
     {
-        if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { } mapWindow) return;
-        if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
-        
         menuType = type;
         
-        clickPosition = Position.GetTexturePosition(ImGui.GetMousePos() - mapWindow.MapContentsStart, map, mapWindow.Viewport);
+        clickPosition = Position.GetTexturePosition(ImGui.GetMousePos() - viewport.StartPosition, map, viewport);
     }
 
     public void Draw()
