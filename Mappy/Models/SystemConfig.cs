@@ -5,6 +5,7 @@ namespace Mappy.Models;
 public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDisplayConfig, IToolbarConfig, IZoomConfig, IFadeOptions
 {
     public bool KeepOpen { get; set; } = true;
+    public bool IgnoreEscapeKey { get; set; } = false;
     public bool FollowPlayer { get; set; } = true;
     public bool CenterOnOpen { get; set; } = false;
     public bool LockWindow { get; set; } = false;

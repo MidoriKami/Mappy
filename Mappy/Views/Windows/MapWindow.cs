@@ -154,6 +154,7 @@ public unsafe class MapWindow : Window
         if (MappySystem.SystemConfig.LockWindow) Flags |= NoMoveResizeFlags;
         if (MappySystem.SystemConfig.HideWindowFrame) Flags |= NoDecorationFlags;
         if (!Bound.IsCursorInWindowHeader()) Flags |= ImGuiWindowFlags.NoMove;
+        RespectCloseHotkey = !MappySystem.SystemConfig.IgnoreEscapeKey;
     }
 
     private void ReadMouseInputs()

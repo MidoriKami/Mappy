@@ -8,8 +8,8 @@ public interface IWindowConfig
     [BoolConfig("KeepOpen")]
     public bool KeepOpen { get; set; }
     
-    [BoolConfig("FollowPlayer")]
-    public bool FollowPlayer { get; set; }
+    [BoolConfig("IgnoreEscapeKey", "IgnoreEscapeKeyHelp")]
+    public bool IgnoreEscapeKey { get; set; }
     
     [BoolConfig("CenterOnOpen", "CenterOnOpenHelp")]
     public bool CenterOnOpen { get; set; }
