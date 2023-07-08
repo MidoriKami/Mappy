@@ -2,7 +2,7 @@
 
 namespace Mappy.Models;
 
-public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDisplayConfig, IToolbarConfig, IZoomConfig, IFadeOptions
+public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDisplayConfig, IToolbarConfig, IZoomConfig, IFadeConfig
 {
     public bool KeepOpen { get; set; } = true;
     public bool IgnoreEscapeKey { get; set; } = false;
