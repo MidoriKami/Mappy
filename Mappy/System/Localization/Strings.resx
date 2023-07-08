@@ -376,4 +376,7 @@ Recommended to disable if using Chat2</value>
     <data name="IgnoreEscapeKeyHelp" xml:space="preserve">
         <value>Prevents the escape key from closing the Map Window</value>
     </data>
+    <data name="CenterMap" xml:space="preserve">
+        <value>Center Map</value>
+    </data>
 </root>

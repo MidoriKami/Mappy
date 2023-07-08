@@ -24,6 +24,7 @@ public class MapToolbar
     private readonly DefaultIconSfxButton configurationButton;
     private readonly DefaultIconSfxButton openLockButton;
     private readonly DefaultIconSfxButton closeLockButton;
+    private readonly DefaultIconSfxButton centerMapButton;
 
     public MapToolbar(Window owner)
     {
@@ -100,6 +101,22 @@ public class MapToolbar
             TooltipText = Strings.HideAndLock,
             Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
         };
+
+        centerMapButton = new DefaultIconSfxButton
+        {
+            ClickAction = () =>
+            {
+                if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { Viewport: var viewport }) return;
+                
+                MappySystem.SystemConfig.FollowPlayer = false;
+
+                viewport.SetViewportCenter(new Vector2(1024.0f, 1024.0f));
+                viewport.SetViewportZoom(0.4f);
+            },
+            Label = FontAwesomeIcon.ArrowsToDot.ToIconString() + "##CloseLockButton",
+            TooltipText = Strings.CenterMap,
+            Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
+        };
     }
 
     public void Draw()
@@ -124,6 +141,8 @@ public class MapToolbar
                 ImGui.SameLine();
                 DrawRecenterOnPlayerWidget();
                 ImGui.SameLine();
+                DrawCenterMapWidget();
+                ImGui.SameLine();
                 MapSelect.DrawWidget();
                 ImGui.SameLine();
                 DrawConfigurationButton();
@@ -138,7 +157,7 @@ public class MapToolbar
             MapSelect.Draw();
         }
     }
-
+    
     private void DrawMapLayersWidget()
     {
         if (MappySystem.MapTextureController is not { Ready: true, MapLayers: var layers, CurrentMap: var map }) return;
@@ -172,16 +191,12 @@ public class MapToolbar
         if (followPlayer) ImGui.PopStyleColor();
     }
 
-    private void DrawRecenterOnPlayerWidget()
-    {
-        centerOnPlayerButton.Draw();
-    }
+    private void DrawRecenterOnPlayerWidget() => centerOnPlayerButton.Draw();
 
-    private void DrawConfigurationButton()
-    {
-        configurationButton.Draw();
-    }
-    
+    private void DrawCenterMapWidget() => centerMapButton.Draw();
+
+    private void DrawConfigurationButton() => configurationButton.Draw();
+
     private void DrawLockUnlockWidget()
     {
         if (MappySystem.SystemConfig.HideWindowFrame)

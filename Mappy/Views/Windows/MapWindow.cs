@@ -51,7 +51,7 @@ public unsafe class MapWindow : Window
         
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(470,200),
+            MinimumSize = new Vector2(495,200),
             MaximumSize = new Vector2(9999,9999)
         };
 

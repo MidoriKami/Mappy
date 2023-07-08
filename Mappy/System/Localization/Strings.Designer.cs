@@ -141,6 +141,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Center Map.
+        /// </summary>
+        internal static string CenterMap {
+            get {
+                return ResourceManager.GetString("CenterMap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Center on Open.
         /// </summary>
         internal static string CenterOnOpen {
