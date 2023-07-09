@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using System.Numerics;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using KamiLib.AutomaticUserInterface;
@@ -47,29 +46,9 @@ public unsafe class TemporaryMarkers : ModuleBase
         if (TempMapMarker is null) return;
         var config = GetConfig<TemporaryMarkersConfig>();
 
-        var iconId = TempMapMarker.IconID;
-        var rawPosition = TempMapMarker.Position;
-        var position = Position.GetTextureOffsetPosition(rawPosition, map);
-
-        switch (TempMapMarker.Type)
-        {
-            case MarkerType.Gathering:
-            case MarkerType.Quest:
-            case MarkerType.Command:
-                DrawRing(viewport, map);
-                break;
-        }
-       
-        if (GetConfig<TemporaryMarkersConfig>().ShowIcon) DrawUtilities.DrawIcon(iconId, position, config.IconScale);
-
-        switch (TempMapMarker.Type)
-        {
-            case MarkerType.Gathering:
-            case MarkerType.Quest:
-            case MarkerType.Command:
-                DrawTooltip(viewport, map);
-                break;
-        }
+        TempMapMarker.DrawRing(viewport, map, config.CircleColor);
+        if(config.ShowIcon) TempMapMarker.DrawIcon(map, config.IconScale);
+        if(config.ShowTooltip) TempMapMarker.DrawTooltip(viewport, map, config.TooltipColor);
         
         ShowContextMenu(viewport, map);
     }
@@ -95,32 +74,6 @@ public unsafe class TemporaryMarkers : ModuleBase
         };
         
         MappySystem.ContextMenuController.Show(contextType, viewport, map);
-    }
-    
-    private void DrawRing(Viewport viewport, Map map)
-    {
-        if (TempMapMarker is null) return;
-        
-        var config = GetConfig<TemporaryMarkersConfig>();
-
-        var markerPosition = Position.GetTextureOffsetPosition(TempMapMarker.Position, map);
-        var drawPosition = viewport.GetImGuiWindowDrawPosition(markerPosition);
-
-        var radius = TempMapMarker.Radius * viewport.Scale;
-        var color = ImGui.GetColorU32(config.CircleColor);
-        
-        ImGui.GetWindowDrawList().AddCircleFilled(drawPosition, radius, color);
-        ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, color, 0, 4);
-    }
-        
-    private void DrawTooltip(Viewport viewport, Map map)
-    {
-        if (TempMapMarker is null) return;
-        if (TempMapMarker.TooltipText.IsNullOrEmpty()) return;
-        
-        var config = GetConfig<TemporaryMarkersConfig>();
-        if (config.ShowTooltip && TempMapMarker.Radius < 5.0f) DrawUtilities.DrawTooltip(TempMapMarker.IconID, config.TooltipColor, TempMapMarker.TooltipText);
-        if (config.ShowTooltip && TempMapMarker.Radius >= 5.0f) DrawUtilities.DrawLevelTooltip(TempMapMarker.Position, TempMapMarker.Radius * viewport.Scale, viewport, map, TempMapMarker.IconID, config.TooltipColor, TempMapMarker.TooltipText);
     }
     
     public static void SetMarker(TemporaryMapMarker marker) => TempMapMarker = marker;
