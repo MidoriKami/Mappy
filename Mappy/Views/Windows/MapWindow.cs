@@ -51,7 +51,7 @@ public unsafe class MapWindow : Window
         
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(495,200),
+            MinimumSize = new Vector2(510,200),
             MaximumSize = new Vector2(9999,9999)
         };
 
@@ -93,6 +93,8 @@ public unsafe class MapWindow : Window
 
     public override void Draw()
     {
+        UpdateSizePosition();
+        
         if (MappySystem.MapTextureController is not { Ready: true, MapTexture: var texture, CurrentMap: var map }) return;
         
         SetWindowFlags();
@@ -120,6 +122,38 @@ public unsafe class MapWindow : Window
         UIModule.PlaySound(24u, 0, 0, 0);
 
         ProcessingCommand = false;
+    }
+    
+    private void UpdateSizePosition()
+    {
+        var systemConfig = MappySystem.SystemConfig;
+        var windowPosition = ImGui.GetWindowPos();
+        var windowSize = ImGui.GetWindowSize();
+        
+        if (windowPosition != systemConfig.WindowPosition && !IsFocused)
+        {
+            ImGui.SetWindowPos(systemConfig.WindowPosition);
+        }
+
+        if (windowSize != systemConfig.WindowSize && !IsFocused)
+        {
+            ImGui.SetWindowSize(systemConfig.WindowSize);
+        }
+
+        if (IsFocused)
+        {
+            if (systemConfig.WindowPosition != windowPosition)
+            {
+                systemConfig.WindowPosition = windowPosition;
+                MappyPlugin.System.SaveConfig();
+            }
+
+            if (systemConfig.WindowSize != windowSize)
+            {
+                systemConfig.WindowSize = windowSize;
+                MappyPlugin.System.SaveConfig();
+            }
+        }
     }
 
     private float GetFadePercent() => ShouldFade() ? 1.0f - MappySystem.SystemConfig.FadePercent : 1.0f;

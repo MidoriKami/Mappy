@@ -1015,7 +1015,7 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Teleporting to {0}..
+        ///   Looks up a localized string similar to Teleporting to {0}.
         /// </summary>
         internal static string TeleportingToLocation {
             get {
@@ -1119,6 +1119,24 @@ namespace Mappy.System.Localization {
         internal static string WindowOptions {
             get {
                 return ResourceManager.GetString("WindowOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Window Position.
+        /// </summary>
+        internal static string WindowPosition {
+            get {
+                return ResourceManager.GetString("WindowPosition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Window Size.
+        /// </summary>
+        internal static string WindowSize {
+            get {
+                return ResourceManager.GetString("WindowSize", resourceCulture);
             }
         }
         

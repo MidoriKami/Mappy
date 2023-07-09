@@ -1,12 +1,11 @@
 ﻿using Dalamud.Plugin;
 using KamiLib;
 using KamiLib.Commands;
-using Mappy;
 using Mappy.System;
 using Mappy.System.Localization;
 using Mappy.Views.Windows;
 
-namespace DailyDuty;
+namespace Mappy;
 
 public sealed class MappyPlugin : IDalamudPlugin
 {

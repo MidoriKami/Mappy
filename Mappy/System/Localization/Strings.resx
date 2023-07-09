@@ -236,7 +236,7 @@ Recommended to disable if using Chat2</value>
         <value>To use the teleport function, you must install the 'Teleporter' plugin</value>
     </data>
     <data name="TeleportingToLocation" xml:space="preserve">
-        <value>Teleporting to {0}.</value>
+        <value>Teleporting to {0}</value>
     </data>
     <data name="SearchForMap" xml:space="preserve">
         <value>Search for map</value>
@@ -378,5 +378,11 @@ Recommended to disable if using Chat2</value>
     </data>
     <data name="CenterMap" xml:space="preserve">
         <value>Center Map</value>
+    </data>
+    <data name="WindowPosition" xml:space="preserve">
+        <value>Window Position</value>
+    </data>
+    <data name="WindowSize" xml:space="preserve">
+        <value>Window Size</value>
     </data>
 </root>
