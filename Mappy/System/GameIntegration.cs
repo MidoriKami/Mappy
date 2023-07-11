@@ -122,7 +122,7 @@ public unsafe class GameIntegration : IDisposable
     {
         PluginLog.Debug("OpenMap");
 
-        if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is {} mapWindow)
+        if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is { Viewport: var viewport } mapWindow)
         {
             ImGui.SetWindowFocus(mapWindow.WindowName);
             mapWindow.IsOpen = true;
@@ -143,19 +143,22 @@ public unsafe class GameIntegration : IDisposable
                 case MapType.FlagMarker when TemporaryMarkers.TempMapMarker is { Type: MarkerType.Flag } flag:
                     MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
                     var flagPosition = Position.GetTextureOffsetPosition(flag.Position, map);
-                    mapWindow.Viewport.SetViewportCenter(flagPosition);
+                    viewport.SetViewportCenter(flagPosition);
+                    viewport.SetViewportZoom(1.0f);
                     break;
                 
                 case MapType.QuestLog when GetQuestLocation(mapInfo) is {} questLocation:
                     MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
                     var questPosition = Position.GetTextureOffsetPosition(questLocation, map);
-                    mapWindow.Viewport.SetViewportCenter(questPosition);
+                    viewport.SetViewportCenter(questPosition);
+                    viewport.SetViewportZoom(1.00f);
                     break;
                 
                 case MapType.GatheringLog when TemporaryMarkers.TempMapMarker is { Type: MarkerType.Gathering } area:
                     MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
                     var gatherAreaPosition = Position.GetTextureOffsetPosition(area.Position, map);
-                    mapWindow.Viewport.SetViewportCenter(gatherAreaPosition);
+                    viewport.SetViewportCenter(gatherAreaPosition);
+                    viewport.SetViewportZoom(0.50f);
                     break;
                 
                 default:
