@@ -80,7 +80,8 @@ public partial class DrawUtilities
     {
         var radius = GetLevelRingRadius(level, viewport, map, extraRadius);
         
-        DrawLevelTooltipInternal(new Vector2(level.X, level.Z), radius, viewport, map, iconId, color, primaryText + $" - {level.RowId}", secondaryText);
+        // DrawLevelTooltipInternal(new Vector2(level.X, level.Z), radius, viewport, map, iconId, color, primaryText + $" - {level.RowId}", secondaryText);
+        DrawLevelTooltipInternal(new Vector2(level.X, level.Z), radius, viewport, map, iconId, color, primaryText, secondaryText);
     }
 
     private static void DrawLevelTooltipInternal(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, Vector4 color, string primaryText, string secondaryText)
