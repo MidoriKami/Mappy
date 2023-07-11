@@ -82,15 +82,14 @@ public unsafe class MapWindow : Window
         if (MappySystem.MapTextureController is not { Ready: true, MapTexture: var texture, CurrentMap: var map }) return;
         
         SetWindowFlags();
-        ReadMouseInputs();
-        
+
         Viewport.UpdateViewportStart(ImGui.GetCursorScreenPos());
         if (ImGui.BeginChild("###MapFrame", ImGui.GetContentRegionAvail(), false, Flags))
         {
             Viewport.UpdateSize();
-            var scaledSize = new Vector2(texture.Width, texture.Height) * Viewport.Scale;
             
             Viewport.SetImGuiDrawPosition();
+            var scaledSize = new Vector2(texture.Width, texture.Height) * Viewport.Scale;
             ImGui.Image(texture.ImGuiHandle, scaledSize, Vector2.Zero, Vector2.One, Vector4.One with { W = GetFadePercent() });
 
             if (!toolbar.MapSelect.ShowMapSelectOverlay) MappySystem.ModuleController.Draw(Viewport, map);
@@ -99,6 +98,8 @@ public unsafe class MapWindow : Window
             MappySystem.ContextMenuController.Draw();
         }
         ImGui.EndChild();
+        
+        ReadMouseInputs();
     }
 
     public override void OnClose()
@@ -146,16 +147,15 @@ public unsafe class MapWindow : Window
     {
         foreach (var flag in Enum.GetValues<FadeMode>())
         {
-            if (MappySystem.SystemConfig.FadeMode.HasFlag(flag))
+            if (!MappySystem.SystemConfig.FadeMode.HasFlag(flag)) continue;
+            
+            switch (flag)
             {
-                switch (flag)
-                {
-                    case FadeMode.Always:
-                    case FadeMode.WhenFocused when KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is { IsFocused: true }:
-                    case FadeMode.WhenUnFocused when KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is { IsFocused: false }:
-                    case FadeMode.WhenMoving when AgentMap.Instance()->IsPlayerMoving == 1:
-                        return true;
-                }
+                case FadeMode.Always:
+                case FadeMode.WhenFocused when KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is { IsFocused: true }:
+                case FadeMode.WhenUnFocused when KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is { IsFocused: false }:
+                case FadeMode.WhenMoving when AgentMap.Instance()->IsPlayerMoving is 1:
+                    return true;
             }
         }
 
@@ -164,34 +164,31 @@ public unsafe class MapWindow : Window
 
     private void SetWindowFlags()
     {
-        Flags = DefaultFlags;
+        Flags = DrawFlags.DefaultFlags;
         
-        if (MappySystem.SystemConfig.LockWindow) Flags |= NoMoveResizeFlags;
-        if (MappySystem.SystemConfig.HideWindowFrame) Flags |= NoDecorationFlags;
+        if (MappySystem.SystemConfig.LockWindow) Flags |= DrawFlags.NoMoveResizeFlags;
+        if (MappySystem.SystemConfig.HideWindowFrame) Flags |= DrawFlags.NoDecorationFlags;
         if (!Bound.IsCursorInWindowHeader()) Flags |= ImGuiWindowFlags.NoMove;
         RespectCloseHotkey = !MappySystem.SystemConfig.IgnoreEscapeKey;
     }
 
     private void ReadMouseInputs()
     {
-        if (MappySystem.SystemConfig.AllowZoomOnHover && !IsFocused && Bound.IsCursorInWindow() && !ImGui.IsWindowFocused(ImGuiFocusedFlags.AnyWindow))
+        // Only allow Context, Zoom, an DragStart if cursor is over the map
+        if (Bound.IsCursorInWindow() && !Bound.IsCursorInWindowHeader())
         {
-            ProcessZoomChange();
-        }
-        
-        if (!ImGui.IsWindowFocused(ImGuiFocusedFlags.AnyWindow) || IsFocused)
-        {
-            // Only allow Context, Zoom, an DragStart if cursor is over the map
-            if (Bound.IsCursorInWindow() && !Bound.IsCursorInWindowHeader())
+            if (ImGui.IsItemHovered())
             {
                 ProcessContextMenu();
                 ProcessZoomChange();
-                ProcessMapDragStart();
             }
 
-            // Allow DragStop to be outside the map window
-            ProcessMapDragStop();
+            // Clicking to start a drag sets hovered to false
+            ProcessMapDragStart();
         }
+
+        // Allow DragStop to be outside the map window
+        ProcessMapDragStop();
     }
     
     private void ProcessMapDragStop()
@@ -202,15 +199,12 @@ public unsafe class MapWindow : Window
             Viewport.MoveViewportCenter(delta);
             mouseDragStart = ImGui.GetMousePos();
         }
-        else
+        else if (ImGui.IsMouseReleased(ImGuiMouseButton.Left))
         {
             dragStarted = false;
         }
 
-        if (dragStarted)
-        {
-            MappySystem.SystemConfig.FollowPlayer = false;
-        }
+        if (dragStarted) MappySystem.SystemConfig.FollowPlayer = false;
     }
 
     private void ProcessMapDragStart()
@@ -218,7 +212,7 @@ public unsafe class MapWindow : Window
         // Don't allow a drag to start if the window size is changing
         if (ImGui.GetWindowSize() == lastWindowSize)
         {
-            if (ImGui.IsMouseDown(ImGuiMouseButton.Left) && !dragStarted)
+            if (ImGui.IsItemClicked(ImGuiMouseButton.Left) && !dragStarted)
             {
                 mouseDragStart = ImGui.GetMousePos();
                 dragStarted = true;
@@ -234,11 +228,7 @@ public unsafe class MapWindow : Window
     private void ProcessContextMenu()
     {
         if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
-        
-        if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
-        {
-            MappySystem.ContextMenuController.Show(ContextMenuType.General, Viewport, map);
-        }
+        if (ImGui.IsMouseClicked(ImGuiMouseButton.Right)) MappySystem.ContextMenuController.Show(ContextMenuType.General, Viewport, map);
     }
     
     private void ProcessZoomChange()
