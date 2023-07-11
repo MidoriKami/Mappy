@@ -28,22 +28,6 @@ public unsafe class MapWindow : Window
     private Vector2 lastWindowSize = Vector2.Zero;
     private readonly MapToolbar toolbar;
     public bool ProcessingCommand;
-
-    private const ImGuiWindowFlags DefaultFlags = 
-        ImGuiWindowFlags.NoFocusOnAppearing |
-        ImGuiWindowFlags.NoNav |
-        ImGuiWindowFlags.NoBringToFrontOnFocus |
-        ImGuiWindowFlags.NoScrollbar |
-        ImGuiWindowFlags.NoScrollWithMouse |
-        ImGuiWindowFlags.NoDocking;
-
-    private const ImGuiWindowFlags NoDecorationFlags =
-        ImGuiWindowFlags.NoDecoration |
-        ImGuiWindowFlags.NoBackground;
-
-    private const ImGuiWindowFlags NoMoveResizeFlags =
-        ImGuiWindowFlags.NoMove |
-        ImGuiWindowFlags.NoResize;
     
     public MapWindow() : base("Mappy - Map Window")
     {
