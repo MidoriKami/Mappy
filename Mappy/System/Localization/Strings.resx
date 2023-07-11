@@ -108,15 +108,8 @@
     <data name="IntegrationsDescription" xml:space="preserve">
         <value>Replaces all of the games normal map functions with Mappy functions instead</value>
     </data>
-    <data name="InsertFlagInChat" xml:space="preserve">
-        <value>Insert &lt;flag&gt; in chat</value>
-    </data>
     <data name="PartyMembers" xml:space="preserve">
         <value>Party Members</value>
-    </data>
-    <data name="InsertFlagHelp" xml:space="preserve">
-        <value>When placing a flag on the map, insert &lt;flag&gt; into chat
-Recommended to disable if using Chat2</value>
     </data>
     <data name="HideBetweenAreas" xml:space="preserve">
         <value>Hide Between Areas</value>

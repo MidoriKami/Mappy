@@ -591,25 +591,6 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to When placing a flag on the map, insert &lt;flag&gt; into chat
-        ///Recommended to disable if using Chat2.
-        /// </summary>
-        internal static string InsertFlagHelp {
-            get {
-                return ResourceManager.GetString("InsertFlagHelp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Insert &lt;flag&gt; in chat.
-        /// </summary>
-        internal static string InsertFlagInChat {
-            get {
-                return ResourceManager.GetString("InsertFlagInChat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Instance Link Color.
         /// </summary>
         internal static string InstanceLinkColor {
