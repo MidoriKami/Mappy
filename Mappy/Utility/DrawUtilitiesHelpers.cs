@@ -56,6 +56,7 @@ public partial class DrawUtilities
     private static void DrawLevelIcon(Level level, uint iconId, Map map, float scale)
     {
         var position = Position.GetTextureOffsetPosition(new Vector2(level.X, level.Z), map);
+        iconId = TryReplaceIconId(iconId);
 
         DrawIcon(iconId, position, scale);
     }
@@ -86,7 +87,7 @@ public partial class DrawUtilities
 
     private static void DrawLevelTooltipInternal(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, Vector4 color, string primaryText, string secondaryText)
     {
-        iconId = iconId is 60492 or 60491 ? 060071 : iconId; // Replace nonexistent markers with our custom ? marker
+        iconId = TryReplaceIconId(iconId);
         var levelTextureLocation = Position.GetTextureOffsetPosition(position, map);
         var levelLocation = levelTextureLocation * viewport.Scale + viewport.StartPosition - viewport.Offset;
         var cursorLocation = ImGui.GetMousePos();
@@ -114,4 +115,10 @@ public partial class DrawUtilities
         
         ImGui.EndTooltip();
     }
+
+    private static uint TryReplaceIconId(uint iconId) => iconId switch
+    {
+        >= 60483 and <= 60494 => 60071,
+        _ => iconId,
+    };
 }
