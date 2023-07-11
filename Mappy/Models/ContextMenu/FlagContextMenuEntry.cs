@@ -19,13 +19,12 @@ public unsafe class FlagContextMenuEntry : IContextMenuEntry
     
     public void ClickAction(Vector2 clickPosition)
     {
-        if(MappySystem.MapTextureController is {Ready: true, CurrentMap: var map})
-        {
-            var agent = AgentMap.Instance();
-            agent->IsFlagMarkerSet = 0;
-            agent->SetFlagMapMarker(map.TerritoryType.Row, map.RowId, clickPosition.X, clickPosition.Y);
+        if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
+        
+        var agent = AgentMap.Instance();
+        agent->IsFlagMarkerSet = 0;
+        agent->SetFlagMapMarker(map.TerritoryType.Row, map.RowId, clickPosition.X, clickPosition.Y);
 
-            AgentChatLog.Instance()->InsertTextCommandParam(1048, false);
-        }
+        AgentChatLog.Instance()->InsertTextCommandParam(1048, false);
     }
 }
