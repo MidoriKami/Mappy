@@ -1,11 +1,10 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.Game.Housing;
-using ImGuiNET;
 using KamiLib.Caching;
 using KamiLib.Utilities;
 using Lumina.Excel;
@@ -32,18 +31,10 @@ public unsafe class Houses : ModuleBase
     public override ModuleName ModuleName => ModuleName.HousingMarkers;
     public override IModuleConfig Configuration { get; protected set; } = new HousingConfig();
     
-    private delegate uint GetPlotIconIdDelegate(HousingTerritory* outdoorTerritory, byte plotIndex);
-
-    [Signature("40 56 57 48 83 EC 38 0F B6 FA")]
-    private readonly GetPlotIconIdDelegate? getPlotIconId = null;
-
     private readonly ConcurrentBag<HousingMapMarkerInfo> housingMarkers = new();
-    private HousingLandSet? housingSizeInfo;
 
     private bool isHousingDistrict;
 
-    public Houses() => SignatureHelper.Initialise(this);
-    
     protected override bool ShouldDrawMarkers(Map map)
     {
         if (!isHousingDistrict) return false;
@@ -56,14 +47,11 @@ public unsafe class Houses : ModuleBase
         housingMarkers.Clear();
         isHousingDistrict = GetHousingDistrictID(mapData.Map) != uint.MaxValue;
 
-        if (isHousingDistrict)
+        if (!isHousingDistrict) return;
+
+        foreach (var marker in LuminaCache<HousingMapMarkerInfo>.Instance.Where(info => info.Map.Row == mapData.Map.RowId))
         {
-            foreach (var marker in LuminaCache<HousingMapMarkerInfo>.Instance.Where(info => info.Map.Row == mapData.Map.RowId))
-            {
-                housingMarkers.Add(marker);
-            }
-            
-            housingSizeInfo = LuminaCache<HousingLandSet>.Instance.GetRow(GetHousingDistrictID(mapData.Map));
+            housingMarkers.Add(marker);
         }
     });
 
@@ -74,75 +62,71 @@ public unsafe class Houses : ModuleBase
         foreach (var marker in housingMarkers)
         {
             if(config.ShowIcon) DrawHousingMapMarker(marker, map);
-            if(config.ShowTooltip) DrawTooltip(marker);
+            if(config.ShowTooltip) DrawTooltip(marker, map);
         }
     }
     
     private void DrawHousingMapMarker(HousingMapMarkerInfo marker, Map map)
     {
-        if (housingSizeInfo is null) return;
         var config = GetConfig<HousingConfig>();
-        var iconId = GetIconId(marker);
-
+        var iconId = GetIconId(marker, map);
         var position = Position.GetObjectPosition(new Vector2(marker.X, marker.Z), map);
 
         DrawUtilities.DrawIcon(iconId, position, config.IconScale + 0.15f);
     }
     
-    private uint GetIconId(ExcelRow marker)
+    private uint GetIconId(ExcelRow marker, ExcelRow map)
     {
-        if (housingSizeInfo is null) return 0;
-        uint iconId;
+        if (GetHousingLandSet(map) is not {} housingSizeInfo) return 0;
 
-        if (IsHousingManagerValid())
+        return marker.SubRowId switch
         {
-            iconId = GetIconID(marker.SubRowId switch
-            {
-                60 => 128,
-                61 => 129,
-                _ => marker.SubRowId
-            });
-        }
-        else
-        {
-            iconId = marker.SubRowId is 60 or 61 ? 60789 : GetIconID(housingSizeInfo.PlotSize[marker.SubRowId]);
-        }
-        return iconId;
-    }
-
-    private void DrawTooltip(ExcelRow marker)
-    {
-        if (!ImGui.IsItemHovered()) return;
-        if (marker.SubRowId is 60 or 61) return;
-        var config = GetConfig<HousingConfig>();    
-        
-        DrawUtilities.DrawTooltip(GetIconId(marker), config.TooltipColor, $"Plot {marker.SubRowId + 1, 2}");
-    }
-
-    private uint GetIconID(uint housingIndex)
-    {
-        if (!IsHousingManagerValid())
-        {
-            return housingSizeInfo?.PlotSize[housingIndex] switch
-            {
+            60 when IsHousingManagerValid() => (uint) HousingManager.Instance()->HousingOutdoorTerritory->GetPlotIcon(128),
+            61 when IsHousingManagerValid() => (uint) HousingManager.Instance()->HousingOutdoorTerritory->GetPlotIcon(129),
+            _  when IsHousingManagerValid() => (uint) HousingManager.Instance()->HousingOutdoorTerritory->GetPlotIcon((byte) marker.SubRowId),
+                
+            60 when !IsHousingManagerValid() => 60789,
+            61 when !IsHousingManagerValid() => 60789,
+            _ when !IsHousingManagerValid() => housingSizeInfo.PlotSize[marker.SubRowId] switch {
                 0 => 60754, // Small House
                 1 => 60755, // Medium House
                 2 => 60756, // Large House
                 _ => 60750  // Housing Placeholder Marker
-            };
-        }
+            },
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
 
-        return getPlotIconId?.Invoke(HousingManager.Instance()->OutdoorTerritory, (byte) housingIndex) ?? 0;
+    private void DrawTooltip(ExcelRow marker, ExcelRow map)
+    {
+        var config = GetConfig<HousingConfig>();
+
+        switch (marker.SubRowId)
+        {
+            case 60:
+                DrawUtilities.DrawTooltip(GetIconId(marker, map), config.TooltipColor, "Apartment");
+                break;
+
+            case 61:
+                DrawUtilities.DrawTooltip(GetIconId(marker, map), config.TooltipColor, "Apartment");
+                break;
+
+            default: 
+                DrawUtilities.DrawTooltip(GetIconId(marker, map), config.TooltipColor, $"Plot {marker.SubRowId + 1,2}");
+                break;
+        }
     }
 
     private bool IsHousingManagerValid()
     {
         if (HousingManager.Instance() is null) return false;
-        if (HousingManager.Instance()->OutdoorTerritory is null) return false;
+        if (HousingManager.Instance()->HousingOutdoorTerritory is null) return false;
 
         return true;
     }
 
+    private static HousingLandSet? GetHousingLandSet(ExcelRow map) => LuminaCache<HousingLandSet>.Instance.GetRow(GetHousingDistrictID(map));
+    
     private static uint GetHousingDistrictID(ExcelRow map) => map.RowId switch
     {
         72 or 192 => 0,
