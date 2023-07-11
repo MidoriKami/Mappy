@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using System.Numerics;
-using Dalamud.Logging;
 using ImGuiNET;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Utilities;
-using KamiLib.Windows;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;

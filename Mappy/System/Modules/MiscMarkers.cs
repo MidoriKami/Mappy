@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Utility;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
 using KamiLib.Utilities;

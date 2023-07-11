@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using System.Numerics;
-using DailyDuty;
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 using Dalamud.Utility;

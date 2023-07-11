@@ -1,5 +1,4 @@
-﻿using DailyDuty;
-using KamiLib.AutomaticUserInterface;
+﻿using KamiLib.AutomaticUserInterface;
 using KamiLib.Interfaces;
 using Mappy.System;
 using Mappy.System.Localization;

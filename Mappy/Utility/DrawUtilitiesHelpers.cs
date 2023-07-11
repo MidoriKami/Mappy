@@ -2,12 +2,9 @@
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Types;
 using ImGuiNET;
-using KamiLib;
 using KamiLib.Caching;
-using KamiLib.Windows;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
-using Mappy.Views.Windows;
 
 namespace Mappy.Utility;
 
