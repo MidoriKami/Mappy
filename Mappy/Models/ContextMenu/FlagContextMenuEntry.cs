@@ -25,10 +25,7 @@ public unsafe class FlagContextMenuEntry : IContextMenuEntry
             agent->IsFlagMarkerSet = 0;
             agent->SetFlagMapMarker(map.TerritoryType.Row, map.RowId, clickPosition.X, clickPosition.Y);
 
-            if (MappySystem.SystemConfig.InsertFlagInChat)
-            {
-                AgentChatLog.Instance()->InsertTextCommandParam(1048, false);
-            }
+            AgentChatLog.Instance()->InsertTextCommandParam(1048, false);
         }
     }
 }

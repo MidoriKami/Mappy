@@ -15,11 +15,10 @@ public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDispl
     public bool HideWindowFrame { get; set; } = false;
     public FadeMode FadeMode { get; set; } = FadeMode.WhenUnFocused | FadeMode.WhenMoving;
     public bool AlwaysShowToolbar { get; set; } = false;
-    public bool ShowToolbarOnHover { get; set; } = false;
+    public bool ShowToolbarOnHover { get; set; } = true;
     public float FadePercent { get; set; } = 0.60f;
     public float ZoomSpeed { get; set; } = 0.15f;
     public bool EnableIntegrations  { get; set; } = true;
-    public bool InsertFlagInChat  { get; set; } = true;
     public bool HideWithGameGui { get; set; } = true;
     public bool HideBetweenAreas { get; set; } = false;
     public bool HideInDuties { get; set; } = false;
