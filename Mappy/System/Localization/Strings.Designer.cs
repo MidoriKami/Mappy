@@ -132,6 +132,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Apartment.
+        /// </summary>
+        internal static string Apartment {
+            get {
+                return ResourceManager.GetString("Apartment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot teleport in this situation..
         /// </summary>
         internal static string CannotTeleport {
@@ -822,6 +831,15 @@ namespace Mappy.System.Localization {
         internal static string Player {
             get {
                 return ResourceManager.GetString("Player", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Plot.
+        /// </summary>
+        internal static string Plot {
+            get {
+                return ResourceManager.GetString("Plot", resourceCulture);
             }
         }
         

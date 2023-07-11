@@ -385,4 +385,10 @@ Recommended to disable if using Chat2</value>
     <data name="WindowSize" xml:space="preserve">
         <value>Window Size</value>
     </data>
+    <data name="Apartment" xml:space="preserve">
+        <value>Apartment</value>
+    </data>
+    <data name="Plot" xml:space="preserve">
+        <value>Plot</value>
+    </data>
 </root>

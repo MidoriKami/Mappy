@@ -12,6 +12,7 @@ using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;
+using Mappy.System.Localization;
 using Mappy.Utility;
 
 namespace Mappy.System.Modules;
@@ -104,15 +105,15 @@ public unsafe class Houses : ModuleBase
         switch (marker.SubRowId)
         {
             case 60:
-                DrawUtilities.DrawTooltip(GetIconId(marker, map), config.TooltipColor, "Apartment");
+                DrawUtilities.DrawTooltip(GetIconId(marker, map), config.TooltipColor, Strings.Apartment);
                 break;
 
             case 61:
-                DrawUtilities.DrawTooltip(GetIconId(marker, map), config.TooltipColor, "Apartment");
+                DrawUtilities.DrawTooltip(GetIconId(marker, map), config.TooltipColor, Strings.Apartment);
                 break;
 
-            default: 
-                DrawUtilities.DrawTooltip(GetIconId(marker, map), config.TooltipColor, $"Plot {marker.SubRowId + 1,2}");
+            default:
+                DrawUtilities.DrawTooltip(GetIconId(marker, map), config.TooltipColor, $"{Strings.Plot} {marker.SubRowId + 1}");
                 break;
         }
     }
