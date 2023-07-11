@@ -12,6 +12,7 @@ public partial class DrawUtilities
 {
     private static float GetRingScale(Map map) => map.SizeFactor switch
     {
+        95 => 9.25f,
         100 => 4.0f,
         200 => 1.60f,
         _ => 1.0f,
@@ -79,7 +80,7 @@ public partial class DrawUtilities
     {
         var radius = GetLevelRingRadius(level, viewport, map, extraRadius);
         
-        DrawLevelTooltipInternal(new Vector2(level.X, level.Z), radius, viewport, map, iconId, color, primaryText, secondaryText);
+        DrawLevelTooltipInternal(new Vector2(level.X, level.Z), radius, viewport, map, iconId, color, primaryText + $" - {level.RowId}", secondaryText);
     }
 
     private static void DrawLevelTooltipInternal(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, Vector4 color, string primaryText, string secondaryText)
