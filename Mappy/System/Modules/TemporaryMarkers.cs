@@ -1,13 +1,11 @@
 ﻿using System.Drawing;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using ImGuiNET;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
 using Mappy.Models.Enums;
-using Mappy.Utility;
 using ModuleBase = Mappy.Abstracts.ModuleBase;
 
 namespace Mappy.System.Modules;
@@ -50,30 +48,7 @@ public unsafe class TemporaryMarkers : ModuleBase
         if(config.ShowIcon) TempMapMarker.DrawIcon(map, config.IconScale);
         if(config.ShowTooltip) TempMapMarker.DrawTooltip(viewport, map, config.TooltipColor);
         
-        ShowContextMenu(viewport, map);
-    }
-
-    private void ShowContextMenu(Viewport viewport, Map map)
-    {
-        if (!ImGui.IsMouseClicked(ImGuiMouseButton.Right)) return;
-        if (TempMapMarker is null) return;
-
-        var markerLocation = Position.GetTextureOffsetPosition(TempMapMarker.Position, map);
-        var markerScreePosition = markerLocation * viewport.Scale + viewport.StartPosition - viewport.Offset;
-        var cursorLocation = ImGui.GetMousePos();
-
-        if (Vector2.Distance(markerScreePosition, cursorLocation) > TempMapMarker.Radius * viewport.Scale) return;
-
-        var contextType = TempMapMarker.Type switch
-        {
-            MarkerType.Flag => ContextMenuType.Flag,
-            MarkerType.Gathering => ContextMenuType.GatheringArea,
-            MarkerType.Command => ContextMenuType.Command,
-            MarkerType.Quest => ContextMenuType.Quest,
-            _ => ContextMenuType.Inactive
-        };
-        
-        MappySystem.ContextMenuController.Show(contextType, viewport, map);
+        TempMapMarker.ShowContextMenu(viewport, map);
     }
     
     public static void SetMarker(TemporaryMapMarker marker) => TempMapMarker = marker;

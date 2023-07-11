@@ -4,6 +4,7 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models.Enums;
+using Mappy.System;
 using Mappy.Utility;
 
 namespace Mappy.Models;
@@ -42,9 +43,37 @@ public class TemporaryMapMarker
 
     public void DrawTooltip(Viewport viewport, Map map, Vector4 tooltipColor)
     {
-        if (TooltipText.IsNullOrEmpty()) return; 
+        if (TooltipText.IsNullOrEmpty()) return;
+
+        DrawUtilities.DrawLevelTooltip(Position, Radius * viewport.Scale, viewport, map, IconID, tooltipColor, TooltipText);
+    }
+
+    public void ShowContextMenu(Viewport viewport, Map map)
+    {
+        // Markers that don't have area rings
+        if (Type is MarkerType.Flag)
+        {
+            if (!ImGui.IsItemHovered()) return;
+            
+            MappySystem.ContextMenuController.Show(ContextMenuType.Flag, viewport, map);
+        }
+        else // Markers that do have area rings
+        {
+            var markerLocation = Utility.Position.GetTextureOffsetPosition(Position, map);
+            var markerScreePosition = markerLocation * viewport.Scale + viewport.StartPosition - viewport.Offset;
+            var cursorLocation = ImGui.GetMousePos();
+            
+            if (Vector2.Distance(markerScreePosition, cursorLocation) > Radius * viewport.Scale) return;
+
+            var contextType = Type switch
+            {
+                MarkerType.Gathering => ContextMenuType.GatheringArea,
+                MarkerType.Command => ContextMenuType.Command,
+                MarkerType.Quest => ContextMenuType.Quest,
+                _ => ContextMenuType.Inactive
+            };
         
-        if (Radius < 5.0f) DrawUtilities.DrawTooltip(IconID, tooltipColor, TooltipText);
-        if (Radius >= 5.0f) DrawUtilities.DrawLevelTooltip(Position, Radius * viewport.Scale, viewport, map, IconID, tooltipColor, TooltipText);
+            MappySystem.ContextMenuController.Show(contextType, viewport, map);
+        }
     }
 }
