@@ -87,6 +87,8 @@ public partial class DrawUtilities
 
     private static void DrawLevelTooltipInternal(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, Vector4 color, string primaryText, string secondaryText)
     {
+        if (!Bound.IsCursorInWindow()) return;
+        
         iconId = TryReplaceIconId(iconId);
         var levelTextureLocation = Position.GetTextureOffsetPosition(position, map);
         var levelLocation = levelTextureLocation * viewport.Scale + viewport.StartPosition - viewport.Offset;
