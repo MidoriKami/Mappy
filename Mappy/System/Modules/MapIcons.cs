@@ -88,7 +88,7 @@ public class MapIcons : ModuleBase
             if (config.DisabledMarkers.Contains(marker.IconId)) continue;
             if (config.AetherytesOnTop && marker.Type is MapMarkerType.Aetheryte) continue;
             
-            if(config.ShowIcon) marker.Draw();
+            if (config.ShowIcon) marker.Draw();
         }
 
         if (config.AetherytesOnTop)
