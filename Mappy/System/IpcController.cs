@@ -135,7 +135,7 @@ public class IpcController : IDisposable
     // MarkerId               string        id of the marker to remove
     //
     // Returns whether the marker was successfully removed or not
-    private static ICallGateProvider<string, bool>? _removeArrowMarker;
+    private static ICallGateProvider<string, bool>? _removeLine;
 
     public static Dictionary<string, IpcMapMarker> Markers = new();
     public static Dictionary<string, IpcArrowMarker> LineMarkers = new();
@@ -148,7 +148,7 @@ public class IpcController : IDisposable
     // public ICallGateSubscriber<string, Vector2, bool>? UpdateMarkerIpcFunction = null;
     // public ICallGateSubscriber<Vector2, Vector2, uint, Vector4, float, string>? AddTextureLineIpcFunction = null;
     // public ICallGateSubscriber<Vector2, Vector2, uint, Vector4, float, string>? AddMapCoordLineIpcFunction = null;
-    // public ICallGateSubscriber<string, bool>? RemoveArrowMarkerIpcFunction = null;
+    // public ICallGateSubscriber<string, bool>? RemoveLineIpcFunction = null;
     // public ICallGateSubscriber<bool>? IsReadyIpcFunction = null;
 
     public IpcController()
@@ -161,7 +161,7 @@ public class IpcController : IDisposable
         // UpdateMarkerIpcFunction = Service.PluginInterface.GetIpcSubscriber<string, Vector2, bool>("Mappy.UpdateMarker");
         // AddTextureLineIpcFunction = Service.PluginInterface.GetIpcSubscriber<Vector2, Vector2, uint, Vector4, float, string>("Mappy.Texture.AddLine");
         // AddMapCoordLineIpcFunction = Service.PluginInterface.GetIpcSubscriber<Vector2, Vector2, uint, Vector4, float, string>("Mappy.MapCoord.AddLine");
-        // RemoveArrowMarkerIpcFunction = Service.PluginInterface.GetIpcSubscriber<string, bool>("Mappy.RemoveArrowMarker");
+        // RemoveLineIpcFunction = Service.PluginInterface.GetIpcSubscriber<string, bool>("Mappy.RemoveLine");
         // IsReadyIpcFunction = Service.PluginInterface.GetIpcSubscriber<bool>("Mappy.IsReady");
         
         _addWorldMarker = Service.PluginInterface.GetIpcProvider<uint, Vector2, uint, string, string, string>("Mappy.World.AddMarker");
@@ -171,7 +171,7 @@ public class IpcController : IDisposable
         _updateMarker = Service.PluginInterface.GetIpcProvider<string, Vector2, bool>("Mappy.UpdateMarker");
         _addTextureLine = Service.PluginInterface.GetIpcProvider<Vector2, Vector2, uint, Vector4, float, string>("Mappy.Texture.AddLine");
         _addMapCoordLine = Service.PluginInterface.GetIpcProvider<Vector2, Vector2, uint, Vector4, float, string>("Mappy.MapCoord.AddLine");
-        _removeArrowMarker = Service.PluginInterface.GetIpcProvider<string, bool>("Mappy.RemoveArrowMarker");
+        _removeLine = Service.PluginInterface.GetIpcProvider<string, bool>("Mappy.RemoveLine");
         _isReady = Service.PluginInterface.GetIpcProvider<bool>("Mappy.IsReady");
         
         _addWorldMarker.RegisterFunc(AddWorldMarker);
@@ -181,7 +181,7 @@ public class IpcController : IDisposable
         _updateMarker.RegisterFunc(UpdateMarker);
         _addTextureLine.RegisterFunc(AddTextureLine);
         _addMapCoordLine.RegisterFunc(AddMapCoordLine);
-        _removeArrowMarker.RegisterFunc(RemoveArrowMarker);
+        _removeLine.RegisterFunc(RemoveLine);
         _isReady.RegisterFunc(IsReady);
     }
 
@@ -205,7 +205,7 @@ public class IpcController : IDisposable
     }
     
     private static bool RemoveMarker(string markerId)
-        => Markers.Remove(markerId);
+        => LineMarkers.Remove(markerId) || Markers.Remove(markerId);
 
     private static unsafe string AddMapCoordLine(Vector2 start, Vector2 stop, uint mapId, Vector4 color, float thickness)
     {
@@ -247,8 +247,8 @@ public class IpcController : IDisposable
         }) ? newId : string.Empty;
     }
 
-    private static bool RemoveArrowMarker(string id)
-        => LineMarkers.Remove(id);
+    private static bool RemoveLine(string id) 
+        => LineMarkers.Remove(id) || Markers.Remove(id);
 
     private static bool IsReady() => MappySystem.MapTextureController is { Ready: true };
     
@@ -288,7 +288,7 @@ public class IpcController : IDisposable
         _updateMarker?.UnregisterFunc();
         _addTextureLine?.UnregisterFunc();
         _addMapCoordLine?.UnregisterFunc();
-        _removeArrowMarker?.UnregisterFunc();
+        _removeLine?.UnregisterFunc();
         _isReady?.UnregisterFunc();
     }
 }
