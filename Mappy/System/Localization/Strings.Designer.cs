@@ -879,7 +879,7 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove Gathering Area.
+        ///   Looks up a localized string similar to Remove Marked Area.
         /// </summary>
         internal static string RemoveGatheringArea {
             get {

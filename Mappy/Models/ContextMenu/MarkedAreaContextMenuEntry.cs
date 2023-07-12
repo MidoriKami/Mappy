@@ -6,16 +6,15 @@ using Mappy.System.Modules;
 
 namespace Mappy.Models.ContextMenu;
 
-public class FlagContextMenuEntry : IContextMenuEntry
+public class MarkedAreaContextMenuEntry : IContextMenuEntry
 {
     public bool Enabled => true;
+    public PopupMenuType Type => PopupMenuType.TempArea;
+
+    public string Label => Strings.RemoveGatheringArea;
     
-    public PopupMenuType Type => PopupMenuType.TempFlag;
-
-    public string Label => Strings.RemoveFlag;
-
     public void ClickAction(Vector2 clickPosition)
     {
-        TemporaryMarkers.RemoveFlagMarker();
+        TemporaryMarkers.RemoveGatheringMarker();
     }
 }

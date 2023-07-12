@@ -29,36 +29,37 @@ public unsafe class TemporaryMarkers : ModuleBase
     public override ModuleName ModuleName => ModuleName.TemporaryMarkers;
     public override IModuleConfig Configuration { get; protected set; } = new TemporaryMarkersConfig();
     
-    public static TemporaryMapMarker? TempMapMarker { get; private set; }
-
-    protected override bool ShouldDrawMarkers(Map map)
-    {
-        if (TempMapMarker is null) return false;
-        if (TempMapMarker.MapID != map.RowId) return false;
-        
-        return base.ShouldDrawMarkers(map);
-    }
+    public static TemporaryMapMarker? FlagMarker { get; private set; }
+    public static TemporaryMapMarker? GatheringMarker { get; private set; }
 
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
-        if (TempMapMarker is null) return;
         var config = GetConfig<TemporaryMarkersConfig>();
 
-        TempMapMarker.DrawRing(viewport, map, config.CircleColor);
-        if(config.ShowIcon) TempMapMarker.DrawIcon(map, config.IconScale);
-        if(config.ShowTooltip) TempMapMarker.DrawTooltip(viewport, map, config.TooltipColor);
-        
-        TempMapMarker.ShowContextMenu(viewport, map);
+        if (GatheringMarker is not null)
+        {
+            GatheringMarker.DrawRing(viewport, map, config.CircleColor);
+            if(config.ShowIcon) GatheringMarker.DrawIcon(map, config.IconScale);
+            if(config.ShowTooltip) GatheringMarker.DrawTooltip(viewport, map, config.TooltipColor);
+            GatheringMarker.ShowContextMenu(viewport, map);
+        }
+   
+        if (FlagMarker is not null)
+        {
+            FlagMarker.DrawRing(viewport, map, config.CircleColor);
+            if(config.ShowIcon) FlagMarker.DrawIcon(map, config.IconScale);
+            if(config.ShowTooltip) FlagMarker.DrawTooltip(viewport, map, config.TooltipColor);
+            FlagMarker.ShowContextMenu(viewport, map);
+        }
     }
     
-    public static void SetMarker(TemporaryMapMarker marker) => TempMapMarker = marker;
-    public static void RemoveMarker()
+    public static void SetFlagMarker(TemporaryMapMarker marker) => FlagMarker = marker;
+    public static void RemoveFlagMarker()
     {
-        if (TempMapMarker?.Type is MarkerType.Flag)
-        {
-            AgentMap.Instance()->IsFlagMarkerSet = 0;
-        }
-
-        TempMapMarker = null;
+        AgentMap.Instance()->IsFlagMarkerSet = 0;
+        FlagMarker = null;
     }
+    
+    public static void SetGatheringMarker(TemporaryMapMarker marker) => GatheringMarker = marker;
+    public static void RemoveGatheringMarker() => GatheringMarker = null;
 }

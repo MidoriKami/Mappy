@@ -35,7 +35,7 @@ public unsafe class GameIntegration : IDisposable
     private readonly Hook<ShowMapDelegate>? showHook;
     
     private bool integrationsEnabled;
-    private bool temporaryMarkerSet;
+    private bool temporaryGatheringMarkerSet;
     
     public GameIntegration()
     {
@@ -128,10 +128,10 @@ public unsafe class GameIntegration : IDisposable
             mapWindow.IsOpen = true;
             mapWindow.ProcessingCommand = true;
             
-            if (temporaryMarkerSet && TemporaryMarkers.TempMapMarker is {} tempMarker)
+            if (temporaryGatheringMarkerSet && TemporaryMarkers.GatheringMarker is {} tempMarker)
             {
                 tempMarker.MapID = mapInfo->MapId;
-                temporaryMarkerSet = false;
+                temporaryGatheringMarkerSet = false;
             }
 
             var map = LuminaCache<Map>.Instance.GetRow(mapInfo->MapId)!;
@@ -140,7 +140,7 @@ public unsafe class GameIntegration : IDisposable
             
             switch (mapInfo->Type)
             {
-                case MapType.FlagMarker when TemporaryMarkers.TempMapMarker is { Type: MarkerType.Flag } flag:
+                case MapType.FlagMarker when TemporaryMarkers.FlagMarker is { Type: MarkerType.Flag } flag:
                     MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
                     var flagPosition = Position.GetTextureOffsetPosition(flag.Position, map);
                     viewport.SetViewportCenter(flagPosition);
@@ -154,7 +154,7 @@ public unsafe class GameIntegration : IDisposable
                     viewport.SetViewportZoom(1.00f);
                     break;
                 
-                case MapType.GatheringLog when TemporaryMarkers.TempMapMarker is { Type: MarkerType.Gathering } area:
+                case MapType.GatheringLog when TemporaryMarkers.GatheringMarker is { Type: MarkerType.Gathering } area:
                     MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
                     var gatherAreaPosition = Position.GetTextureOffsetPosition(area.Position, map);
                     viewport.SetViewportCenter(gatherAreaPosition);
@@ -186,7 +186,7 @@ public unsafe class GameIntegration : IDisposable
             {
                 var levelLocation = new Vector2(issuerLocation.X, issuerLocation.Z);
                 
-                TemporaryMarkers.SetMarker(new TemporaryMapMarker
+                TemporaryMarkers.SetGatheringMarker(new TemporaryMapMarker
                 {
                     Position = levelLocation,
                     TooltipText = mapInfo->TitleString.ToString(),
@@ -216,7 +216,7 @@ public unsafe class GameIntegration : IDisposable
     {
         PluginLog.Debug($"SetFlagMarker : {mapX} {mapY}");
         
-        TemporaryMarkers.SetMarker( new TemporaryMapMarker
+        TemporaryMarkers.SetFlagMarker( new TemporaryMapMarker
         {
             Type = MarkerType.Flag,
             MapID = mapId,
@@ -233,7 +233,7 @@ public unsafe class GameIntegration : IDisposable
 
         if (AgentGatheringNote.Instance()->GatheringAreaInfo is not null)
         {
-            TemporaryMarkers.SetMarker(new TemporaryMapMarker
+            TemporaryMarkers.SetGatheringMarker(new TemporaryMapMarker
             {
                 Type = MarkerType.Gathering,
                 MapID = AgentGatheringNote.Instance()->GatheringAreaInfo->OpenMapInfo.MapId,
@@ -245,7 +245,7 @@ public unsafe class GameIntegration : IDisposable
         }
         else
         {
-            TemporaryMarkers.SetMarker(new TemporaryMapMarker
+            TemporaryMarkers.SetGatheringMarker(new TemporaryMapMarker
             {
                 Type = MarkerType.Gathering,
                 IconID = iconID,
@@ -255,7 +255,7 @@ public unsafe class GameIntegration : IDisposable
             });
         }
 
-        temporaryMarkerSet = true;
+        temporaryGatheringMarkerSet = true;
 
     }, "Exception during SetGatheringMarker");
 }

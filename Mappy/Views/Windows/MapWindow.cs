@@ -227,8 +227,7 @@ public unsafe class MapWindow : Window
     
     private void ProcessContextMenu()
     {
-        if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
-        if (ImGui.IsMouseClicked(ImGuiMouseButton.Right)) MappySystem.ContextMenuController.Show(ContextMenuType.General, Viewport, map);
+        if (ImGui.IsMouseClicked(ImGuiMouseButton.Right)) MappySystem.ContextMenuController.Show(PopupMenuType.AddMoveFlag);
     }
     
     private void ProcessZoomChange()
@@ -266,7 +265,7 @@ public unsafe class MapWindow : Window
             
             ImGui.SetWindowFocus(WindowName);
 
-            TemporaryMarkers.SetMarker(new TemporaryMapMarker
+            TemporaryMarkers.SetGatheringMarker(new TemporaryMapMarker
             {
                 Position = new Vector2(worldX, worldY) / (map.SizeFactor / 100.0f) - new Vector2(1024.0f, 1024.0f) / (map.SizeFactor / 100.0f),
                 TooltipText = "Goto Command",

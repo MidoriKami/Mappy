@@ -53,9 +53,9 @@ public class TemporaryMapMarker
         // Markers that don't have area rings
         if (Type is MarkerType.Flag)
         {
-            if (!ImGui.IsItemHovered()) return;
+            if (!ImGui.IsItemClicked(ImGuiMouseButton.Right)) return;
             
-            MappySystem.ContextMenuController.Show(ContextMenuType.Flag, viewport, map);
+            MappySystem.ContextMenuController.Show(PopupMenuType.TempFlag);
         }
         else // Markers that do have area rings
         {
@@ -64,16 +64,9 @@ public class TemporaryMapMarker
             var cursorLocation = ImGui.GetMousePos();
             
             if (Vector2.Distance(markerScreePosition, cursorLocation) > Radius * viewport.Scale) return;
+            if (!ImGui.IsMouseClicked(ImGuiMouseButton.Right)) return;
 
-            var contextType = Type switch
-            {
-                MarkerType.Gathering => ContextMenuType.GatheringArea,
-                MarkerType.Command => ContextMenuType.Command,
-                MarkerType.Quest => ContextMenuType.Quest,
-                _ => ContextMenuType.Inactive
-            };
-        
-            MappySystem.ContextMenuController.Show(contextType, viewport, map);
+            MappySystem.ContextMenuController.Show(PopupMenuType.TempArea);
         }
     }
 }

@@ -1,58 +1,58 @@
-﻿using System.Linq;
-using System.Numerics;
+﻿using System.Collections.Generic;
+using System.Linq;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
-using Mappy.Models;
 using Mappy.Models.ContextMenu;
-using Mappy.Utility;
+using Mappy.Models.Enums;
 
 namespace Mappy.System;
 
-public enum ContextMenuType
-{
-    Inactive,
-    General,
-    Flag,
-    GatheringArea,
-    Command,
-    Quest,
-}
-
 public class ContextMenuController
 {
-    private Vector2 clickPosition;
-    private ContextMenuType menuType;
-
-    private readonly IContextMenuEntry[] generalContextMenuEntries =
+    private readonly List<IContextMenuEntry> entries = new()
     {
         new FlagContextMenuEntry(),
-        new TemporaryMarkerContextMenuEntry(),
+        new MarkedAreaContextMenuEntry(),
+        new AddMoveFlagContextMenuEntry()
     };
 
-    public void Show(ContextMenuType type, Viewport viewport, Map map)
+    private readonly HashSet<PopupMenuType> activeTypes = new();
+
+    private bool wasWindowOpened;
+
+    
+    public void Show(PopupMenuType type)
     {
-        menuType = type;
-        
-        clickPosition = Position.GetTexturePosition(ImGui.GetMousePos() - viewport.StartPosition, map, viewport);
+        activeTypes.Add(type);
     }
 
     public void Draw()
     {
-        if (ImGui.BeginPopupContextWindow("###GeneralRightClickContext"))
+        if (ImGui.BeginPopupContextWindow())
         {
-            foreach (var contextMenuEntry in generalContextMenuEntries)
+            if (activeTypes.Count is 0)
             {
-                if (!contextMenuEntry.Visible) continue;
-                if (!contextMenuEntry.MenuTypes.Contains(menuType)) continue;
+                ImGui.CloseCurrentPopup();
+            }
+            else
+            {
+                wasWindowOpened = true;
 
-                if (ImGui.Selectable(contextMenuEntry.Label))
+                if (activeTypes.Contains(PopupMenuType.TempFlag)) activeTypes.Remove(PopupMenuType.AddMoveFlag);
+            
+                foreach (var entry in entries.Where(contextEntry => activeTypes.Contains(contextEntry.Type)))
                 {
-                    contextMenuEntry.ClickAction(clickPosition);
+                    entry.Draw();
                 }
             }
 
             ImGui.EndPopup();
+        }
+        
+        if (wasWindowOpened && !ImGui.IsPopupOpen(string.Empty, ImGuiPopupFlags.AnyPopup) && !ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+        {
+            activeTypes.Clear();
+            wasWindowOpened = false;
         }
     }
 }

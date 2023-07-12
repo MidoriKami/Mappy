@@ -214,7 +214,7 @@
         <value>Remove Flag</value>
     </data>
     <data name="RemoveGatheringArea" xml:space="preserve">
-        <value>Remove Gathering Area</value>
+        <value>Remove Marked Area</value>
     </data>
     <data name="CannotTeleport" xml:space="preserve">
         <value>Cannot teleport in this situation.</value>
