@@ -7,6 +7,7 @@ using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiScene;
 using KamiLib.Caching;
+using KamiLib.Hooking;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Utility;
 
@@ -46,24 +47,14 @@ public unsafe class MapTextureController : IDisposable
         }
     }
 
-    public void LoadMap(uint mapId)
-    {
-        if (CurrentMap?.RowId != mapId)
-        {
-            Task.Run(() => InternalLoadMap(mapId));
-        }
-    }
+    public Task? LoadMap(uint mapId) => CurrentMap?.RowId != mapId ? Task.Run(() => InternalLoadMap(mapId)) : null;
 
-    public void MoveMapToPlayer()
+    public Task? MoveMapToPlayer()
     {
         var agent = AgentMap.Instance();
-        if (agent is null) return;
-        if (this is not { Ready: true, CurrentMap: var map }) return;
+        if (agent is null) return null;
 
-        if (agent->CurrentMapId != map.RowId)
-        {
-            LoadMap(agent->CurrentMapId);
-        }
+        return LoadMap(agent->CurrentMapId);
     }
 
     private void InternalLoadMap(uint mapId) => Safety.ExecuteSafe(() =>
