@@ -54,8 +54,8 @@ public class MapMarkerData
     {
         if (!HasIcon) return;
         
-        DrawUtilities.DrawIconTexture(Icon, Position, settings.IconScale);
-        if(settings.ShowTooltip) DrawTooltip();
+        if (settings.ShowIcon) DrawUtilities.DrawIconTexture(Icon, Position, settings.IconScale);
+        if (settings.ShowTooltip) DrawTooltip();
         OnClick();
     }
 
@@ -68,7 +68,7 @@ public class MapMarkerData
         {
             if (!MiscIconNameCache.ContainsKey(IconId))
             {
-                if (LuminaCache<MapSymbol>.Instance.FirstOrDefault(symbol => symbol.Icon == IconId) is { PlaceName.Value.Name: { } name })
+                if (LuminaCache<MapSymbol>.Instance.FirstOrDefault(symbol => symbol.Icon == IconId) is { PlaceName.Value.Name.RawString: var name })
                 {
                     MiscIconNameCache.Add(IconId, name);
                 }
