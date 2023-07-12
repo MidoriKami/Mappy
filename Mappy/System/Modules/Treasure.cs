@@ -38,13 +38,13 @@ public class Treasure : ModuleBase
     {
         foreach (var obj in Service.ObjectTable)
         {
-            if(obj.ObjectKind != ObjectKind.Treasure) continue;
+            if (obj.ObjectKind != ObjectKind.Treasure) continue;
             var config = GetConfig<TreasureConfig>();
 
             if(!IsTargetable(obj)) continue;
             
-            if(config.ShowIcon) DrawUtilities.DrawGameObjectIcon(config.SelectedIcon, obj, map, config.IconScale);
-            if(config.ShowTooltip) DrawTooltip(obj);
+            if (config.ShowIcon) DrawUtilities.DrawGameObjectIcon(config.SelectedIcon, obj, map, config.IconScale);
+            if (config.ShowTooltip) DrawTooltip(obj);
         }
     }
     
@@ -53,7 +53,7 @@ public class Treasure : ModuleBase
         if (!ImGui.IsItemHovered()) return;
         var config = GetConfig<TreasureConfig>();
         
-        if (gameObject.Name.TextValue is { Length: > 0 } name)
+        if (gameObject is { Name.TextValue: { Length: > 0 } name })
         {
             DrawUtilities.DrawTooltip(config.SelectedIcon, config.TooltipColor, name);
         }
@@ -63,10 +63,10 @@ public class Treasure : ModuleBase
     {
         if (gameObject.Address == nint.Zero) return false;
 
-        if (Service.ClientState.LocalPlayer is not { } player) return false;
+        if (Service.ClientState.LocalPlayer is not { Position: var playerPosition } ) return false;
 
         // Limit height delta to 20yalms
-        if (Math.Abs(player.Position.Y - gameObject.Position.Y) < 15.0f)
+        if (Math.Abs(playerPosition.Y - gameObject.Position.Y) < 15.0f)
         {
             return gameObject.IsTargetable;
         }

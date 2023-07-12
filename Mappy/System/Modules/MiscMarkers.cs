@@ -94,7 +94,7 @@ public unsafe class MiscMarkers : ModuleBase
         var config = GetConfig<MiscConfig>();
         var position = Position.GetObjectPosition(new Vector2(levelData.X, levelData.Z), map);
         
-        DrawUtilities.DrawIcon(markerInfo.IconId, position, config.IconScale);
+        if(config.ShowIcon) DrawUtilities.DrawIcon(markerInfo.IconId, position, config.IconScale);
         if(config.ShowTooltip) DrawUtilities.DrawTooltip(markerInfo.IconId, config.TooltipColor, tooltip, secondaryTooltip ?? string.Empty);
     }
 }

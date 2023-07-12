@@ -29,7 +29,6 @@ public unsafe class Waymark : ModuleBase
     protected override bool ShouldDrawMarkers(Map map)
     {
         if (!IsPlayerInCurrentMap(map)) return false;
-        if (!GetConfig<WaymarkConfig>().ShowIcon) return false;
         
         return base.ShouldDrawMarkers(map);
     }
@@ -45,7 +44,7 @@ public unsafe class Waymark : ModuleBase
             {
                 var position = Position.GetObjectPosition(marker.Position, map);
                     
-                DrawUtilities.DrawIcon(GetIconForMarkerIndex(index), position, config.IconScale);
+                if(config.ShowIcon) DrawUtilities.DrawIcon(GetIconForMarkerIndex(index), position, config.IconScale);
             }
         }
     }
