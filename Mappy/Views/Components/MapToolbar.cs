@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Numerics;
+using System.Threading.Tasks;
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 using Dalamud.Utility;
@@ -16,7 +17,7 @@ namespace Mappy.Views.Components;
 public class MapToolbar
 {
     private readonly Window owner;
-    public MapSelectWidget MapSelect { get; } = new();
+    public MapSearchWidget MapSearch { get; } = new();
 
     private readonly DefaultIconSfxButton followPlayerButton;
     private readonly DefaultIconSfxButton centerOnPlayerButton;
@@ -33,9 +34,20 @@ public class MapToolbar
         {
             ClickAction = () =>
             {
-                MappySystem.MapTextureController.MoveMapToPlayer();
-                MappySystem.SystemConfig.FollowPlayer = !MappySystem.SystemConfig.FollowPlayer;
-                MappyPlugin.System.SaveConfig();
+                static void FollowPlayerFunction(Task? _)
+                {
+                    MappySystem.SystemConfig.FollowPlayer = !MappySystem.SystemConfig.FollowPlayer;
+                    MappyPlugin.System.SaveConfig();
+                }
+                
+                if (MappySystem.MapTextureController.MoveMapToPlayer() is { } validTask)
+                {
+                    validTask.ContinueWith(FollowPlayerFunction);
+                }
+                else // Player is already in the current map, follow immediately
+                {
+                    FollowPlayerFunction(null);
+                }
             },
             Label = FontAwesomeIcon.MapMarkerAlt.ToIconString() + "##FollowPlayerButton",
             TooltipText = Strings.FollowPlayer,
@@ -46,13 +58,22 @@ public class MapToolbar
         {
             ClickAction = () =>
             {
-                if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
-                
-                MappySystem.MapTextureController.MoveMapToPlayer();
-
-                if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is { } window && Service.ClientState.LocalPlayer is {} player)
+                static void CenterViewportFunction(Task? _)
                 {
-                    window.Viewport.SetViewportCenter(Position.GetObjectPosition(player.Position, map));
+                    if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { Viewport: var viewport }) return;
+                    if (Service.ClientState.LocalPlayer is not { Position: var playerPosition }) return;
+                    if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
+
+                    viewport.SetViewportCenter(Position.GetObjectPosition(playerPosition, map));
+                }
+
+                if (MappySystem.MapTextureController.MoveMapToPlayer() is { } validTask)
+                {
+                    validTask.ContinueWith(CenterViewportFunction);
+                }
+                else // Player is already in the current map, follow immediately
+                {
+                    CenterViewportFunction(null);
                 }
             },
             Label = FontAwesomeIcon.Crosshairs.ToIconString() + "##CenterOnPlayerButton",
@@ -120,7 +141,7 @@ public class MapToolbar
 
     public void Draw()
     {
-        if (!owner.IsFocused) MapSelect.ShowMapSelectOverlay = false;
+        if (!owner.IsFocused) MapSearch.ShowMapSelectOverlay = false;
 
         var hoverShow = MappySystem.SystemConfig.ShowToolbarOnHover && Bound.IsCursorInWindow();
         var alwaysShow = MappySystem.SystemConfig.AlwaysShowToolbar;
@@ -142,7 +163,7 @@ public class MapToolbar
                 ImGui.SameLine();
                 DrawCenterMapWidget();
                 ImGui.SameLine();
-                MapSelect.DrawWidget();
+                MapSearch.DrawWidget();
                 ImGui.SameLine();
                 DrawConfigurationButton();
                 ImGui.SameLine();
@@ -153,7 +174,7 @@ public class MapToolbar
             ImGui.EndChild();
             ImGui.PopStyleColor();
             
-            MapSelect.Draw();
+            MapSearch.Draw();
         }
     }
     
@@ -210,7 +231,7 @@ public class MapToolbar
     
     private void DrawCursorPosition()
     {
-        if (MapSelect.ShowMapSelectOverlay) return;
+        if (MapSearch.ShowMapSelectOverlay) return;
         if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
         if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not {} mapWindow) return;
 
