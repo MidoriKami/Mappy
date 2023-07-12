@@ -99,6 +99,8 @@ public partial class DrawUtilities
     
     private static void DrawTooltipInternal(uint iconId, uint secondIconId, Vector4 color, string primaryText, string secondaryText)
     {
+        if (ImGui.IsPopupOpen(string.Empty, ImGuiPopupFlags.AnyPopup)) return;
+        
         ImGui.BeginTooltip();
         
         if(iconId is not 0) DrawTooltipIcon(iconId);
