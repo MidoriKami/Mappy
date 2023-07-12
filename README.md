@@ -31,7 +31,7 @@ Each function is more thoroughly documented in the [IpcController](https://githu
     public ICallGateSubscriber<string, Vector2, bool>? UpdateMarkerIpcFunction = null;
     public ICallGateSubscriber<Vector2, Vector2, uint, Vector4, float, string>? AddTextureLineIpcFunction = null;
     public ICallGateSubscriber<Vector2, Vector2, uint, Vector4, float, string>? AddMapCoordLineIpcFunction = null;
-    public ICallGateSubscriber<string, bool>? RemoveArrowMarkerIpcFunction = null;
+    public ICallGateSubscriber<string, bool>? RemoveLineIpcFunction = null;
     public ICallGateSubscriber<bool>? IsReadyIpcFunction = null;
 ```
 
@@ -44,7 +44,7 @@ Each function is more thoroughly documented in the [IpcController](https://githu
         UpdateMarkerIpcFunction = Service.PluginInterface.GetIpcSubscriber<string, Vector2, bool>("Mappy.UpdateMarker");
         AddTextureLineIpcFunction = Service.PluginInterface.GetIpcSubscriber<Vector2, Vector2, uint, Vector4, float, string>("Mappy.Texture.AddLine");
         AddMapCoordLineIpcFunction = Service.PluginInterface.GetIpcSubscriber<Vector2, Vector2, uint, Vector4, float, string>("Mappy.MapCoord.AddLine");
-        RemoveArrowMarkerIpcFunction = Service.PluginInterface.GetIpcSubscriber<string, bool>("Mappy.RemoveArrowMarker");
+        RemoveLineIpcFunction = Service.PluginInterface.GetIpcSubscriber<string, bool>("Mappy.RemoveLine");
         IsReadyIpcFunction = Service.PluginInterface.GetIpcSubscriber<bool>("Mappy.IsReady");
 ```
 
