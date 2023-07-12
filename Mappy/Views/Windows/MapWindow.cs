@@ -92,7 +92,7 @@ public unsafe class MapWindow : Window
             var scaledSize = new Vector2(texture.Width, texture.Height) * Viewport.Scale;
             ImGui.Image(texture.ImGuiHandle, scaledSize, Vector2.Zero, Vector2.One, Vector4.One with { W = GetFadePercent() });
 
-            if (!toolbar.MapSelect.ShowMapSelectOverlay) MappySystem.ModuleController.Draw(Viewport, map);
+            if (!toolbar.MapSearch.ShowMapSelectOverlay) MappySystem.ModuleController.Draw(Viewport, map);
 
             toolbar.Draw();
             MappySystem.ContextMenuController.Draw();
@@ -174,6 +174,9 @@ public unsafe class MapWindow : Window
 
     private void ReadMouseInputs()
     {
+        // Disable while Searching
+        if (toolbar.MapSearch.ShowMapSelectOverlay) return;
+        
         // Only allow Context, Zoom, an DragStart if cursor is over the map
         if (Bound.IsCursorInWindow() && !Bound.IsCursorInWindowHeader())
         {

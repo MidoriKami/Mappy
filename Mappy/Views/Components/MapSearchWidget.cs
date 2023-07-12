@@ -13,7 +13,7 @@ using Mappy.Utility;
 
 namespace Mappy.Views.Components;
 
-public class MapSelectWidget
+public class MapSearchWidget
 {
     public bool ShowMapSelectOverlay { get; set; }
     
@@ -23,7 +23,7 @@ public class MapSelectWidget
 
     private readonly DefaultIconSfxButton mapSelectButton;
 
-    public MapSelectWidget()
+    public MapSearchWidget()
     {
         mapSelectButton = new DefaultIconSfxButton
         {
