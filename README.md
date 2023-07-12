@@ -56,6 +56,7 @@ Be sure to save the ID's of the generated markers so you can remove them when yo
         registeredMarkers.Add(AddMapCoordinateMarkerIpcFunction.InvokeFunc(60011, new Vector2(33.7f, 15.2f), 700, "TestMarker", "TestDescription\nWithMultiline"));
 ```
 
+Worth noting RemoveMarker and RemoveLine are interchangeable, both will clear any saved mark with the passed in ID.
 ```cs
         foreach (var registered in registeredMarkers)
         {
