@@ -65,13 +65,13 @@ public unsafe class MapTextureController : IDisposable
             LoadMap(agent->CurrentMapId);
         }
     }
-    
-    private void InternalLoadMap(uint mapId)
+
+    private void InternalLoadMap(uint mapId) => Safety.ExecuteSafe(() =>
     {
         CurrentMap = LuminaCache<Map>.Instance.GetRow(mapId)!;
-        
+
         PluginLog.Debug($"Loading Map: {mapId} - {CurrentMap.GetName()}");
-        
+
         MapLayers = Service.DataManager.GetExcelSheet<Map>()!
             .Where(eachMap => eachMap.PlaceName.Row == CurrentMap.PlaceName.Row)
             .Where(eachMap => eachMap.MapIndex != 0)
@@ -79,9 +79,9 @@ public unsafe class MapTextureController : IDisposable
             .ToList();
 
         MapLoaded?.Invoke(this, new MapData(CurrentMap));
-        
+
         MapTexture = MappySystem.PenumbraController.GetTexture(GetPathFromMap(CurrentMap))!;
-    }
+    });
     
     private static string GetPathFromMap(Map map)
     {
