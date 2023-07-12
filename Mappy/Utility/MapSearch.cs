@@ -35,7 +35,6 @@ public static class MapSearch
             .GroupBy(result => result.MapId)
             .Select(group => group.First());
     
-    
     private static IEnumerable<ISearchResult> MapResults(string searchTerms)
         => LuminaCache<Map>.Instance
             .Where(map => map is { MapIndex: 0 or 1, Hierarchy: 1, PlaceName.Value.RowId: not 0, IsEvent: false, PriorityUI: not 0 })
