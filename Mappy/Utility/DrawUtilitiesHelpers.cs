@@ -76,16 +76,15 @@ public partial class DrawUtilities
         DrawTooltipInternal(iconId, secondIconId, color, primaryText, secondaryText);
     }
 
-    // Note: LevelTooltips aren't allowed to have double icons
-    private static void DrawLevelTooltipInternal(Level level, Viewport viewport, Map map, float extraRadius, uint iconId, Vector4 color, string primaryText, string secondaryText)
+    private static void DrawLevelTooltipInternal(Level level, Viewport viewport, Map map, float extraRadius, uint iconId, uint secondIconId, Vector4 color, string primaryText, string secondaryText)
     {
         var radius = GetLevelRingRadius(level, viewport, map, extraRadius);
         
         // DrawLevelTooltipInternal(new Vector2(level.X, level.Z), radius, viewport, map, iconId, color, primaryText + $" - {level.RowId}", secondaryText);
-        DrawLevelTooltipInternal(new Vector2(level.X, level.Z), radius, viewport, map, iconId, color, primaryText, secondaryText);
+        DrawLevelTooltipInternal(new Vector2(level.X, level.Z), radius, viewport, map, iconId, secondIconId, color, primaryText, secondaryText);
     }
 
-    private static void DrawLevelTooltipInternal(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, Vector4 color, string primaryText, string secondaryText)
+    private static void DrawLevelTooltipInternal(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, uint secondIconId, Vector4 color, string primaryText, string secondaryText)
     {
         if (!Bound.IsCursorInWindow()) return;
         
@@ -95,7 +94,7 @@ public partial class DrawUtilities
         var cursorLocation = ImGui.GetMousePos();
 
         if (Vector2.Distance(levelLocation, cursorLocation) * viewport.Scale > radius * viewport.Scale) return;
-        DrawTooltipInternal(iconId, 0, color, primaryText, secondaryText);
+        DrawTooltipInternal(iconId, secondIconId, color, primaryText, secondaryText);
     }
     
     private static void DrawTooltipInternal(uint iconId, uint secondIconId, Vector4 color, string primaryText, string secondaryText)

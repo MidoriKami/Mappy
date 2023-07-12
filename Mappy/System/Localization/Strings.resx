@@ -384,4 +384,10 @@
     <data name="Plot" xml:space="preserve">
         <value>Plot</value>
     </data>
+    <data name="TimeRemaining" xml:space="preserve">
+        <value>Time Remaining</value>
+    </data>
+    <data name="Progress" xml:space="preserve">
+        <value>Progress</value>
+    </data>
 </root>

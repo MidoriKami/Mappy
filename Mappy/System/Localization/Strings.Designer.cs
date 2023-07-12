@@ -834,6 +834,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Progress.
+        /// </summary>
+        internal static string Progress {
+            get {
+                return ResourceManager.GetString("Progress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Quarrying.
         /// </summary>
         internal static string Quarrying {
@@ -1037,6 +1046,15 @@ namespace Mappy.System.Localization {
         internal static string TemporaryMarkers {
             get {
                 return ResourceManager.GetString("TemporaryMarkers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time Remaining.
+        /// </summary>
+        internal static string TimeRemaining {
+            get {
+                return ResourceManager.GetString("TimeRemaining", resourceCulture);
             }
         }
         

@@ -52,23 +52,35 @@ public partial class DrawUtilities
 
     public static void DrawLevelIcon(Level level, Viewport viewport, Map map, uint iconId, Vector4 color, float scale, float extraRadius)
     {
-        iconId = iconId is 60492 or 60491 ? 060071 : iconId; // Replace nonexistent markers with our custom ? marker
+        iconId = TryReplaceIconId(iconId);
         
         DrawLevelRing(level, viewport, map, color, extraRadius);
         DrawLevelIcon(level, iconId, map, scale);
     }
 
     public static void DrawLevelTooltip(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, Vector4 color, string primaryText)
-        => DrawLevelTooltipInternal(position, radius, viewport, map, iconId, color, primaryText, string.Empty);
+        => DrawLevelTooltipInternal(position, radius, viewport, map, iconId, 0, color, primaryText, string.Empty);
     
     public static void DrawLevelTooltip(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, Vector4 color, string primaryText, string secondaryText)
-        => DrawLevelTooltipInternal(position, radius, viewport, map, iconId, color, primaryText, secondaryText);
+        => DrawLevelTooltipInternal(position, radius, viewport, map, iconId, 0, color, primaryText, secondaryText);
     
     public static void DrawLevelTooltip(Level level, Viewport viewport, Map map, float extraRadius, uint iconId, Vector4 color, string primaryText)
-        => DrawLevelTooltipInternal(level, viewport, map, extraRadius, iconId, color, primaryText, string.Empty);
+        => DrawLevelTooltipInternal(level, viewport, map, extraRadius, iconId, 0, color, primaryText, string.Empty);
     
     public static void DrawLevelTooltip(Level level, Viewport viewport, Map map, float extraRadius, uint iconId, Vector4 color, string primaryText, string secondaryText)
-        => DrawLevelTooltipInternal(level, viewport, map, extraRadius, iconId, color, primaryText, secondaryText);
+        => DrawLevelTooltipInternal(level, viewport, map, extraRadius, iconId, 0, color, primaryText, secondaryText);
+    
+    public static void DrawLevelTooltip(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, uint secondIconId, Vector4 color, string primaryText)
+        => DrawLevelTooltipInternal(position, radius, viewport, map, iconId, secondIconId, color, primaryText, string.Empty);
+    
+    public static void DrawLevelTooltip(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, uint secondIconId, Vector4 color, string primaryText, string secondaryText)
+        => DrawLevelTooltipInternal(position, radius, viewport, map, iconId, secondIconId, color, primaryText, secondaryText);
+    
+    public static void DrawLevelTooltip(Level level, Viewport viewport, Map map, float extraRadius, uint iconId, uint secondIconId, Vector4 color, string primaryText)
+        => DrawLevelTooltipInternal(level, viewport, map, extraRadius, iconId, secondIconId, color, primaryText, string.Empty);
+    
+    public static void DrawLevelTooltip(Level level, Viewport viewport, Map map, float extraRadius, uint iconId, uint secondIconId, Vector4 color, string primaryText, string secondaryText)
+        => DrawLevelTooltipInternal(level, viewport, map, extraRadius, iconId, secondIconId, color, primaryText, secondaryText);
     
     public static void DrawIconRotated(uint iconId, GameObject gameObject, float iconScale)
     {
