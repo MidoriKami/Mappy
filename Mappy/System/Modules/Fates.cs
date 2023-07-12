@@ -5,11 +5,13 @@ using Dalamud.Game.ClientState.Fates;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using ImGuiNET;
 using KamiLib.AutomaticUserInterface;
+using KamiLib.Caching;
 using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;
+using Mappy.System.Localization;
 using Mappy.Utility;
 
 namespace Mappy.System.Modules;
@@ -73,10 +75,15 @@ public unsafe class Fates : ModuleBase
         var position = Position.GetObjectPosition(fate->Location, map);
 
         var mapIcon = *(uint*) ((byte*) fate + 0x760);
+        var isExpBonus = *(bool*) ((byte*) fate + 0x3C4);
+        var primaryLine = GetFatePrimaryTooltip(fate);
+        var secondaryLine = GetFateSecondaryTooltip(fate, isExpBonus);
         
         if (config.ShowRing) DrawRing(fate, viewport, map);
         if (config.ShowIcon) DrawUtilities.DrawIcon(mapIcon, position, config.IconScale);
-        if (config.ShowTooltip) DrawUtilities.DrawLevelTooltip(new Vector2(fate->Location.X, fate->Location.Z), fate->Radius * viewport.Scale, viewport, map, mapIcon, config.TooltipColor, GetFatePrimaryTooltip(fate), GetFateSecondaryTooltip(fate));
+        if (config.ShowTooltip && (fate->State is 7 || viewport.Scale <= 0.5f)) DrawUtilities.DrawTooltip(mapIcon, config.TooltipColor, primaryLine, secondaryLine);
+        if (config.ShowTooltip && (fate->State is not 7 && viewport.Scale > 0.5f)) DrawUtilities.DrawLevelTooltip(new Vector2(fate->Location.X, fate->Location.Z), fate->Radius * viewport.Scale, viewport, map, mapIcon, config.TooltipColor, primaryLine, secondaryLine);
+        if (config.ShowIcon && isExpBonus) DrawUtilities.DrawIcon(60934, position + new Vector2(16.0f, -16.0f) * config.IconScale / viewport.Scale, config.IconScale);
     }
 
     private void DrawRing(FateContext* fate, Viewport viewport, Map map)
@@ -107,7 +114,19 @@ public unsafe class Fates : ModuleBase
     }
     
     private string GetFatePrimaryTooltip(FateContext* fate) => $"Lv. {fate->Level} {fate->Name}";
-    private string GetFateSecondaryTooltip(FateContext* fate) => (FateState) fate->State != FateState.Running ? string.Empty : $"Time Remaining: {GetTimeFormatted(GetTimeRemaining(fate))}\nProgress: {fate->Progress,3}%%";
+    private string GetFateSecondaryTooltip(FateContext* fate, bool isExpBonus)
+    {
+        if ((FateState) fate->State != FateState.Running) return isExpBonus ? LuminaCache<Addon>.Instance.GetRow(3921)!.Text.RawString : string.Empty;
+
+        var baseString = $"{Strings.TimeRemaining}: {GetTimeFormatted(GetTimeRemaining(fate))}\n{Strings.Progress}: {fate->Progress,3}%%";
+
+        if (isExpBonus)
+        {
+            baseString += $"\n{LuminaCache<Addon>.Instance.GetRow(3921)!.Text.RawString}";
+        }
+
+        return baseString;
+    }
 
     private TimeSpan GetTimeRemaining(FateContext* fate)
     {
