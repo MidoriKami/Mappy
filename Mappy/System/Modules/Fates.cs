@@ -72,9 +72,11 @@ public unsafe class Fates : ModuleBase
         var config = GetConfig<FateConfig>();
         var position = Position.GetObjectPosition(fate->Location, map);
 
+        var mapIcon = *(uint*) ((byte*) fate + 0x760);
+        
         if (config.ShowRing) DrawRing(fate, viewport, map);
-        if (config.ShowIcon) DrawUtilities.DrawIcon(fate->IconId, position, config.IconScale);
-        if (config.ShowTooltip) DrawUtilities.DrawLevelTooltip(new Vector2(fate->Location.X, fate->Location.Z), fate->Radius * viewport.Scale, viewport, map, fate->IconId, config.TooltipColor, GetFatePrimaryTooltip(fate), GetFateSecondaryTooltip(fate));
+        if (config.ShowIcon) DrawUtilities.DrawIcon(mapIcon, position, config.IconScale);
+        if (config.ShowTooltip) DrawUtilities.DrawLevelTooltip(new Vector2(fate->Location.X, fate->Location.Z), fate->Radius * viewport.Scale, viewport, map, mapIcon, config.TooltipColor, GetFatePrimaryTooltip(fate), GetFateSecondaryTooltip(fate));
     }
 
     private void DrawRing(FateContext* fate, Viewport viewport, Map map)
