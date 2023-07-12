@@ -82,7 +82,7 @@ public unsafe class Fates : ModuleBase
         if (config.ShowRing) DrawRing(fate, viewport, map);
         if (config.ShowIcon) DrawUtilities.DrawIcon(mapIcon, position, config.IconScale);
         if (config.ShowTooltip && (fate->State is 7 || viewport.Scale <= 0.5f)) DrawUtilities.DrawTooltip(mapIcon, config.TooltipColor, primaryLine, secondaryLine);
-        if (config.ShowTooltip && (fate->State is not 7 && viewport.Scale > 0.5f)) DrawUtilities.DrawLevelTooltip(new Vector2(fate->Location.X, fate->Location.Z), fate->Radius * viewport.Scale, viewport, map, mapIcon, config.TooltipColor, primaryLine, secondaryLine);
+        if (config.ShowTooltip && (fate->State is not 7 && viewport.Scale > 0.5f)) DrawUtilities.DrawLevelTooltip(new Vector2(fate->Location.X, fate->Location.Z), fate->Radius, viewport, map, mapIcon, config.TooltipColor, primaryLine, secondaryLine);
         if (config.ShowIcon && isExpBonus) DrawUtilities.DrawIcon(60934, position + new Vector2(16.0f, -16.0f) * config.IconScale / viewport.Scale, config.IconScale);
     }
 

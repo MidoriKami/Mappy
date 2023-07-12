@@ -45,7 +45,7 @@ public class TemporaryMapMarker
     {
         if (TooltipText.IsNullOrEmpty()) return;
 
-        DrawUtilities.DrawLevelTooltip(Position, Radius * viewport.Scale, viewport, map, IconID, tooltipColor, TooltipText);
+        DrawUtilities.DrawLevelTooltip(Position, Radius, viewport, map, IconID, tooltipColor, TooltipText);
     }
 
     public void ShowContextMenu(Viewport viewport, Map map)
