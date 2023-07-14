@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Numerics;
 using ImGuiNET;
 using KamiLib;
@@ -9,7 +10,7 @@ using Mappy.Views.Windows;
 
 namespace Mappy.Abstracts;
 
-public interface ISearchResult
+public interface ISearchResult : IEquatable<ISearchResult>
 {
     string Label { get; set; }
     string SubLabel { get; set; }
@@ -18,6 +19,15 @@ public interface ISearchResult
     float MapZoom { get; set; }
     uint MapId { get; set; }
 
+    bool IEquatable<ISearchResult>.Equals(ISearchResult? other)
+    {
+        if (other is null) return false;
+        if (other.Label != Label) return false;
+        if (other.MapId != MapId) return false;
+
+        return true;
+    }
+    
     bool DrawEntry()
     {
         if (IconCache.Instance.GetIcon(IconId) is not { } icon) return false;
