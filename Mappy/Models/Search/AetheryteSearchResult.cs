@@ -18,7 +18,6 @@ public class AetheryteSearchResult : ISearchResult
     public AetheryteSearchResult(uint mapMarkerId, uint subRowId)
     {
         if (LuminaCache<MapMarker>.Instance.GetRow(mapMarkerId, subRowId) is not {
-                PlaceNameSubtext.Value.Name.RawString: var aetheryteName, 
                 Icon: var iconId,
                 X: var xPos,
                 Y: var yPos,
@@ -28,8 +27,10 @@ public class AetheryteSearchResult : ISearchResult
         if (LuminaCache<Aetheryte>.Instance.GetRow(aetheryteId) is not
             {
                 Map.Row: var mapId, 
-                PlaceName.Value.Name.RawString: var mapName
+                PlaceName.Value.Name.RawString: var aetheryteName
             }) throw new Exception("Invalid Aetheryte Entry");
+
+        if (LuminaCache<Map>.Instance.GetRow(mapId) is not { PlaceName.Value.Name.RawString: var mapName }) throw new Exception("Invalid Map Entry");
         
         Label = aetheryteName;
         SubLabel = mapName;
