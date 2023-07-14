@@ -36,7 +36,7 @@ public unsafe class TemporaryMarkers : ModuleBase
     {
         var config = GetConfig<TemporaryMarkersConfig>();
 
-        if (GatheringMarker is not null)
+        if (GatheringMarker is not null && GatheringMarker.MapID == map.RowId)
         {
             GatheringMarker.DrawRing(viewport, map, config.CircleColor);
             if(config.ShowIcon) GatheringMarker.DrawIcon(map, config.IconScale);
@@ -44,7 +44,7 @@ public unsafe class TemporaryMarkers : ModuleBase
             GatheringMarker.ShowContextMenu(viewport, map);
         }
    
-        if (FlagMarker is not null)
+        if (FlagMarker is not null && FlagMarker.MapID == map.RowId)
         {
             FlagMarker.DrawRing(viewport, map, config.CircleColor);
             if(config.ShowIcon) FlagMarker.DrawIcon(map, config.IconScale);
