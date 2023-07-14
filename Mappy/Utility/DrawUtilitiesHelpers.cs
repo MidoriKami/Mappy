@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Utility;
 using ImGuiNET;
 using KamiLib.Caching;
 using Lumina.Excel.GeneratedSheets;
@@ -100,6 +101,7 @@ public partial class DrawUtilities
     private static void DrawTooltipInternal(uint iconId, uint secondIconId, Vector4 color, string primaryText, string secondaryText)
     {
         if (ImGui.IsPopupOpen(string.Empty, ImGuiPopupFlags.AnyPopup)) return;
+        if (primaryText.IsNullOrEmpty() && secondaryText.IsNullOrEmpty()) return;
         
         ImGui.BeginTooltip();
         
@@ -108,8 +110,8 @@ public partial class DrawUtilities
 
         var cursorPosition = ImGui.GetCursorPos();
         
-        if(primaryText != string.Empty) ImGui.TextColored(color, primaryText);
-        if (secondaryText != string.Empty)
+        if(!primaryText.IsNullOrEmpty()) ImGui.TextColored(color, primaryText);
+        if (!secondaryText.IsNullOrEmpty())
         {
             ImGui.SameLine();
             ImGui.SetCursorPos(cursorPosition with { Y = ImGui.GetCursorPos().Y + 5.0f } );
