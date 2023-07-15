@@ -71,33 +71,16 @@ public unsafe class Quest : ModuleBase
     {
         var mapData = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
 
-        DebugWindow.Print($"MapDataAddress: {new nint(mapData):X8}");
-        
         foreach (var quest in mapData->QuestDataSpan)
         {
             foreach (var questInfo in quest.MarkerData.Span)
             {
-                DebugWindow.Print($"QuestMarker: {questInfo.ObjectiveId} : {questInfo.TooltipString->ToString()}");
-
                 if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap }) continue;
                 if (levelMap != map.RowId) continue;
                 
                 DrawRegularObjective(questInfo, quest.Label.ToString(), viewport, map);
             }
         }
-
-        // foreach (var quest in mapData->QuestMarkerData.GetAllMarkers())
-        // {
-        //     foreach (var marker in quest.MarkerData.Span)
-        //     {
-        //         DebugWindow.Print($"QuestMarker: {marker.ObjectiveId} : {marker.TooltipString->ToString()}");
-        //         
-        //         if (LuminaCache<Level>.Instance.GetRow(marker.LevelId) is not { Map.Row: var levelMap }) continue;
-        //         if (levelMap != map.RowId) continue;
-        //         
-        //         DrawRegularObjective(marker, quest.Label.ToString(), viewport, map);
-        //     }
-        // }
     }
     
     private void DrawUnacceptedQuests(Viewport viewport, Map map)
