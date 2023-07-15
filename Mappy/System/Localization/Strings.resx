@@ -244,10 +244,10 @@
         <value>Settings</value>
     </data>
     <data name="ShowAndUnlock" xml:space="preserve">
-        <value>Show and Unlock</value>
+        <value>Show Frame and Unlock Window</value>
     </data>
     <data name="HideAndLock" xml:space="preserve">
-        <value>Hide and Unlock</value>
+        <value>Hide Frame and Lock Window </value>
     </data>
     <data name="General" xml:space="preserve">
         <value>General</value>

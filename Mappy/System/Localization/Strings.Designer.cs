@@ -456,7 +456,7 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hide and Unlock.
+        ///   Looks up a localized string similar to Hide Frame and Lock Window .
         /// </summary>
         internal static string HideAndLock {
             get {
@@ -924,7 +924,7 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show and Unlock.
+        ///   Looks up a localized string similar to Show Frame and Unlock Window.
         /// </summary>
         internal static string ShowAndUnlock {
             get {
