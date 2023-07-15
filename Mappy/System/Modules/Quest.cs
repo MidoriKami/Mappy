@@ -74,10 +74,10 @@ public unsafe class Quest : ModuleBase
         {
             foreach (var questInfo in quest.MarkerData.Span)
             {
-                if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap } levelData ) continue;
+                if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap }) continue;
                 if (levelMap != map.RowId) continue;
                 
-                DrawRegularObjective(questInfo.IconId, quest.Label.ToString(), levelData, viewport, map);
+                DrawRegularObjective(questInfo, quest.Label.ToString(), viewport, map);
             }
         }
     }
@@ -90,10 +90,10 @@ public unsafe class Quest : ModuleBase
         {
             foreach (var markerData in markerInfo.MarkerData.Span)
             {
-                if (LuminaCache<Level>.Instance.GetRow(markerData.LevelId) is not { Map.Row: var levelMap} levelData) continue;
+                if (LuminaCache<Level>.Instance.GetRow(markerData.LevelId) is not { Map.Row: var levelMap}) continue;
                 if (levelMap != map.RowId) continue;
 
-                DrawRegularObjective(markerData.IconId, $"Lv. {markerData.RecommendedLevel} {markerData.TooltipString->ToString()}", levelData, viewport, map);
+                DrawRegularObjective(markerData, $"Lv. {markerData.RecommendedLevel} {markerData.TooltipString->ToString()}", viewport, map);
             }
         }
     }
@@ -107,19 +107,19 @@ public unsafe class Quest : ModuleBase
             foreach (var questInfo in quest.MarkerData.Span)
             {
                 if (FindLevework(quest.ObjectiveId) is not { Flags: not 32 } ) continue;
-                if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap } levelData ) continue;
+                if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap } ) continue;
                 if (levelMap != map.RowId) continue;
                 
-                DrawLeveObjective(questInfo.IconId, quest.Label.ToString(), levelData, viewport, map);
+                DrawLeveObjective(questInfo, quest.Label.ToString(), viewport, map);
             }
         }
         
         foreach (var markerInfo in mapData->ActiveLevequestMarkerData.Span)
         {
-            if(LuminaCache<Level>.Instance.GetRow(markerInfo.LevelId) is not { Map.Row: var levelMap } levelData ) continue;
+            if(LuminaCache<Level>.Instance.GetRow(markerInfo.LevelId) is not { Map.Row: var levelMap } ) continue;
             if(levelMap != map.RowId) continue;
             
-            DrawLeveObjective(markerInfo.IconId, markerInfo.TooltipString->ToString(), levelData, viewport, map);
+            DrawLeveObjective(markerInfo, markerInfo.TooltipString->ToString(), viewport, map);
         }
     }
 
@@ -132,22 +132,20 @@ public unsafe class Quest : ModuleBase
 
         return null;
     }
-
-    private void DrawRegularObjective(uint icon, string tooltip, Level level, Viewport viewport, Map map)
-    {
-        var config = GetConfig<QuestConfig>();
-        
-        DrawUtilities.DrawLevelIcon(level, viewport, map, icon, config.InProgressColor, config.IconScale, 0.0f);
-        
-        if(config.ShowTooltip && level.Radius < 5.0f) DrawUtilities.DrawTooltip(icon, config.TooltipColor, tooltip);
-        if(config.ShowTooltip && level.Radius >= 5.0f) DrawUtilities.DrawLevelTooltip(level, viewport, map, 0.0f, icon, config.TooltipColor, tooltip);
-    }
     
-    private void DrawLeveObjective(uint icon, string tooltip, Level level, Viewport viewport, Map map)
+    private void DrawRegularObjective(MapMarkerData marker, string tooltip, Viewport viewport, Map map)
+        => DrawObjective(marker, tooltip, viewport, map, GetConfig<QuestConfig>().InProgressColor);
+    
+    private void DrawLeveObjective(MapMarkerData marker, string tooltip, Viewport viewport, Map map)
+        => DrawObjective(marker, tooltip, viewport, map, GetConfig<QuestConfig>().LeveQuestColor);
+
+    private void DrawObjective(MapMarkerData marker, string tooltip, Viewport viewport, Map map, Vector4 color)
     {
         var config = GetConfig<QuestConfig>();
         
-        if(config.ShowIcon) DrawUtilities.DrawLevelIcon(level, viewport, map, icon, config.LeveQuestColor, config.IconScale, 50.0f);
-        if(config.ShowTooltip) DrawUtilities.DrawLevelTooltip(level, viewport, map, 50.0f, icon, config.TooltipColor, tooltip);
+        DrawUtilities.DrawLevelIcon(new Vector2(marker.X, marker.Z), marker.Radius, viewport, map, marker.IconId, color, config.IconScale, 0.0f);
+
+        if(config.ShowTooltip && marker.Radius < 5.0f) DrawUtilities.DrawTooltip(marker.IconId, config.TooltipColor, tooltip);
+        if(config.ShowTooltip && marker.Radius >= 5.0f) DrawUtilities.DrawLevelTooltip(new Vector2(marker.X, marker.Z), marker.Radius, viewport, map, marker.IconId, config.TooltipColor, tooltip);
     }
 }
