@@ -124,5 +124,9 @@ public unsafe struct MapMarkerData
     [FieldOffset(0x04)] public uint ObjectiveId;
     [FieldOffset(0x08)] public Utf8String* TooltipString;
     [FieldOffset(0x10)] public uint IconId;
+    [FieldOffset(0x18)] public float X;
+    [FieldOffset(0x1C)] public float Y;
+    [FieldOffset(0x20)] public float Z;
+    [FieldOffset(0x24)] public float Radius;
     [FieldOffset(0x3C)] public ushort RecommendedLevel;
 }
