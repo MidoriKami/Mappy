@@ -11,14 +11,6 @@ namespace Mappy.Utility;
 
 public partial class DrawUtilities
 {
-    private static float GetRingScale(Map map) => map.SizeFactor switch
-    {
-        95 => 9.25f,
-        100 => 4.0f,
-        200 => 1.60f,
-        _ => 1.0f,
-    };
-    
     private static float GetObjectRotation(GameObject gameObject) 
         => -gameObject.Rotation + 0.5f * MathF.PI;
     
@@ -40,26 +32,29 @@ public partial class DrawUtilities
         return vectors;
     }
 
+    private static float GetLevelRingRadius(float radius, Viewport viewport, Map map, float extraRadius)
+        => radius * viewport.Scale * map.SizeFactor / 100.0f + extraRadius * viewport.Scale;
+    
     private static float GetLevelRingRadius(Level level, Viewport viewport, Map map, float extraRadius)
-        => level.Radius * viewport.Scale / GetRingScale(map) + extraRadius * viewport.Scale;
+        => level.Radius * viewport.Scale * map.SizeFactor / 100.0f  + extraRadius * viewport.Scale;
 
-    private static void DrawLevelRing(Level level, Viewport viewport, Map map, Vector4 color, float extraRadius)
+    private static void DrawLevelRing(Vector2 position, float radius, Viewport viewport, Map map, Vector4 color, float extraRadius)
     {
-        var position = Position.GetTextureOffsetPosition(new Vector2(level.X, level.Z), map);
-        var drawPosition = viewport.GetImGuiWindowDrawPosition(position);
-        var radius = GetLevelRingRadius(level, viewport, map, extraRadius);
+        var calculatedPosition = Position.GetTextureOffsetPosition(position, map);
+        var drawPosition = viewport.GetImGuiWindowDrawPosition(calculatedPosition);
+        var calculatedRadius = GetLevelRingRadius(radius, viewport, map, extraRadius);
         var imGuiColor = ImGui.GetColorU32(color);
         
-        ImGui.GetWindowDrawList().AddCircleFilled(drawPosition, radius, imGuiColor);
-        ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, imGuiColor, 0, 4);
+        ImGui.GetWindowDrawList().AddCircleFilled(drawPosition, calculatedRadius, imGuiColor);
+        ImGui.GetWindowDrawList().AddCircle(drawPosition, calculatedRadius, imGuiColor, 0, 4);
     }
-    
-    private static void DrawLevelIcon(Level level, uint iconId, Map map, float scale)
+
+    private static void DrawLevelIcon(Vector2 position, uint iconId, Map map, float scale)
     {
-        var position = Position.GetTextureOffsetPosition(new Vector2(level.X, level.Z), map);
+        var calculatedPosition = Position.GetTextureOffsetPosition(position, map);
         iconId = TryReplaceIconId(iconId);
 
-        DrawIcon(iconId, position, scale);
+        DrawIcon(iconId, calculatedPosition, scale);
     }
     
     private static void DrawTooltipIcon(uint iconId)
@@ -81,7 +76,7 @@ public partial class DrawUtilities
     {
         var radius = GetLevelRingRadius(level, viewport, map, extraRadius);
         
-        // DrawLevelTooltipInternal(new Vector2(level.X, level.Z), radius, viewport, map, iconId, color, primaryText + $" - {level.RowId}", secondaryText);
+        // DrawLevelTooltipInternal(new Vector2(level.X, level.Z), radius, viewport, map, iconId, secondIconId, color, primaryText + $" - {level.RowId}", secondaryText);
         DrawLevelTooltipInternal(new Vector2(level.X, level.Z), radius, viewport, map, iconId, secondIconId, color, primaryText, secondaryText);
     }
 

@@ -51,11 +51,14 @@ public partial class DrawUtilities
         => DrawStandardTooltipInternal(iconId, secondIconId, color, primaryText, secondaryText);
 
     public static void DrawLevelIcon(Level level, Viewport viewport, Map map, uint iconId, Vector4 color, float scale, float extraRadius)
+        => DrawLevelIcon(new Vector2(level.X, level.Z), level.Radius, viewport, map, iconId, color, scale, extraRadius);
+    
+    public static void DrawLevelIcon(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, Vector4 color, float scale, float extraRadius)
     {
         iconId = TryReplaceIconId(iconId);
         
-        DrawLevelRing(level, viewport, map, color, extraRadius);
-        DrawLevelIcon(level, iconId, map, scale);
+        DrawLevelRing(position, radius, viewport, map, color, extraRadius);
+        DrawLevelIcon(position, iconId, map, scale);
     }
 
     public static void DrawLevelTooltip(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, Vector4 color, string primaryText)
