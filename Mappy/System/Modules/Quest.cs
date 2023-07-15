@@ -5,6 +5,7 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
 using KamiLib.Utilities;
+using KamiLib.Windows;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
@@ -70,6 +71,8 @@ public unsafe class Quest : ModuleBase
     {
         var mapData = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
 
+        DebugWindow.Print($"MapDataAddress: {new nint(mapData):X8}");
+        
         // foreach (var quest in mapData->QuestDataSpan)
         // {
         //     foreach (var questInfo in quest.MarkerData.Span)
@@ -85,6 +88,8 @@ public unsafe class Quest : ModuleBase
         {
             foreach (var marker in quest.MarkerData.Span)
             {
+                DebugWindow.Print($"QuestMarker: {marker.ObjectiveId} : {marker.TooltipString->ToString()}");
+                
                 if (LuminaCache<Level>.Instance.GetRow(marker.LevelId) is not { Map.Row: var levelMap }) continue;
                 if (levelMap != map.RowId) continue;
                 
