@@ -19,11 +19,12 @@ public class MapSearchResult : ISearchResult
     {
         if (LuminaCache<Map>.Instance.GetRow(rowId) is not
             {
-                PlaceName.Value.Name.RawString: var mapName
+                PlaceName.Value.Name.RawString: var mapName,
+                PlaceNameSub.Value.Name.RawString: var subName,
             }) throw new Exception("Invalid Map Entry");
         
         Label = mapName;
-        SubLabel = string.Empty;
+        SubLabel = subName;
         IconId = 60652;
         MapPosition = new Vector2(1024.0f, 1024.0f);
         MapZoom = 0.25f;
