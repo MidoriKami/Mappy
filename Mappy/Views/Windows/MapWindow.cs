@@ -266,8 +266,6 @@ public unsafe class MapWindow : Window
             Viewport.SetViewportCenter(new Vector2(worldX, worldY));
             Viewport.SetViewportZoom(2.0f);
             
-            ImGui.SetWindowFocus(WindowName);
-
             TemporaryMarkers.SetGatheringMarker(new TemporaryMapMarker
             {
                 Position = new Vector2(worldX, worldY) / (map.SizeFactor / 100.0f) - new Vector2(1024.0f, 1024.0f) / (map.SizeFactor / 100.0f),
