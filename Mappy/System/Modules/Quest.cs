@@ -73,6 +73,8 @@ public unsafe class Quest : ModuleBase
 
         foreach (var quest in mapData->QuestDataSpan)
         {
+            if (quest.ShouldRender != 1) continue;
+            
             foreach (var questInfo in quest.MarkerData.Span)
             {
                 if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap }) continue;
@@ -105,6 +107,8 @@ public unsafe class Quest : ModuleBase
 
         foreach (var quest in mapData->LevequestDataSpan)
         {
+            if (quest.ShouldRender != 1) continue;
+            
             foreach (var questInfo in quest.MarkerData.Span)
             {
                 if (FindLevework(quest.ObjectiveId) is not { Flags: not 32 } ) continue;
