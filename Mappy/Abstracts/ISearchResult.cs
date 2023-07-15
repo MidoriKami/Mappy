@@ -34,7 +34,7 @@ public interface ISearchResult : IEquatable<ISearchResult>
 
         var cursorPosition = ImGui.GetCursorPos();
         ImGui.SetCursorPos(cursorPosition with { Y = cursorPosition.Y + 4.0f });
-        if (ImGui.Selectable($"##{Label}{MapId}"))
+        if (ImGui.Selectable($"##{Label}{MapId}{SubLabel}"))
         {
             Invoke();
             return true;
