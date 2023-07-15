@@ -35,9 +35,6 @@ public partial class DrawUtilities
     private static float GetLevelRingRadius(float radius, Viewport viewport, Map map, float extraRadius)
         => radius * viewport.Scale * map.SizeFactor / 100.0f + extraRadius * viewport.Scale;
     
-    private static float GetLevelRingRadius(Level level, Viewport viewport, Map map, float extraRadius)
-        => level.Radius * viewport.Scale * map.SizeFactor / 100.0f  + extraRadius * viewport.Scale;
-
     private static void DrawLevelRing(Vector2 position, float radius, Viewport viewport, Map map, Vector4 color, float extraRadius)
     {
         var calculatedPosition = Position.GetTextureOffsetPosition(position, map);
@@ -70,14 +67,6 @@ public partial class DrawUtilities
     {
         if (!ImGui.IsItemHovered()) return;
         DrawTooltipInternal(iconId, secondIconId, color, primaryText, secondaryText);
-    }
-
-    private static void DrawLevelTooltipInternal(Level level, Viewport viewport, Map map, float extraRadius, uint iconId, uint secondIconId, Vector4 color, string primaryText, string secondaryText)
-    {
-        var radius = GetLevelRingRadius(level, viewport, map, extraRadius);
-        
-        // DrawLevelTooltipInternal(new Vector2(level.X, level.Z), radius, viewport, map, iconId, secondIconId, color, primaryText + $" - {level.RowId}", secondaryText);
-        DrawLevelTooltipInternal(new Vector2(level.X, level.Z), radius, viewport, map, iconId, secondIconId, color, primaryText, secondaryText);
     }
 
     private static void DrawLevelTooltipInternal(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, uint secondIconId, Vector4 color, string primaryText, string secondaryText)
