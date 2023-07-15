@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
@@ -17,8 +17,8 @@ namespace Mappy.Views.Components;
 public class MapSearchWidget
 {
     public bool ShowMapSelectOverlay { get; set; }
-    
-    private readonly ConcurrentBag<ISearchResult> searchResults = new();
+
+    private IEnumerable<ISearchResult>? searchResults;
     private bool shouldFocusMapSearch;
     private string searchString = string.Empty;
 
@@ -40,16 +40,8 @@ public class MapSearchWidget
         };
     }
 
-    private void SearchTask()
-    {
-        var results = MapSearch.Search(searchString, 10);
-        searchResults.Clear();
-        foreach (var element in results)
-        {
-            searchResults.Add(element);
-        }
-    }
-    
+    private void SearchTask() => searchResults = MapSearch.Search(searchString, 10);
+
     public void DrawWidget()
     {
         var showOverlay = ShowMapSelectOverlay;
@@ -84,7 +76,7 @@ public class MapSearchWidget
     {
         if (!ImGui.IsKeyPressed(ImGuiKey.Enter) & !ImGui.IsKeyPressed(ImGuiKey.KeypadEnter)) return;
         
-        if (searchResults.FirstOrDefault() is { } validResult)
+        if (searchResults?.FirstOrDefault() is { } validResult)
         {
             validResult.Invoke();
             ShowMapSelectOverlay = false;
@@ -123,9 +115,15 @@ public class MapSearchWidget
         ImGui.SetCursorPos(searchPosition + ImGuiHelpers.ScaledVector2(0.0f, 30.0f));
         if (ImGui.BeginChild("###SearchResultsChild", new Vector2(searchWidth, regionAvailable.Y * 3.0f / 4.0f)))
         {
-            foreach (var _ in searchResults.Where(result => result.DrawEntry()))
+            if (searchResults is not null)
             {
-                ShowMapSelectOverlay = false;
+                foreach (var entry in searchResults)
+                {
+                    if (entry.DrawEntry())
+                    {
+                        ShowMapSelectOverlay = false;
+                    }
+                }
             }
         }
         ImGui.EndChild();
