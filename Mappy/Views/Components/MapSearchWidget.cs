@@ -34,7 +34,7 @@ public class MapSearchWidget
                 shouldFocusMapSearch = true;
                 Task.Run(SearchTask);
             },
-            Label = FontAwesomeIcon.Map.ToIconString() + "##MapSelectButton",
+            Label = FontAwesomeIcon.Search.ToIconString() + "##MapSelectButton",
             TooltipText = Strings.SearchForMap,
             Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
         };
