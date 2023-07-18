@@ -390,4 +390,10 @@
     <data name="Progress" xml:space="preserve">
         <value>Progress</value>
     </data>
+    <data name="ZoomOnFlag" xml:space="preserve">
+        <value>Zoom in on Flag</value>
+    </data>
+    <data name="ZoomOnFlagHelp" xml:space="preserve">
+        <value>Zooms on flags when clicking on map location links</value>
+    </data>
 </root>

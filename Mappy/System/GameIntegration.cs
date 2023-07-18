@@ -144,7 +144,7 @@ public unsafe class GameIntegration : IDisposable
                     MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
                     var flagPosition = Position.GetTextureOffsetPosition(flag.Position, map);
                     viewport.SetViewportCenter(flagPosition);
-                    viewport.SetViewportZoom(1.0f);
+                    if (MappySystem.SystemConfig.ZoomInOnFlag) viewport.SetViewportZoom(1.0f);
                     break;
                 
                 case MapType.QuestLog when GetQuestLocation(mapInfo) is {} questLocation:

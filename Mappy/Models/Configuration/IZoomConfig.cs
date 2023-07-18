@@ -7,4 +7,7 @@ public interface IZoomConfig
 {
     [FloatConfig("ZoomSpeed", 0.05f, 0.40f)]
     public float ZoomSpeed { get; set; }
+
+    [BoolConfig("ZoomOnFlag", "ZoomOnFlagHelp")]
+    public bool ZoomInOnFlag { get; set; }
 }

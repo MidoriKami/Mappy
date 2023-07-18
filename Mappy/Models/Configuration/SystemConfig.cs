@@ -18,6 +18,7 @@ public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDispl
     public bool ShowToolbarOnHover { get; set; } = true;
     public float FadePercent { get; set; } = 0.60f;
     public float ZoomSpeed { get; set; } = 0.15f;
+    public bool ZoomInOnFlag { get; set; } = true;
     public bool EnableIntegrations  { get; set; } = true;
     public bool HideWithGameGui { get; set; } = true;
     public bool HideBetweenAreas { get; set; } = false;

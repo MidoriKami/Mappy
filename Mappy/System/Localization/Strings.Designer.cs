@@ -1158,6 +1158,24 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Zoom in on Flag.
+        /// </summary>
+        internal static string ZoomOnFlag {
+            get {
+                return ResourceManager.GetString("ZoomOnFlag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zooms on flags when clicking on map location links.
+        /// </summary>
+        internal static string ZoomOnFlagHelp {
+            get {
+                return ResourceManager.GetString("ZoomOnFlagHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Zoom Options.
         /// </summary>
         internal static string ZoomOptions {
