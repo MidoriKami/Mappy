@@ -193,22 +193,6 @@ public unsafe class MapWindow : Window
         // Allow DragStop to be outside the map window
         ProcessMapDragStop();
     }
-    
-    private void ProcessMapDragStop()
-    {
-        if (ImGui.IsMouseDragging(ImGuiMouseButton.Left) && dragStarted)
-        {
-            var delta = mouseDragStart - ImGui.GetMousePos();
-            Viewport.MoveViewportCenter(delta);
-            mouseDragStart = ImGui.GetMousePos();
-        }
-        else if (ImGui.IsMouseReleased(ImGuiMouseButton.Left))
-        {
-            dragStarted = false;
-        }
-
-        if (dragStarted) MappySystem.SystemConfig.FollowPlayer = false;
-    }
 
     private void ProcessMapDragStart()
     {
@@ -226,6 +210,23 @@ public unsafe class MapWindow : Window
             lastWindowSize = ImGui.GetWindowSize();
             dragStarted = false;
         }
+    }
+
+    private void ProcessMapDragStop()
+    {
+        if (ImGui.IsMouseDragging(ImGuiMouseButton.Left) && dragStarted)
+        {
+            var delta = mouseDragStart - ImGui.GetMousePos();
+            Viewport.MoveViewportCenter(delta);
+            mouseDragStart = ImGui.GetMousePos();
+            ProcessZoomChange();
+        }
+        else if (ImGui.IsMouseReleased(ImGuiMouseButton.Left))
+        {
+            dragStarted = false;
+        }
+
+        if (dragStarted) MappySystem.SystemConfig.FollowPlayer = false;
     }
     
     private void ProcessContextMenu()
