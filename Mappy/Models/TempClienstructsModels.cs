@@ -93,9 +93,8 @@ public unsafe struct ClientStructsMapData
     [FieldOffset(0x3F48)] public MapMarkerContainer GemstoneTraderMarkerData;
     [FieldOffset(0x3F50)] public SimpleMapMarkerContainer SimpleGemstoneTraderMarkerData;
 
-    public Span<MarkerInfo> QuestDataSpan => new(Unsafe.AsPointer(ref QuestData[0]), QuestManager.Instance()->NumAcceptedQuests);
-
-    public Span<MarkerInfo> LevequestDataSpan => new(Unsafe.AsPointer(ref LevequestData[0]), QuestManager.Instance()->NumAcceptedLeveQuests);
+    public Span<MarkerInfo> QuestDataSpan => new(Unsafe.AsPointer(ref QuestData[0]), 30);
+    public Span<MarkerInfo> LevequestDataSpan => new(Unsafe.AsPointer(ref LevequestData[0]), 16);
 }
 
 [StructLayout(LayoutKind.Explicit, Size = 0x10)]
