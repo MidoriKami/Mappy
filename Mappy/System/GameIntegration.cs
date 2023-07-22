@@ -166,7 +166,6 @@ public unsafe class GameIntegration : IDisposable
                     break;
             }
         }
-
     }, "Exception during OpenMap");
 
     private Vector2? GetQuestLocation(OpenMapInfo* mapInfo)
@@ -205,6 +204,14 @@ public unsafe class GameIntegration : IDisposable
     
     private void OnShowHook(AgentInterface* agent, bool a1, bool a2) => Safety.ExecuteSafe(() =>
     {
+#if DEBUG
+        if (ImGui.GetIO().KeyAlt)
+        {
+            showHook!.Original(agent, a1, a2);
+            return;
+        }
+#endif
+        
         if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is {} mapWindow)
         {
             ImGui.SetWindowFocus(mapWindow.WindowName);
