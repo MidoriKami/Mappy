@@ -10,7 +10,7 @@ public class Bound
         var windowStart = ImGui.GetWindowPos();
         var windowSize = ImGui.GetWindowSize();
 
-        return Bound.IsBoundedBy(ImGui.GetMousePos(), windowStart, windowStart + windowSize);
+        return IsBoundedBy(ImGui.GetMousePos(), windowStart, windowStart + windowSize);
     }
     
     public static bool IsCursorInWindowHeader()
@@ -18,7 +18,7 @@ public class Bound
         var windowStart = ImGui.GetWindowPos();
         var headerSize = ImGui.GetWindowSize() with { Y = ImGui.GetWindowContentRegionMin().Y };
         
-        return Bound.IsBoundedBy(ImGui.GetMousePos(), windowStart, windowStart + headerSize);
+        return IsBoundedBy(ImGui.GetMousePos(), windowStart, windowStart + headerSize);
     }
     
     public static bool IsBoundedBy(Vector2 cursor, Vector2 minBounds, Vector2 maxBounds)
