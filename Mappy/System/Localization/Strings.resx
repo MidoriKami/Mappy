@@ -312,11 +312,11 @@
     <data name="IslandSanctuary" xml:space="preserve">
         <value>Island Sanctuary</value>
     </data>
-    <data name="CenterOnOpen" xml:space="preserve">
-        <value>Center on Open</value>
+    <data name="FollowOnOpen" xml:space="preserve">
+        <value>Follow on Open</value>
     </data>
-    <data name="CenterOnOpenHelp" xml:space="preserve">
-        <value>Centers the map on the player, and enables Follow Player when opening the map</value>
+    <data name="FollowOnOpenHelp" xml:space="preserve">
+        <value>Enables Follow Player when opening the map</value>
     </data>
     <data name="AllowZoomOnHover" xml:space="preserve">
         <value>Allow Zoom on Hover</value>
@@ -395,5 +395,11 @@
     </data>
     <data name="ZoomOnFlagHelp" xml:space="preserve">
         <value>Zooms on flags when clicking on map location links</value>
+    </data>
+    <data name="CenterOnOpen" xml:space="preserve">
+        <value>Center on Open</value>
+    </data>
+    <data name="CenterOnOpenHelp" xml:space="preserve">
+        <value>Centers the map on the player when opening the map</value>
     </data>
 </root>

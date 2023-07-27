@@ -12,6 +12,9 @@ public interface IWindowConfig
     [BoolConfig("IgnoreEscapeKey", "IgnoreEscapeKeyHelp")]
     public bool IgnoreEscapeKey { get; set; }
     
+    [BoolConfig("FollowOnOpen", "FollowOnOpenHelp")]
+    public bool FollowOnOpen { get; set; }
+    
     [BoolConfig("CenterOnOpen", "CenterOnOpenHelp")]
     public bool CenterOnOpen { get; set; }
     

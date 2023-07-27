@@ -65,10 +65,21 @@ public unsafe class MapWindow : Window
     {
         UIModule.PlaySound(23u, 0, 0, 0);
 
-        if (MappySystem.SystemConfig.CenterOnOpen && !ProcessingCommand)
+        if (!ProcessingCommand)
         {
-            MappySystem.MapTextureController.MoveMapToPlayer();
-            MappySystem.SystemConfig.FollowPlayer = true;
+            if (MappySystem.SystemConfig.CenterOnOpen)
+            {
+                if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { Viewport: var viewport }) return;
+                if (Service.ClientState.LocalPlayer is not { Position: var playerPosition }) return;
+                if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
+
+                viewport.SetViewportCenter(Utility.Position.GetObjectPosition(playerPosition, map));
+            }
+
+            if (MappySystem.SystemConfig.FollowOnOpen)
+            {
+                MappySystem.SystemConfig.FollowPlayer = true;
+            }
         }
         
         ProcessingCommand = false;
