@@ -18,6 +18,14 @@ public static class MapSearch
             .Take(numResults)
             .ToList();
 
+    public static IEnumerable<ISearchResult> SearchByMapId(uint map)
+        => AetheryteResults(string.Empty)
+            .Concat(PointOfInterestResults(string.Empty))
+            .Concat(MapResults(string.Empty))
+            .Where(result => result.MapId == map)
+            .OrderBy(result => result.Label)
+            .ToList();
+
     private static IEnumerable<ISearchResult> AetheryteResults(string searchTerms)
         => LuminaCache<MapMarker>.Instance
             .Where(marker => marker is { DataType: 3 })

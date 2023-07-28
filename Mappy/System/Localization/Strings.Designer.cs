@@ -915,6 +915,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        internal static string Search {
+            get {
+                return ResourceManager.GetString("Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Search for map.
         /// </summary>
         internal static string SearchForMap {
@@ -1109,6 +1118,24 @@ namespace Mappy.System.Localization {
         internal static string TreasureMarkers {
             get {
                 return ResourceManager.GetString("TreasureMarkers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use Region Search.
+        /// </summary>
+        internal static string UseRegionSearch {
+            get {
+                return ResourceManager.GetString("UseRegionSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use alternative search ui for finding maps.
+        /// </summary>
+        internal static string UseRegionSearchHelp {
+            get {
+                return ResourceManager.GetString("UseRegionSearchHelp", resourceCulture);
             }
         }
         
