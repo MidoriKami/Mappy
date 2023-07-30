@@ -411,4 +411,12 @@
     <data name="Search" xml:space="preserve">
         <value>Search</value>
     </data>
+    <data name="IconDisableInfo" xml:space="preserve">
+        <value>This tab allows you to disable showing any icon that Mappy has shown you
+Icons that you haven't seen yet can not be disabled</value>
+    </data>
+    <data name="IconDisableNoIcons" xml:space="preserve">
+        <value>No icons have been seen yet
+Open Map Window to populate data</value>
+    </data>
 </root>

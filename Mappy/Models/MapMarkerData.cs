@@ -30,7 +30,6 @@ public class MapMarkerData
     
     private readonly MapMarker data;
     private Vector2 Position => new(data.X, data.Y);
-    public TextureWrap? Icon => IconCache.Instance.GetIcon(data.Icon);
     private PlaceName PlaceName => LuminaCache<PlaceName>.Instance.GetRow(data.PlaceNameSubtext.Row)!;
     private Map DataMap => LuminaCache<Map>.Instance.GetRow(data.DataKey)!;
     private Aetheryte DataAetheryte => LuminaCache<Aetheryte>.Instance.GetRow(data.DataKey)!;
@@ -41,9 +40,6 @@ public class MapMarkerData
 
     private static readonly Dictionary<uint, string> MiscIconNameCache = new();
 
-    [MemberNotNullWhen(true, nameof(Icon))]
-    private bool HasIcon => Icon != null && data.Icon != 0;
-    
     public MapMarkerData(MapMarker marker, MapIconConfig config)
     {
         data = marker;
@@ -52,16 +48,13 @@ public class MapMarkerData
 
     public void Draw()
     {
-        if (!HasIcon) return;
-        
-        if (settings.ShowIcon) DrawUtilities.DrawIconTexture(Icon, Position, settings.IconScale);
+        if (settings.ShowIcon) DrawUtilities.DrawIcon(IconId, Position, settings.IconScale);
         if (settings.ShowTooltip) DrawTooltip();
         OnClick();
     }
 
     private void DrawTooltip()
     {
-        if (!HasIcon) return;
         if (!ImGui.IsItemHovered()) return;
 
         if (GetDisplayString() is null && settings.ShowMiscTooltips)

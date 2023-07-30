@@ -21,9 +21,21 @@ public partial class DrawUtilities
     }
     
     public static void DrawIcon(uint iconId, Vector2 position, float scale)
-        => DrawIconTexture(IconCache.Instance.GetIcon(iconId), position, scale);
-    
-    public static void DrawIconTexture(TextureWrap? iconTexture, Vector2 position, float scale)
+    {
+        if (MappySystem.SystemConfig is not { SeenIcons: var seenIcons, DisallowedIcons: var disallowedIcons }) return;
+
+        if (!seenIcons.Contains(iconId) && iconId is not 0)
+        {
+            seenIcons.Add(iconId);
+            MappyPlugin.System.SaveConfig();
+        }
+
+        if (disallowedIcons.Contains(iconId)) return;
+
+        DrawIconTexture(IconCache.Instance.GetIcon(iconId), position, scale);
+    }
+
+    private static void DrawIconTexture(TextureWrap? iconTexture, Vector2 position, float scale)
     {
         if (iconTexture is null) return;
         if (MappySystem.MapTextureController is not { Ready: true }) return;

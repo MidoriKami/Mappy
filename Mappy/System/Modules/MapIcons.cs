@@ -54,9 +54,6 @@ public class MapIconConfig : IModuleConfig, IIconConfig, ITooltipConfig, IMapIco
     
     [BoolConfig("ShowMiscTooltips", "ShowMiscTooltipsHelp")]
     public bool ShowMiscTooltips { get; set; } = true;
-    
-    [MapMarkerSelection]
-    public HashSet<uint> DisabledMarkers { get; set; } = new();
 }
 
 public class MapIcons : ModuleBase
@@ -85,7 +82,6 @@ public class MapIcons : ModuleBase
         
         foreach (var marker in mapMarkers)
         {
-            if (config.DisabledMarkers.Contains(marker.IconId)) continue;
             if (config.AetherytesOnTop && marker.Type is MapMarkerType.Aetheryte) continue;
             
             if (config.ShowIcon) marker.Draw();
@@ -95,8 +91,6 @@ public class MapIcons : ModuleBase
         {
             foreach (var aetheryte in mapMarkers.Where(marker => marker.Type is MapMarkerType.Aetheryte))
             {
-                if (config.DisabledMarkers.Contains(aetheryte.IconId)) continue;
-                
                 if (config.ShowIcon) aetheryte.Draw();
             }
         }

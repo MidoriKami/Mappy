@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Collections.Generic;
+using System.Numerics;
 using Mappy.Models.Enums;
 
 namespace Mappy.Models;
@@ -26,4 +27,7 @@ public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDispl
     public bool HideBetweenAreas { get; set; } = false;
     public bool HideInDuties { get; set; } = false;
     public bool HideInCombat { get; set; } = false;
+
+    public HashSet<uint> DisallowedIcons { get; set; } = new();
+    public HashSet<uint> SeenIcons { get; set; } = new();
 }

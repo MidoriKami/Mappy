@@ -564,6 +564,26 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This tab allows you to disable showing any icon that Mappy has shown you
+        ///Icons that you haven&apos;t seen yet can not be disabled.
+        /// </summary>
+        internal static string IconDisableInfo {
+            get {
+                return ResourceManager.GetString("IconDisableInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No icons have been seen yet
+        ///Open Map Window to populate data.
+        /// </summary>
+        internal static string IconDisableNoIcons {
+            get {
+                return ResourceManager.GetString("IconDisableNoIcons", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Scale.
         /// </summary>
         internal static string IconScale {
