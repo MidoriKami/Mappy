@@ -25,7 +25,7 @@ public class IconDisableView
         var maxIconsPerRow = (int) (areaSize / itemSize);
         var currentIndex = 0;
         
-        foreach (var icon in seenIcons)
+        foreach (var icon in seenIcons.OrderBy(id => id))
         {
             DrawIcon(icon);
 
