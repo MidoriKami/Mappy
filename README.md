@@ -13,7 +13,7 @@ Integrates seamlessly into the games built in functions, for example pressing `m
 
 ![image](https://github.com/MidoriKami/Mappy/assets/9083275/41357ae5-5e1d-4b27-8cc4-a409bf6042b9)
 
-![image](https://github.com/MidoriKami/Mappy/assets/9083275/574c6494-796c-44f6-8229-dc05beec1784)
+![image](https://github.com/MidoriKami/Mappy/assets/9083275/f02ffcd2-b290-4764-8a1a-9a6e9843e576)
 
 # Mappy IPC
 Mappy provides various functions to other plugins to allow interplugin communication, and example usage is illustrated below.
