@@ -13,7 +13,7 @@ public sealed class Service
     [PluginService] public static DalamudPluginInterface PluginInterface { get; set; } = null!;
     [PluginService] public static IClientState ClientState { get; set; } = null!;
     [PluginService] public static Framework Framework { get; set; } = null!;
-    [PluginService] public static DataManager DataManager { get; set; } = null!;
+    [PluginService] public static IDataManager DataManager { get; set; } = null!;
     [PluginService] public static ChatGui Chat { get; set; } = null!;
     [PluginService] public static ToastGui Toast { get; set; } = null!;
     [PluginService] public static IPartyList PartyList { get; set; } = null!;
