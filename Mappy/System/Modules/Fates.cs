@@ -74,8 +74,8 @@ public unsafe class Fates : ModuleBase
         var config = GetConfig<FateConfig>();
         var position = Position.GetObjectPosition(fate->Location, map);
 
-        var mapIcon = *(uint*) ((byte*) fate + 0x760);
-        var isExpBonus = *(bool*) ((byte*) fate + 0x3C4);
+        var mapIcon = fate->MapIconId;
+        var isExpBonus = fate->IsExpBonus;
         var primaryLine = GetFatePrimaryTooltip(fate);
         var secondaryLine = GetFateSecondaryTooltip(fate, isExpBonus);
         
