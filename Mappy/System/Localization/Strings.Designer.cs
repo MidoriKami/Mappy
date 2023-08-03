@@ -222,6 +222,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Directional Marker.
+        /// </summary>
+        internal static string DirectionalMarker {
+            get {
+                return ResourceManager.GetString("DirectionalMarker", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Displayed Markers.
         /// </summary>
         internal static string DisplayedMarkers {
@@ -254,6 +263,15 @@ namespace Mappy.System.Localization {
         internal static string DisplayOptions {
             get {
                 return ResourceManager.GetString("DisplayOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Distance Threshold.
+        /// </summary>
+        internal static string DistanceThreshold {
+            get {
+                return ResourceManager.GetString("DistanceThreshold", resourceCulture);
             }
         }
         

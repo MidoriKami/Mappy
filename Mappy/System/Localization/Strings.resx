@@ -419,4 +419,10 @@ Icons that you haven't seen yet can not be disabled</value>
         <value>No icons have been seen yet
 Open Map Window to populate data</value>
     </data>
+    <data name="DirectionalMarker" xml:space="preserve">
+        <value>Directional Marker</value>
+    </data>
+    <data name="DistanceThreshold" xml:space="preserve">
+        <value>Distance Threshold</value>
+    </data>
 </root>
