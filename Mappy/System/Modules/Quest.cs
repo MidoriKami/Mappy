@@ -5,7 +5,6 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
 using KamiLib.Utilities;
-using KamiLib.Windows;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
@@ -14,7 +13,7 @@ using Mappy.Utility;
 
 namespace Mappy.System.Modules;
 
-[Category("ModuleColors")]
+[Category("ModuleColors", 2)]
 public interface IQuestColorConfig
 {
     [ColorConfig("InProgressColor", 255, 69, 0, 45)]
@@ -24,8 +23,18 @@ public interface IQuestColorConfig
     public Vector4 LeveQuestColor { get; set; }
 }
 
+[Category("DirectionalMarker", 1)]
+public interface IQuestDistanceMarkerConfig
+{
+    [BoolConfig("DirectionalMarker")]
+    public bool EnableDirectionalMarker { get; set; }
+    
+    [FloatConfig("DistanceThreshold", 0.0f, 50.0f)]
+    public float DistanceThreshold { get; set; }
+}
+
 [Category("ModuleConfig")]
-public class QuestConfig : IModuleConfig, IIconConfig, ITooltipConfig, IQuestColorConfig
+public class QuestConfig : IModuleConfig, IIconConfig, ITooltipConfig, IQuestColorConfig, IQuestDistanceMarkerConfig
 {
     public bool Enable { get; set; } = true;
     public int Layer { get; set; } = 11;
@@ -44,6 +53,9 @@ public class QuestConfig : IModuleConfig, IIconConfig, ITooltipConfig, IQuestCol
 
     [BoolConfig("HideLeveQuests")]
     public bool HideLeveQuests { get; set; } = false;
+
+    public bool EnableDirectionalMarker { get; set; } = true;
+    public float DistanceThreshold { get; set; } = 20.0f;
 }
 
 public unsafe class Quest : ModuleBase
@@ -80,7 +92,7 @@ public unsafe class Quest : ModuleBase
                 if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap }) continue;
                 if (levelMap != map.RowId) continue;
                 
-                DrawRegularObjective(questInfo, quest.Label.ToString(), viewport, map);
+                DrawObjective(questInfo, quest.Label.ToString(), viewport, map, GetConfig<QuestConfig>().InProgressColor);
             }
         }
     }
@@ -96,7 +108,7 @@ public unsafe class Quest : ModuleBase
                 if (LuminaCache<Level>.Instance.GetRow(markerData.LevelId) is not { Map.Row: var levelMap}) continue;
                 if (levelMap != map.RowId) continue;
 
-                DrawRegularObjective(markerData, $"Lv. {markerData.RecommendedLevel} {markerData.TooltipString->ToString()}", viewport, map);
+                DrawObjective(markerData, $"Lv. {markerData.RecommendedLevel} {markerData.TooltipString->ToString()}", viewport, map, GetConfig<QuestConfig>().InProgressColor);
             }
         }
     }
@@ -115,7 +127,7 @@ public unsafe class Quest : ModuleBase
                 if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap } ) continue;
                 if (levelMap != map.RowId) continue;
                 
-                DrawLeveObjective(questInfo, quest.Label.ToString(), viewport, map);
+                DrawObjective(questInfo, quest.Label.ToString(), viewport, map, GetConfig<QuestConfig>().LeveQuestColor);
             }
         }
         
@@ -124,7 +136,7 @@ public unsafe class Quest : ModuleBase
             if(LuminaCache<Level>.Instance.GetRow(markerInfo.LevelId) is not { Map.Row: var levelMap } ) continue;
             if(levelMap != map.RowId) continue;
             
-            DrawLeveObjective(markerInfo, markerInfo.TooltipString->ToString(), viewport, map);
+            DrawObjective(markerInfo, markerInfo.TooltipString->ToString(), viewport, map, GetConfig<QuestConfig>().LeveQuestColor);
         }
     }
 
@@ -138,19 +150,27 @@ public unsafe class Quest : ModuleBase
         return null;
     }
     
-    private void DrawRegularObjective(MapMarkerData marker, string tooltip, Viewport viewport, Map map)
-        => DrawObjective(marker, tooltip, viewport, map, GetConfig<QuestConfig>().InProgressColor);
-    
-    private void DrawLeveObjective(MapMarkerData marker, string tooltip, Viewport viewport, Map map)
-        => DrawObjective(marker, tooltip, viewport, map, GetConfig<QuestConfig>().LeveQuestColor);
-
     private void DrawObjective(MapMarkerData marker, string tooltip, Viewport viewport, Map map, Vector4 color)
     {
         var config = GetConfig<QuestConfig>();
-        
-        DrawUtilities.DrawLevelIcon(new Vector2(marker.X, marker.Z), marker.Radius, viewport, map, marker.IconId, color, config.IconScale, 0.0f);
+        var isBelowPlayer = false;
+        var isAbovePlayer = false;
 
-        if(config.ShowTooltip && marker.Radius < 5.0f) DrawUtilities.DrawTooltip(marker.IconId, config.TooltipColor, tooltip);
-        if(config.ShowTooltip && marker.Radius >= 5.0f) DrawUtilities.DrawLevelTooltip(new Vector2(marker.X, marker.Z), marker.Radius, viewport, map, marker.IconId, config.TooltipColor, tooltip);
+        if (Service.ClientState is { LocalPlayer.Position.Y: var playerHeight })
+        {
+            var distance = playerHeight - marker.Y;
+            isBelowPlayer = distance > config.DistanceThreshold && distance > 0 && config.EnableDirectionalMarker;
+            isAbovePlayer = distance < config.DistanceThreshold && distance < 0 && config.EnableDirectionalMarker;
+        }
+
+        var markerPosition = new Vector2(marker.X, marker.Z);
+        var calculatedPosition = Position.GetTextureOffsetPosition(markerPosition, map);
+        
+        DrawUtilities.DrawLevelIcon(markerPosition, marker.Radius, viewport, map, marker.IconId, color, config.IconScale, 0.0f);
+
+        if (config.ShowTooltip && marker.Radius < 5.0f) DrawUtilities.DrawTooltip(marker.IconId, config.TooltipColor, tooltip);
+        if (config.ShowTooltip && marker.Radius >= 5.0f) DrawUtilities.DrawLevelTooltip(new Vector2(marker.X, marker.Z), marker.Radius, viewport, map, marker.IconId, config.TooltipColor, tooltip);
+        if (config.ShowIcon && isBelowPlayer) DrawUtilities.DrawIcon(60545, calculatedPosition + new Vector2(8.0f, 24.0f) * config.IconScale / viewport.Scale, config.IconScale);
+        if (config.ShowIcon && isAbovePlayer) DrawUtilities.DrawIcon(60541, calculatedPosition + new Vector2(8.0f, 24.0f) * config.IconScale / viewport.Scale, config.IconScale);
     }
 }
