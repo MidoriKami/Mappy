@@ -54,6 +54,7 @@ public unsafe class IslandSanctuary : ModuleBase
     protected override bool ShouldDrawMarkers(Map map)
     {
         if (MJIManager.Instance()->IsPlayerInSanctuary is 0) return false;
+        if (LuminaCache<TerritoryType>.Instance.GetRow(map.TerritoryType.Row) is not { TerritoryIntendedUse: 49 }) return false;
         
         return base.ShouldDrawMarkers(map);
     }
