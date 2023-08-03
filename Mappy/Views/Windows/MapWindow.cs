@@ -125,18 +125,20 @@ public unsafe class MapWindow : Window
         var systemConfig = MappySystem.SystemConfig;
         var windowPosition = ImGui.GetWindowPos();
         var windowSize = ImGui.GetWindowSize();
-        
-        if (windowPosition != systemConfig.WindowPosition && !IsFocused)
-        {
-            ImGui.SetWindowPos(systemConfig.WindowPosition);
-        }
 
-        if (windowSize != systemConfig.WindowSize && !IsFocused)
+        if (!IsFocused)
         {
-            ImGui.SetWindowSize(systemConfig.WindowSize);
-        }
+            if (windowPosition != systemConfig.WindowPosition)
+            {
+                ImGui.SetWindowPos(systemConfig.WindowPosition);
+            }
 
-        if (IsFocused)
+            if (windowSize != systemConfig.WindowSize)
+            {
+                ImGui.SetWindowSize(systemConfig.WindowSize);
+            }
+        }
+        else // If focused
         {
             if (systemConfig.WindowPosition != windowPosition)
             {
@@ -242,7 +244,10 @@ public unsafe class MapWindow : Window
     
     private void ProcessContextMenu()
     {
-        if (ImGui.IsMouseClicked(ImGuiMouseButton.Right)) MappySystem.ContextMenuController.Show(PopupMenuType.AddMoveFlag);
+        if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+        {
+            MappySystem.ContextMenuController.Show(PopupMenuType.AddMoveFlag, PopupMenuType.Layers);
+        }
     }
     
     private void ProcessZoomChange()
