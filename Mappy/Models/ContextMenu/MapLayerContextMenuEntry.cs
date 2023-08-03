@@ -25,10 +25,10 @@ public class MapLayerContextMenuEntry : IContextMenuEntry
         }
     }
 
-    private string GetParentMapName() 
+    private static string GetParentMapName() 
         => GetParentMap()?.PlaceName.Value?.Name.RawString ?? "Unable to read map data";
 
-    private Map? GetParentMap()
+    private static Map? GetParentMap()
     {
         if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var currentMap }) return null;
 
