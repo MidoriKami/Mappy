@@ -8,9 +8,9 @@ using Map = Lumina.Excel.GeneratedSheets.Map;
 
 namespace Mappy.Models.ContextMenu;
 
-public class MapLayerContextMenuEntry : IContextMenuEntry
+public class ParentMapContextMenuEntry : IContextMenuEntry
 {
-    public PopupMenuType Type => PopupMenuType.Layers;
+    public PopupMenuType Type => PopupMenuType.ViewParentMap;
     public string Label => $"View Map: {GetParentMapName()}";
     public bool Enabled => GetParentMap() is not null;
     
