@@ -13,17 +13,20 @@ public class ContextMenuController
     {
         new FlagContextMenuEntry(),
         new MarkedAreaContextMenuEntry(),
-        new AddMoveFlagContextMenuEntry()
+        new AddMoveFlagContextMenuEntry(),
+        new MapLayerContextMenuEntry(),
     };
 
     private readonly HashSet<PopupMenuType> activeTypes = new();
 
     private bool wasWindowOpened;
-
     
-    public void Show(PopupMenuType type)
+    public void Show(params PopupMenuType[] types)
     {
-        activeTypes.Add(type);
+        foreach (var type in types)
+        {
+            activeTypes.Add(type);
+        }
     }
 
     public void Draw()

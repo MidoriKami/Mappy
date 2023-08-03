@@ -5,4 +5,5 @@ public enum PopupMenuType
     AddMoveFlag,
     TempFlag,
     TempArea,
+    Layers,
 }
