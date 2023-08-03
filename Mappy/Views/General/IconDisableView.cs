@@ -41,7 +41,7 @@ public class IconDisableView
 
         var disabled = disallowedIcons.Contains(iconId);
         var color = ImGui.GetColorU32(disabled ? KnownColor.Red.AsVector4() : KnownColor.ForestGreen.AsVector4());
-        var iconSize = new Vector2(iconTexture.Width, iconTexture.Height);
+        var iconSize = new Vector2(64.0f, 64.0f);
 
         var start = ImGui.GetCursorScreenPos();
         var stop = start + iconSize;
