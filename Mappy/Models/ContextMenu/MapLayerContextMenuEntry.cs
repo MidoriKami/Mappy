@@ -11,8 +11,8 @@ namespace Mappy.Models.ContextMenu;
 public class MapLayerContextMenuEntry : IContextMenuEntry
 {
     public PopupMenuType Type => PopupMenuType.Layers;
-    public string Label => $"View Map: {GetParentArea()}";
-    public bool Enabled => IsInSubArea();
+    public string Label => $"View Map: {GetParentMapName()}";
+    public bool Enabled => GetParentMap() is not null;
     
     public void ClickAction(Vector2 clickPosition)
     {
@@ -25,15 +25,7 @@ public class MapLayerContextMenuEntry : IContextMenuEntry
         }
     }
 
-    private bool IsInSubArea()
-    {
-        if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return false;
-        if (map is { PriorityCategoryUI: 0, PriorityUI: 0 }) return true;
-        
-        return false;
-    }
-
-    private string GetParentArea() 
+    private string GetParentMapName() 
         => GetParentMap()?.PlaceName.Value?.Name.RawString ?? "Unable to read map data";
 
     private Map? GetParentMap()
