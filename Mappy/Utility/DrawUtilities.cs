@@ -60,7 +60,7 @@ public partial class DrawUtilities
     {
         iconId = TryReplaceIconId(iconId);
         
-        DrawLevelRing(position, radius, viewport, map, color, extraRadius);
+        if (radius > 1.0f) DrawLevelRing(position, radius, viewport, map, color, extraRadius);
         DrawLevelIcon(position, iconId, map, scale);
     }
     
