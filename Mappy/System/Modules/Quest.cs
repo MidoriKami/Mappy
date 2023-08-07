@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -159,8 +160,12 @@ public unsafe class Quest : ModuleBase
         if (Service.ClientState is { LocalPlayer.Position.Y: var playerHeight })
         {
             var distance = playerHeight - marker.Y;
-            isBelowPlayer = distance > config.DistanceThreshold && distance > 0 && config.EnableDirectionalMarker;
-            isAbovePlayer = distance < config.DistanceThreshold && distance < 0 && config.EnableDirectionalMarker;
+
+            if (Math.Abs(distance) > config.DistanceThreshold && config.EnableDirectionalMarker)
+            {
+                isBelowPlayer = distance > 0;
+                isAbovePlayer = distance < 0;
+            }
         }
 
         var markerPosition = new Vector2(marker.X, marker.Z);
