@@ -26,7 +26,7 @@ public interface IContextMenuEntry
 
         if (ImGui.MenuItem(Label))
         {
-            var clickPosition = Position.GetTexturePosition(ImGui.GetMousePosOnOpeningCurrentPopup() - viewport.StartPosition, map, viewport);
+            var clickPosition = Position.GetRawTexturePosition(ImGui.GetMousePosOnOpeningCurrentPopup() - viewport.StartPosition, map, viewport);
 
             ClickAction(clickPosition);
         }

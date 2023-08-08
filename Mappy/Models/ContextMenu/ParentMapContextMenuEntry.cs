@@ -28,11 +28,18 @@ public class ParentMapContextMenuEntry : IContextMenuEntry
     private static string GetParentMapName() 
         => GetParentMap()?.PlaceName.Value?.Name.RawString ?? "Unable to read map data";
 
-    private static Map? GetParentMap()
+    public static Map? GetParentMap()
     {
         if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var currentMap }) return null;
 
-        return LuminaCache<Map>.Instance.FirstOrDefault(map => map.TerritoryType.Row == currentMap.TerritoryType.Row && map is { PriorityCategoryUI: not 0, PriorityUI: not 0 });
+        if (currentMap.Id.RawString.Split('/') is [_, _] idSplit)
+        {
+            var index = int.Parse(idSplit[1]);
+            
+            return LuminaCache<Map>.Instance.FirstOrDefault(map => map.Id.RawString == $"{idSplit[0]}/{index - 1:D2}");
+        }
+
+        return null;
     }
 }
 
