@@ -62,7 +62,7 @@ public partial class DrawUtilities
     {
         if (iconTexture is null) return;
         if (MappySystem.MapTextureController is not { Ready: true }) return;
-        // var calculatedPosition = Position.GetTextureOffsetPosition(position, map);
+        
         var iconSize = new Vector2(iconTexture.Width, iconTexture.Height) * scale;
         
         viewport.SetImGuiDrawPosition(position * viewport.Scale - iconSize / 2.0f);
