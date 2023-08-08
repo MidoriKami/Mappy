@@ -35,7 +35,7 @@ public class PenumbraController
         {
             // ignored
         }
-        
+
         return Service.DataManager.GetImGuiTexture(path);
     }
     
