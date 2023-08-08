@@ -37,12 +37,16 @@ public class MapMarkerData
     public MapMarkerType Type => (MapMarkerType) data.DataType;
     public uint IconId => data.Icon;
 
+    private string TooltipString { get; set; }
+    
     private static readonly Dictionary<uint, string> MiscIconNameCache = new();
 
     public MapMarkerData(MapMarker marker, MapIconConfig config)
     {
         data = marker;
         settings = config;
+
+        TooltipString = GetTooltipString();
     }
 
     public void Draw(Viewport viewport, Map map)
@@ -54,7 +58,7 @@ public class MapMarkerData
             IconScale = settings.IconScale,
             ShowIcon = settings.ShowIcon,
             
-            Tooltip = GetTooltipString(),
+            Tooltip = TooltipString,
             TooltipColor = GetDisplayColor(),
             ShowTooltip = settings.ShowTooltip,
             
