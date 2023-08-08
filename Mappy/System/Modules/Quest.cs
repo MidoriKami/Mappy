@@ -62,13 +62,6 @@ public unsafe class Quest : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.QuestMarkers;
     public override IModuleConfig Configuration { get; protected set; } = new QuestConfig();
-
-    protected override bool ShouldDrawMarkers(Map map)
-    {
-        if (!GetConfig<QuestConfig>().ShowIcon) return false;
-        
-        return base.ShouldDrawMarkers(map);
-    }
     
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
@@ -96,7 +89,7 @@ public unsafe class Quest : ModuleBase
                 DrawUtilities.DrawMapIcon(new MappyMapIcon
                 {
                     IconId = questInfo.IconId,
-                    TexturePosition = new Vector2(questInfo.X, questInfo.Z),
+                    ObjectPosition = new Vector2(questInfo.X, questInfo.Z),
                     IconScale = config.IconScale,
                     ShowIcon = config.ShowIcon,
 
