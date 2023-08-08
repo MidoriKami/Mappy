@@ -157,7 +157,7 @@ public unsafe class Quest : ModuleBase
                 DrawUtilities.DrawMapIcon(new MappyMapIcon
                 {
                     IconId = questInfo.IconId,
-                    TexturePosition = new Vector2(questInfo.X, questInfo.Z),
+                    ObjectPosition = new Vector2(questInfo.X, questInfo.Z),
                     IconScale = config.IconScale,
                     Tooltip = quest.Label.ToString(),
                     TooltipColor = config.TooltipColor,
