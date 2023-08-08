@@ -12,8 +12,6 @@ public class PenumbraController
     private readonly ICallGateSubscriber<string, string> penumbraResolveDefaultSubscriber;
     private readonly ICallGateSubscriber<bool> penumbraGetEnabledState;
 
-    private const bool Testing = false;
-
     public PenumbraController()
     {
         penumbraResolveDefaultSubscriber = Service.PluginInterface.GetIpcSubscriber<string, string>("Penumbra.ResolveInterfacePath");
@@ -37,15 +35,8 @@ public class PenumbraController
         {
             // ignored
         }
-
-        if (Testing)
-        {
-            return Service.TextureProvider.GetTextureFromGame(path);
-        }
-        else
-        {
-            return Service.DataManager.GetImGuiTexture(path);
-        }
+        
+        return Service.DataManager.GetImGuiTexture(path);
     }
     
     private string ResolvePenumbraPath(string filePath)
@@ -62,29 +53,14 @@ public class PenumbraController
 
     private TextureWrap? GetTextureForPath(string path)
     {
-        if (Testing)
+        if (path[0] is '/' or '\\' || path[1] == ':')
         {
-            if (path[0] is '/' or '\\' || path[1] == ':')
-            {
-                var texFile = Service.DataManager.GameData.GetFileFromDisk<TexFile>(path);
-                return Service.TextureProvider.GetTexture(texFile);
-            }
-            else
-            {
-                return Service.TextureProvider.GetTextureFromGame(path);
-            }
+            var texFile = Service.DataManager.GameData.GetFileFromDisk<TexFile>(path);
+            return Service.DataManager.GetImGuiTexture(texFile);
         }
         else
         {
-            if (path[0] is '/' or '\\' || path[1] == ':')
-            {
-                var texFile = Service.DataManager.GameData.GetFileFromDisk<TexFile>(path);
-                return Service.DataManager.GetImGuiTexture(texFile);
-            }
-            else
-            {
-                return Service.DataManager.GetImGuiTexture(path);
-            }
+            return Service.DataManager.GetImGuiTexture(path);
         }
     }
 }
