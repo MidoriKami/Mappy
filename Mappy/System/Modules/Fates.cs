@@ -70,7 +70,6 @@ public unsafe class Fates : ModuleBase
     protected override bool ShouldDrawMarkers(Map map)
     {
         if (Service.ClientState.TerritoryType != map.TerritoryType.Row) return false;
-        if (ParentMapContextMenuEntry.GetParentMap() is not null) return false;
         
         return base.ShouldDrawMarkers(map);
     }
