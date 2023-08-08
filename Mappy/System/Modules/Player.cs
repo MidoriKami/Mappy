@@ -83,7 +83,7 @@ public unsafe class Player : ModuleBase
         
         var angle = GetCameraRotation();
 
-        var playerPosition = Position.GetObjectPosition(player, map);
+        var playerPosition = Position.GetTexturePosition(player, map);
         var drawPosition = mapWindow.Viewport.GetImGuiWindowDrawPosition(playerPosition);
 
         var lineLength = config.ConeRadius * mapWindow.Viewport.Scale;

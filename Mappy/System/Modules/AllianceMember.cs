@@ -56,13 +56,19 @@ public unsafe class AllianceMember : ModuleBase
         {
             if (member.ObjectID is 0xE0000000 or 0) continue;
             
-            var memberPosition = new Vector2(member.X, member.Z);
-            var objectPosition = Position.GetObjectPosition(memberPosition, map);
-            
-            var mapIcon = config.DisplayJobIcons ? member.ClassJob + 62000u : config.SelectedIcon;
-            
-            if(config.ShowIcon) DrawUtilities.DrawIcon(mapIcon, objectPosition, config.IconScale);
-            if(config.ShowTooltip) DrawUtilities.DrawTooltip(config.SelectedIcon, member.ClassJob + 62000u, config.TooltipColor, MemoryHelper.ReadStringNullTerminated((nint)member.Name));
+            DrawUtilities.DrawMapIcon(new MappyMapIcon
+            {
+                IconId = config.DisplayJobIcons ? member.ClassJob + 62000u : config.SelectedIcon,
+                ObjectPosition = new Vector2(member.X, member.Z),
+                IconScale = config.IconScale,
+                ShowIcon = config.ShowIcon,
+                
+                TooltipExtraIcon = member.ClassJob + 62000u,
+                TooltipColor = config.TooltipColor,
+                Tooltip = MemoryHelper.ReadStringNullTerminated((nint)member.Name),
+                ShowTooltip = config.ShowTooltip,
+                
+            }, viewport, map);
         }
     }
 }

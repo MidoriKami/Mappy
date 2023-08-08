@@ -63,7 +63,7 @@ public class MappySystem
 
         if (SystemConfig.FollowPlayer)
         {
-            mapWindow.Viewport.SetViewportCenter(Position.GetObjectPosition(player.Position, map));
+            mapWindow.Viewport.SetViewportCenter(Position.GetTexturePosition(player.Position, map));
         }
     }
 

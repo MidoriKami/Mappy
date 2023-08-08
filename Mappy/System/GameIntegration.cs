@@ -142,21 +142,21 @@ public unsafe class GameIntegration : IDisposable
             {
                 case MapType.FlagMarker when TemporaryMarkers.FlagMarker is { Type: MarkerType.Flag } flag:
                     MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
-                    var flagPosition = Position.GetTextureOffsetPosition(flag.Position, map);
+                    var flagPosition = Position.GetTexturePosition(flag.Position, map);
                     viewport.SetViewportCenter(flagPosition);
                     if (MappySystem.SystemConfig.ZoomInOnFlag) viewport.SetViewportZoom(1.0f);
                     break;
                 
                 case MapType.QuestLog when GetQuestLocation(mapInfo) is {} questLocation:
                     MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
-                    var questPosition = Position.GetTextureOffsetPosition(questLocation, map);
+                    var questPosition = Position.GetTexturePosition(questLocation, map);
                     viewport.SetViewportCenter(questPosition);
                     viewport.SetViewportZoom(1.00f);
                     break;
                 
                 case MapType.GatheringLog when TemporaryMarkers.GatheringMarker is { Type: MarkerType.Gathering } area:
                     MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
-                    var gatherAreaPosition = Position.GetTextureOffsetPosition(area.Position, map);
+                    var gatherAreaPosition = Position.GetTexturePosition(area.Position, map);
                     viewport.SetViewportCenter(gatherAreaPosition);
                     viewport.SetViewportZoom(0.50f);
                     break;

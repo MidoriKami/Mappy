@@ -64,7 +64,7 @@ public class MapToolbar
                     if (Service.ClientState.LocalPlayer is not { Position: var playerPosition }) return;
                     if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
 
-                    viewport.SetViewportCenter(Position.GetObjectPosition(playerPosition, map));
+                    viewport.SetViewportCenter(Position.GetTexturePosition(playerPosition, map));
                 }
 
                 if (MappySystem.MapTextureController.MoveMapToPlayer() is { } validTask)
@@ -239,7 +239,7 @@ public class MapToolbar
 
         if (Bound.IsBoundedBy(cursorScreenPosition, mapWindow.Viewport.StartPosition, mapWindow.Viewport.StartPosition + mapWindow.Viewport.Size))
         {
-            var cursorPosition = Position.GetTexturePosition(ImGui.GetMousePos() - mapWindow.Viewport.StartPosition, map, mapWindow.Viewport);
+            var cursorPosition = Position.GetRawTexturePosition(ImGui.GetMousePos() - mapWindow.Viewport.StartPosition, map, mapWindow.Viewport);
 
             var mapCoordinates = MapUtil.WorldToMap(cursorPosition, map);
 

@@ -1,5 +1,4 @@
-﻿using Dalamud.Data;
-using Dalamud.Game;
+﻿using Dalamud.Game;
 using Dalamud.Game.Gui;
 using Dalamud.Game.Gui.Toast;
 using Dalamud.IoC;

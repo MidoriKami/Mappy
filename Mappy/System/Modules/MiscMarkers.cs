@@ -28,28 +28,21 @@ public unsafe class MiscMarkers : ModuleBase
 {
     public override ModuleName ModuleName => ModuleName.MiscMarkers;
     public override IModuleConfig Configuration { get; protected set; } = new MiscConfig();
-    private Dictionary<uint, string> CardRewardCache = new();
+    private readonly Dictionary<uint, string> cardRewardCache = new();
 
-    protected override bool ShouldDrawMarkers(Map map)
-    {
-        if (!GetConfig<MiscConfig>().ShowIcon) return false;
-        
-        return base.ShouldDrawMarkers(map);
-    }
-    
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
         var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
         
-        DrawMapMarkerContainer(data->CustomTalkMarkerData, map);
-        DrawMapMarkerContainer(data->GuildLeveAssignmentMapMarkerData, map);
-        DrawMapMarkerContainer(data->GuildOrderGuideMarkerData, map);
-        DrawMapMarkerContainer(data->GemstoneTraderMarkerData, map);
+        DrawMapMarkerContainer(data->CustomTalkMarkerData, viewport, map);
+        DrawMapMarkerContainer(data->GuildLeveAssignmentMapMarkerData, viewport, map);
+        DrawMapMarkerContainer(data->GuildOrderGuideMarkerData, viewport, map);
+        DrawMapMarkerContainer(data->GemstoneTraderMarkerData, viewport, map);
         
-        DrawTripleTriadMarkers(map);
+        DrawTripleTriadMarkers(viewport, map);
     }
     
-    private void DrawTripleTriadMarkers(Map map)
+    private void DrawTripleTriadMarkers(Viewport viewport, Map map)
     {
         var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
 
@@ -57,7 +50,7 @@ public unsafe class MiscMarkers : ModuleBase
         {
             foreach (var subLocation in markerInfo.MarkerData.Span)
             {
-                if (!CardRewardCache.ContainsKey(subLocation.ObjectiveId))
+                if (!cardRewardCache.ContainsKey(subLocation.ObjectiveId))
                 {
                     if (LuminaCache<TripleTriad>.Instance.GetRow(subLocation.ObjectiveId) is not { } triadInfo) continue;
                     
@@ -67,35 +60,43 @@ public unsafe class MiscMarkers : ModuleBase
                         .OfType<Item>()
                         .Select(item => item.Name.RawString);
                     
-                    CardRewardCache.Add(subLocation.ObjectiveId, string.Join("\n", cardRewards));
+                    cardRewardCache.Add(subLocation.ObjectiveId, string.Join("\n", cardRewards));
                 }
                 
-                DrawObjective(subLocation, map, subLocation.TooltipString->ToString(), CardRewardCache[subLocation.ObjectiveId]);
+                DrawObjective(subLocation, viewport, map, subLocation.TooltipString->ToString(), cardRewardCache[subLocation.ObjectiveId]);
             }
         }
     }
     
-    private void DrawMapMarkerContainer(MapMarkerContainer container, Map map)
+    private void DrawMapMarkerContainer(MapMarkerContainer container, Viewport viewport, Map map)
     {
         foreach (var markerInfo in container.GetAllMarkers())
         {
             foreach (var subLocation in markerInfo.MarkerData.Span)
             {
-                DrawObjective(subLocation, map, subLocation.TooltipString->ToString());
+                DrawObjective(subLocation, viewport, map, subLocation.TooltipString->ToString());
             }
         }
     }
     
-    private void DrawObjective(MapMarkerData markerInfo, Map map, string tooltip, string? secondaryTooltip = null)
+    private void DrawObjective(MapMarkerData markerInfo, Viewport viewport, Map map, string tooltip, string? secondaryTooltip = null)
     {
         if (LuminaCache<Level>.Instance.GetRow(markerInfo.LevelId) is not { } levelData) return;
         if (levelData.Map.Row != map.RowId) return;
         
         var config = GetConfig<MiscConfig>();
-        var position = Position.GetObjectPosition(new Vector2(levelData.X, levelData.Z), map);
 
-        var iconId = markerInfo.IconId is 60091 ? 61731 : markerInfo.IconId;
-        if(config.ShowIcon) DrawUtilities.DrawIcon(iconId, position, config.IconScale);
-        if(config.ShowTooltip) DrawUtilities.DrawTooltip(iconId, config.TooltipColor, tooltip, secondaryTooltip ?? string.Empty);
+        DrawUtilities.DrawMapIcon(new MappyMapIcon
+        {
+            IconId = markerInfo.IconId is 60091 ? 61731 : markerInfo.IconId,
+            ObjectPosition = new Vector2(markerInfo.X, markerInfo.Z),
+            ShowIcon = config.ShowIcon,
+            IconScale = config.IconScale,
+            
+            Tooltip = tooltip,
+            TooltipDescription = secondaryTooltip ?? string.Empty,
+            TooltipColor = config.TooltipColor,
+            ShowTooltip = config.ShowTooltip,
+        }, viewport, map);
     }
 }

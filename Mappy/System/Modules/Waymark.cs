@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using KamiLib.Caching;
 using Mappy.Abstracts;
@@ -42,9 +43,13 @@ public unsafe class Waymark : ModuleBase
         {
             if (markerSpan[index] is { Active: true } marker)
             {
-                var position = Position.GetObjectPosition(marker.Position, map);
-                    
-                if(config.ShowIcon) DrawUtilities.DrawIcon(GetIconForMarkerIndex(index), position, config.IconScale);
+                DrawUtilities.DrawMapIcon(new MappyMapIcon
+                {
+                    IconId = GetIconForMarkerIndex(index),
+                    ObjectPosition = new Vector2(marker.X, marker.Z) / 1000.0f,
+                    IconScale = config.IconScale,
+                    ShowIcon = config.ShowIcon,
+                }, viewport, map);
             }
         }
     }

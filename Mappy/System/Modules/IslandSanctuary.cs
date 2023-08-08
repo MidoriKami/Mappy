@@ -61,19 +61,13 @@ public unsafe class IslandSanctuary : ModuleBase
 
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
-        DrawGatheringIcons(map);
-    }
-    
-    private void DrawGatheringIcons(Map map)
-    {
         if (MJIManager.Instance()->CurrentMode is not 1) return; // If not in GatherMode
         var config = GetConfig<IslandSanctuaryConfig>();
-        
-        
+
         foreach (var obj in Service.ObjectTable)
         {
-            if(obj.ObjectKind is not ObjectKind.CardStand) continue;
-            if (gatheringObjectNames.FirstOrDefault(luminaObject => string.Compare(luminaObject.Name.Value?.Singular.RawString,obj.Name.TextValue, StringComparison.OrdinalIgnoreCase) == 0) is not { MapIcon: var mapIcon } luminaData ) continue;
+            if (obj.ObjectKind is not ObjectKind.CardStand) continue;
+            if (gatheringObjectNames.FirstOrDefault(luminaObject => string.Compare(luminaObject.Name.Value?.Singular.RawString, obj.Name.TextValue, StringComparison.OrdinalIgnoreCase) == 0) is not { MapIcon: var mapIcon } luminaData) continue;
 
             switch (luminaData.Unknown2)
             {
@@ -84,9 +78,18 @@ public unsafe class IslandSanctuary : ModuleBase
                 case 16 when !config.Fishing:
                     continue;
             }
-            
-            if(config.ShowIcon) DrawUtilities.DrawGameObjectIcon(mapIcon, obj, map, config.IconScale);
-            if(config.ShowTooltip) DrawUtilities.DrawTooltip(mapIcon, config.TooltipColor, obj.Name.TextValue);
+
+            DrawUtilities.DrawMapIcon(new MappyMapIcon
+            {
+                IconId = mapIcon,
+                ObjectPosition = new Vector2(obj.Position.X, obj.Position.Z),
+                IconScale = config.IconScale,
+                ShowIcon = config.ShowIcon,
+                
+                Tooltip = obj.Name.TextValue,
+                TooltipColor = config.TooltipColor,
+                ShowTooltip = config.ShowTooltip,
+            }, viewport, map);
         }
     }
 }

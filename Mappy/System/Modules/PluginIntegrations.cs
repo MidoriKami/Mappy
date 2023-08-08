@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Numerics;
 using ImGuiNET;
 using KamiLib.AutomaticUserInterface;
@@ -47,16 +46,21 @@ public class PluginIntegrations : ModuleBase
         foreach (var (_, marker) in IpcController.Markers)
         {
             if (map.RowId != marker.MapId) continue;
-            
-            var location = marker.PositionType switch
+
+            DrawUtilities.DrawMapIcon(new MappyMapIcon
             {
-                PositionType.Texture => Position.GetTextureOffsetPosition(marker.Position, map),
-                PositionType.World => Position.GetObjectPosition(marker.Position, map),
-                _ => throw new ArgumentOutOfRangeException()
-            };
-            
-            if(config.ShowIcon) DrawUtilities.DrawIcon(marker.IconId, location, config.IconScale);
-            if(config.ShowTooltip) DrawUtilities.DrawTooltip(marker.IconId, config.TooltipColor, marker.Tooltip, marker.Description);
+                IconId = marker.IconId,
+                TexturePosition = marker.PositionType is PositionType.Texture ? marker.Position : null,
+                ObjectPosition = marker.PositionType is PositionType.World ? marker.Position : null,
+                IconScale = config.IconScale,
+                ShowIcon = config.ShowIcon,
+                
+                Tooltip = marker.Tooltip,
+                TooltipDescription = marker.Description,
+                TooltipColor = config.TooltipColor,
+                ShowTooltip = config.ShowTooltip,
+                
+            }, viewport, map);
         }
     }
 }

@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
 using DailyDuty.System;
 using Dalamud.Utility;
 using ImGuiNET;
-using ImGuiScene;
 using KamiLib.Caching;
 using Lumina.Excel.GeneratedSheets;
+using Mappy.Models;
 using Mappy.System;
 using Mappy.System.Modules;
 using Mappy.Utility;
@@ -46,17 +45,26 @@ public class MapMarkerData
         settings = config;
     }
 
-    public void Draw()
+    public void Draw(Viewport viewport, Map map)
     {
-        if (settings.ShowIcon) DrawUtilities.DrawIcon(IconId, Position, settings.IconScale);
-        if (settings.ShowTooltip) DrawTooltip();
-        OnClick();
+        DrawUtilities.DrawMapIcon(new MappyMapIcon
+        {
+            IconId = IconId,
+            TexturePosition = Position,
+            IconScale = settings.IconScale,
+            ShowIcon = settings.ShowIcon,
+            
+            Tooltip = GetTooltipString(),
+            TooltipColor = GetDisplayColor(),
+            ShowTooltip = settings.ShowTooltip,
+            
+            OnClickAction = OnClick,
+            
+        }, viewport, map);
     }
 
-    private void DrawTooltip()
+    private string GetTooltipString()
     {
-        if (!ImGui.IsItemHovered()) return;
-
         if (GetDisplayString() is null && settings.ShowMiscTooltips)
         {
             if (!MiscIconNameCache.ContainsKey(IconId))
@@ -67,12 +75,14 @@ public class MapMarkerData
                 }
             }
 
-            DrawUtilities.DrawTooltip(data.Icon, GetDisplayColor(), MiscIconNameCache[IconId]);
+            return MiscIconNameCache[IconId];
         }
         else if (GetDisplayString() is { } displayString)
         {
-            DrawUtilities.DrawTooltip(data.Icon, GetDisplayColor(), displayString);
+            return displayString;
         }
+
+        return string.Empty;
     }
 
     private void OnClick()
@@ -99,7 +109,7 @@ public class MapMarkerData
     {
         MapMarkerType.Standard => GetStandardMarkerString(),
         MapMarkerType.MapLink => PlaceName.Name.ToDalamudString().TextValue,
-        MapMarkerType.InstanceLink => DataMap.PlaceName.Value?.Name.ToDalamudString().TextValue,
+        MapMarkerType.InstanceLink => null,
         MapMarkerType.Aetheryte => DataAetheryte.PlaceName.Value?.Name.ToDalamudString().TextValue,
         MapMarkerType.Aethernet => DataPlaceName.Name.ToDalamudString().TextValue,
         _ => null

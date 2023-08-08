@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
-using ImGuiNET;
 using KamiLib.Caching;
 using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
@@ -47,23 +46,22 @@ public class GatheringPoints : ModuleBase
 
             if(!IsTargetable(obj)) continue;
             
-            var iconId = GetIconIdForGatheringNode(obj);
-            
-            if(config.ShowIcon) DrawUtilities.DrawGameObjectIcon(iconId, obj, map, config.IconScale);
-            if(config.ShowTooltip) DrawTooltip(obj);
-        }
-    }
-    
-    private void DrawTooltip(GameObject gameObject)
-    {
-        if (!ImGui.IsItemHovered()) return;
-        var config = GetConfig<GatheringPointConfig>();
+            var gatheringPoint = LuminaCache<GatheringPoint>.Instance.GetRow(obj.DataId)!;
+            var gatheringPointBase = LuminaCache<GatheringPointBase>.Instance.GetRow(gatheringPoint.GatheringPointBase.Row)!;
 
-        var gatheringPoint = LuminaCache<GatheringPoint>.Instance.GetRow(gameObject.DataId)!;
-        var gatheringPointBase = LuminaCache<GatheringPointBase>.Instance.GetRow(gatheringPoint.GatheringPointBase.Row)!;
-        
-        var displayString = $"Lv. {gatheringPointBase.GatheringLevel} {gameObject.Name.TextValue}";
-        if (displayString != string.Empty) DrawUtilities.DrawTooltip(GetIconIdForGatheringNode(gameObject), config.TooltipColor, displayString);
+            DrawUtilities.DrawMapIcon(new MappyMapIcon
+            {
+                IconId = GetIconIdForGatheringNode(obj),
+                IconScale = config.IconScale,
+                ObjectPosition = new Vector2(obj.Position.X, obj.Position.Z),
+                ShowIcon = config.ShowIcon,
+                
+                Tooltip = $"Lv. {gatheringPointBase.GatheringLevel} {obj.Name.TextValue}",
+                TooltipColor = config.TooltipColor,
+                ShowTooltip = config.ShowTooltip,
+                
+            }, viewport, map);
+        }
     }
 
     private bool IsTargetable(GameObject gameObject) => gameObject.IsTargetable;

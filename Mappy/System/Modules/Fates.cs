@@ -1,15 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using Dalamud.Game.ClientState.Fates;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
-using ImGuiNET;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
 using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
+using Mappy.Models.ContextMenu;
 using Mappy.Models.Enums;
 using Mappy.System.Localization;
 using Mappy.Utility;
@@ -26,8 +27,18 @@ public interface IFateColorsConfig
     public Vector4 ExpiringColor { get; set; }
 }
 
+[Category("DirectionalMarker", 1)]
+public interface IFateDistanceMarkerConfig
+{
+    [BoolConfig("DirectionalMarker")]
+    public bool EnableDirectionalMarker { get; set; }
+    
+    [FloatConfig("DistanceThreshold", 0.0f, 50.0f)]
+    public float DistanceThreshold { get; set; }
+}
+
 [Category("ModuleConfig")]
-public class FateConfig : IModuleConfig, IIconConfig, ITooltipConfig, IFateColorsConfig
+public class FateConfig : IModuleConfig, IIconConfig, ITooltipConfig, IFateColorsConfig, IFateDistanceMarkerConfig
 {
     public bool Enable { get; set; } = true;
     public int Layer { get; set; } = 3;
@@ -46,6 +57,9 @@ public class FateConfig : IModuleConfig, IIconConfig, ITooltipConfig, IFateColor
 
     [IntCounterConfig("EarlyWarningTime", false)]
     public int EarlyWarningTime { get; set; } = 300;
+
+    public bool EnableDirectionalMarker { get; set; } = true;
+    public float DistanceThreshold { get; set; } = 20.0f;
 }
 
 public unsafe class Fates : ModuleBase
@@ -55,65 +69,62 @@ public unsafe class Fates : ModuleBase
 
     protected override bool ShouldDrawMarkers(Map map)
     {
-        if (!IsPlayerInCurrentMap(map)) return false;
+        if (Service.ClientState.TerritoryType != map.TerritoryType.Row) return false;
+        if (ParentMapContextMenuEntry.GetParentMap() is not null) return false;
         
         return base.ShouldDrawMarkers(map);
     }
 
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
+        var config = GetConfig<FateConfig>();
+        
         foreach (var fate in FateManager.Instance()->Fates.Span)
         {
             if (fate.Value is null) continue;
-            DrawFate(fate, viewport, map);
+            
+            DrawUtilities.DrawMapIcon(new MappyMapIcon
+            {
+                IconId = fate.Value->MapIconId,
+                ObjectPosition = new Vector2(fate.Value->Location.X, fate.Value->Location.Z),
+                IconScale = config.IconScale,
+                ShowIcon = config.ShowIcon,
+            
+                Radius = fate.Value->Radius,
+                RadiusColor = GetFateRingColor(fate),
+            
+                Tooltip = GetFatePrimaryTooltip(fate),
+                TooltipDescription = GetFateSecondaryTooltip(fate, fate.Value->IsExpBonus),
+                ShowTooltip = config.ShowTooltip,
+                TooltipColor = config.TooltipColor,
+            
+                Layers = GetFateLayers(fate),
+                VerticalPosition = fate.Value->Location.Y,
+                ShowDirectionalIndicator = config.EnableDirectionalMarker,
+                VerticalThreshold = config.DistanceThreshold,
+            }, viewport, map);
         }
     }
-    
-    private void DrawFate(FateContext* fate, Viewport viewport, Map map)
-    {
-        var config = GetConfig<FateConfig>();
-        var position = Position.GetObjectPosition(fate->Location, map);
 
-        var mapIcon = fate->MapIconId;
-        var isExpBonus = fate->IsExpBonus;
-        var primaryLine = GetFatePrimaryTooltip(fate);
-        var secondaryLine = GetFateSecondaryTooltip(fate, isExpBonus);
-        
-        if (config.ShowRing) DrawRing(fate, viewport, map);
-        if (config.ShowIcon) DrawUtilities.DrawIcon(mapIcon, position, config.IconScale);
-        if (config.ShowTooltip && (fate->State is 7 || viewport.Scale <= 0.5f)) DrawUtilities.DrawTooltip(mapIcon, config.TooltipColor, primaryLine, secondaryLine);
-        if (config.ShowTooltip && (fate->State is not 7 && viewport.Scale > 0.5f)) DrawUtilities.DrawLevelTooltip(new Vector2(fate->Location.X, fate->Location.Z), fate->Radius, viewport, map, mapIcon, config.TooltipColor, primaryLine, secondaryLine);
-        if (config.ShowIcon && isExpBonus) DrawUtilities.DrawIcon(60934, position + new Vector2(16.0f, -16.0f) * config.IconScale / viewport.Scale, config.IconScale);
-    }
+    private List<IconLayer> GetFateLayers(FateContext* fate) => fate->IsExpBonus ? new List<IconLayer> { new(60934, new Vector2(16.0f, -16.0f)) } : new List<IconLayer>();
 
-    private void DrawRing(FateContext* fate, Viewport viewport, Map map)
+    private Vector4 GetFateRingColor(FateContext* fate)
     {
         var config = GetConfig<FateConfig>();
         
         var timeRemaining = GetTimeRemaining(fate);
         var earlyWarningTime = TimeSpan.FromSeconds(config.EarlyWarningTime);
-        var color = ImGui.GetColorU32(config.CircleColor);
-
+        
         if (config.ExpiringWarning && timeRemaining <= earlyWarningTime)
         {
-            color = ImGui.GetColorU32(config.ExpiringColor);
+            return config.ExpiringColor;
         }
 
-        switch ((FateState)fate->State)
-        {
-            case FateState.Running:
-                var position = Position.GetObjectPosition(fate->Location, map);
-                var drawPosition = viewport.GetImGuiWindowDrawPosition(position);
-
-                var radius = fate->Radius * viewport.Scale;
-
-                ImGui.GetWindowDrawList().AddCircleFilled(drawPosition, radius, color);
-                ImGui.GetWindowDrawList().AddCircle(drawPosition, radius, color, 0, 4);
-                break;
-        }
+        return config.CircleColor;
     }
     
     private string GetFatePrimaryTooltip(FateContext* fate) => $"Lv. {fate->Level} {fate->Name}";
+
     private string GetFateSecondaryTooltip(FateContext* fate, bool isExpBonus)
     {
         if ((FateState) fate->State != FateState.Running) return isExpBonus ? LuminaCache<Addon>.Instance.GetRow(3921)!.Text.RawString : string.Empty;
@@ -139,5 +150,5 @@ public unsafe class Fates : ModuleBase
         return delta;
     }
 
-    private string GetTimeFormatted(TimeSpan span) => $"{span.Minutes:D2}:{span.Seconds:D2}";
+    private static string GetTimeFormatted(TimeSpan span) => $"{span.Minutes:D2}:{span.Seconds:D2}";
 }

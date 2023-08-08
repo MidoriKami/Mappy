@@ -6,6 +6,7 @@ using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
 using Mappy.Models.Enums;
+using Mappy.Utility;
 using ModuleBase = Mappy.Abstracts.ModuleBase;
 
 namespace Mappy.System.Modules;
@@ -38,17 +39,38 @@ public unsafe class TemporaryMarkers : ModuleBase
 
         if (GatheringMarker is not null && GatheringMarker.MapID == map.RowId)
         {
-            GatheringMarker.DrawRing(viewport, map, config.CircleColor);
-            if(config.ShowIcon) GatheringMarker.DrawIcon(map, config.IconScale);
-            if(config.ShowTooltip) GatheringMarker.DrawTooltip(viewport, map, config.TooltipColor);
+            DrawUtilities.DrawMapIcon(new MappyMapIcon
+            {
+                IconId = GatheringMarker.IconID,
+                IconScale = config.IconScale,
+                ObjectPosition = GatheringMarker.Position,
+                ShowIcon = config.ShowIcon,
+                
+                Tooltip = GatheringMarker.TooltipText,
+                TooltipColor = config.TooltipColor,
+                ShowTooltip = config.ShowTooltip,
+                
+                Radius = GatheringMarker.Radius,
+                RadiusColor = config.CircleColor,
+            }, viewport, map);
+            
             GatheringMarker.ShowContextMenu(viewport, map);
         }
    
-        if (FlagMarker is not null && FlagMarker.MapID == map.RowId)
+        if (FlagMarker is not null && FlagMarker.MapID == map.RowId && AgentMap.Instance() is not null && AgentMap.Instance()->IsFlagMarkerSet is 1)
         {
-            FlagMarker.DrawRing(viewport, map, config.CircleColor);
-            if(config.ShowIcon) FlagMarker.DrawIcon(map, config.IconScale);
-            if(config.ShowTooltip) FlagMarker.DrawTooltip(viewport, map, config.TooltipColor);
+            DrawUtilities.DrawMapIcon(new MappyMapIcon
+            {
+                IconId = FlagMarker.IconID,
+                IconScale = config.IconScale,
+                ObjectPosition = FlagMarker.Position,
+                ShowIcon = config.ShowIcon,
+                
+                Tooltip = FlagMarker.TooltipText,
+                TooltipColor = config.TooltipColor,
+                ShowTooltip = config.ShowTooltip,
+            }, viewport, map);
+
             FlagMarker.ShowContextMenu(viewport, map);
         }
     }

@@ -45,23 +45,33 @@ public class Pet : ModuleBase
     {
         foreach (var obj in Service.PartyList)
         {
-            DrawPet(obj.ObjectId, map);
+            DrawPet(obj.ObjectId, viewport, map);
         }
 
         if (Service.PartyList.Length is 0 && Service.ClientState.LocalPlayer is { } player)
         {
-            DrawPet(player.ObjectId, map);
+            DrawPet(player.ObjectId, viewport, map);
         }
     }
     
-    private void DrawPet(uint ownerID, Map map)
+    private void DrawPet(uint ownerID, Viewport viewport, Map map)
     {
         var config = GetConfig<PetConfig>();
         
         foreach (var obj in OwnedPets(ownerID))
         {
-            if(config.ShowIcon) DrawUtilities.DrawGameObjectIcon(config.SelectedIcon, obj, map, config.IconScale + 0.25f);
-            if(config.ShowTooltip) DrawUtilities.DrawTooltip(config.SelectedIcon, config.TooltipColor, obj.Name.TextValue);
+            DrawUtilities.DrawMapIcon(new MappyMapIcon
+            {
+                IconId = config.SelectedIcon,
+                ObjectPosition = new Vector2(obj.Position.X, obj.Position.Z),
+                IconScale = config.IconScale + 0.25f,
+                ShowIcon = config.ShowIcon,
+                
+                Tooltip = obj.Name.TextValue,
+                TooltipColor = config.TooltipColor,
+                ShowTooltip = config.ShowTooltip,
+                
+            }, viewport, map);
         }
     }
     

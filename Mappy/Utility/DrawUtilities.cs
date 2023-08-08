@@ -1,7 +1,7 @@
-﻿using System.Numerics;
+﻿using System.Linq;
+using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Types;
 using ImGuiNET;
-using ImGuiScene;
 using KamiLib;
 using KamiLib.Caching;
 using Lumina.Excel.GeneratedSheets;
@@ -13,70 +13,70 @@ namespace Mappy.Utility;
 
 public partial class DrawUtilities
 {
-    public static void DrawGameObjectIcon(uint iconId, GameObject gameObject, Map map, float scale)
+    public static void DrawMapIcon(MappyMapIcon iconData, Viewport viewport, Map map)
     {
-        var objectPosition = Position.GetObjectPosition(gameObject, map);
+        if (iconData.IconId is 0) return;
         
-        DrawIcon(iconId, objectPosition, scale);
-    }
-    
-    public static void DrawIcon(uint iconId, Vector2 position, float scale)
-    {
-        if (MappySystem.SystemConfig is not { SeenIcons: var seenIcons, DisallowedIcons: var disallowedIcons }) return;
+        iconData.IconId = TryReplaceIconId(iconData.IconId);
 
-        if (!seenIcons.Contains(iconId) && iconId is not 0)
+        // If we have a texture position, use it as-is, else get the texture position, Zero if error
+        var drawPosition = iconData.TexturePosition ?? (iconData.ObjectPosition is not null ? Position.GetTexturePosition(iconData.ObjectPosition.Value, map) : Vector2.Zero);
+        
+        if (iconData is { ShowIcon: true } && !IsIconDisabled(iconData.IconId))
         {
-            seenIcons.Add(iconId);
-            MappyPlugin.System.SaveConfig();
+            if (iconData is { Radius: > 1.0f })
+            {
+                DrawAreaRing(drawPosition, iconData.Radius, viewport, map, iconData.RadiusColor);
+            }
+            
+            DrawIconTexture(iconData.IconTexture, viewport, drawPosition, iconData.IconScale);
+
+            if (ImGui.IsItemClicked())
+            {
+                iconData.OnClickAction?.Invoke();
+            }
+
+            var radiusSize = iconData.Radius * viewport.Scale;
+            var iconSize = iconData.IconSize.X * iconData.IconScale / 2.0f;
+            var isIconBiggerThanRadius = iconSize >= radiusSize;
+
+            switch (iconData)
+            {
+                case { ShowTooltip: true, Radius: <= 1.0f }:
+                case { ShowTooltip: true, Radius: > 1.0f } when isIconBiggerThanRadius:
+                    DrawTooltip(iconData.IconId, iconData.TooltipExtraIcon, iconData.TooltipColor, iconData.Tooltip, iconData.TooltipDescription);
+                    break;
+                
+                case { ShowTooltip: true, Radius: > 1.0f } when !isIconBiggerThanRadius:
+                    DrawAreaTooltip(drawPosition, iconData.Radius, viewport, iconData.IconId, iconData.TooltipColor, iconData.Tooltip, iconData.TooltipDescription);
+                    break;
+            }
+            
+            if (iconData is { ShowDirectionalIndicator: true })
+            {
+                if (GetDirectionalIconLayer(iconData) is { } layer)
+                {
+                    iconData.Layers.Add(layer);
+                }
+            }
+
+            foreach (var layer in iconData.Layers.Where(layer => !IsIconDisabled(layer.IconId)))
+            {
+                DrawIconTexture(layer.IconTexture, viewport, drawPosition + layer.PositionOffset * iconData.IconScale / viewport.Scale, iconData.IconScale);
+            }
         }
-
-        if (disallowedIcons.Contains(iconId)) return;
-
-        DrawIconTexture(IconCache.Instance.GetIcon(iconId), position, scale);
-    }
-
-    private static void DrawIconTexture(TextureWrap? iconTexture, Vector2 position, float scale)
-    {
-        if (iconTexture is null) return;
-        if (MappySystem.MapTextureController is not { Ready: true }) return;
-        if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { } mapWindow) return;
-        
-        var iconSize = new Vector2(iconTexture.Width, iconTexture.Height) * scale;
-        
-        mapWindow.Viewport.SetImGuiDrawPosition(position * mapWindow.Viewport.Scale - iconSize / 2.0f);
-        ImGui.Image(iconTexture.ImGuiHandle, iconSize);
     }
 
     public static void DrawTooltip(Vector4 color, string primaryText)
         => DrawStandardTooltipInternal(0, 0, color, primaryText, string.Empty);
 
-    public static void DrawTooltip(uint iconId, Vector4 color, string primaryText, string secondaryText = "")
-        => DrawStandardTooltipInternal(iconId, 0, color, primaryText, secondaryText);
-
-    public static void DrawTooltip(uint iconId, uint secondIconId, Vector4 color, string primaryText, string secondaryText = "")
-        => DrawStandardTooltipInternal(iconId, secondIconId, color, primaryText, secondaryText);
-
-    public static void DrawLevelIcon(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, Vector4 color, float scale, float extraRadius)
-    {
-        iconId = TryReplaceIconId(iconId);
-        
-        if (radius > 1.0f) DrawLevelRing(position, radius, viewport, map, color, extraRadius);
-        DrawLevelIcon(position, iconId, map, scale);
-    }
-    
-    public static void DrawLevelTooltip(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, Vector4 color, string primaryText, string secondaryText = "")
-        => DrawLevelTooltipInternal(position, radius * viewport.Scale, viewport, map, iconId, 0, color, primaryText, secondaryText);
-    
-    public static void DrawLevelTooltip(Vector2 position, float radius, Viewport viewport, Map map, uint iconId, uint secondIconId, Vector4 color, string primaryText, string secondaryText = "")
-        => DrawLevelTooltipInternal(position, radius, viewport, map, iconId, secondIconId, color, primaryText, secondaryText);
-    
     public static void DrawIconRotated(uint iconId, GameObject gameObject, float iconScale)
     {
         if (IconCache.Instance.GetIcon(iconId) is not {} texture) return;
         if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
         if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { } mapWindow) return;
         
-        var objectPosition = Position.GetObjectPosition(gameObject.Position, map);
+        var objectPosition = Position.GetTexturePosition(gameObject.Position, map);
         var center = mapWindow.Viewport.GetImGuiWindowDrawPosition(objectPosition);
         var angle = GetObjectRotation(gameObject);
         var size = new Vector2(texture.Width, texture.Height) * iconScale;

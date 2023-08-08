@@ -62,18 +62,17 @@ public unsafe class Houses : ModuleBase
         
         foreach (var marker in housingMarkers)
         {
-            if(config.ShowIcon) DrawHousingMapMarker(marker, map);
-            if(config.ShowTooltip) DrawTooltip(marker, map);
+            DrawUtilities.DrawMapIcon(new MappyMapIcon
+            {
+                IconId = GetIconId(marker, map),
+                ObjectPosition = new Vector2(marker.X, marker.Z),
+                IconScale = config.IconScale + 0.15f,
+                ShowIcon = config.ShowIcon,
+            
+                Tooltip = GetTooltip(marker),
+                ShowTooltip = config.ShowTooltip,
+            }, viewport, map);
         }
-    }
-    
-    private void DrawHousingMapMarker(HousingMapMarkerInfo marker, Map map)
-    {
-        var config = GetConfig<HousingConfig>();
-        var iconId = GetIconId(marker, map);
-        var position = Position.GetObjectPosition(new Vector2(marker.X, marker.Z), map);
-
-        DrawUtilities.DrawIcon(iconId, position, config.IconScale + 0.15f);
     }
     
     private uint GetIconId(ExcelRow marker, ExcelRow map)
@@ -98,25 +97,11 @@ public unsafe class Houses : ModuleBase
         };
     }
 
-    private void DrawTooltip(ExcelRow marker, ExcelRow map)
+    private string GetTooltip(ExcelRow marker) => marker.SubRowId switch
     {
-        var config = GetConfig<HousingConfig>();
-
-        switch (marker.SubRowId)
-        {
-            case 60:
-                DrawUtilities.DrawTooltip(GetIconId(marker, map), config.TooltipColor, Strings.Apartment);
-                break;
-
-            case 61:
-                DrawUtilities.DrawTooltip(GetIconId(marker, map), config.TooltipColor, Strings.Apartment);
-                break;
-
-            default:
-                DrawUtilities.DrawTooltip(GetIconId(marker, map), config.TooltipColor, $"{Strings.Plot} {marker.SubRowId + 1}");
-                break;
-        }
-    }
+        60 or 61 => Strings.Apartment,
+        _ => $"{Strings.Plot} {marker.SubRowId + 1}"
+    };
 
     private bool IsHousingManagerValid()
     {

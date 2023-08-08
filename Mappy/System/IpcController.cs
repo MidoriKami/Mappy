@@ -221,8 +221,8 @@ public class IpcController : IDisposable
         
         return LineMarkers.TryAdd(newId, new IpcArrowMarker
         {
-            Start = Position.GetTextureOffsetPosition(adjustedStart, map),
-            End = Position.GetTextureOffsetPosition(adjustedStop, map),
+            Start = Position.GetTexturePosition(adjustedStart, map),
+            End = Position.GetTexturePosition(adjustedStop, map),
             MapId = mapId,
             Color = color,
             Thickness = thickness,

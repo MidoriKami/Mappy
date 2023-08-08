@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
-using ImGuiNET;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
@@ -43,19 +42,17 @@ public class Treasure : ModuleBase
 
             if(!IsTargetable(obj)) continue;
             
-            if (config.ShowIcon) DrawUtilities.DrawGameObjectIcon(config.SelectedIcon, obj, map, config.IconScale);
-            if (config.ShowTooltip) DrawTooltip(obj);
-        }
-    }
-    
-    private void DrawTooltip(GameObject gameObject)
-    {
-        if (!ImGui.IsItemHovered()) return;
-        var config = GetConfig<TreasureConfig>();
-        
-        if (gameObject is { Name.TextValue: { Length: > 0 } name })
-        {
-            DrawUtilities.DrawTooltip(config.SelectedIcon, config.TooltipColor, name);
+            DrawUtilities.DrawMapIcon(new MappyMapIcon
+            {
+                IconId = config.SelectedIcon,
+                ObjectPosition = new Vector2(obj.Position.X, obj.Position.Z),
+                IconScale = config.IconScale,
+                ShowIcon = config.ShowIcon,
+
+                Tooltip = obj.Name.TextValue,
+                ShowTooltip = config.ShowTooltip,
+                TooltipColor = config.TooltipColor,
+            }, viewport, map);
         }
     }
 
@@ -65,12 +62,7 @@ public class Treasure : ModuleBase
 
         if (Service.ClientState.LocalPlayer is not { Position: var playerPosition } ) return false;
 
-        // Limit height delta to 20yalms
-        if (Math.Abs(playerPosition.Y - gameObject.Position.Y) < 15.0f)
-        {
-            return gameObject.IsTargetable;
-        }
-
-        return false;
+        // Limit height delta to 15yalms
+        return Math.Abs(playerPosition.Y - gameObject.Position.Y) < 15.0f && gameObject.IsTargetable;
     }
 }

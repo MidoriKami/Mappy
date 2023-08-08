@@ -1,6 +1,5 @@
 ﻿// ReSharper disable CollectionNeverUpdated.Global
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
@@ -13,7 +12,6 @@ using Mappy.Abstracts;
 using Mappy.DataModels;
 using Mappy.Models;
 using Mappy.Models.Enums;
-using Mappy.Views.Attributes;
 using MapMarkerData = Mappy.DataModels.MapMarkerData;
 
 namespace Mappy.System.Modules;
@@ -83,15 +81,15 @@ public class MapIcons : ModuleBase
         foreach (var marker in mapMarkers)
         {
             if (config.AetherytesOnTop && marker.Type is MapMarkerType.Aetheryte) continue;
-            
-            if (config.ShowIcon) marker.Draw();
+
+            marker.Draw(viewport, map);
         }
 
         if (config.AetherytesOnTop)
         {
             foreach (var aetheryte in mapMarkers.Where(marker => marker.Type is MapMarkerType.Aetheryte))
             {
-                if (config.ShowIcon) aetheryte.Draw();
+                aetheryte.Draw(viewport, map);
             }
         }
     }

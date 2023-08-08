@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -83,6 +82,7 @@ public unsafe class Quest : ModuleBase
     private void DrawAcceptedQuests(Viewport viewport, Map map)
     {
         var mapData = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
+        var config = GetConfig<QuestConfig>();
 
         foreach (var quest in mapData->QuestDataSpan)
         {
@@ -93,7 +93,23 @@ public unsafe class Quest : ModuleBase
                 if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap }) continue;
                 if (levelMap != map.RowId) continue;
                 
-                DrawObjective(questInfo, quest.Label.ToString(), viewport, map, GetConfig<QuestConfig>().InProgressColor);
+                DrawUtilities.DrawMapIcon(new MappyMapIcon
+                {
+                    IconId = questInfo.IconId,
+                    TexturePosition = new Vector2(questInfo.X, questInfo.Z),
+                    IconScale = config.IconScale,
+                    ShowIcon = config.ShowIcon,
+
+                    Tooltip = quest.Label.ToString(),
+                    TooltipColor = config.TooltipColor,
+                    ShowTooltip = config.ShowTooltip,
+
+                    RadiusColor = config.InProgressColor,
+                    
+                    ShowDirectionalIndicator = config.EnableDirectionalMarker,
+                    VerticalPosition = questInfo.Y,
+                    VerticalThreshold = config.DistanceThreshold,
+                }, viewport, map);
             }
         }
     }
@@ -101,6 +117,7 @@ public unsafe class Quest : ModuleBase
     private void DrawUnacceptedQuests(Viewport viewport, Map map)
     {
         var mapData = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
+        var config = GetConfig<QuestConfig>();
         
         foreach (var markerInfo in mapData->QuestMarkerData.GetAllMarkers())
         {
@@ -109,7 +126,22 @@ public unsafe class Quest : ModuleBase
                 if (LuminaCache<Level>.Instance.GetRow(markerData.LevelId) is not { Map.Row: var levelMap}) continue;
                 if (levelMap != map.RowId) continue;
 
-                DrawObjective(markerData, $"Lv. {markerData.RecommendedLevel} {markerData.TooltipString->ToString()}", viewport, map, GetConfig<QuestConfig>().InProgressColor);
+                DrawUtilities.DrawMapIcon(new MappyMapIcon
+                {
+                    IconId = markerData.IconId,
+                    ObjectPosition = new Vector2(markerData.X, markerData.Z),
+                    IconScale = config.IconScale,
+                    ShowIcon = config.ShowIcon,
+
+                    Tooltip = $"Lv. {markerData.RecommendedLevel} {markerData.TooltipString->ToString()}",
+                    TooltipColor = config.TooltipColor,
+                    ShowTooltip = config.ShowTooltip,
+
+                    RadiusColor = config.InProgressColor,
+                    ShowDirectionalIndicator = config.EnableDirectionalMarker,
+                    VerticalPosition = markerData.Y,
+                    VerticalThreshold = config.DistanceThreshold,
+                }, viewport, map);
             }
         }
     }
@@ -117,6 +149,7 @@ public unsafe class Quest : ModuleBase
     private void DrawLeveQuests(Viewport viewport, Map map)
     {
         var mapData = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
+        var config = GetConfig<QuestConfig>();
 
         foreach (var quest in mapData->LevequestDataSpan)
         {
@@ -124,11 +157,25 @@ public unsafe class Quest : ModuleBase
             
             foreach (var questInfo in quest.MarkerData.Span)
             {
-                if (FindLevework(quest.ObjectiveId) is not { Flags: not 32 } ) continue;
+                if (GetLevework(quest.ObjectiveId) is not { Flags: not 32 } ) continue;
                 if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap } ) continue;
                 if (levelMap != map.RowId) continue;
                 
-                DrawObjective(questInfo, quest.Label.ToString(), viewport, map, GetConfig<QuestConfig>().LeveQuestColor);
+                DrawUtilities.DrawMapIcon(new MappyMapIcon
+                {
+                    IconId = questInfo.IconId,
+                    TexturePosition = new Vector2(questInfo.X, questInfo.Z),
+                    IconScale = config.IconScale,
+                    Tooltip = quest.Label.ToString(),
+                    TooltipColor = config.TooltipColor,
+                    Radius = questInfo.Radius,
+                    RadiusColor = config.LeveQuestColor,
+                    ShowIcon = config.ShowIcon,
+                    ShowTooltip = config.ShowTooltip,
+                    ShowDirectionalIndicator = config.EnableDirectionalMarker,
+                    VerticalPosition = questInfo.Y,
+                    VerticalThreshold = config.DistanceThreshold,
+                }, viewport, map);
             }
         }
         
@@ -137,11 +184,25 @@ public unsafe class Quest : ModuleBase
             if(LuminaCache<Level>.Instance.GetRow(markerInfo.LevelId) is not { Map.Row: var levelMap } ) continue;
             if(levelMap != map.RowId) continue;
             
-            DrawObjective(markerInfo, markerInfo.TooltipString->ToString(), viewport, map, GetConfig<QuestConfig>().LeveQuestColor);
+            DrawUtilities.DrawMapIcon(new MappyMapIcon
+            {
+                IconId = markerInfo.IconId,
+                TexturePosition = new Vector2(markerInfo.X, markerInfo.Z),
+                IconScale = config.IconScale,
+                Tooltip = markerInfo.TooltipString->ToString(),
+                TooltipColor = config.TooltipColor,
+                Radius = markerInfo.Radius,
+                RadiusColor = config.LeveQuestColor,
+                ShowIcon = config.ShowIcon,
+                ShowTooltip = config.ShowTooltip,
+                ShowDirectionalIndicator = config.EnableDirectionalMarker,
+                VerticalPosition = markerInfo.Y,
+                VerticalThreshold = config.DistanceThreshold,
+            }, viewport, map);
         }
     }
 
-    private LeveWork? FindLevework(uint id)
+    private LeveWork? GetLevework(uint id)
     {
         foreach (var levework in QuestManager.Instance()->LeveQuestsSpan)
         {
@@ -149,33 +210,5 @@ public unsafe class Quest : ModuleBase
         }
 
         return null;
-    }
-    
-    private void DrawObjective(MapMarkerData marker, string tooltip, Viewport viewport, Map map, Vector4 color)
-    {
-        var config = GetConfig<QuestConfig>();
-        var isBelowPlayer = false;
-        var isAbovePlayer = false;
-
-        if (Service.ClientState is { LocalPlayer.Position.Y: var playerHeight })
-        {
-            var distance = playerHeight - marker.Y;
-
-            if (Math.Abs(distance) > config.DistanceThreshold && config.EnableDirectionalMarker)
-            {
-                isBelowPlayer = distance > 0;
-                isAbovePlayer = distance < 0;
-            }
-        }
-
-        var markerPosition = new Vector2(marker.X, marker.Z);
-        var calculatedPosition = Position.GetTextureOffsetPosition(markerPosition, map);
-        
-        DrawUtilities.DrawLevelIcon(markerPosition, marker.Radius, viewport, map, marker.IconId, color, config.IconScale, 0.0f);
-
-        if (config.ShowTooltip && marker.Radius < 5.0f) DrawUtilities.DrawTooltip(marker.IconId, config.TooltipColor, tooltip);
-        if (config.ShowTooltip && marker.Radius >= 5.0f) DrawUtilities.DrawLevelTooltip(new Vector2(marker.X, marker.Z), marker.Radius, viewport, map, marker.IconId, config.TooltipColor, tooltip);
-        if (config.ShowIcon && isBelowPlayer) DrawUtilities.DrawIcon(60545, calculatedPosition + new Vector2(8.0f, 24.0f) * config.IconScale / viewport.Scale, config.IconScale);
-        if (config.ShowIcon && isAbovePlayer) DrawUtilities.DrawIcon(60541, calculatedPosition + new Vector2(8.0f, 24.0f) * config.IconScale / viewport.Scale, config.IconScale);
     }
 }
