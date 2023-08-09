@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Utility;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
 using KamiLib.Utilities;
@@ -34,11 +35,11 @@ public unsafe class MiscMarkers : ModuleBase
     {
         var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
         
-        DrawMapMarkerContainer(data->CustomTalkMarkerData, viewport, map);
         DrawMapMarkerContainer(data->GuildLeveAssignmentMapMarkerData, viewport, map);
         DrawMapMarkerContainer(data->GuildOrderGuideMarkerData, viewport, map);
         DrawMapMarkerContainer(data->GemstoneTraderMarkerData, viewport, map);
         
+        DrawCustomTalkMarkers(viewport, map);
         DrawTripleTriadMarkers(viewport, map);
     }
     
@@ -74,6 +75,21 @@ public unsafe class MiscMarkers : ModuleBase
         {
             foreach (var subLocation in markerInfo.MarkerData.Span)
             {
+                DrawObjective(subLocation, viewport, map, subLocation.TooltipString->ToString());
+            }
+        }
+    }
+    
+    private void DrawCustomTalkMarkers(Viewport viewport, Map map)
+    {
+        var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
+        
+        foreach (var markerInfo in data->CustomTalkMarkerData.GetAllMarkers())
+        {
+            foreach (var subLocation in markerInfo.MarkerData.Span)
+            {
+                if(markerInfo.Label.ToString().IsNullOrEmpty() && subLocation.IconId is not 61731) continue;
+                
                 DrawObjective(subLocation, viewport, map, subLocation.TooltipString->ToString());
             }
         }
