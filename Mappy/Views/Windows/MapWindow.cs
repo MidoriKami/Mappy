@@ -78,6 +78,7 @@ public unsafe class MapWindow : Window
 
             if (MappySystem.SystemConfig.FollowOnOpen)
             {
+                MappySystem.MapTextureController.MoveMapToPlayer();
                 MappySystem.SystemConfig.FollowPlayer = true;
             }
         }
