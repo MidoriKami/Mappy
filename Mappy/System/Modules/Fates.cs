@@ -10,7 +10,6 @@ using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
-using Mappy.Models.ContextMenu;
 using Mappy.Models.Enums;
 using Mappy.System.Localization;
 using Mappy.Utility;
@@ -92,7 +91,7 @@ public unsafe class Fates : ModuleBase
                 Radius = fate.Value->Radius,
                 RadiusColor = GetFateRingColor(fate),
             
-                Tooltip = GetFatePrimaryTooltip(fate),
+                Tooltip = $"Lv. {fate.Value->Level} {fate.Value->Name}",
                 TooltipDescription = GetFateSecondaryTooltip(fate, fate.Value->IsExpBonus),
                 ShowTooltip = config.ShowTooltip,
                 TooltipColor = config.TooltipColor,
@@ -122,8 +121,6 @@ public unsafe class Fates : ModuleBase
         return config.CircleColor;
     }
     
-    private string GetFatePrimaryTooltip(FateContext* fate) => $"Lv. {fate->Level} {fate->Name}";
-
     private string GetFateSecondaryTooltip(FateContext* fate, bool isExpBonus)
     {
         if ((FateState) fate->State != FateState.Running) return isExpBonus ? LuminaCache<Addon>.Instance.GetRow(3921)!.Text.RawString : string.Empty;
