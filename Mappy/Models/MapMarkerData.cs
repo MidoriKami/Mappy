@@ -3,7 +3,6 @@ using System.Linq;
 using System.Numerics;
 using DailyDuty.System;
 using Dalamud.Utility;
-using ImGuiNET;
 using KamiLib.Caching;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
@@ -62,7 +61,7 @@ public class MapMarkerData
             TooltipColor = GetDisplayColor(),
             ShowTooltip = settings.ShowTooltip,
             
-            OnClickAction = OnClick,
+            OnClickAction = GetClickAction(),
             
         }, viewport, map);
     }
@@ -87,13 +86,6 @@ public class MapMarkerData
         }
 
         return string.Empty;
-    }
-
-    private void OnClick()
-    {
-        if (!ImGui.IsItemClicked()) return;
-
-        GetClickAction()?.Invoke();
     }
 
     private Action? GetClickAction() => (MapMarkerType?) DataType switch

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
 using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiScene;
@@ -47,14 +46,20 @@ public unsafe class MapTextureController : IDisposable
         }
     }
 
-    public Task? LoadMap(uint mapId) => CurrentMap?.RowId != mapId ? Task.Run(() => InternalLoadMap(mapId)) : null;
+    public void LoadMap(uint mapId)
+    {
+        if (CurrentMap?.RowId != mapId)
+        {
+            InternalLoadMap(mapId);
+        }
+    }
 
-    public Task? MoveMapToPlayer()
+    public void MoveMapToPlayer()
     {
         var agent = AgentMap.Instance();
-        if (agent is null) return null;
+        if (agent is null) return;
 
-        return LoadMap(agent->CurrentMapId);
+        LoadMap(agent->CurrentMapId);
     }
 
     private void InternalLoadMap(uint mapId) => Safety.ExecuteSafe(() =>
@@ -71,6 +76,7 @@ public unsafe class MapTextureController : IDisposable
 
         MapLoaded?.Invoke(this, new MapData(CurrentMap));
 
+        MapTexture?.Dispose();
         MapTexture = MappySystem.PenumbraController.GetTexture(GetPathFromMap(CurrentMap))!;
     });
     

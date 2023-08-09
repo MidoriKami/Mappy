@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using System.Numerics;
-using System.Threading.Tasks;
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 using Dalamud.Utility;
@@ -34,20 +33,9 @@ public class MapToolbar
         {
             ClickAction = () =>
             {
-                static void FollowPlayerFunction(Task? _)
-                {
-                    MappySystem.SystemConfig.FollowPlayer = !MappySystem.SystemConfig.FollowPlayer;
-                    MappyPlugin.System.SaveConfig();
-                }
-                
-                if (MappySystem.MapTextureController.MoveMapToPlayer() is { } validTask)
-                {
-                    validTask.ContinueWith(FollowPlayerFunction);
-                }
-                else // Player is already in the current map, follow immediately
-                {
-                    FollowPlayerFunction(null);
-                }
+                MappySystem.MapTextureController.MoveMapToPlayer();
+                MappySystem.SystemConfig.FollowPlayer = !MappySystem.SystemConfig.FollowPlayer;
+                MappyPlugin.System.SaveConfig();
             },
             Label = FontAwesomeIcon.MapMarkerAlt.ToIconString() + "##FollowPlayerButton",
             TooltipText = Strings.FollowPlayer,
@@ -58,23 +46,12 @@ public class MapToolbar
         {
             ClickAction = () =>
             {
-                static void CenterViewportFunction(Task? _)
-                {
-                    if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { Viewport: var viewport }) return;
-                    if (Service.ClientState.LocalPlayer is not { Position: var playerPosition }) return;
-                    if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
+                if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { Viewport: var viewport }) return;
+                if (Service.ClientState.LocalPlayer is not { Position: var playerPosition }) return;
+                if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
 
-                    viewport.SetViewportCenter(Position.GetTexturePosition(playerPosition, map));
-                }
-
-                if (MappySystem.MapTextureController.MoveMapToPlayer() is { } validTask)
-                {
-                    validTask.ContinueWith(CenterViewportFunction);
-                }
-                else // Player is already in the current map, follow immediately
-                {
-                    CenterViewportFunction(null);
-                }
+                MappySystem.MapTextureController.MoveMapToPlayer();
+                viewport.SetViewportCenter(Position.GetTexturePosition(playerPosition, map));
             },
             Label = FontAwesomeIcon.Crosshairs.ToIconString() + "##CenterOnPlayerButton",
             TooltipText = Strings.CenterOnPlayer,

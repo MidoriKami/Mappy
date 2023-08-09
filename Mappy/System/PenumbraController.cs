@@ -17,7 +17,7 @@ public class PenumbraController
         penumbraResolveDefaultSubscriber = Service.PluginInterface.GetIpcSubscriber<string, string>("Penumbra.ResolveInterfacePath");
         penumbraGetEnabledState = Service.PluginInterface.GetIpcSubscriber<bool>("Penumbra.GetEnabledState");
         
-        IconCache.Instance.SetAlternativeGetTextureFunc(GetTexture);
+        IconCache.SetAlternativeGetTextureFunc(GetTexture);
     }
     
     public TextureWrap? GetTexture(string path)
@@ -36,7 +36,7 @@ public class PenumbraController
             // ignored
         }
 
-        return Service.DataManager.GetImGuiTexture(path);
+        return Service.TextureProvider.GetTextureFromGame(path);
     }
     
     private string ResolvePenumbraPath(string filePath)
@@ -56,11 +56,11 @@ public class PenumbraController
         if (path[0] is '/' or '\\' || path[1] == ':')
         {
             var texFile = Service.DataManager.GameData.GetFileFromDisk<TexFile>(path);
-            return Service.DataManager.GetImGuiTexture(texFile);
+            return Service.TextureProvider.GetTexture(texFile);
         }
         else
         {
-            return Service.DataManager.GetImGuiTexture(path);
+            return Service.TextureProvider.GetTextureFromGame(path);
         }
     }
 }
