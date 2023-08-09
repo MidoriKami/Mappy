@@ -73,6 +73,7 @@ public unsafe class MapWindow : Window
                 if (Service.ClientState.LocalPlayer is not { Position: var playerPosition }) return;
                 if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
 
+                MappySystem.MapTextureController.MoveMapToPlayer();
                 viewport.SetViewportCenter(Utility.Position.GetTexturePosition(playerPosition, map));
             }
 
