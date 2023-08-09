@@ -97,6 +97,7 @@ public unsafe class Quest : ModuleBase
                     TooltipColor = config.TooltipColor,
                     ShowTooltip = config.ShowTooltip,
 
+                    Radius = questInfo.Radius,
                     RadiusColor = config.InProgressColor,
                     
                     ShowDirectionalIndicator = config.EnableDirectionalMarker,
@@ -130,7 +131,9 @@ public unsafe class Quest : ModuleBase
                     TooltipColor = config.TooltipColor,
                     ShowTooltip = config.ShowTooltip,
 
+                    Radius = markerData.Radius,
                     RadiusColor = config.InProgressColor,
+                    
                     ShowDirectionalIndicator = config.EnableDirectionalMarker,
                     VerticalPosition = markerData.Y,
                     VerticalThreshold = config.DistanceThreshold,
@@ -159,12 +162,15 @@ public unsafe class Quest : ModuleBase
                     IconId = questInfo.IconId,
                     ObjectPosition = new Vector2(questInfo.X, questInfo.Z),
                     IconScale = config.IconScale,
+                    ShowIcon = config.ShowIcon,
+
                     Tooltip = quest.Label.ToString(),
                     TooltipColor = config.TooltipColor,
+                    ShowTooltip = config.ShowTooltip,
+
                     Radius = questInfo.Radius,
                     RadiusColor = config.LeveQuestColor,
-                    ShowIcon = config.ShowIcon,
-                    ShowTooltip = config.ShowTooltip,
+                    
                     ShowDirectionalIndicator = config.EnableDirectionalMarker,
                     VerticalPosition = questInfo.Y,
                     VerticalThreshold = config.DistanceThreshold,
