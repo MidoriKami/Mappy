@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Drawing;
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Utility;
 using ImGuiNET;
 using ImGuiScene;
 using KamiLib.Caching;
+using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
 using Mappy.System;
@@ -153,7 +155,7 @@ public partial class DrawUtilities
         {
             ImGui.SameLine();
             ImGui.SetCursorPos(cursorPosition with { Y = ImGui.GetCursorPos().Y + 5.0f } );
-            ImGui.TextColored(color with { W = 0.45f }, $"\n{secondaryText}");
+            ImGui.TextColored(KnownColor.Gray.AsVector4(), $"\n{secondaryText}");
         }
         
         ImGui.EndTooltip();

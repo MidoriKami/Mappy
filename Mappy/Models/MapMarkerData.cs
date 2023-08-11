@@ -37,6 +37,7 @@ public class MapMarkerData
     public uint IconId => data.Icon;
 
     private string TooltipString { get; set; }
+    private string SecondaryTooltipString { get; set; }
     
     private static readonly Dictionary<uint, string> MiscIconNameCache = new();
 
@@ -46,6 +47,7 @@ public class MapMarkerData
         settings = config;
 
         TooltipString = GetTooltipString();
+        SecondaryTooltipString = GetSecondaryTooltipString();
     }
 
     public void Draw(Viewport viewport, Map map)
@@ -58,6 +60,7 @@ public class MapMarkerData
             ShowIcon = settings.ShowIcon,
             
             Tooltip = TooltipString,
+            TooltipDescription = SecondaryTooltipString,
             TooltipColor = GetDisplayColor(),
             ShowTooltip = settings.ShowTooltip,
             
@@ -87,6 +90,16 @@ public class MapMarkerData
 
         return string.Empty;
     }
+    
+    private string GetSecondaryTooltipString() => (MapMarkerType?) DataType switch
+    {
+        MapMarkerType.Standard => string.Empty,
+        MapMarkerType.MapLink => string.Empty,
+        MapMarkerType.InstanceLink => string.Empty,
+        MapMarkerType.Aetheryte => $"Teleport cost: {Service.AetheryteList.FirstOrDefault(entry => entry.AetheryteId == DataAetheryte.RowId)?.GilCost.ToString() ?? string.Empty} gil",
+        MapMarkerType.Aethernet => string.Empty,
+        _ => string.Empty
+    };
 
     private Action? GetClickAction() => (MapMarkerType?) DataType switch
     {

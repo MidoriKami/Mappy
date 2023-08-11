@@ -19,4 +19,5 @@ public sealed class Service
     [PluginService] public static IPartyList PartyList { get; set; } = null!;
     [PluginService] public static IObjectTable ObjectTable { get; set; } = null!;
     [PluginService] public static IGameGui GameGui { get; set; } = null!;
+    [PluginService] public static IAetheryteList AetheryteList { get; set; } = null!;
 }
