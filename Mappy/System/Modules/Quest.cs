@@ -192,10 +192,10 @@ public unsafe class Quest : ModuleBase
 
                 Tooltip = markerInfo.TooltipString->ToString(),
                 TooltipColor = config.TooltipColor,
-                
+                ShowTooltip = config.ShowTooltip,
+
                 Radius = markerInfo.Radius,
                 RadiusColor = config.LeveQuestColor,
-                ShowTooltip = config.ShowTooltip,
                 
                 ShowDirectionalIndicator = config.EnableDirectionalMarker,
                 VerticalPosition = markerInfo.Y,
