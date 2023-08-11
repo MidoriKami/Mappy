@@ -78,7 +78,7 @@ public unsafe class Houses : ModuleBase
                 ShowTooltip = config.ShowTooltip,
             }, viewport, map);
 
-            if (config.ShowHousingNumber)
+            if (config.ShowHousingNumber && marker.SubRowId is not (61 or 60))
             {
                 DrawUtilities.DrawMapText(new MappyMapText
                 {
