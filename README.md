@@ -8,6 +8,7 @@ Mappy offers a lot of customization options such as enabling and disabling speci
 Integrates seamlessly into the games built in functions, for example pressing `m` will open Mappy instead of the built in game map.
 
 **Mappy is not intended to replace the vanilla minimap**
+
 **Please do not attempt to use Mappy as a Minimap**
 
 ![image](https://github.com/MidoriKami/Mappy/assets/9083275/02d79ece-f2ba-458f-9ea4-c59500c19674)
