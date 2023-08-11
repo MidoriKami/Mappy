@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using ImGuiScene;
 using KamiLib.Caching;
 using KamiLib.Utilities;
+using Lumina.Excel.GeneratedSheets;
+using Mappy.Utility;
+using Action = System.Action;
 
 namespace Mappy.Models;
 
@@ -30,6 +32,14 @@ public class MappyMapIcon
     
     public Vector2? TexturePosition { get; set; }
     public Vector2? ObjectPosition { get; set; }
+
+    public Vector2 GetDrawPosition(Map map)
+    {
+        if (TexturePosition is not null) return TexturePosition.Value;
+        if (ObjectPosition is not null) return Position.GetTexturePosition(ObjectPosition.Value, map);
+        
+        return Vector2.Zero;
+    }
     
     public Action? OnClickAction { get; set; }
     

@@ -19,8 +19,7 @@ public partial class DrawUtilities
         
         iconData.IconId = TryReplaceIconId(iconData.IconId);
 
-        // If we have a texture position, use it as-is, else get the texture position, Zero if error
-        var drawPosition = iconData.TexturePosition ?? (iconData.ObjectPosition is not null ? Position.GetTexturePosition(iconData.ObjectPosition.Value, map) : Vector2.Zero);
+        var drawPosition = iconData.GetDrawPosition(map);
         
         if (iconData is { ShowIcon: true } && !IsIconDisabled(iconData.IconId))
         {
