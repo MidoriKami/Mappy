@@ -7,6 +7,9 @@ Mappy is a total replacement plugin for the ingame main map. This plugin is not 
 Mappy offers a lot of customization options such as enabling and disabling specific icons, configuring colors of tooltips, or displayed areas.
 Integrates seamlessly into the games built in functions, for example pressing `m` will open Mappy instead of the built in game map.
 
+**Mappy is not intended to replace the vanilla minimap**
+**Please do not attempt to use Mappy as a Minimap**
+
 ![image](https://github.com/MidoriKami/Mappy/assets/9083275/02d79ece-f2ba-458f-9ea4-c59500c19674)
 
 ![image](https://github.com/MidoriKami/Mappy/assets/9083275/a1328788-4fca-49a1-883f-420820e81682)
