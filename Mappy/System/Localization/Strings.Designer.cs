@@ -1016,6 +1016,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show housing number.
+        /// </summary>
+        internal static string ShowHousingNumber {
+            get {
+                return ResourceManager.GetString("ShowHousingNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Icon.
         /// </summary>
         internal static string ShowIcon {

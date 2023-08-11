@@ -66,6 +66,31 @@ public partial class DrawUtilities
         }
     }
 
+    public static void DrawMapText(MappyMapText textData, Viewport viewport, Map map)
+    {
+        if (textData.Text == string.Empty) return;
+        
+        ImGui.PushFont(KamiCommon.FontManager.Axis12.ImFont);
+
+        const int outlineThickness = 1;
+        
+        for (var x = -outlineThickness; x <= outlineThickness; ++x)
+        {
+            for (var y = -outlineThickness; y <= outlineThickness; ++y)
+            {
+                if (x == 0 && y == 0) continue;
+                
+                viewport.SetImGuiDrawPosition(textData.GetDrawPosition(map) * viewport.Scale + new Vector2(x, y));
+                ImGui.TextColored(textData.OutlineColor, textData.Text);
+            }
+        }
+        
+        viewport.SetImGuiDrawPosition(textData.GetDrawPosition(map) * viewport.Scale);
+        ImGui.TextColored(textData.TextColor, textData.Text);
+        
+        ImGui.PopFont();
+    }
+
     public static void DrawTooltip(Vector4 color, string primaryText)
         => DrawStandardTooltipInternal(0, 0, color, primaryText, string.Empty);
 

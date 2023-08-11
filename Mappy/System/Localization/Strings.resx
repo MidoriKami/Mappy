@@ -428,4 +428,7 @@ Open Map Window to populate data</value>
     <data name="NoLayersInfo" xml:space="preserve">
         <value>No layers for this map</value>
     </data>
+    <data name="ShowHousingNumber" xml:space="preserve">
+        <value>Show housing number</value>
+    </data>
 </root>

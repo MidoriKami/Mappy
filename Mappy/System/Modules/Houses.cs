@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using FFXIVClientStructs.FFXIV.Client.Game.Housing;
+using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
 using KamiLib.Utilities;
 using Lumina.Excel;
@@ -17,6 +18,7 @@ using Mappy.Utility;
 
 namespace Mappy.System.Modules;
 
+[Category("ModuleConfig")]
 public class HousingConfig : IModuleConfig, IIconConfig, ITooltipConfig
 {
     public bool Enable { get; set; } = true;
@@ -25,6 +27,9 @@ public class HousingConfig : IModuleConfig, IIconConfig, ITooltipConfig
     public float IconScale { get; set; } = 0.65f;
     public bool ShowTooltip { get; set; } = true;
     public Vector4 TooltipColor { get; set; } = KnownColor.White.AsVector4();
+
+    [BoolConfig("ShowHousingNumber")]
+    public bool ShowHousingNumber { get; set; } = true;
 }
 
 public unsafe class Houses : ModuleBase
@@ -72,6 +77,16 @@ public unsafe class Houses : ModuleBase
                 Tooltip = GetTooltip(marker),
                 ShowTooltip = config.ShowTooltip,
             }, viewport, map);
+
+            if (config.ShowHousingNumber)
+            {
+                DrawUtilities.DrawMapText(new MappyMapText
+                {
+                    Text = $"{marker.SubRowId + 1}",
+                    ObjectPosition = new Vector2(marker.X, marker.Z) + new Vector2(4.0f, 4.0f),
+                
+                }, viewport, map);
+            }
         }
     }
     
