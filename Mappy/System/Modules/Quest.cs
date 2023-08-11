@@ -83,8 +83,8 @@ public unsafe class Quest : ModuleBase
             
             foreach (var questInfo in quest.MarkerData.Span)
             {
-                if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap }) continue;
-                if (levelMap != map.RowId) continue;
+                if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap, Territory.Row: var levelTerritory }) continue;
+                if (levelMap != map.RowId && levelTerritory != map.TerritoryType.Row) continue;
                 
                 DrawUtilities.DrawMapIcon(new MappyMapIcon
                 {
@@ -117,8 +117,8 @@ public unsafe class Quest : ModuleBase
         {
             foreach (var markerData in markerInfo.MarkerData.Span)
             {
-                if (LuminaCache<Level>.Instance.GetRow(markerData.LevelId) is not { Map.Row: var levelMap}) continue;
-                if (levelMap != map.RowId) continue;
+                if (LuminaCache<Level>.Instance.GetRow(markerData.LevelId) is not { Map.Row: var levelMap, Territory.Row: var levelTerritory}) continue;
+                if (levelMap != map.RowId && levelTerritory != map.TerritoryType.Row) continue;
 
                 DrawUtilities.DrawMapIcon(new MappyMapIcon
                 {
@@ -154,8 +154,8 @@ public unsafe class Quest : ModuleBase
             foreach (var questInfo in quest.MarkerData.Span)
             {
                 if (GetLevework(quest.ObjectiveId) is not { Flags: not 32 } ) continue;
-                if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap } ) continue;
-                if (levelMap != map.RowId) continue;
+                if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap, Territory.Row: var levelTerritory } ) continue;
+                if (levelMap != map.RowId && levelTerritory != map.TerritoryType.Row) continue;
                 
                 DrawUtilities.DrawMapIcon(new MappyMapIcon
                 {
@@ -180,20 +180,23 @@ public unsafe class Quest : ModuleBase
         
         foreach (var markerInfo in mapData->ActiveLevequestMarkerData.Span)
         {
-            if(LuminaCache<Level>.Instance.GetRow(markerInfo.LevelId) is not { Map.Row: var levelMap } ) continue;
-            if(levelMap != map.RowId) continue;
+            if(LuminaCache<Level>.Instance.GetRow(markerInfo.LevelId) is not { Map.Row: var levelMap, Territory.Row: var levelTerritory } ) continue;
+            if (levelMap != map.RowId && levelTerritory != map.TerritoryType.Row) continue;
             
             DrawUtilities.DrawMapIcon(new MappyMapIcon
             {
                 IconId = markerInfo.IconId,
                 TexturePosition = new Vector2(markerInfo.X, markerInfo.Z),
                 IconScale = config.IconScale,
+                ShowIcon = config.ShowIcon,
+
                 Tooltip = markerInfo.TooltipString->ToString(),
                 TooltipColor = config.TooltipColor,
+                
                 Radius = markerInfo.Radius,
                 RadiusColor = config.LeveQuestColor,
-                ShowIcon = config.ShowIcon,
                 ShowTooltip = config.ShowTooltip,
+                
                 ShowDirectionalIndicator = config.EnableDirectionalMarker,
                 VerticalPosition = markerInfo.Y,
                 VerticalThreshold = config.DistanceThreshold,
