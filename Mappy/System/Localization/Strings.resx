@@ -425,4 +425,7 @@ Open Map Window to populate data</value>
     <data name="DistanceThreshold" xml:space="preserve">
         <value>Distance Threshold</value>
     </data>
+    <data name="NoLayersInfo" xml:space="preserve">
+        <value>No layers for this map</value>
+    </data>
 </root>

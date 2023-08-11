@@ -160,9 +160,13 @@ public class MapToolbar
         if (MappySystem.MapTextureController is not { Ready: true, MapLayers: var layers, CurrentMap: var map }) return;
         
         ImGui.PushItemWidth(200.0f * ImGuiHelpers.GlobalScale);
-        ImGui.BeginDisabled(layers.Count == 0);
         if (ImGui.BeginCombo("###LayerCombo", map.GetName()))
         {
+            if (layers.Count is 0)
+            {
+                ImGui.TextColored(KnownColor.Gray.AsVector4(), Strings.NoLayersInfo);
+            }
+            
             foreach (var layer in layers)
             {
                 var subAreaName = layer.GetSubName();
@@ -176,7 +180,6 @@ public class MapToolbar
             }
             ImGui.EndCombo();
         }
-        ImGui.EndDisabled();
     }
 
     private void DrawFollowPlayerWidget()

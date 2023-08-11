@@ -818,6 +818,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No layers for this map.
+        /// </summary>
+        internal static string NoLayersInfo {
+            get {
+                return ResourceManager.GetString("NoLayersInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open Configuration Window.
         /// </summary>
         internal static string OpenConfigWindow {
