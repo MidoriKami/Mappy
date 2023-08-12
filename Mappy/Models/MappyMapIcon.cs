@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using ImGuiScene;
@@ -21,8 +22,14 @@ public class MappyMapIcon
     public Vector4 RadiusColor { get; set; } = KnownColor.Aqua.AsVector4();
 
     public string Tooltip { get; set; } = string.Empty;
+    public Func<string>? GetTooltipFunc { get; set; }
+    public string GetTooltip() => GetTooltipFunc is not null ? GetTooltipFunc.Invoke() : Tooltip;
+
     public uint TooltipExtraIcon { get; set; }
-    public string TooltipDescription { get; set; } = string.Empty;
+    public string TooltipExtraText { get; set; } = string.Empty;
+    public Func<string>? GetTooltipExtraTextFunc { get; set; }
+    public string GetTooltipExtraText() => GetTooltipExtraTextFunc is not null ? GetTooltipExtraTextFunc.Invoke() : TooltipExtraText;
+    
     public Vector4 TooltipColor { get; set; } = KnownColor.White.AsVector4();
     public bool ShowTooltip { get; set; }
     

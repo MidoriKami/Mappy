@@ -52,6 +52,9 @@ public class MapIconConfig : IModuleConfig, IIconConfig, ITooltipConfig, IMapIco
     
     [BoolConfig("ShowMiscTooltips", "ShowMiscTooltipsHelp")]
     public bool ShowMiscTooltips { get; set; } = true;
+
+    [BoolConfig("ShowTeleportCosts")]
+    public bool ShowTeleportCostTooltips { get; set; } = true;
 }
 
 public class MapIcons : ModuleBase

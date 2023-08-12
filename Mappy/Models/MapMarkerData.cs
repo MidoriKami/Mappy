@@ -7,6 +7,7 @@ using KamiLib.Caching;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
 using Mappy.System;
+using Mappy.System.Localization;
 using Mappy.System.Modules;
 using Mappy.Utility;
 using Action = System.Action;
@@ -36,18 +37,12 @@ public class MapMarkerData
     public MapMarkerType Type => (MapMarkerType) data.DataType;
     public uint IconId => data.Icon;
 
-    private string TooltipString { get; set; }
-    private string SecondaryTooltipString { get; set; }
-    
     private static readonly Dictionary<uint, string> MiscIconNameCache = new();
 
     public MapMarkerData(MapMarker marker, MapIconConfig config)
     {
         data = marker;
         settings = config;
-
-        TooltipString = GetTooltipString();
-        SecondaryTooltipString = GetSecondaryTooltipString();
     }
 
     public void Draw(Viewport viewport, Map map)
@@ -59,8 +54,8 @@ public class MapMarkerData
             IconScale = settings.IconScale,
             ShowIcon = settings.ShowIcon,
             
-            Tooltip = TooltipString,
-            TooltipDescription = SecondaryTooltipString,
+            GetTooltipFunc = GetTooltipString,
+            GetTooltipExtraTextFunc = settings.ShowTeleportCostTooltips ? GetSecondaryTooltipString : () => string.Empty,
             TooltipColor = GetDisplayColor(),
             ShowTooltip = settings.ShowTooltip,
             
@@ -96,7 +91,7 @@ public class MapMarkerData
         MapMarkerType.Standard => string.Empty,
         MapMarkerType.MapLink => string.Empty,
         MapMarkerType.InstanceLink => string.Empty,
-        MapMarkerType.Aetheryte => $"Teleport cost: {Service.AetheryteList.FirstOrDefault(entry => entry.AetheryteId == DataAetheryte.RowId)?.GilCost.ToString() ?? string.Empty} gil",
+        MapMarkerType.Aetheryte => $"{Strings.TeleportCost}: {Service.AetheryteList.FirstOrDefault(entry => entry.AetheryteId == data.DataKey)?.GilCost ?? 0:n0} {Strings.gil}",
         MapMarkerType.Aethernet => string.Empty,
         _ => string.Empty
     };
