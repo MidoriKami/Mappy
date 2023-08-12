@@ -431,4 +431,10 @@ Open Map Window to populate data</value>
     <data name="ShowHousingNumber" xml:space="preserve">
         <value>Show housing number</value>
     </data>
+    <data name="TeleportCost" xml:space="preserve">
+        <value>Teleport cost</value>
+    </data>
+    <data name="gil" xml:space="preserve">
+        <value>gil</value>
+    </data>
 </root>

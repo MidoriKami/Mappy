@@ -465,6 +465,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to gil.
+        /// </summary>
+        internal static string gil {
+            get {
+                return ResourceManager.GetString("gil", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Harvesting.
         /// </summary>
         internal static string Harvesting {
@@ -1093,6 +1102,15 @@ namespace Mappy.System.Localization {
         internal static string Teleport {
             get {
                 return ResourceManager.GetString("Teleport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Teleport cost.
+        /// </summary>
+        internal static string TeleportCost {
+            get {
+                return ResourceManager.GetString("TeleportCost", resourceCulture);
             }
         }
         
