@@ -114,11 +114,8 @@ public partial class DrawUtilities
         ImGui.SetCursorPos(ImGui.GetCursorPos() with { Y = ImGui.GetCursorPos().Y + 3.0f } );
     }
 
-    private static void DrawStandardTooltipInternal(uint iconId, uint secondIconId, Vector4 color, string primaryText, string secondaryText)
-    {
-        if (!ImGui.IsItemHovered()) return;
-        DrawTooltipInternal(iconId, secondIconId, color, primaryText, secondaryText);
-    }
+    private static void DrawStandardTooltipInternal(uint iconId, uint secondIconId, Vector4 color, string primaryText, string secondaryText) 
+        => DrawTooltipInternal(iconId, secondIconId, color, primaryText, secondaryText);
 
     private static void DrawTooltip(uint iconId, uint secondIconId, Vector4 color, string primaryText, string secondaryText = "")
         => DrawStandardTooltipInternal(iconId, secondIconId, color, primaryText, secondaryText);

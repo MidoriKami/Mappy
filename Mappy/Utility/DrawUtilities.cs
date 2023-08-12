@@ -35,20 +35,23 @@ public partial class DrawUtilities
                 iconData.OnClickAction?.Invoke();
             }
 
-            var radiusSize = iconData.Radius * viewport.Scale;
-            var iconSize = iconData.IconSize.X * iconData.IconScale / 2.0f;
-            var isIconBiggerThanRadius = iconSize >= radiusSize;
-
-            switch (iconData)
+            if (ImGui.IsItemHovered())
             {
-                case { ShowTooltip: true, Radius: <= 1.0f }:
-                case { ShowTooltip: true, Radius: > 1.0f } when isIconBiggerThanRadius:
-                    DrawTooltip(iconData.IconId, iconData.TooltipExtraIcon, iconData.TooltipColor, iconData.Tooltip, iconData.TooltipDescription);
-                    break;
+                var radiusSize = iconData.Radius * viewport.Scale;
+                var iconSize = iconData.IconSize.X * iconData.IconScale / 2.0f;
+                var isIconBiggerThanRadius = iconSize >= radiusSize;
                 
-                case { ShowTooltip: true, Radius: > 1.0f } when !isIconBiggerThanRadius:
-                    DrawAreaTooltip(drawPosition, iconData.Radius, viewport, iconData.IconId, iconData.TooltipColor, iconData.Tooltip, iconData.TooltipDescription);
-                    break;
+                switch (iconData)
+                {
+                    case { ShowTooltip: true, Radius: <= 1.0f }:
+                    case { ShowTooltip: true, Radius: > 1.0f } when isIconBiggerThanRadius:
+                        DrawTooltip(iconData.IconId, iconData.TooltipExtraIcon, iconData.TooltipColor, iconData.GetTooltip(), iconData.GetTooltipExtraText());
+                        break;
+                
+                    case { ShowTooltip: true, Radius: > 1.0f } when !isIconBiggerThanRadius:
+                        DrawAreaTooltip(drawPosition, iconData.Radius, viewport, iconData.IconId, iconData.TooltipColor, iconData.GetTooltip(), iconData.GetTooltipExtraText());
+                        break;
+                }
             }
             
             if (iconData is { ShowDirectionalIndicator: true })
@@ -92,7 +95,10 @@ public partial class DrawUtilities
     }
 
     public static void DrawTooltip(Vector4 color, string primaryText)
-        => DrawStandardTooltipInternal(0, 0, color, primaryText, string.Empty);
+    {
+        if (!ImGui.IsItemHovered()) return;
+        DrawStandardTooltipInternal(0, 0, color, primaryText, string.Empty);
+    }
 
     public static void DrawIconRotated(uint iconId, GameObject gameObject, float iconScale)
     {
