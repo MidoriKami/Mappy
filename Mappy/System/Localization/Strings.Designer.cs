@@ -1070,6 +1070,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Teleport Costs.
+        /// </summary>
+        internal static string ShowTeleportCosts {
+            get {
+                return ResourceManager.GetString("ShowTeleportCosts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Toolbar on Hover.
         /// </summary>
         internal static string ShowToolbarOnHover {

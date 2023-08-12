@@ -437,4 +437,7 @@ Open Map Window to populate data</value>
     <data name="gil" xml:space="preserve">
         <value>gil</value>
     </data>
+    <data name="ShowTeleportCosts" xml:space="preserve">
+        <value>Show Teleport Costs</value>
+    </data>
 </root>
