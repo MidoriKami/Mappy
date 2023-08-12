@@ -35,23 +35,20 @@ public partial class DrawUtilities
                 iconData.OnClickAction?.Invoke();
             }
 
-            if (ImGui.IsItemHovered())
+            var radiusSize = iconData.Radius * viewport.Scale;
+            var iconSize = iconData.IconSize.X * iconData.IconScale / 2.0f;
+            var isIconBiggerThanRadius = iconSize >= radiusSize;
+                
+            switch (iconData)
             {
-                var radiusSize = iconData.Radius * viewport.Scale;
-                var iconSize = iconData.IconSize.X * iconData.IconScale / 2.0f;
-                var isIconBiggerThanRadius = iconSize >= radiusSize;
+                case { ShowTooltip: true, Radius: <= 1.0f } when ImGui.IsItemHovered():
+                case { ShowTooltip: true, Radius: > 1.0f } when isIconBiggerThanRadius:
+                    DrawTooltip(iconData.IconId, iconData.TooltipExtraIcon, iconData.TooltipColor, iconData.GetTooltip(), iconData.GetTooltipExtraText());
+                    break;
                 
-                switch (iconData)
-                {
-                    case { ShowTooltip: true, Radius: <= 1.0f }:
-                    case { ShowTooltip: true, Radius: > 1.0f } when isIconBiggerThanRadius:
-                        DrawTooltip(iconData.IconId, iconData.TooltipExtraIcon, iconData.TooltipColor, iconData.GetTooltip(), iconData.GetTooltipExtraText());
-                        break;
-                
-                    case { ShowTooltip: true, Radius: > 1.0f } when !isIconBiggerThanRadius:
-                        DrawAreaTooltip(drawPosition, iconData.Radius, viewport, iconData.IconId, iconData.TooltipColor, iconData.GetTooltip(), iconData.GetTooltipExtraText());
-                        break;
-                }
+                case { ShowTooltip: true, Radius: > 1.0f } when !isIconBiggerThanRadius:
+                    DrawAreaTooltip(drawPosition, iconData.Radius, viewport, iconData.IconId, iconData.TooltipColor, iconData.GetTooltip(), iconData.GetTooltipExtraText());
+                    break;
             }
             
             if (iconData is { ShowDirectionalIndicator: true })
