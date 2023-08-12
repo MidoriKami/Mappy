@@ -56,7 +56,7 @@ public class PluginIntegrations : ModuleBase
                 ShowIcon = config.ShowIcon,
                 
                 Tooltip = marker.Tooltip,
-                TooltipDescription = marker.Description,
+                TooltipExtraText = marker.Description,
                 TooltipColor = config.TooltipColor,
                 ShowTooltip = config.ShowTooltip,
                 

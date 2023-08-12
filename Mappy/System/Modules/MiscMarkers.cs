@@ -110,7 +110,7 @@ public unsafe class MiscMarkers : ModuleBase
             IconScale = config.IconScale,
             
             Tooltip = tooltip,
-            TooltipDescription = secondaryTooltip ?? string.Empty,
+            TooltipExtraText = secondaryTooltip ?? string.Empty,
             TooltipColor = config.TooltipColor,
             ShowTooltip = config.ShowTooltip,
         }, viewport, map);

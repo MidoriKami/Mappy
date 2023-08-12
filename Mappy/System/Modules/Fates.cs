@@ -92,7 +92,7 @@ public unsafe class Fates : ModuleBase
                 RadiusColor = GetFateRingColor(fate),
             
                 Tooltip = $"Lv. {fate.Value->Level} {fate.Value->Name}",
-                TooltipDescription = GetFateSecondaryTooltip(fate, fate.Value->IsExpBonus),
+                TooltipExtraText = GetFateSecondaryTooltip(fate, fate.Value->IsExpBonus),
                 ShowTooltip = config.ShowTooltip,
                 TooltipColor = config.TooltipColor,
             
