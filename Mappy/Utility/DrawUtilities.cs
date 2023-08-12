@@ -42,7 +42,7 @@ public partial class DrawUtilities
             switch (iconData)
             {
                 case { ShowTooltip: true, Radius: <= 1.0f } when ImGui.IsItemHovered():
-                case { ShowTooltip: true, Radius: > 1.0f } when isIconBiggerThanRadius:
+                case { ShowTooltip: true, Radius: > 1.0f } when isIconBiggerThanRadius && ImGui.IsItemHovered():
                     DrawTooltip(iconData.IconId, iconData.TooltipExtraIcon, iconData.TooltipColor, iconData.GetTooltip(), iconData.GetTooltipExtraText());
                     break;
                 
