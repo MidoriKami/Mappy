@@ -573,6 +573,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hostiles.
+        /// </summary>
+        internal static string Hostiles {
+            get {
+                return ResourceManager.GetString("Hostiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Houses.
         /// </summary>
         internal static string HousingMarkers {

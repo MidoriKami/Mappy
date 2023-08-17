@@ -48,4 +48,7 @@ public enum ModuleName
     
     [EnumLabel("PluginIntegrations")]
     PluginIntegrations,
+    
+    [EnumLabel("Hostiles")]
+    Hostiles,
 }
