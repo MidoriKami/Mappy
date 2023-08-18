@@ -35,11 +35,11 @@ public class Treasure : ModuleBase
 
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
+        var config = GetConfig<TreasureConfig>();
+        
         foreach (var obj in Service.ObjectTable)
         {
             if (obj.ObjectKind != ObjectKind.Treasure) continue;
-            var config = GetConfig<TreasureConfig>();
-
             if(!IsTargetable(obj)) continue;
             
             DrawUtilities.DrawMapIcon(new MappyMapIcon
