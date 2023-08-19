@@ -77,7 +77,7 @@ public unsafe class MapTextureController : IDisposable
         MapLoaded?.Invoke(this, new MapData(CurrentMap));
 
         MapTexture?.Dispose();
-        MapTexture = MappySystem.PenumbraController.GetTexture(GetPathFromMap(CurrentMap))!;
+        MapTexture = Service.TextureProvider.GetTextureFromGame(GetPathFromMap(CurrentMap));
     });
     
     private static string GetPathFromMap(Map map)

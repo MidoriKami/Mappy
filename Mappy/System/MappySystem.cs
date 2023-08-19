@@ -13,7 +13,6 @@ public class MappySystem
     public static SystemConfig SystemConfig = null!;
     public static ModuleController ModuleController = null!;
     public static MapTextureController MapTextureController = null!;
-    public static PenumbraController PenumbraController = null!;
     public static GameIntegration GameIntegration = null!;
     public static ContextMenuController ContextMenuController = null!;
     public static IpcController IPCController = null!;
@@ -27,7 +26,6 @@ public class MappySystem
 
         MapTextureController = new MapTextureController();
         ModuleController = new ModuleController();
-        PenumbraController = new PenumbraController();
         GameIntegration = new GameIntegration();
         ContextMenuController = new ContextMenuController();
         IPCController = new IpcController();
