@@ -52,15 +52,11 @@ public class PluginIntegrations : ModuleBase
                 IconId = marker.IconId,
                 TexturePosition = marker.PositionType is PositionType.Texture ? marker.Position : null,
                 ObjectPosition = marker.PositionType is PositionType.World ? marker.Position : null,
-                IconScale = config.IconScale,
-                ShowIcon = config.ShowIcon,
                 
                 Tooltip = marker.Tooltip,
                 TooltipExtraText = marker.Description,
-                TooltipColor = config.TooltipColor,
-                ShowTooltip = config.ShowTooltip,
                 
-            }, viewport, map);
+            }, config, viewport, map);
         }
     }
 }

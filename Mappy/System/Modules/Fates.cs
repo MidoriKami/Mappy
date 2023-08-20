@@ -85,22 +85,16 @@ public unsafe class Fates : ModuleBase
             {
                 IconId = fate.Value->MapIconId,
                 ObjectPosition = new Vector2(fate.Value->Location.X, fate.Value->Location.Z),
-                IconScale = config.IconScale,
-                ShowIcon = config.ShowIcon,
             
                 Radius = fate.Value->Radius,
                 RadiusColor = GetFateRingColor(fate),
             
                 Tooltip = $"Lv. {fate.Value->Level} {fate.Value->Name}",
                 TooltipExtraText = GetFateSecondaryTooltip(fate, fate.Value->IsExpBonus),
-                ShowTooltip = config.ShowTooltip,
-                TooltipColor = config.TooltipColor,
             
                 Layers = GetFateLayers(fate),
                 VerticalPosition = fate.Value->Location.Y,
-                ShowDirectionalIndicator = config.EnableDirectionalMarker,
-                VerticalThreshold = config.DistanceThreshold,
-            }, viewport, map);
+            }, config, viewport, map);
         }
     }
 

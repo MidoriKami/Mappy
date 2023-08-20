@@ -106,13 +106,9 @@ public unsafe class MiscMarkers : ModuleBase
         {
             IconId = markerInfo.IconId is 60091 ? 61731 : markerInfo.IconId,
             ObjectPosition = new Vector2(markerInfo.X, markerInfo.Z),
-            ShowIcon = config.ShowIcon,
-            IconScale = config.IconScale,
             
             Tooltip = tooltip,
             TooltipExtraText = secondaryTooltip ?? string.Empty,
-            TooltipColor = config.TooltipColor,
-            ShowTooltip = config.ShowTooltip,
-        }, viewport, map);
+        }, config, viewport, map);
     }
 }

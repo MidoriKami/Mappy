@@ -21,7 +21,7 @@ public class PetConfig : IModuleConfig, IIconConfig, ITooltipConfig
     public bool Enable { get; set; } = true;
     public int Layer { get; set; } = 5;
     public bool ShowIcon { get; set; } = true;
-    public float IconScale { get; set; } = 0.50f;
+    public float IconScale { get; set; } = 0.75f;
     public bool ShowTooltip { get; set; } = true;
     public Vector4 TooltipColor { get; set; } = KnownColor.MediumPurple.AsVector4();
     
@@ -64,14 +64,9 @@ public class Pet : ModuleBase
             {
                 IconId = config.SelectedIcon,
                 ObjectPosition = new Vector2(obj.Position.X, obj.Position.Z),
-                IconScale = config.IconScale + 0.25f,
-                ShowIcon = config.ShowIcon,
                 
                 Tooltip = obj.Name.TextValue,
-                TooltipColor = config.TooltipColor,
-                ShowTooltip = config.ShowTooltip,
-                
-            }, viewport, map);
+            }, config, viewport, map);
         }
     }
     

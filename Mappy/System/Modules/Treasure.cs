@@ -46,13 +46,9 @@ public class Treasure : ModuleBase
             {
                 IconId = config.SelectedIcon,
                 ObjectPosition = new Vector2(obj.Position.X, obj.Position.Z),
-                IconScale = config.IconScale,
-                ShowIcon = config.ShowIcon,
 
                 Tooltip = obj.Name.TextValue,
-                ShowTooltip = config.ShowTooltip,
-                TooltipColor = config.TooltipColor,
-            }, viewport, map);
+            }, config, viewport, map);
         }
     }
 

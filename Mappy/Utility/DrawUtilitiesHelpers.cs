@@ -10,12 +10,13 @@ using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
 using Mappy.System;
+using Mappy.System.Modules;
 
 namespace Mappy.Utility;
 
 public partial class DrawUtilities
 {
-    private static IconLayer? GetDirectionalIconLayer(MappyMapIcon iconData)
+    private static IconLayer? GetDirectionalIconLayer(MappyMapIcon iconData, IDirectionalMarkerConfig config)
     {
         var offsetPosition = new Vector2(8.0f, 24.0f);
         
@@ -26,7 +27,7 @@ public partial class DrawUtilities
         {
             var distance = playerHeight - iconData.VerticalPosition;
 
-            if (Math.Abs(distance) > iconData.VerticalThreshold)
+            if (Math.Abs(distance) > config.DistanceThreshold)
             {
                 isBelowPlayer = distance > 0;
                 isAbovePlayer = distance < 0;

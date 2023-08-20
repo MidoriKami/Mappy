@@ -42,17 +42,13 @@ public unsafe class TemporaryMarkers : ModuleBase
             DrawUtilities.DrawMapIcon(new MappyMapIcon
             {
                 IconId = GatheringMarker.IconID,
-                IconScale = config.IconScale,
                 ObjectPosition = GatheringMarker.Position,
-                ShowIcon = config.ShowIcon,
                 
                 Tooltip = GatheringMarker.TooltipText,
-                TooltipColor = config.TooltipColor,
-                ShowTooltip = config.ShowTooltip,
                 
                 Radius = GatheringMarker.Radius,
                 RadiusColor = config.CircleColor,
-            }, viewport, map);
+            }, config, viewport, map);
             
             GatheringMarker.ShowContextMenu(viewport, map);
         }
@@ -62,14 +58,10 @@ public unsafe class TemporaryMarkers : ModuleBase
             DrawUtilities.DrawMapIcon(new MappyMapIcon
             {
                 IconId = FlagMarker.IconID,
-                IconScale = config.IconScale,
                 ObjectPosition = FlagMarker.Position,
-                ShowIcon = config.ShowIcon,
                 
                 Tooltip = FlagMarker.TooltipText,
-                TooltipColor = config.TooltipColor,
-                ShowTooltip = config.ShowTooltip,
-            }, viewport, map);
+            }, config, viewport, map);
 
             FlagMarker.ShowContextMenu(viewport, map);
         }

@@ -64,14 +64,10 @@ public unsafe class PartyMember : ModuleBase
             {
                 IconId = config.DisplayJobIcons ? member.ClassJob + 62000u : config.SelectedIcon,
                 ObjectPosition = new Vector2(member.X, member.Z),
-                IconScale = config.IconScale,
-                ShowIcon = config.ShowIcon,
                 
                 TooltipExtraIcon = member.ClassJob + 62000u,
                 Tooltip = MemoryHelper.ReadStringNullTerminated((nint)member.Name),
-                TooltipColor = config.TooltipColor,
-                ShowTooltip = config.ShowTooltip,
-            }, viewport, map);
+            }, config, viewport, map);
         }
     }
 

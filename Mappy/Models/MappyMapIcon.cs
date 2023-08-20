@@ -15,8 +15,6 @@ public class MappyMapIcon
 {
     public uint IconId { get; set; }
     public List<IconLayer> Layers { get; set; } = new();
-    public float IconScale { get; set; } = 1.0f;
-    public bool ShowIcon { get; set; }
     
     public float Radius { get; set; }
     public Vector4 RadiusColor { get; set; } = KnownColor.Aqua.AsVector4();
@@ -29,14 +27,10 @@ public class MappyMapIcon
     public string TooltipExtraText { get; set; } = string.Empty;
     public Func<string>? GetTooltipExtraTextFunc { get; set; }
     public string GetTooltipExtraText() => GetTooltipExtraTextFunc is not null ? GetTooltipExtraTextFunc.Invoke() : TooltipExtraText;
-    
-    public Vector4 TooltipColor { get; set; } = KnownColor.White.AsVector4();
-    public bool ShowTooltip { get; set; }
-    
+    public Func<Vector4>? GetTooltipColorFunc { get; set; }
+
     public float VerticalPosition { get; set; }
-    public float VerticalThreshold { get; set; }
-    public bool ShowDirectionalIndicator { get; set; }
-    
+
     public Vector2? TexturePosition { get; set; }
     public Vector2? ObjectPosition { get; set; }
 

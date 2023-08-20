@@ -60,15 +60,11 @@ public unsafe class AllianceMember : ModuleBase
             {
                 IconId = config.DisplayJobIcons ? member.ClassJob + 62000u : config.SelectedIcon,
                 ObjectPosition = new Vector2(member.X, member.Z),
-                IconScale = config.IconScale,
-                ShowIcon = config.ShowIcon,
                 
                 TooltipExtraIcon = member.ClassJob + 62000u,
-                TooltipColor = config.TooltipColor,
                 Tooltip = MemoryHelper.ReadStringNullTerminated((nint)member.Name),
-                ShowTooltip = config.ShowTooltip,
                 
-            }, viewport, map);
+            }, config, viewport, map);
         }
     }
 }

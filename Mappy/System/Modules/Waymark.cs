@@ -47,9 +47,7 @@ public unsafe class Waymark : ModuleBase
                 {
                     IconId = GetIconForMarkerIndex(index),
                     ObjectPosition = new Vector2(marker.X, marker.Z) / 1000.0f,
-                    IconScale = config.IconScale,
-                    ShowIcon = config.ShowIcon,
-                }, viewport, map);
+                }, config, viewport, map);
             }
         }
     }

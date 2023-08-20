@@ -83,13 +83,9 @@ public unsafe class IslandSanctuary : ModuleBase
             {
                 IconId = mapIcon,
                 ObjectPosition = new Vector2(obj.Position.X, obj.Position.Z),
-                IconScale = config.IconScale,
-                ShowIcon = config.ShowIcon,
                 
                 Tooltip = obj.Name.TextValue,
-                TooltipColor = config.TooltipColor,
-                ShowTooltip = config.ShowTooltip,
-            }, viewport, map);
+            }, config, viewport, map);
         }
     }
 }

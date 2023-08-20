@@ -51,17 +51,14 @@ public class MapMarkerData
         {
             IconId = IconId,
             TexturePosition = Position,
-            IconScale = settings.IconScale,
-            ShowIcon = settings.ShowIcon,
             
             GetTooltipFunc = GetTooltipString,
             GetTooltipExtraTextFunc = settings.ShowTeleportCostTooltips ? GetSecondaryTooltipString : () => string.Empty,
-            TooltipColor = GetDisplayColor(),
-            ShowTooltip = settings.ShowTooltip,
+            GetTooltipColorFunc = GetDisplayColor,
             
             OnClickAction = GetClickAction(),
             
-        }, viewport, map);
+        }, settings, viewport, map);
     }
 
     private string GetTooltipString()

@@ -52,15 +52,10 @@ public class GatheringPoints : ModuleBase
             DrawUtilities.DrawMapIcon(new MappyMapIcon
             {
                 IconId = GetIconIdForGatheringNode(obj),
-                IconScale = config.IconScale,
                 ObjectPosition = new Vector2(obj.Position.X, obj.Position.Z),
-                ShowIcon = config.ShowIcon,
                 
                 Tooltip = $"Lv. {gatheringPointBase.GatheringLevel} {obj.Name.TextValue}",
-                TooltipColor = config.TooltipColor,
-                ShowTooltip = config.ShowTooltip,
-                
-            }, viewport, map);
+            }, config, viewport, map);
         }
     }
 

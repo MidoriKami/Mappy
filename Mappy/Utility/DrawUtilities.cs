@@ -7,13 +7,14 @@ using KamiLib.Caching;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
 using Mappy.System;
+using Mappy.System.Modules;
 using Mappy.Views.Windows;
 
 namespace Mappy.Utility;
 
 public partial class DrawUtilities
 {
-    public static void DrawMapIcon(MappyMapIcon iconData, Viewport viewport, Map map)
+    public static void DrawMapIcon(MappyMapIcon iconData, object configuration, Viewport viewport, Map map)
     {
         if (iconData.IconId is 0) return;
         
@@ -21,39 +22,43 @@ public partial class DrawUtilities
 
         var drawPosition = iconData.GetDrawPosition(map);
         
-        if (iconData is { ShowIcon: true } && !IsIconDisabled(iconData.IconId))
+        if (configuration is IIconConfig { ShowIcon: true } iconConfig && !IsIconDisabled(iconData.IconId))
         {
             if (iconData is { Radius: > 1.0f })
             {
                 DrawAreaRing(drawPosition, iconData.Radius, viewport, map, iconData.RadiusColor);
             }
             
-            DrawIconTexture(iconData.IconTexture, viewport, drawPosition, iconData.IconScale);
+            DrawIconTexture(iconData.IconTexture, viewport, drawPosition, iconConfig.IconScale);
 
             if (ImGui.IsItemClicked())
             {
                 iconData.OnClickAction?.Invoke();
             }
 
-            var radiusSize = iconData.Radius * viewport.Scale;
-            var iconSize = iconData.IconSize.X * iconData.IconScale / 2.0f;
-            var isIconBiggerThanRadius = iconSize >= radiusSize;
-                
-            switch (iconData)
+            if (configuration is ITooltipConfig { ShowTooltip: true } tooltipConfig)
             {
-                case { ShowTooltip: true, Radius: <= 1.0f } when ImGui.IsItemHovered():
-                case { ShowTooltip: true, Radius: > 1.0f } when isIconBiggerThanRadius && ImGui.IsItemHovered():
-                    DrawTooltip(iconData.IconId, iconData.TooltipExtraIcon, iconData.TooltipColor, iconData.GetTooltip(), iconData.GetTooltipExtraText());
-                    break;
+                var radiusSize = iconData.Radius * viewport.Scale;
+                var iconSize = iconData.IconSize.X * iconConfig.IconScale / 2.0f;
+                var isIconBiggerThanRadius = iconSize >= radiusSize;
+                var color = iconData.GetTooltipColorFunc?.Invoke() ?? tooltipConfig.TooltipColor;
                 
-                case { ShowTooltip: true, Radius: > 1.0f } when !isIconBiggerThanRadius:
-                    DrawAreaTooltip(drawPosition, iconData.Radius, viewport, iconData.IconId, iconData.TooltipColor, iconData.GetTooltip(), iconData.GetTooltipExtraText());
-                    break;
+                switch (iconData)
+                {
+                    case { Radius: <= 1.0f } when ImGui.IsItemHovered():
+                    case { Radius: > 1.0f } when isIconBiggerThanRadius && ImGui.IsItemHovered():
+                        DrawTooltip(iconData.IconId, iconData.TooltipExtraIcon, color, iconData.GetTooltip(), iconData.GetTooltipExtraText());
+                        break;
+                
+                    case { Radius: > 1.0f } when !isIconBiggerThanRadius:
+                        DrawAreaTooltip(drawPosition, iconData.Radius, viewport, iconData.IconId, color, iconData.GetTooltip(), iconData.GetTooltipExtraText());
+                        break;
+                }
             }
             
-            if (iconData is { ShowDirectionalIndicator: true })
+            if (configuration is IDirectionalMarkerConfig { EnableDirectionalMarker: true } directionalMarkerConfig)
             {
-                if (GetDirectionalIconLayer(iconData) is { } layer)
+                if (GetDirectionalIconLayer(iconData, directionalMarkerConfig) is { } layer)
                 {
                     iconData.Layers.Add(layer);
                 }
@@ -61,7 +66,7 @@ public partial class DrawUtilities
 
             foreach (var layer in iconData.Layers.Where(layer => !IsIconDisabled(layer.IconId)))
             {
-                DrawIconTexture(layer.IconTexture, viewport, drawPosition + layer.PositionOffset * iconData.IconScale / viewport.Scale, iconData.IconScale);
+                DrawIconTexture(layer.IconTexture, viewport, drawPosition + layer.PositionOffset * iconConfig.IconScale / viewport.Scale, iconConfig.IconScale);
             }
         }
     }

@@ -41,14 +41,10 @@ public class Hostiles : ModuleBase
             DrawUtilities.DrawMapIcon(new MappyMapIcon
             {
                 IconId = GetIconForBattleNpc(battleNpc),
-                ShowIcon = config.ShowIcon,
-                IconScale = config.IconScale,
                 ObjectPosition = new Vector2(battleNpc.Position.X, battleNpc.Position.Z),
                 
                 Tooltip = $"Lv. {battleNpc.Level} {battleNpc.Name.TextValue}",
-                ShowTooltip = config.ShowTooltip,
-                TooltipColor = config.TooltipColor,
-            }, viewport, map);
+            }, config, viewport, map);
         }
     }
 

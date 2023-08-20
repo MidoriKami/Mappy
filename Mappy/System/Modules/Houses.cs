@@ -71,12 +71,9 @@ public unsafe class Houses : ModuleBase
             {
                 IconId = GetIconId(marker, map),
                 ObjectPosition = new Vector2(marker.X, marker.Z),
-                IconScale = config.IconScale + 0.15f,
-                ShowIcon = config.ShowIcon,
             
                 Tooltip = GetTooltip(marker),
-                ShowTooltip = config.ShowTooltip,
-            }, viewport, map);
+            }, config, viewport, map);
 
             if (config.ShowHousingNumber && marker.SubRowId is not (61 or 60))
             {
@@ -84,7 +81,6 @@ public unsafe class Houses : ModuleBase
                 {
                     Text = $"{marker.SubRowId + 1}",
                     ObjectPosition = new Vector2(marker.X, marker.Z) + new Vector2(4.0f, 4.0f),
-                
                 }, viewport, map);
             }
         }

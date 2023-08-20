@@ -24,7 +24,7 @@ public interface IQuestColorConfig
 }
 
 [Category("DirectionalMarker", 1)]
-public interface IQuestDistanceMarkerConfig
+public interface IDirectionalMarkerConfig
 {
     [BoolConfig("DirectionalMarker")]
     public bool EnableDirectionalMarker { get; set; }
@@ -34,7 +34,7 @@ public interface IQuestDistanceMarkerConfig
 }
 
 [Category("ModuleConfig")]
-public class QuestConfig : IModuleConfig, IIconConfig, ITooltipConfig, IQuestColorConfig, IQuestDistanceMarkerConfig
+public class QuestConfig : IModuleConfig, IIconConfig, ITooltipConfig, IQuestColorConfig, IDirectionalMarkerConfig
 {
     public bool Enable { get; set; } = true;
     public int Layer { get; set; } = 11;
@@ -90,20 +90,14 @@ public unsafe class Quest : ModuleBase
                 {
                     IconId = questInfo.IconId,
                     ObjectPosition = new Vector2(questInfo.X, questInfo.Z),
-                    IconScale = config.IconScale,
-                    ShowIcon = config.ShowIcon,
 
                     Tooltip = quest.Label.ToString(),
-                    TooltipColor = config.TooltipColor,
-                    ShowTooltip = config.ShowTooltip,
 
                     Radius = questInfo.Radius,
                     RadiusColor = config.InProgressColor,
                     
-                    ShowDirectionalIndicator = config.EnableDirectionalMarker,
                     VerticalPosition = questInfo.Y,
-                    VerticalThreshold = config.DistanceThreshold,
-                }, viewport, map);
+                }, config, viewport, map);
             }
         }
     }
@@ -124,20 +118,14 @@ public unsafe class Quest : ModuleBase
                 {
                     IconId = markerData.IconId,
                     ObjectPosition = new Vector2(markerData.X, markerData.Z),
-                    IconScale = config.IconScale,
-                    ShowIcon = config.ShowIcon,
 
                     Tooltip = $"Lv. {markerData.RecommendedLevel} {markerData.TooltipString->ToString()}",
-                    TooltipColor = config.TooltipColor,
-                    ShowTooltip = config.ShowTooltip,
 
                     Radius = markerData.Radius,
                     RadiusColor = config.InProgressColor,
                     
-                    ShowDirectionalIndicator = config.EnableDirectionalMarker,
                     VerticalPosition = markerData.Y,
-                    VerticalThreshold = config.DistanceThreshold,
-                }, viewport, map);
+                }, config, viewport, map);
             }
         }
     }
@@ -161,20 +149,14 @@ public unsafe class Quest : ModuleBase
                 {
                     IconId = questInfo.IconId,
                     ObjectPosition = new Vector2(questInfo.X, questInfo.Z),
-                    IconScale = config.IconScale,
-                    ShowIcon = config.ShowIcon,
 
                     Tooltip = quest.Label.ToString(),
-                    TooltipColor = config.TooltipColor,
-                    ShowTooltip = config.ShowTooltip,
 
                     Radius = questInfo.Radius,
                     RadiusColor = config.LeveQuestColor,
                     
-                    ShowDirectionalIndicator = config.EnableDirectionalMarker,
                     VerticalPosition = questInfo.Y,
-                    VerticalThreshold = config.DistanceThreshold,
-                }, viewport, map);
+                }, config, viewport, map);
             }
         }
         
@@ -187,20 +169,14 @@ public unsafe class Quest : ModuleBase
             {
                 IconId = markerInfo.IconId,
                 TexturePosition = new Vector2(markerInfo.X, markerInfo.Z),
-                IconScale = config.IconScale,
-                ShowIcon = config.ShowIcon,
 
                 Tooltip = markerInfo.TooltipString->ToString(),
-                TooltipColor = config.TooltipColor,
-                ShowTooltip = config.ShowTooltip,
 
                 Radius = markerInfo.Radius,
                 RadiusColor = config.LeveQuestColor,
                 
-                ShowDirectionalIndicator = config.EnableDirectionalMarker,
                 VerticalPosition = markerInfo.Y,
-                VerticalThreshold = config.DistanceThreshold,
-            }, viewport, map);
+            }, config, viewport, map);
         }
     }
 
