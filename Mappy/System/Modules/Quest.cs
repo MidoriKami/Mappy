@@ -112,7 +112,7 @@ public unsafe class Quest : ModuleBase
             foreach (var markerData in markerInfo.MarkerData.Span)
             {
                 if (LuminaCache<Level>.Instance.GetRow(markerData.LevelId) is not { Map.Row: var levelMap, Territory.Row: var levelTerritory}) continue;
-                if (levelMap != map.RowId && levelTerritory != map.TerritoryType.Row) continue;
+                if (levelMap != map.RowId) continue;
 
                 DrawUtilities.DrawMapIcon(new MappyMapIcon
                 {
