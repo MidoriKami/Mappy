@@ -2,7 +2,6 @@
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Utility;
 using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
@@ -29,7 +28,14 @@ public class Hostiles : ModuleBase
 
     private const uint YellowEnemyIcon = 60424u;
     private const uint RedEnemyIcon = 60422u;
-    
+
+    protected override bool ShouldDrawMarkers(Map map)
+    {
+        if (!IsPlayerInCurrentTerritory(map)) return false;
+        
+        return base.ShouldDrawMarkers(map);
+    }
+
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
         var config = GetConfig<HostilesConfiguration>();
