@@ -43,5 +43,17 @@ public abstract unsafe class ModuleBase
         return true;
     }
 
+    protected static bool IsPlayerInCurrentTerritory(Map map)
+    {
+        if (AgentMap.Instance() is null) return false;
+
+        var isSameMap = AgentMap.Instance()->CurrentMapId == map.RowId;
+        var isSameTerritory = AgentMap.Instance()->CurrentTerritoryId == map.TerritoryType.Row;
+        
+        if (!isSameMap && !isSameTerritory) return false;
+
+        return true;
+    }
+
     protected static bool IsLocalPlayerValid() => Service.ClientState.LocalPlayer is not null;
 }
