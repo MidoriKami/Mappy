@@ -248,7 +248,11 @@ public unsafe class MapWindow : Window
     {
         if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
         {
-            MappySystem.ContextMenuController.Show(PopupMenuType.AddMoveFlag, PopupMenuType.ViewParentMap);
+            MappySystem.ContextMenuController.Show(PopupMenuType.AddMoveFlag, 
+                PopupMenuType.ViewParentMap, 
+                PopupMenuType.ViewRegionMap,
+                PopupMenuType.ViewSource,
+                PopupMenuType.ViewFirst);
         }
     }
     

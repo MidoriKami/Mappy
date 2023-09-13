@@ -15,6 +15,9 @@ public class ContextMenuController
         new MarkedAreaContextMenuEntry(),
         new AddMoveFlagContextMenuEntry(),
         new ParentMapContextMenuEntry(),
+        new ViewRegionMapContextMenuEntry(),
+        new SourceMapContextMenuEntry(),
+        new FirstMapContextMenuEntry(),
     };
 
     private readonly HashSet<PopupMenuType> activeTypes = new();

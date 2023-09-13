@@ -29,7 +29,7 @@ public partial class DrawUtilities
                 DrawAreaRing(drawPosition, iconData.Radius, viewport, map, iconData.RadiusColor);
             }
             
-            DrawIconTexture(iconData.IconTexture, viewport, drawPosition, iconConfig.IconScale);
+            DrawIconTexture(iconData.IconTexture, viewport, drawPosition, GetSpecialIconScale(iconData.IconId, iconConfig.IconScale, viewport), iconData.ColorManipulation);
 
             if (ImGui.IsItemClicked())
             {
@@ -74,26 +74,22 @@ public partial class DrawUtilities
     public static void DrawMapText(MappyMapText textData, Viewport viewport, Map map)
     {
         if (textData.Text == string.Empty) return;
-        
-        ImGui.PushFont(KamiCommon.FontManager.Axis12.ImFont);
 
-        const int outlineThickness = 1;
-        
-        for (var x = -outlineThickness; x <= outlineThickness; ++x)
+        ImGui.PushFont(textData.UseLargeFont ? KamiCommon.FontManager.Axis18.ImFont : KamiCommon.FontManager.Axis12.ImFont);
+
+        DrawTextOutlined(textData, viewport, map, false);
+
+        if (ImGui.IsItemHovered())
         {
-            for (var y = -outlineThickness; y <= outlineThickness; ++y)
-            {
-                if (x == 0 && y == 0) continue;
-                
-                viewport.SetImGuiDrawPosition(textData.GetDrawPosition(map) * viewport.Scale + new Vector2(x, y));
-                ImGui.TextColored(textData.OutlineColor, textData.Text);
-            }
+            DrawTextOutlined(textData, viewport, map, true);
         }
         
-        viewport.SetImGuiDrawPosition(textData.GetDrawPosition(map) * viewport.Scale);
-        ImGui.TextColored(textData.TextColor, textData.Text);
-        
         ImGui.PopFont();
+        
+        if (textData is { OnClick: { } clickAction } && ImGui.IsItemClicked())
+        {
+            clickAction();
+        }
     }
 
     public static void DrawTooltip(Vector4 color, string primaryText)

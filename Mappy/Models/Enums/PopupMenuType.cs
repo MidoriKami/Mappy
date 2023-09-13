@@ -6,4 +6,7 @@ public enum PopupMenuType
     TempFlag,
     TempArea,
     ViewParentMap,
+    ViewRegionMap,
+    ViewSource,
+    ViewFirst,
 }

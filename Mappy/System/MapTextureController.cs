@@ -67,6 +67,7 @@ public unsafe class MapTextureController : IDisposable
         CurrentMap = LuminaCache<Map>.Instance.GetRow(mapId)!;
 
         PluginLog.Debug($"Loading Map: {mapId} - {CurrentMap.GetName()}");
+        PluginLog.Debug($"Map Data: {CurrentMap.Id.RawString}");
 
         MapLayers = Service.DataManager.GetExcelSheet<Map>()!
             .Where(eachMap => eachMap.PlaceName.Row == CurrentMap.PlaceName.Row)

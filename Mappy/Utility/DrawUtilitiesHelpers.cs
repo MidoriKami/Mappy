@@ -16,6 +16,33 @@ namespace Mappy.Utility;
 
 public partial class DrawUtilities
 {
+    private static void DrawTextOutlined(MappyMapText textData, Viewport viewport, Map map, bool useHoverColors)
+    {
+        const int outlineThickness = 1;
+        var textSize = ImGui.CalcTextSize(textData.Text);
+        var textSizeOffset = new Vector2(-textSize.X / 2.0f, textSize.Y / 2.0f);
+
+        for (var x = -outlineThickness; x <= outlineThickness; ++x)
+        {
+            for (var y = -outlineThickness; y <= outlineThickness; ++y)
+            {
+                if (x == 0 && y == 0) continue;
+
+                viewport.SetImGuiDrawPosition(textData.GetDrawPosition(map) * viewport.Scale + new Vector2(x, y) + textSizeOffset);
+                ImGui.TextColored(useHoverColors ? textData.HoverOutlineColor : textData.OutlineColor, textData.Text);
+            }
+        }
+        
+        viewport.SetImGuiDrawPosition(textData.GetDrawPosition(map) * viewport.Scale + textSizeOffset);
+        ImGui.TextColored(useHoverColors ? textData.HoverColor : textData.TextColor, textData.Text);
+    }
+    
+    private static float GetSpecialIconScale(uint iconId, float baseScale, Viewport viewport) => iconId switch
+    {
+        > 063200 and < 63900 => 0.50f * 0.833f * viewport.Scale,
+        _ => baseScale,
+    };
+
     private static IconLayer? GetDirectionalIconLayer(MappyMapIcon iconData, IDirectionalMarkerConfig config)
     {
         var offsetPosition = new Vector2(8.0f, 24.0f);
@@ -61,7 +88,7 @@ public partial class DrawUtilities
         return disallowedIcons.Contains(iconId);
     }
     
-    private static void DrawIconTexture(TextureWrap? iconTexture, Viewport viewport, Vector2 position, float scale)
+    private static void DrawIconTexture(TextureWrap? iconTexture, Viewport viewport, Vector2 position, float scale, Vector4? tintColor = null)
     {
         if (iconTexture is null) return;
         if (MappySystem.MapTextureController is not { Ready: true }) return;
@@ -69,7 +96,7 @@ public partial class DrawUtilities
         var iconSize = new Vector2(iconTexture.Width, iconTexture.Height) * scale;
         
         viewport.SetImGuiDrawPosition(position * viewport.Scale - iconSize / 2.0f);
-        ImGui.Image(iconTexture.ImGuiHandle, iconSize);
+        ImGui.Image(iconTexture.ImGuiHandle, iconSize, Vector2.Zero, Vector2.One, tintColor ?? Vector4.One);
     }
     
     private static float GetObjectRotation(GameObject gameObject) 

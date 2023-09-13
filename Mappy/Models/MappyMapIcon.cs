@@ -33,6 +33,8 @@ public class MappyMapIcon
 
     public Vector2? TexturePosition { get; set; }
     public Vector2? ObjectPosition { get; set; }
+    
+    public Vector4? ColorManipulation { get; set; }
 
     public Vector2 GetDrawPosition(Map map)
     {

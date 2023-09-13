@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using System.Security.AccessControl;
 using DailyDuty.System;
 using Dalamud.Utility;
 using KamiLib.Caching;
+using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
 using Mappy.System;
@@ -47,18 +50,46 @@ public class MapMarkerData
 
     public void Draw(Viewport viewport, Map map)
     {
-        DrawUtilities.DrawMapIcon(new MappyMapIcon
+        if (IconId is > 063200 and < 63900 || map.Id.RawString.StartsWith("world"))
         {
-            IconId = IconId,
-            TexturePosition = Position,
+            DrawUtilities.DrawMapIcon(new MappyMapIcon
+            {
+                IconId = IconId,
+                TexturePosition = Position,
+                ColorManipulation = new Vector4(0.75f, 0.75f, 0.75f, 1.0f),
+            }, settings, viewport, map);
             
-            GetTooltipFunc = GetTooltipString,
-            GetTooltipExtraTextFunc = settings.ShowTeleportCostTooltips ? GetSecondaryTooltipString : () => string.Empty,
-            GetTooltipColorFunc = GetDisplayColor,
+            DrawUtilities.DrawMapText(new MappyMapText
+            {
+                Text = PlaceName.Name.ToDalamudString().TextValue,
+                TexturePosition = Position,
+                UseLargeFont = true,
+                
+                TextColor = KnownColor.Black.AsVector4(),
+                OutlineColor = KnownColor.White.AsVector4(),
+                
+                HoverColor = KnownColor.White.AsVector4(),
+                HoverOutlineColor = KnownColor.RoyalBlue.AsVector4(),
+                
+                OnClick = GetClickAction(),
+                
+            }, viewport, map);
+        }
+        else
+        {
+            DrawUtilities.DrawMapIcon(new MappyMapIcon
+            {
+                IconId = IconId,
+                TexturePosition = Position,
             
-            OnClickAction = GetClickAction(),
+                GetTooltipFunc = GetTooltipString,
+                GetTooltipExtraTextFunc = settings.ShowTeleportCostTooltips ? GetSecondaryTooltipString : () => string.Empty,
+                GetTooltipColorFunc = GetDisplayColor,
             
-        }, settings, viewport, map);
+                OnClickAction = GetClickAction(),
+            
+            }, settings, viewport, map);
+        }
     }
 
     private string GetTooltipString()
@@ -73,7 +104,7 @@ public class MapMarkerData
                 }
             }
 
-            return MiscIconNameCache[IconId];
+            return MiscIconNameCache.TryGetValue(IconId, out var value) ? value : string.Empty;
         }
         else if (GetDisplayString() is { } displayString)
         {
