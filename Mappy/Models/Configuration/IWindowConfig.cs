@@ -1,6 +1,5 @@
 ﻿using System.Numerics;
 using KamiLib.AutomaticUserInterface;
-using KamiLib.AutomaticUserInterface.Configuration;
 using Mappy.Models.Enums;
 
 namespace Mappy.Models;
