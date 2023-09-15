@@ -169,7 +169,7 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Centers the map on the player when opening the map.
+        ///   Looks up a localized string similar to Centers the map when opening it.
         /// </summary>
         internal static string CenterOnOpenHelp {
             get {

@@ -499,7 +499,7 @@
     <value>Center on Open</value>
   </data>
   <data name="CenterOnOpenHelp" xml:space="preserve">
-    <value>Centers the map on the player when opening the map</value>
+    <value>Centers the map when opening it</value>
   </data>
   <data name="UseRegionSearch" xml:space="preserve">
     <value>Use Region Search</value>
