@@ -20,23 +20,23 @@ namespace Mappy.Views.Windows;
 
 public unsafe class MapWindow : Window
 {
-    private static AtkUnitBase* NameplateAddon => (AtkUnitBase*) Service.GameGui.GetAddonByName("NamePlate");
-    
+    private static AtkUnitBase* NameplateAddon => (AtkUnitBase*)Service.GameGui.GetAddonByName("NamePlate");
+
     public Viewport Viewport = new();
     private Vector2 mouseDragStart;
     private bool dragStarted;
     private Vector2 lastWindowSize = Vector2.Zero;
     private readonly MapToolbar toolbar;
     public bool ProcessingCommand;
-    
+
     public MapWindow() : base("Mappy - Map Window")
     {
         toolbar = new MapToolbar(this);
-        
+
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(510,200),
-            MaximumSize = new Vector2(9999,9999)
+            MinimumSize = new Vector2(510, 200),
+            MaximumSize = new Vector2(9999, 9999)
         };
 
         CommandController.RegisterCommands(this);
@@ -48,7 +48,7 @@ public unsafe class MapWindow : Window
         if (Service.ClientState.IsPvP) IsOpen = false;
         if (!Service.ClientState.IsLoggedIn) IsOpen = false;
     }
-    
+
     public override bool DrawConditions()
     {
         if (!Service.ClientState.IsLoggedIn) return false;
@@ -57,7 +57,7 @@ public unsafe class MapWindow : Window
         if (MappySystem.SystemConfig.HideInCombat && Condition.IsInCombat()) return false;
         if (MappySystem.SystemConfig.HideBetweenAreas && Condition.IsBetweenAreas()) return false;
         if (MappySystem.SystemConfig.HideWithGameGui && Node.IsAddonReady(NameplateAddon) && !NameplateAddon->RootNode->IsVisible) return false;
-        
+
         return true;
     }
 
@@ -67,14 +67,25 @@ public unsafe class MapWindow : Window
 
         if (!ProcessingCommand)
         {
-            if (MappySystem.SystemConfig.CenterOnOpen)
+            var centerTarget = MappySystem.SystemConfig.CenterOnOpen;
+
+            if (centerTarget != CenterTarget.Disabled)
             {
                 if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { Viewport: var viewport }) return;
                 if (Service.ClientState.LocalPlayer is not { Position: var playerPosition }) return;
                 if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
 
-                MappySystem.MapTextureController.MoveMapToPlayer();
-                viewport.SetViewportCenter(Utility.Position.GetTexturePosition(playerPosition, map));
+                if (centerTarget == CenterTarget.Player)
+                {
+                    MappySystem.MapTextureController.MoveMapToPlayer();
+                    viewport.SetViewportCenter(Utility.Position.GetTexturePosition(playerPosition, map));
+                }
+                else
+                {
+                    MappySystem.SystemConfig.FollowPlayer = false;
+                    viewport.SetViewportCenter(new Vector2(1024.0f, 1024.0f));
+                    viewport.SetViewportZoom(0.4f);
+                }
             }
 
             if (MappySystem.SystemConfig.FollowOnOpen)
@@ -83,7 +94,7 @@ public unsafe class MapWindow : Window
                 MappySystem.SystemConfig.FollowPlayer = true;
             }
         }
-        
+
         ProcessingCommand = false;
         ImGui.SetWindowFocus(WindowName);
     }
@@ -91,16 +102,16 @@ public unsafe class MapWindow : Window
     public override void Draw()
     {
         UpdateSizePosition();
-        
+
         if (MappySystem.MapTextureController is not { Ready: true, MapTexture: var texture, CurrentMap: var map }) return;
-        
+
         SetWindowFlags();
 
         Viewport.UpdateViewportStart(ImGui.GetCursorScreenPos());
         if (ImGui.BeginChild("###MapFrame", ImGui.GetContentRegionAvail(), false, Flags))
         {
             Viewport.UpdateSize();
-            
+
             Viewport.SetImGuiDrawPosition();
             var scaledSize = new Vector2(texture.Width, texture.Height) * Viewport.Scale;
             ImGui.Image(texture.ImGuiHandle, scaledSize, Vector2.Zero, Vector2.One, Vector4.One with { W = GetFadePercent() });
@@ -111,7 +122,7 @@ public unsafe class MapWindow : Window
             MappySystem.ContextMenuController.Draw();
         }
         ImGui.EndChild();
-        
+
         ReadMouseInputs();
     }
 
@@ -121,7 +132,7 @@ public unsafe class MapWindow : Window
 
         ProcessingCommand = false;
     }
-    
+
     private void UpdateSizePosition()
     {
         var systemConfig = MappySystem.SystemConfig;
@@ -163,7 +174,7 @@ public unsafe class MapWindow : Window
         foreach (var flag in Enum.GetValues<FadeMode>())
         {
             if (!MappySystem.SystemConfig.FadeMode.HasFlag(flag)) continue;
-            
+
             switch (flag)
             {
                 case FadeMode.Always:
@@ -180,7 +191,7 @@ public unsafe class MapWindow : Window
     private void SetWindowFlags()
     {
         Flags = DrawFlags.DefaultFlags;
-        
+
         if (MappySystem.SystemConfig.LockWindow) Flags |= DrawFlags.NoMoveResizeFlags;
         if (MappySystem.SystemConfig.HideWindowFrame) Flags |= DrawFlags.NoDecorationFlags;
         if (!Bound.IsCursorInWindowHeader()) Flags |= ImGuiWindowFlags.NoMove;
@@ -191,7 +202,7 @@ public unsafe class MapWindow : Window
     {
         // Disable while Searching
         if (toolbar.MapSearch.ShowMapSelectOverlay) return;
-        
+
         // Only allow Context, Zoom, an DragStart if cursor is over the map
         if (Bound.IsCursorInWindow() && !Bound.IsCursorInWindowHeader())
         {
@@ -243,19 +254,19 @@ public unsafe class MapWindow : Window
 
         if (dragStarted) MappySystem.SystemConfig.FollowPlayer = false;
     }
-    
+
     private void ProcessContextMenu()
     {
         if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
         {
-            MappySystem.ContextMenuController.Show(PopupMenuType.AddMoveFlag, 
-                PopupMenuType.ViewParentMap, 
+            MappySystem.ContextMenuController.Show(PopupMenuType.AddMoveFlag,
+                PopupMenuType.ViewParentMap,
                 PopupMenuType.ViewRegionMap,
                 PopupMenuType.ViewSource,
                 PopupMenuType.ViewFirst);
         }
     }
-    
+
     private void ProcessZoomChange()
     {
         if (ImGui.GetIO().MouseWheel > 0) // Mouse Wheel Up
@@ -267,13 +278,13 @@ public unsafe class MapWindow : Window
             Viewport.ZoomOut(MappySystem.SystemConfig.ZoomSpeed);
         }
     }
-    
+
     // ReSharper disable once UnusedMember.Local
     [DoubleTierCommandHandler("GoToCommandHelp", "map", "goto")]
     private void GoToCommand(params string[] args)
     {
         if (args.Length is not 2) return;
-        
+
         var x = float.Parse(args[0]);
         var y = float.Parse(args[1]);
 
@@ -288,7 +299,7 @@ public unsafe class MapWindow : Window
 
             Viewport.SetViewportCenter(new Vector2(worldX, worldY));
             Viewport.SetViewportZoom(2.0f);
-            
+
             TemporaryMarkers.SetGatheringMarker(new TemporaryMapMarker
             {
                 Position = new Vector2(worldX, worldY) / (map.SizeFactor / 100.0f) - new Vector2(1024.0f, 1024.0f) / (map.SizeFactor / 100.0f),
