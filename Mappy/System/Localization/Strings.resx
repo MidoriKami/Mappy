@@ -543,10 +543,10 @@ Open Map Window to populate data</value>
     <value>Hostiles</value>
   </data>
   <data name="FocusObjective" xml:space="preserve">
-    <value>Focus on objective</value>
+    <value>Center on Links</value>
   </data>
   <data name="FocusObjectiveHelp" xml:space="preserve">
-    <value>Center and zoom in on target when clicking a map link (gathering point, quest objective, etc.)</value>
+    <value>Center and zoom in on target when clicking a link</value>
   </data>
   <data name="Disabled" xml:space="preserve">
     <value>Disabled</value>
