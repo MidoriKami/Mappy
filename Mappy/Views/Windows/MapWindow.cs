@@ -67,25 +67,22 @@ public unsafe class MapWindow : Window
 
         if (!ProcessingCommand)
         {
-            var centerTarget = MappySystem.SystemConfig.CenterOnOpen;
+            if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { Viewport: var viewport }) return;
+            if (Service.ClientState.LocalPlayer is not { Position: var playerPosition }) return;
+            if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
 
-            if (centerTarget != CenterTarget.Disabled)
+            switch (MappySystem.SystemConfig)
             {
-                if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { Viewport: var viewport }) return;
-                if (Service.ClientState.LocalPlayer is not { Position: var playerPosition }) return;
-                if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
-
-                if (centerTarget == CenterTarget.Player)
-                {
+                case { CenterOnOpen: CenterTarget.Player }:
                     MappySystem.MapTextureController.MoveMapToPlayer();
                     viewport.SetViewportCenter(Utility.Position.GetTexturePosition(playerPosition, map));
-                }
-                else
-                {
+                    break;
+                
+                case { CenterOnOpen: CenterTarget.Map }:
                     MappySystem.SystemConfig.FollowPlayer = false;
                     viewport.SetViewportCenter(new Vector2(1024.0f, 1024.0f));
                     viewport.SetViewportZoom(0.4f);
-                }
+                    break;
             }
 
             if (MappySystem.SystemConfig.FollowOnOpen)
