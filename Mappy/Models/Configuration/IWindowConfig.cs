@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using KamiLib.AutomaticUserInterface;
+using KamiLib.AutomaticUserInterface.Configuration;
 using Mappy.Models.Enums;
 
 namespace Mappy.Models;
@@ -16,7 +17,7 @@ public interface IWindowConfig
     [BoolConfig("FollowOnOpen", "FollowOnOpenHelp")]
     public bool FollowOnOpen { get; set; }
     
-    [EnumConfig("CenterOnOpen", "CenterOnOpenHelp")]
+    [RadioEnumConfig("CenterOnOpen", "CenterOnOpenHelp")]
     public CenterTarget CenterOnOpen { get; set; }
     
     [Vector2Config("WindowPosition", 1.0f)]
