@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using KamiLib.AutomaticUserInterface;
+using Mappy.Models.Enums;
 
 namespace Mappy.Models;
 
@@ -15,8 +16,8 @@ public interface IWindowConfig
     [BoolConfig("FollowOnOpen", "FollowOnOpenHelp")]
     public bool FollowOnOpen { get; set; }
     
-    [BoolConfig("CenterOnOpen", "CenterOnOpenHelp")]
-    public bool CenterOnOpen { get; set; }
+    [EnumConfig("CenterOnOpen", "CenterOnOpenHelp")]
+    public CenterTarget CenterOnOpen { get; set; }
     
     [Vector2Config("WindowPosition", 1.0f)]
     public Vector2 WindowPosition { get; set; }
