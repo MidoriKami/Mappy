@@ -63,7 +63,7 @@ public unsafe class MapWindow : Window
 
     public override void OnOpen()
     {
-        UIModule.PlaySound(23u, 0, 0, 0);
+        UIModule.PlaySound(23u);
 
         if (!ProcessingCommand)
         {
@@ -125,7 +125,7 @@ public unsafe class MapWindow : Window
 
     public override void OnClose()
     {
-        UIModule.PlaySound(24u, 0, 0, 0);
+        UIModule.PlaySound(24u);
 
         ProcessingCommand = false;
     }

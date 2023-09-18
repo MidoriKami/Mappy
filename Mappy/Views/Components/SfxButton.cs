@@ -30,7 +30,7 @@ public class SfxButton
 
             if (ClickSfxId is { } clickSfx)
             {
-                UIModule.PlaySound(clickSfx, 0, 0, 0);
+                UIModule.PlaySound(clickSfx);
             }
         }
         if(IsIconButton) ImGui.PopFont();
@@ -40,7 +40,7 @@ public class SfxButton
             // We weren't hovered, but are now
             if (!isMouseOver)
             {
-                UIModule.PlaySound(sfxId, 0, 0, 0);
+                UIModule.PlaySound(sfxId);
                 isMouseOver = true;
             }
         }
