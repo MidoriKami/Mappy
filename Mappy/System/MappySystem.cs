@@ -1,5 +1,5 @@
 ﻿using DailyDuty.System;
-using Dalamud.Game;
+using Dalamud.Plugin.Services;
 using KamiLib;
 using KamiLib.Utilities;
 using Mappy.Models;

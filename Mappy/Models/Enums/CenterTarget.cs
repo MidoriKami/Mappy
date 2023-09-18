@@ -1,5 +1,4 @@
 ﻿using KamiLib.AutomaticUserInterface;
-using System;
 
 namespace Mappy.Models.Enums;
 
