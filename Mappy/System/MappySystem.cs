@@ -39,7 +39,7 @@ public class MappySystem
         ModuleController.ZoneChanged(newZone);
     }
     
-    private void FrameworkUpdate(Framework framework)
+    private void FrameworkUpdate(IFramework framework)
     {
         if (!Service.ClientState.IsLoggedIn) return;
         if (Service.ClientState.IsPvP) return;
