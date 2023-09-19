@@ -34,7 +34,7 @@ public class MappySystem
         Service.Framework.Update += FrameworkUpdate;
     }
 
-    private void ZoneChanged(object? sender, ushort newZone)
+    private void ZoneChanged(ushort newZone)
     {
         ModuleController.ZoneChanged(newZone);
     }
