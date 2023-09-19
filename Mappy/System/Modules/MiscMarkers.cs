@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
 using KamiLib.Utilities;
@@ -11,6 +12,7 @@ using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.Utility;
+using Map = Lumina.Excel.GeneratedSheets.Map;
 
 namespace Mappy.System.Modules;
 
@@ -33,7 +35,7 @@ public unsafe class MiscMarkers : ModuleBase
 
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
-        var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
+        var data = FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
         
         DrawMapMarkerContainer(data->GuildLeveAssignmentMapMarkerData, viewport, map);
         DrawMapMarkerContainer(data->GuildOrderGuideMarkerData, viewport, map);
@@ -45,7 +47,7 @@ public unsafe class MiscMarkers : ModuleBase
     
     private void DrawTripleTriadMarkers(Viewport viewport, Map map)
     {
-        var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
+        var data = FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
 
         foreach (var markerInfo in data->TripleTriadMarkerData.GetAllMarkers())
         {
@@ -82,7 +84,7 @@ public unsafe class MiscMarkers : ModuleBase
     
     private void DrawCustomTalkMarkers(Viewport viewport, Map map)
     {
-        var data = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
+        var data = FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
         
         foreach (var markerInfo in data->CustomTalkMarkerData.GetAllMarkers())
         {

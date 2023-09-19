@@ -74,12 +74,12 @@ public unsafe class Quest : ModuleBase
     
     private void DrawAcceptedQuests(Viewport viewport, Map map)
     {
-        var mapData = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
+        var mapData = FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
         var config = GetConfig<QuestConfig>();
 
         foreach (var quest in mapData->QuestDataSpan)
         {
-            if (quest.ShouldRender != 1) continue;
+            if (!quest.ShouldRender) continue;
             
             foreach (var questInfo in quest.MarkerData.Span)
             {
@@ -104,7 +104,7 @@ public unsafe class Quest : ModuleBase
     
     private void DrawUnacceptedQuests(Viewport viewport, Map map)
     {
-        var mapData = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
+        var mapData = FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
         var config = GetConfig<QuestConfig>();
         
         foreach (var markerInfo in mapData->QuestMarkerData.GetAllMarkers())
@@ -132,12 +132,12 @@ public unsafe class Quest : ModuleBase
     
     private void DrawLeveQuests(Viewport viewport, Map map)
     {
-        var mapData = (ClientStructsMapData*) FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
+        var mapData = FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
         var config = GetConfig<QuestConfig>();
 
         foreach (var quest in mapData->LevequestDataSpan)
         {
-            if (quest.ShouldRender != 1) continue;
+            if (!quest.ShouldRender) continue;
             
             foreach (var questInfo in quest.MarkerData.Span)
             {
