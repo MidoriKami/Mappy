@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiScene;
 using KamiLib.Caching;
@@ -39,7 +38,7 @@ public unsafe class MapTextureController : IDisposable
         var currentMapId = agent->CurrentMapId;
         if (lastMapId != currentMapId)
         {
-            PluginLog.Debug($"Map ID Updated: {currentMapId}");
+            Service.Log.Debug($"Map ID Updated: {currentMapId}");
             LoadMap(currentMapId);
 
             lastMapId = currentMapId;
@@ -66,8 +65,8 @@ public unsafe class MapTextureController : IDisposable
     {
         CurrentMap = LuminaCache<Map>.Instance.GetRow(mapId)!;
 
-        PluginLog.Debug($"Loading Map: {mapId} - {CurrentMap.GetName()}");
-        PluginLog.Debug($"Map Data: {CurrentMap.Id.RawString}");
+        Service.Log.Debug($"Loading Map: {mapId} - {CurrentMap.GetName()}");
+        Service.Log.Debug($"Map Data: {CurrentMap.Id.RawString}");
 
         MapLayers = Service.DataManager.GetExcelSheet<Map>()!
             .Where(eachMap => eachMap.PlaceName.Row == CurrentMap.PlaceName.Row)

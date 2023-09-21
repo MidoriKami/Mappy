@@ -4,7 +4,6 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Interface.Utility;
-using Dalamud.Logging;
 using ImGuiNET;
 using Mappy.Abstracts;
 using Mappy.Interfaces;
@@ -62,7 +61,7 @@ public class MapSearchView
 
         if (ImGui.InputTextWithHint("###MapSearch", Strings.SearchHint, ref searchString, 60, ImGuiInputTextFlags.AutoSelectAll))
         {
-            PluginLog.Debug("Refreshing Search Results");
+            Service.Log.Debug("Refreshing Search Results");
             Task.Run(SearchTask);
         }
     }

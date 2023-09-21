@@ -17,4 +17,5 @@ public sealed class Service
     [PluginService] public static IObjectTable ObjectTable { get; set; } = null!;
     [PluginService] public static IGameGui GameGui { get; set; } = null!;
     [PluginService] public static IAetheryteList AetheryteList { get; set; } = null!;
+    [PluginService] public static IPluginLog Log { get; set; } = null!;
 }

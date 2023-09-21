@@ -1,5 +1,4 @@
-﻿using Dalamud.Logging;
-using Dalamud.Plugin.Ipc;
+﻿using Dalamud.Plugin.Ipc;
 using Dalamud.Plugin.Ipc.Exceptions;
 using KamiLib.ChatCommands;
 using Lumina.Excel.GeneratedSheets;
@@ -40,7 +39,7 @@ public class TeleporterController
         }
         catch (IpcNotReadyError)
         {
-            PluginLog.Error(Strings.TeleportIPCNotFound);
+            Service.Log.Error(Strings.TeleportIPCNotFound);
             UserError(Strings.TeleporterMissingError);
         }
     }

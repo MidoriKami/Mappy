@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Numerics;
 using Dalamud.Hooking;
-using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -68,7 +67,7 @@ public unsafe class GameIntegration : IDisposable
 
     public void Enable()
     {
-        PluginLog.Debug("Enabling Integrations");
+        Service.Log.Debug("Enabling Integrations");
         
         openMapByIdHook?.Enable();
         openMapHook?.Enable();
@@ -81,7 +80,7 @@ public unsafe class GameIntegration : IDisposable
 
     public void Disable()
     {
-        PluginLog.Debug("Disabling Integrations");
+        Service.Log.Debug("Disabling Integrations");
         
         openMapByIdHook?.Disable();
         openMapHook?.Disable();
@@ -120,7 +119,7 @@ public unsafe class GameIntegration : IDisposable
 
     private void OpenMap(AgentMap* agent, OpenMapInfo* mapInfo) => Safety.ExecuteSafe(() =>
     {
-        PluginLog.Debug("OpenMap");
+        Service.Log.Debug("OpenMap");
 
         if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is { Viewport: var viewport } mapWindow)
         {
@@ -230,7 +229,7 @@ public unsafe class GameIntegration : IDisposable
 
     private void SetFlagMarker(AgentMap* agent, uint territoryId, uint mapId, float mapX, float mapY, uint iconId) => Safety.ExecuteSafe(() =>
     {
-        PluginLog.Debug($"SetFlagMarker : {mapX} {mapY}");
+        Service.Log.Debug($"SetFlagMarker : {mapX} {mapY}");
         
         TemporaryMarkers.SetFlagMarker( new TemporaryMapMarker
         {
@@ -245,7 +244,7 @@ public unsafe class GameIntegration : IDisposable
 
     private void SetGatheringMarker(AgentMap* agent, uint styleFlags, int mapX, int mapY, uint iconID, int radius, Utf8String* tooltip) => Safety.ExecuteSafe(() =>
     {
-        PluginLog.Debug("SetGatheringMarker");
+        Service.Log.Debug("SetGatheringMarker");
 
         if (AgentGatheringNote.Instance()->GatheringAreaInfo is not null)
         {
