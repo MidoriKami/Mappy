@@ -554,4 +554,7 @@ Open Map Window to populate data</value>
   <data name="Map" xml:space="preserve">
     <value>Map</value>
   </data>
+  <data name="GoToCommandHelp" xml:space="preserve">
+    <value>Centers map on specified "X, Y" coordinates</value>
+  </data>
 </root>

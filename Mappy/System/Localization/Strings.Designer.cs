@@ -501,6 +501,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Centers map on specified &quot;X, Y&quot; coordinates.
+        /// </summary>
+        internal static string GoToCommandHelp {
+            get {
+                return ResourceManager.GetString("GoToCommandHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Harvesting.
         /// </summary>
         internal static string Harvesting {
