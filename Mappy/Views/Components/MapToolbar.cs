@@ -6,7 +6,6 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Utility;
 using ImGuiNET;
 using KamiLib;
-using KamiLib.Utilities;
 using Mappy.System;
 using Mappy.System.Localization;
 using Mappy.Utility;
@@ -165,7 +164,7 @@ public class MapToolbar
         {
             if (layers.Count is 0)
             {
-                ImGui.TextColored(KnownColor.Gray.AsVector4(), Strings.NoLayersInfo);
+                ImGui.TextColored(KnownColor.Gray.Vector(), Strings.NoLayersInfo);
             }
             
             foreach (var layer in layers)
@@ -187,7 +186,7 @@ public class MapToolbar
     {
         var followPlayer = MappySystem.SystemConfig.FollowPlayer;
 
-        if (followPlayer) ImGui.PushStyleColor(ImGuiCol.Button, KnownColor.Red.AsVector4());
+        if (followPlayer) ImGui.PushStyleColor(ImGuiCol.Button, KnownColor.Red.Vector());
         followPlayerButton.Draw();
         if (followPlayer) ImGui.PopStyleColor();
     }

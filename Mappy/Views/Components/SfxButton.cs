@@ -4,7 +4,6 @@ using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using ImGuiNET;
-using KamiLib.Utilities;
 using Mappy.Utility;
 
 namespace Mappy.Views.Components;
@@ -49,6 +48,6 @@ public class SfxButton
             isMouseOver = false;
         }
 
-        if (TooltipText is not null) DrawUtilities.DrawTooltip(KnownColor.White.AsVector4(), TooltipText);
+        if (TooltipText is not null) DrawUtilities.DrawTooltip(KnownColor.White.Vector(), TooltipText);
     }
 }

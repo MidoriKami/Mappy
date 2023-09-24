@@ -1,9 +1,7 @@
 ﻿using System.Drawing;
 using System.Linq;
-using System.Numerics;
+using Dalamud.Interface;
 using ImGuiNET;
-using KamiLib.Caching;
-using KamiLib.Utilities;
 using Mappy.System;
 using Mappy.System.Localization;
 
@@ -18,7 +16,7 @@ public class IconDisableView
         ImGui.Text(Strings.IconDisableInfo);
         ImGui.Separator();
         
-        if (!seenIcons.Any()) ImGui.TextColored(KnownColor.Orange.AsVector4(), Strings.IconDisableNoIcons);
+        if (!seenIcons.Any()) ImGui.TextColored(KnownColor.Orange.Vector(), Strings.IconDisableNoIcons);
 
         var areaSize = ImGui.GetContentRegionMax().X;
         var itemSize = 64.0f + ImGui.GetStyle().ItemSpacing.X;
@@ -36,17 +34,16 @@ public class IconDisableView
 
     private void DrawIcon(uint iconId)
     {
-        if (IconCache.Instance.GetIcon(iconId) is not { } iconTexture) return;
+        if (Service.TextureProvider.GetIcon(iconId) is not { } iconTexture) return;
         if (MappySystem.SystemConfig is not { DisallowedIcons: var disallowedIcons }) return;
 
         var disabled = disallowedIcons.Contains(iconId);
-        var color = ImGui.GetColorU32(disabled ? KnownColor.Red.AsVector4() : KnownColor.ForestGreen.AsVector4());
-        var iconSize = new Vector2(64.0f, 64.0f);
+        var color = ImGui.GetColorU32(disabled ? KnownColor.Red.Vector() : KnownColor.ForestGreen.Vector());
 
         var start = ImGui.GetCursorScreenPos();
-        var stop = start + iconSize;
+        var stop = start + iconTexture.Size;
         
-        ImGui.Image(iconTexture.ImGuiHandle, iconSize);
+        ImGui.Image(iconTexture.ImGuiHandle, iconTexture.Size);
         ImGui.GetWindowDrawList().AddRect(start, stop, color, 5.0f, ImDrawFlags.None, 3.0f);
 
         if (ImGui.IsItemClicked())

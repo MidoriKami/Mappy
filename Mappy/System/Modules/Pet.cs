@@ -4,8 +4,8 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Interface;
 using KamiLib.AutomaticUserInterface;
-using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
@@ -23,7 +23,7 @@ public class PetConfig : IModuleConfig, IIconConfig, ITooltipConfig
     public bool ShowIcon { get; set; } = true;
     public float IconScale { get; set; } = 0.75f;
     public bool ShowTooltip { get; set; } = true;
-    public Vector4 TooltipColor { get; set; } = KnownColor.MediumPurple.AsVector4();
+    public Vector4 TooltipColor { get; set; } = KnownColor.MediumPurple.Vector();
     
     [IconSelection(60961)]
     public uint SelectedIcon { get; set; } = 60961;

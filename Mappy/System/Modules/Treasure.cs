@@ -3,8 +3,8 @@ using System.Drawing;
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Interface;
 using KamiLib.AutomaticUserInterface;
-using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
@@ -22,7 +22,7 @@ public class TreasureConfig : IModuleConfig, IIconConfig, ITooltipConfig
     public bool ShowIcon { get; set; } = true;
     public float IconScale { get; set; } = 0.50f;
     public bool ShowTooltip { get; set; } = true;
-    public Vector4 TooltipColor { get; set; } = KnownColor.White.AsVector4();
+    public Vector4 TooltipColor { get; set; } = KnownColor.White.Vector();
     
     [IconSelection(60003, 60354)]
     public uint SelectedIcon { get; set; } = 60003;

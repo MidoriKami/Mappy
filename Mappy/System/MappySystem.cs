@@ -18,8 +18,6 @@ public class MappySystem
     
     public MappySystem()
     {
-        var _ = DutyLists.Instance; // Initialize Duty lists on Construction
-        
         SystemConfig = new SystemConfig();
         SystemConfig = LoadConfig();
 

@@ -4,9 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using Dalamud.Interface;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
-using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.DataModels;
@@ -41,11 +41,11 @@ public class MapIconConfig : IModuleConfig, IIconConfig, ITooltipConfig, IMapIco
     public float IconScale { get; set; } = 0.50f;
     public bool ShowTooltip { get; set; } = true;
     
-    public Vector4 TooltipColor { get; set; } = KnownColor.White.AsVector4();
+    public Vector4 TooltipColor { get; set; } = KnownColor.White.Vector();
     public Vector4 MapLinkColor { get; set; } = new(0.655f, 0.396f, 0.149f, 1.0f);
-    public Vector4 InstanceLinkColor { get; set; } = KnownColor.Orange.AsVector4();
-    public Vector4 AetheryteColor { get; set; } = KnownColor.RoyalBlue.AsVector4();
-    public Vector4 AethernetColor { get; set; }  = KnownColor.LightBlue.AsVector4();
+    public Vector4 InstanceLinkColor { get; set; } = KnownColor.Orange.Vector();
+    public Vector4 AetheryteColor { get; set; } = KnownColor.RoyalBlue.Vector();
+    public Vector4 AethernetColor { get; set; }  = KnownColor.LightBlue.Vector();
     
     [BoolConfig("AetherytesOnTop")]
     public bool AetherytesOnTop { get; set; } = true;

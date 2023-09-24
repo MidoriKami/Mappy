@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using System.Numerics;
-using KamiLib.Utilities;
+using Dalamud.Interface;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Utility;
 using Action = System.Action;
@@ -10,8 +10,8 @@ namespace Mappy.Models;
 public class MappyMapText
 {
     public string Text { get; set; } = string.Empty;
-    public Vector4 TextColor { get; set; } = KnownColor.White.AsVector4();
-    public Vector4 OutlineColor { get; set; } = KnownColor.Black.AsVector4();
+    public Vector4 TextColor { get; set; } = KnownColor.White.Vector();
+    public Vector4 OutlineColor { get; set; } = KnownColor.Black.Vector();
     public Vector2? ObjectPosition { get; set; }
     public Vector2? TexturePosition { get; set; }
     public Vector4 HoverColor { get; set; }

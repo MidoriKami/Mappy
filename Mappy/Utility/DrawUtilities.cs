@@ -3,7 +3,6 @@ using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Types;
 using ImGuiNET;
 using KamiLib;
-using KamiLib.Caching;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
 using Mappy.System;
@@ -16,7 +15,7 @@ public partial class DrawUtilities
 {
     public static void DrawMapIcon(MappyMapIcon iconData, object configuration, Viewport viewport, Map map)
     {
-        if (iconData.IconId is 0) return;
+        if (iconData is { IconId: 0 } or { IconTexture: null }) return;
         
         iconData.IconId = TryReplaceIconId(iconData.IconId);
 
@@ -39,7 +38,7 @@ public partial class DrawUtilities
             if (configuration is ITooltipConfig { ShowTooltip: true } tooltipConfig)
             {
                 var radiusSize = iconData.Radius * viewport.Scale;
-                var iconSize = iconData.IconSize.X * iconConfig.IconScale / 2.0f;
+                var iconSize = iconData.IconTexture.Width * iconConfig.IconScale / 2.0f;
                 var isIconBiggerThanRadius = iconSize >= radiusSize;
                 var color = iconData.GetTooltipColorFunc?.Invoke() ?? tooltipConfig.TooltipColor;
                 
@@ -100,14 +99,14 @@ public partial class DrawUtilities
 
     public static void DrawIconRotated(uint iconId, GameObject gameObject, float iconScale)
     {
-        if (IconCache.Instance.GetIcon(iconId) is not {} texture) return;
+        if (Service.TextureProvider.GetIcon(iconId) is not {} texture) return;
         if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
         if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { } mapWindow) return;
         
         var objectPosition = Position.GetTexturePosition(gameObject.Position, map);
         var center = mapWindow.Viewport.GetImGuiWindowDrawPosition(objectPosition);
         var angle = GetObjectRotation(gameObject);
-        var size = new Vector2(texture.Width, texture.Height) * iconScale;
+        var size = texture.Size * iconScale;
         var vectors = GetRotationVectors(angle, center, size);
     
         ImGui.GetWindowDrawList().AddImageQuad(texture.ImGuiHandle, vectors[0], vectors[1], vectors[2], vectors[3]);

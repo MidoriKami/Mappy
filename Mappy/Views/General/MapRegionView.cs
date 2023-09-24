@@ -3,9 +3,9 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using Dalamud.Interface;
 using ImGuiNET;
 using KamiLib.Caching;
-using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Interfaces;
@@ -75,7 +75,7 @@ public class MapRegionView
             {
                 if (!results.Any())
                 {
-                    ImGui.TextColored(KnownColor.Orange.AsVector4(), "No Results");
+                    ImGui.TextColored(KnownColor.Orange.Vector(), "No Results");
                 }
                 
                 foreach (var result in results)

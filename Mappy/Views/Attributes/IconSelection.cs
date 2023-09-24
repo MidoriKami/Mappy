@@ -2,11 +2,10 @@
 using System.Drawing;
 using System.Numerics;
 using System.Reflection;
+using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using ImGuiNET;
 using KamiLib.AutomaticUserInterface;
-using KamiLib.Caching;
-using KamiLib.Utilities;
 
 namespace Mappy.Views.Attributes;
 
@@ -26,23 +25,20 @@ public class IconSelection : DrawableAttribute
 
         foreach (var option in options)
         {
-            var icon = IconCache.Instance.GetIcon(option);
-            if (icon is null) continue;
+            if (Service.TextureProvider.GetIcon(option) is not {} icon) continue;
             
-            var iconSize = new Vector2(icon.Width, icon.Height);
-                    
             if (value == option)
             {
                 var cursorPosition = ImGui.GetCursorScreenPos();
-                ImGui.Image(icon.ImGuiHandle, iconSize, Vector2.Zero, Vector2.One, Vector4.One);
-                ImGui.GetWindowDrawList().AddRect(cursorPosition,  cursorPosition + iconSize, ImGui.GetColorU32(KnownColor.ForestGreen.AsVector4()), 5.0f, ImDrawFlags.RoundCornersAll, 3.0f);
+                ImGui.Image(icon.ImGuiHandle, icon.Size, Vector2.Zero, Vector2.One, Vector4.One);
+                ImGui.GetWindowDrawList().AddRect(cursorPosition,  cursorPosition + icon.Size, ImGui.GetColorU32(KnownColor.ForestGreen.Vector()), 5.0f, ImDrawFlags.RoundCornersAll, 3.0f);
             }
             else
             {
-                ImGui.Image(icon.ImGuiHandle, iconSize, Vector2.Zero, Vector2.One, Vector4.One * 0.5f);
+                ImGui.Image(icon.ImGuiHandle, icon.Size, Vector2.Zero, Vector2.One, Vector4.One * 0.5f);
             }
                     
-            totalSize += iconSize.X + 7.0f * ImGuiHelpers.GlobalScale;
+            totalSize += icon.Width + 7.0f * ImGuiHelpers.GlobalScale;
                     
             if (ImGui.IsItemClicked() && value != option)
             {
@@ -51,11 +47,11 @@ public class IconSelection : DrawableAttribute
             }
 
             var region = ImGui.GetContentRegionAvail();
-            if (totalSize + iconSize.X < region.X)
+            if (totalSize + icon.Width < region.X)
             {
                 ImGui.SameLine();
             }
-            else if(totalSize + iconSize.X >= region.X)
+            else if(totalSize + icon.Width >= region.X)
             {
                 totalSize = 0.0f;
                 ImGuiHelpers.ScaledDummy(2.0f);

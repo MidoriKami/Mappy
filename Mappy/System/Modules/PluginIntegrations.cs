@@ -1,8 +1,8 @@
 ﻿using System.Drawing;
 using System.Numerics;
+using Dalamud.Interface;
 using ImGuiNET;
 using KamiLib.AutomaticUserInterface;
-using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
@@ -19,7 +19,7 @@ public class PluginIntegrationsConfig : IModuleConfig, IIconConfig, ITooltipConf
     public bool ShowIcon { get; set; } = true;
     public float IconScale { get; set; } = 0.50f;
     public bool ShowTooltip { get; set; } = true;
-    public Vector4 TooltipColor { get; set; } = KnownColor.White.AsVector4();
+    public Vector4 TooltipColor { get; set; } = KnownColor.White.Vector();
 }
 
 public class PluginIntegrations : ModuleBase

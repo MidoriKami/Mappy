@@ -2,11 +2,10 @@
 using System.Drawing;
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Interface;
+using Dalamud.Interface.Internal;
 using Dalamud.Utility;
 using ImGuiNET;
-using ImGuiScene;
-using KamiLib.Caching;
-using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
 using Mappy.System;
@@ -88,7 +87,7 @@ public partial class DrawUtilities
         return disallowedIcons.Contains(iconId);
     }
     
-    private static void DrawIconTexture(TextureWrap? iconTexture, Viewport viewport, Vector2 position, float scale, Vector4? tintColor = null)
+    private static void DrawIconTexture(IDalamudTextureWrap? iconTexture, Viewport viewport, Vector2 position, float scale, Vector4? tintColor = null)
     {
         if (iconTexture is null) return;
         if (MappySystem.MapTextureController is not { Ready: true }) return;
@@ -135,7 +134,7 @@ public partial class DrawUtilities
     
     private static void DrawTooltipIcon(uint iconId)
     {
-        if (IconCache.Instance.GetIcon(iconId) is not { } icon) return;
+        if (Service.TextureProvider.GetIcon(iconId) is not { } icon) return;
         
         ImGui.Image(icon.ImGuiHandle, new Vector2(24.0f, 24.0f));
         ImGui.SameLine();
@@ -180,7 +179,7 @@ public partial class DrawUtilities
         {
             ImGui.SameLine();
             ImGui.SetCursorPos(cursorPosition with { Y = ImGui.GetCursorPos().Y + 5.0f } );
-            ImGui.TextColored(KnownColor.Gray.AsVector4(), $"\n{secondaryText}");
+            ImGui.TextColored(KnownColor.Gray.Vector(), $"\n{secondaryText}");
         }
         
         ImGui.EndTooltip();

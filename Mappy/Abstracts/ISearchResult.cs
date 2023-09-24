@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using System.Numerics;
+using Dalamud.Interface;
 using ImGuiNET;
 using KamiLib;
-using KamiLib.Caching;
-using KamiLib.Utilities;
 using Mappy.System;
 using Mappy.Views.Windows;
 
@@ -30,7 +29,7 @@ public interface ISearchResult : IEquatable<ISearchResult>
     
     bool DrawEntry()
     {
-        if (IconCache.Instance.GetIcon(IconId) is not { } icon) return false;
+        if (Service.TextureProvider.GetIcon(IconId) is not { } icon) return false;
 
         var cursorPosition = ImGui.GetCursorPos();
         ImGui.SetCursorPos(cursorPosition with { Y = cursorPosition.Y + 4.0f });
@@ -48,7 +47,7 @@ public interface ISearchResult : IEquatable<ISearchResult>
         ImGui.TextUnformatted(Label);
 
         ImGui.SameLine();
-        ImGui.TextColored(KnownColor.Gray.AsVector4() with { W = 0.45f }, SubLabel);
+        ImGui.TextColored(KnownColor.Gray.Vector() with { W = 0.45f }, SubLabel);
 
         return false;
     }

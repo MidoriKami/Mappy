@@ -1,8 +1,8 @@
 ﻿using System.Drawing;
 using System.Numerics;
+using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiLib.AutomaticUserInterface;
-using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
 using Mappy.Models.Enums;
@@ -19,10 +19,10 @@ public class TemporaryMarkersConfig : IModuleConfig, IIconConfig, ITooltipConfig
     public bool ShowIcon { get; set; } = true;
     public float IconScale { get; set; } = 0.50f;
     public bool ShowTooltip { get; set; } = true;
-    public Vector4 TooltipColor { get; set; } = KnownColor.LightSkyBlue.AsVector4();
+    public Vector4 TooltipColor { get; set; } = KnownColor.LightSkyBlue.Vector();
     
     [ColorConfig("CircleColor", 65, 105, 225, 45)]
-    public Vector4 CircleColor { get; set; } = KnownColor.RoyalBlue.AsVector4() with { W = 0.33f };
+    public Vector4 CircleColor { get; set; } = KnownColor.RoyalBlue.Vector() with { W = 0.33f };
 }
 
 public unsafe class TemporaryMarkers : ModuleBase

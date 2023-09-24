@@ -1,10 +1,10 @@
 ﻿using System.Drawing;
 using System.Numerics;
+using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
-using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
@@ -41,8 +41,8 @@ public class QuestConfig : IModuleConfig, IIconConfig, ITooltipConfig, IQuestCol
     public bool ShowIcon { get; set; } = true;
     public float IconScale { get; set; } = 0.50f;
     public bool ShowTooltip { get; set; } = true;
-    public Vector4 TooltipColor { get; set; } = KnownColor.White.AsVector4();
-    public Vector4 InProgressColor { get; set; } = KnownColor.OrangeRed.AsVector4() with { W = 0.33f };
+    public Vector4 TooltipColor { get; set; } = KnownColor.White.Vector();
+    public Vector4 InProgressColor { get; set; } = KnownColor.OrangeRed.Vector() with { W = 0.33f };
     public Vector4 LeveQuestColor { get; set; } = new Vector4(0, 133, 5, 97) / 255.0f;
     
     [BoolConfig("HideUnacceptedQuests")]

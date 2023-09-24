@@ -12,5 +12,6 @@
   ],
   "InternalName": "mappy",
   "RepoUrl": "https://github.com/MidoriKami/Mappy",
-  "AcceptsFeedback": false
+  "AcceptsFeedback": false,
+  "DalamudApiLevel": 9
 }

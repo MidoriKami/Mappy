@@ -2,7 +2,6 @@
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using ImGuiNET;
-using KamiLib.Utilities;
 using Mappy.Interfaces;
 using Mappy.System;
 using Mappy.System.Localization;
@@ -43,7 +42,7 @@ public class MapSearchWidget : IMapSearchWidget
     {
         var showOverlay = ShowMapSelectOverlay;
 
-        if (showOverlay) ImGui.PushStyleColor(ImGuiCol.Button, KnownColor.Red.AsVector4());
+        if (showOverlay) ImGui.PushStyleColor(ImGuiCol.Button, KnownColor.Red.Vector());
         mapSelectButton.Draw();
         if (showOverlay) ImGui.PopStyleColor();
     }

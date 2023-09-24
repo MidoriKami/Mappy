@@ -38,11 +38,11 @@ public unsafe class GameIntegration : IDisposable
     
     public GameIntegration()
     {
-        showHook ??= Hook<ShowMapDelegate>.FromAddress((nint) AgentMap.Addresses.ShowMap.Value, OnShowHook);
-        openMapByIdHook ??= Hook<OpenMapByIdDelegate>.FromAddress((nint)AgentMap.Addresses.OpenMapByMapId.Value, OpenMapById);
-        openMapHook ??= Hook<OpenMapDelegate>.FromAddress((nint)AgentMap.Addresses.OpenMap.Value, OpenMap);
-        setFlagMarkerHook ??= Hook<SetFlagMarkerDelegate>.FromAddress((nint)AgentMap.Addresses.SetFlagMapMarker.Value, SetFlagMarker);
-        setGatheringMarkerHook ??= Hook<SetGatheringMarkerDelegate>.FromAddress((nint)AgentMap.Addresses.AddGatheringTempMarker.Value, SetGatheringMarker);
+        showHook ??= Service.Hooker.HookFromAddress<ShowMapDelegate>((nint) AgentMap.Addresses.ShowMap.Value, OnShowHook);
+        openMapByIdHook ??= Service.Hooker.HookFromAddress<OpenMapByIdDelegate>((nint)AgentMap.Addresses.OpenMapByMapId.Value, OpenMapById);
+        openMapHook ??= Service.Hooker.HookFromAddress<OpenMapDelegate>((nint)AgentMap.Addresses.OpenMap.Value, OpenMap);
+        setFlagMarkerHook ??= Service.Hooker.HookFromAddress<SetFlagMarkerDelegate>((nint)AgentMap.Addresses.SetFlagMapMarker.Value, SetFlagMarker);
+        setGatheringMarkerHook ??= Service.Hooker.HookFromAddress<SetGatheringMarkerDelegate>((nint)AgentMap.Addresses.AddGatheringTempMarker.Value, SetGatheringMarker);
 
         if (MappySystem.SystemConfig.EnableIntegrations)
         {

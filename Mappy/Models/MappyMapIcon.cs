@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
-using ImGuiScene;
-using KamiLib.Caching;
-using KamiLib.Utilities;
+using Dalamud.Interface;
+using Dalamud.Interface.Internal;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Utility;
 using Action = System.Action;
@@ -17,7 +16,7 @@ public class MappyMapIcon
     public List<IconLayer> Layers { get; set; } = new();
     
     public float Radius { get; set; }
-    public Vector4 RadiusColor { get; set; } = KnownColor.Aqua.AsVector4();
+    public Vector4 RadiusColor { get; set; } = KnownColor.Aqua.Vector();
 
     public string Tooltip { get; set; } = string.Empty;
     public Func<string>? GetTooltipFunc { get; set; }
@@ -45,7 +44,6 @@ public class MappyMapIcon
     }
     
     public Action? OnClickAction { get; set; }
-    
-    public TextureWrap? IconTexture => IconCache.Instance.GetIcon(IconId);
-    public Vector2 IconSize => IconTexture is null ? Vector2.Zero : new Vector2(IconTexture.Width, IconTexture.Height);
+
+    public IDalamudTextureWrap? IconTexture => Service.TextureProvider.GetIcon(IconId);
 }

@@ -4,10 +4,10 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
+using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Client.Game.MJI;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Caching;
-using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
@@ -24,7 +24,7 @@ public class IslandSanctuaryConfig : IModuleConfig, IIconConfig, ITooltipConfig
     public bool ShowIcon { get; set; } = true;
     public float IconScale { get; set; } = 0.50f;
     public bool ShowTooltip { get; set; } = true;
-    public Vector4 TooltipColor { get; set; } = KnownColor.LightBlue.AsVector4();
+    public Vector4 TooltipColor { get; set; } = KnownColor.LightBlue.Vector();
 
     [BoolConfig("Logging")]
     public bool Logging { get; set; } = true;

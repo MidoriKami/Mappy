@@ -13,7 +13,7 @@ public class ModuleSelectable : ISelectable, IDrawable
 
     public ModuleSelectable(ModuleBase module) => this.module = module;
 
-    public void DrawLabel() => ImGui.TextUnformatted(module.ModuleName.GetLabel());
+    public void DrawLabel() => ImGui.TextUnformatted(module.ModuleName.Label());
 
     public void Draw() => module.DrawConfig();
 }

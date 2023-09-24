@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Drawing;
 using System.Numerics;
+using Dalamud.Interface;
 using Dalamud.Memory;
 using FFXIVClientStructs.FFXIV.Client.Game.Group;
 using KamiLib.AutomaticUserInterface;
-using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
@@ -30,7 +30,7 @@ public class PartyMemberConfig : IModuleConfig, IIconConfig, ITooltipConfig, IPa
     public bool ShowIcon { get; set; } = true;
     public float IconScale { get; set; } = 0.50f;
     public bool ShowTooltip { get; set; } = true;
-    public Vector4 TooltipColor { get; set; } = KnownColor.DodgerBlue.AsVector4();
+    public Vector4 TooltipColor { get; set; } = KnownColor.DodgerBlue.Vector();
 
     public uint SelectedIcon { get; set; } = 60421;
     

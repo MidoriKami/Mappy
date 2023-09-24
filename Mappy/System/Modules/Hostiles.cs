@@ -2,7 +2,7 @@
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
-using KamiLib.Utilities;
+using Dalamud.Interface;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
@@ -18,7 +18,7 @@ public class HostilesConfiguration : IModuleConfig, IIconConfig, ITooltipConfig
     public bool ShowIcon { get; set; } = true;
     public float IconScale { get; set; } = 0.75f;
     public bool ShowTooltip { get; set; } = true;
-    public Vector4 TooltipColor { get; set; } = KnownColor.White.AsVector4();
+    public Vector4 TooltipColor { get; set; } = KnownColor.White.Vector();
 }
 
 public class Hostiles : ModuleBase

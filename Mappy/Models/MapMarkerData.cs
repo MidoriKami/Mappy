@@ -3,9 +3,9 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using DailyDuty.System;
+using Dalamud.Interface;
 using Dalamud.Utility;
 using KamiLib.Caching;
-using KamiLib.Utilities;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
 using Mappy.System;
@@ -64,11 +64,11 @@ public class MapMarkerData
                 TexturePosition = Position,
                 UseLargeFont = true,
                 
-                TextColor = KnownColor.Black.AsVector4(),
-                OutlineColor = KnownColor.White.AsVector4(),
+                TextColor = KnownColor.Black.Vector(),
+                OutlineColor = KnownColor.White.Vector(),
                 
-                HoverColor = KnownColor.White.AsVector4(),
-                HoverOutlineColor = KnownColor.RoyalBlue.AsVector4(),
+                HoverColor = KnownColor.White.Vector(),
+                HoverOutlineColor = KnownColor.RoyalBlue.Vector(),
                 
                 OnClick = GetClickAction(),
                 

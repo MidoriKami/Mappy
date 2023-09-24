@@ -18,4 +18,5 @@ public sealed class Service
     [PluginService] public static IGameGui GameGui { get; set; } = null!;
     [PluginService] public static IAetheryteList AetheryteList { get; set; } = null!;
     [PluginService] public static IPluginLog Log { get; set; } = null!;
+    [PluginService] public static IGameInteropProvider Hooker { get; set; } = null!;
 }
