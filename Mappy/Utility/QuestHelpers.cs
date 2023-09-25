@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -14,7 +14,7 @@ public unsafe class QuestHelpers
     public static IEnumerable<Level>? GetActiveLevelsForQuest(string questName, uint mapId) => 
         (from quest in GetAcceptedQuests()
             let luminaData = LuminaCache<CustomQuestSheet>.Instance.GetRow(quest.QuestId + 65536u)!
-            where luminaData.Name.ToDalamudString().TextValue == questName
+            where string.Equals(luminaData.Name.RawString, questName, StringComparison.InvariantCultureIgnoreCase)
             select GetActiveLevelsForQuest(quest, mapId))
         .FirstOrDefault();
 
