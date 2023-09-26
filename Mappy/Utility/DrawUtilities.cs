@@ -15,9 +15,8 @@ public partial class DrawUtilities
 {
     public static void DrawMapIcon(MappyMapIcon iconData, object configuration, Viewport viewport, Map map)
     {
-        if (iconData is { IconId: 0 } or { IconTexture: null }) return;
-        
         iconData.IconId = TryReplaceIconId(iconData.IconId);
+        if (iconData is { IconId: 0 } or { IconTexture: null }) return;
 
         var drawPosition = iconData.GetDrawPosition(map);
         
