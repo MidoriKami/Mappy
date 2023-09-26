@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using System.Drawing;
+using System.Numerics;
+using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using ImGuiNET;
@@ -47,35 +49,43 @@ public class QuestListView
     {
         if (ImGui.BeginChild("##QuestScrollable", ImGui.GetContentRegionAvail()))
         {
-            foreach (var quest in Map.Instance()->QuestMarkerData.GetAllMarkers())
+            if (Map.Instance()->QuestMarkerData.Size > 0)
             {
-                // if (!quest.ShouldRender) continue;
-
-                foreach (var location in quest.MarkerData.Span)
+                foreach (var quest in Map.Instance()->QuestMarkerData.GetAllMarkers())
                 {
-                    if (ImGui.Selectable($"##{quest.ObjectiveId}"))
+                    foreach (var location in quest.MarkerData.Span)
                     {
-                        if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { Viewport: var viewport }) continue;
-                        if (MappySystem.MapTextureController is not { Ready: true } textureController) continue;
+                        if (ImGui.Selectable($"##{quest.ObjectiveId}"))
+                        {
+                            if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { Viewport: var viewport }) continue;
+                            if (MappySystem.MapTextureController is not { Ready: true } textureController) continue;
 
-                        MappySystem.SystemConfig.FollowPlayer = false;
-                        textureController.MoveMapToPlayer();
+                            MappySystem.SystemConfig.FollowPlayer = false;
+                            textureController.MoveMapToPlayer();
                     
-                        var objectPosition = Position.GetTexturePosition(new Vector2(location.X, location.Z), textureController.CurrentMap);
-                        viewport.SetViewportCenter(objectPosition);
-                        mapWindow.ShowQuestListOverlay = false;
+                            var objectPosition = Position.GetTexturePosition(new Vector2(location.X, location.Z), textureController.CurrentMap);
+                            viewport.SetViewportCenter(objectPosition);
+                            mapWindow.ShowQuestListOverlay = false;
+                        }
+            
+                        ImGui.SameLine();
+                        ImGui.SetCursorPosY(ImGui.GetCursorPosY() - 2.0f * ImGuiHelpers.GlobalScale);
+                        var icon = Service.TextureProvider.GetIcon(location.IconId)!;
+                        ImGui.Image(icon.ImGuiHandle, ImGuiHelpers.ScaledVector2(24.0f, 24.0f));
+            
+                        ImGui.SameLine();
+                        ImGui.Text($"Lv. {location.RecommendedLevel} {location.TooltipString->ToString()}");
+            
+                        ImGuiHelpers.ScaledDummy(3.0f);
                     }
-            
-                    ImGui.SameLine();
-                    ImGui.SetCursorPosY(ImGui.GetCursorPosY() - 2.0f * ImGuiHelpers.GlobalScale);
-                    var icon = Service.TextureProvider.GetIcon(location.IconId)!;
-                    ImGui.Image(icon.ImGuiHandle, ImGuiHelpers.ScaledVector2(24.0f, 24.0f));
-            
-                    ImGui.SameLine();
-                    ImGui.Text($"Lv. {location.RecommendedLevel} {location.TooltipString->ToString()}");
-            
-                    ImGuiHelpers.ScaledDummy(3.0f);
                 }
+            }
+            else
+            {
+                const string text = "No quests available";
+                var textSize = ImGui.CalcTextSize(text);
+                ImGui.SetCursorPosX(ImGui.GetContentRegionAvail().X / 2.0f - textSize.X / 2.0f);
+                ImGui.TextColored(KnownColor.Orange.Vector(), text);
             }
         }
         ImGui.EndChild();
