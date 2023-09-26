@@ -1,7 +1,10 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Linq;
 using Dalamud.Interface;
+using Dalamud.Interface.Utility;
 using ImGuiNET;
+using KamiLib.Windows;
 using Mappy.System;
 using Mappy.System.Localization;
 
@@ -9,6 +12,9 @@ namespace Mappy.Views.General;
 
 public class IconDisableView
 {
+    private int currentIndex;
+    private int itemsPerLine;
+    
     public void Draw()
     {
         if (MappySystem.SystemConfig is not { SeenIcons: var seenIcons }) return;
@@ -18,17 +24,14 @@ public class IconDisableView
         
         if (!seenIcons.Any()) ImGui.TextColored(KnownColor.Orange.Vector(), Strings.IconDisableNoIcons);
 
-        var areaSize = ImGui.GetContentRegionMax().X;
-        var itemSize = 64.0f + ImGui.GetStyle().ItemSpacing.X;
-        var maxIconsPerRow = (int) (areaSize / itemSize);
-        var currentIndex = 0;
+        itemsPerLine = (int) MathF.Floor(ImGui.GetContentRegionAvail().X / (64.0f * ImGuiHelpers.GlobalScale + ImGui.GetStyle().ItemSpacing.X));
         
-        foreach (var icon in seenIcons.OrderBy(id => id))
+        currentIndex = 0;
+        foreach (var icon in seenIcons.OrderBy(id => id).Where(id => id is not (>= 60483 and <= 60494) and not 0))
         {
+            if (currentIndex >= itemsPerLine && currentIndex % itemsPerLine == 0) ImGui.NewLine();
+            
             DrawIcon(icon);
-
-            if (++currentIndex < maxIconsPerRow) ImGui.SameLine();
-            else currentIndex = 0;
         }
     }
 
@@ -40,11 +43,14 @@ public class IconDisableView
         var disabled = disallowedIcons.Contains(iconId);
         var color = ImGui.GetColorU32(disabled ? KnownColor.Red.Vector() : KnownColor.ForestGreen.Vector());
 
+        var size = ImGuiHelpers.ScaledVector2(64.0f, 64.0f);
         var start = ImGui.GetCursorScreenPos();
-        var stop = start + iconTexture.Size;
+        var stop = start + size;
         
-        ImGui.Image(iconTexture.ImGuiHandle, iconTexture.Size);
+        ImGui.Image(iconTexture.ImGuiHandle, size);
         ImGui.GetWindowDrawList().AddRect(start, stop, color, 5.0f, ImDrawFlags.None, 3.0f);
+        ImGui.SameLine();
+        currentIndex++;
 
         if (ImGui.IsItemClicked())
         {
