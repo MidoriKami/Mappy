@@ -198,12 +198,12 @@ public unsafe class MapWindow : Window
     private void ReadMouseInputs()
     {
         // Disable while Searching
-        if (toolbar.ShowMapSelectOverlay || toolbar.ShowQuestListOverlay) return;
+        if (toolbar.ShowMapSelectOverlay) return;
 
         // Only allow Context, Zoom, an DragStart if cursor is over the map
         if (Bound.IsCursorInWindow() && !Bound.IsCursorInWindowHeader())
         {
-            if (ImGui.IsItemHovered())
+            if (ImGui.IsItemHovered() && !toolbar.ShowQuestListOverlay)
             {
                 ProcessContextMenu();
                 ProcessZoomChange();
