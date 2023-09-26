@@ -67,7 +67,7 @@ public class QuestListView
                     }
             
                     ImGui.SameLine();
-                    ImGui.SetCursorPosY(ImGui.GetCursorPosY() - 3.0f * ImGuiHelpers.GlobalScale);
+                    ImGui.SetCursorPosY(ImGui.GetCursorPosY() - 2.0f * ImGuiHelpers.GlobalScale);
                     var icon = Service.TextureProvider.GetIcon(location.IconId)!;
                     ImGui.Image(icon.ImGuiHandle, ImGuiHelpers.ScaledVector2(24.0f, 24.0f));
             
