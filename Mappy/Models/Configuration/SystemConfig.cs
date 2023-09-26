@@ -4,7 +4,7 @@ using Mappy.Models.Enums;
 
 namespace Mappy.Models;
 
-public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDisplayConfig, IToolbarConfig, ISearchConfig, IZoomConfig, IFadeConfig
+public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDisplayConfig, IToolbarConfig, IZoomConfig, IFadeConfig
 {
     public bool KeepOpen { get; set; } = false;
     public bool IgnoreEscapeKey { get; set; } = false;
@@ -24,7 +24,6 @@ public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDispl
     public bool FocusObjective { get; set; } = true;
     public bool EnableIntegrations  { get; set; } = true;
     public bool HideWithGameGui { get; set; } = true;
-    public bool UseRegionSearch { get; set; } = true;
     public bool HideBetweenAreas { get; set; } = false;
     public bool HideInDuties { get; set; } = false;
     public bool HideInCombat { get; set; } = false;

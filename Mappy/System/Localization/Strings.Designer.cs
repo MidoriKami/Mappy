@@ -791,6 +791,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Map Layers.
+        /// </summary>
+        internal static string MapLayers {
+            get {
+                return ResourceManager.GetString("MapLayers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Map Link Color.
         /// </summary>
         internal static string MapLinkColor {
@@ -1034,7 +1043,16 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Search for map.
+        ///   Looks up a localized string similar to Search by Region.
+        /// </summary>
+        internal static string SearchByRegion {
+            get {
+                return ResourceManager.GetString("SearchByRegion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search by Name.
         /// </summary>
         internal static string SearchForMap {
             get {

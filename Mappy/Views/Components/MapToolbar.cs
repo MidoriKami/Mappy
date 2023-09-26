@@ -6,28 +6,102 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Utility;
 using ImGuiNET;
 using KamiLib;
+using Mappy.Interfaces;
 using Mappy.System;
 using Mappy.System.Localization;
 using Mappy.Utility;
+using Mappy.Views.General;
 using Mappy.Views.Windows;
 
 namespace Mappy.Views.Components;
 
-public class MapToolbar
+public class MapToolbar : IMapSearchWidget
 {
     private readonly Window owner;
-    public MapSearchWidget MapSearch { get; } = new();
+    public bool ShowMapSelectOverlay { get; set; }
+    public bool ShowQuestListOverlay { get; set; }
+    
+    private bool showRegionSearchView;
+    private bool showTextSearchView;
 
+    private readonly DefaultIconSfxButton mapLayersButton;
     private readonly DefaultIconSfxButton followPlayerButton;
     private readonly DefaultIconSfxButton centerOnPlayerButton;
     private readonly DefaultIconSfxButton configurationButton;
     private readonly DefaultIconSfxButton openLockButton;
     private readonly DefaultIconSfxButton closeLockButton;
     private readonly DefaultIconSfxButton centerMapButton;
+    private readonly DefaultIconSfxButton mapRegionSearchButton;
+    private readonly DefaultIconSfxButton mapTextSearchButton;
+    private readonly DefaultIconSfxButton questListButton;
+
+    private readonly MapSearchView searchView;
+    private readonly MapRegionView regionView;
+    private readonly QuestListView questListView;
 
     public MapToolbar(Window owner)
     {
         this.owner = owner;
+        searchView = new MapSearchView(this);
+        regionView = new MapRegionView(this);
+        questListView = new QuestListView(this);
+
+        mapRegionSearchButton = new DefaultIconSfxButton
+        {
+            ClickAction = () =>
+            {
+                if (!showRegionSearchView)
+                {
+                    regionView.Show();
+                    ShowMapSelectOverlay = true;
+                    showRegionSearchView = true;
+                    showTextSearchView = false;
+                }
+                else
+                {
+                    ShowMapSelectOverlay = false;
+                    showRegionSearchView = false;
+                    showTextSearchView = false;
+                }
+            },
+            Label = FontAwesomeIcon.Map.ToIconString() + "##MapRegionSearchButton",
+            TooltipText = Strings.SearchByRegion,
+            Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
+        };
+
+        mapTextSearchButton = new DefaultIconSfxButton
+        {
+            ClickAction = () =>
+            {
+                if (!showTextSearchView)
+                {
+                    searchView.Show();
+                    ShowMapSelectOverlay = true;
+                    showRegionSearchView = false;
+                    showTextSearchView = true;
+                }
+                else
+                {
+                    ShowMapSelectOverlay = false;
+                    showRegionSearchView = false;
+                    showTextSearchView = false;
+                }
+            },
+            Label = FontAwesomeIcon.Search.ToIconString() + "##MapSearchButton",
+            TooltipText = Strings.SearchForMap,
+            Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
+        };
+
+        mapLayersButton = new DefaultIconSfxButton
+        {
+            ClickAction = () =>
+            {
+                ImGui.OpenPopup("MapLayersPopup");
+            },
+            Label = FontAwesomeIcon.LayerGroup.ToIconString() + "##MapLayersButton",
+            TooltipText = Strings.MapLayers,
+            Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
+        };
 
         followPlayerButton = new DefaultIconSfxButton
         {
@@ -114,17 +188,28 @@ public class MapToolbar
             TooltipText = Strings.CenterMap,
             Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
         };
+
+        questListButton = new DefaultIconSfxButton
+        {
+            ClickAction = () =>
+            {
+                ShowQuestListOverlay = !ShowQuestListOverlay;
+            },
+            Label = FontAwesomeIcon.Question.ToIconString() + "##QuestListButton",
+            TooltipText = "Show/Hide Quest List for Current Map",
+            Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
+        };
     }
 
     public void Draw()
     {
-        if (!owner.IsFocused) MapSearch.ShowMapSelectOverlay = false;
+        if (!owner.IsFocused) ShowMapSelectOverlay = false;
 
         var hoverShow = MappySystem.SystemConfig.ShowToolbarOnHover && Bound.IsCursorInWindow();
         var alwaysShow = MappySystem.SystemConfig.AlwaysShowToolbar;
         var focusedShow = owner.IsFocused;
         
-        if (focusedShow || alwaysShow || hoverShow)
+        if (focusedShow || alwaysShow || hoverShow || ShowQuestListOverlay)
         {
             var regionAvailable = ImGui.GetContentRegionAvail();
             
@@ -136,49 +221,79 @@ public class MapToolbar
                 ImGui.SameLine();
                 DrawFollowPlayerWidget();
                 ImGui.SameLine();
-                DrawRecenterOnPlayerWidget();
+                centerOnPlayerButton.Draw();
                 ImGui.SameLine();
-                DrawCenterMapWidget();
+                centerMapButton.Draw();
                 ImGui.SameLine();
-                MapSearch.DrawWidget();
+                mapRegionSearchButton.Draw();
                 ImGui.SameLine();
-                DrawConfigurationButton();
+                mapTextSearchButton.Draw();
+                ImGui.SameLine();
+                configurationButton.Draw();
                 ImGui.SameLine();
                 DrawLockUnlockWidget();
                 ImGui.SameLine();
+                questListButton.Draw();
+                ImGui.SameLine();
                 DrawCursorPosition();
             }
+
             ImGui.EndChild();
             ImGui.PopStyleColor();
-            
-            MapSearch.Draw();
         }
+
+        DrawMapSearch();
+        DrawQuestList();
+    }
+
+    private void DrawMapSearch()
+    {
+        if (!ShowMapSelectOverlay || ShowMapSelectOverlay && ImGui.IsKeyPressed(ImGuiKey.Escape))
+        {
+            ShowMapSelectOverlay = false;
+            showRegionSearchView = false;
+            showTextSearchView = false;
+            return;
+        }
+
+        if (showRegionSearchView) regionView.Draw();
+        if (showTextSearchView) searchView.Draw();
+    }
+
+    private void DrawQuestList()
+    {
+        if (!ShowQuestListOverlay) {return;}
+
+        questListView.Draw();
     }
     
     private void DrawMapLayersWidget()
     {
-        if (MappySystem.MapTextureController is not { Ready: true, MapLayers: var layers, CurrentMap: var map }) return;
-        
-        ImGui.PushItemWidth(200.0f * ImGuiHelpers.GlobalScale);
-        if (ImGui.BeginCombo("###LayerCombo", map.GetName()))
-        {
-            if (layers.Count is 0)
-            {
-                ImGui.TextColored(KnownColor.Gray.Vector(), Strings.NoLayersInfo);
-            }
-            
-            foreach (var layer in layers)
-            {
-                var subAreaName = layer.GetSubName();
-                    
-                if(subAreaName == string.Empty) continue;
+        mapLayersButton.Draw();
 
-                if (ImGui.Selectable($"{subAreaName}##{layer.Id.RawString}", layer.RowId == map.RowId))
+        if (ImGui.BeginPopup("MapLayersPopup"))
+        {
+            if (MappySystem.MapTextureController is { Ready: true, MapLayers: var layers, CurrentMap: var map })
+            {
+                if (layers.Count is 0)
                 {
-                    MappySystem.MapTextureController.LoadMap(layer.RowId);
+                    ImGui.TextColored(KnownColor.Gray.Vector(), Strings.NoLayersInfo);
+                }
+            
+                foreach (var layer in layers)
+                {
+                    var subAreaName = layer.GetSubName();
+                    
+                    if(subAreaName == string.Empty) continue;
+
+                    if (ImGui.Selectable($"{subAreaName}##{layer.Id.RawString}", layer.RowId == map.RowId))
+                    {
+                        MappySystem.MapTextureController.LoadMap(layer.RowId);
+                    }
                 }
             }
-            ImGui.EndCombo();
+
+            ImGui.EndPopup();
         }
     }
 
@@ -190,12 +305,6 @@ public class MapToolbar
         followPlayerButton.Draw();
         if (followPlayer) ImGui.PopStyleColor();
     }
-
-    private void DrawRecenterOnPlayerWidget() => centerOnPlayerButton.Draw();
-
-    private void DrawCenterMapWidget() => centerMapButton.Draw();
-
-    private void DrawConfigurationButton() => configurationButton.Draw();
 
     private void DrawLockUnlockWidget()
     {
@@ -211,7 +320,7 @@ public class MapToolbar
     
     private void DrawCursorPosition()
     {
-        if (MapSearch.ShowMapSelectOverlay) return;
+        if (ShowMapSelectOverlay) return;
         if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
         if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not {} mapWindow) return;
 

@@ -331,7 +331,7 @@
     <value>Teleporting to {0}</value>
   </data>
   <data name="SearchForMap" xml:space="preserve">
-    <value>Search for map</value>
+    <value>Search by Name</value>
   </data>
   <data name="SearchHint" xml:space="preserve">
     <value>Search...</value>
@@ -556,5 +556,11 @@ Open Map Window to populate data</value>
   </data>
   <data name="GoToCommandHelp" xml:space="preserve">
     <value>Centers map on specified "X, Y" coordinates</value>
+  </data>
+  <data name="MapLayers" xml:space="preserve">
+    <value>Map Layers</value>
+  </data>
+  <data name="SearchByRegion" xml:space="preserve">
+    <value>Search by Region</value>
   </data>
 </root>
