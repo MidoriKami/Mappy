@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
@@ -51,32 +52,42 @@ public class QuestListView
         {
             if (Map.Instance()->QuestMarkerData.Size > 0)
             {
-                foreach (var quest in Map.Instance()->QuestMarkerData.GetAllMarkers())
+                var questsData = Map.Instance()->QuestMarkerData.GetAllMarkers()
+                    .Where(quest => quest.MarkerData.First is not null)
+                    .OrderByDescending(quest => quest.MarkerData.First->IconId)
+                    .ThenBy(quest => quest.MarkerData.First->RecommendedLevel)
+                    .ThenBy(quest => quest.MarkerData.First->TooltipString->ToString())
+                    .GroupBy(quest => quest.MarkerData.First->IconId);
+                
+                foreach (var questGroup in questsData)
                 {
-                    foreach (var location in quest.MarkerData.Span)
+                    foreach (var quest in questGroup)
                     {
-                        if (ImGui.Selectable($"##{quest.ObjectiveId}"))
+                        foreach (var location in quest.MarkerData.Span)
                         {
-                            if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { Viewport: var viewport }) continue;
-                            if (MappySystem.MapTextureController is not { Ready: true } textureController) continue;
+                            if (ImGui.Selectable($"##{quest.ObjectiveId}"))
+                            {
+                                if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { Viewport: var viewport }) continue;
+                                if (MappySystem.MapTextureController is not { Ready: true } textureController) continue;
 
-                            MappySystem.SystemConfig.FollowPlayer = false;
-                            textureController.MoveMapToPlayer();
+                                MappySystem.SystemConfig.FollowPlayer = false;
+                                textureController.MoveMapToPlayer();
                     
-                            var objectPosition = Position.GetTexturePosition(new Vector2(location.X, location.Z), textureController.CurrentMap);
-                            viewport.SetViewportCenter(objectPosition);
-                            mapWindow.ShowQuestListOverlay = false;
+                                var objectPosition = Position.GetTexturePosition(new Vector2(location.X, location.Z), textureController.CurrentMap);
+                                viewport.SetViewportCenter(objectPosition);
+                                mapWindow.ShowQuestListOverlay = false;
+                            }
+            
+                            ImGui.SameLine();
+                            ImGui.SetCursorPosY(ImGui.GetCursorPosY() - 2.0f * ImGuiHelpers.GlobalScale);
+                            var icon = Service.TextureProvider.GetIcon(location.IconId)!;
+                            ImGui.Image(icon.ImGuiHandle, ImGuiHelpers.ScaledVector2(24.0f, 24.0f));
+            
+                            ImGui.SameLine();
+                            ImGui.Text($"Lv. {location.RecommendedLevel} {location.TooltipString->ToString()}");
+            
+                            ImGuiHelpers.ScaledDummy(3.0f);
                         }
-            
-                        ImGui.SameLine();
-                        ImGui.SetCursorPosY(ImGui.GetCursorPosY() - 2.0f * ImGuiHelpers.GlobalScale);
-                        var icon = Service.TextureProvider.GetIcon(location.IconId)!;
-                        ImGui.Image(icon.ImGuiHandle, ImGuiHelpers.ScaledVector2(24.0f, 24.0f));
-            
-                        ImGui.SameLine();
-                        ImGui.Text($"Lv. {location.RecommendedLevel} {location.TooltipString->ToString()}");
-            
-                        ImGuiHelpers.ScaledDummy(3.0f);
                     }
                 }
             }
