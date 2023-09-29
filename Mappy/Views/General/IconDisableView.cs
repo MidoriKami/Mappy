@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Dalamud.Interface;
@@ -34,7 +33,7 @@ public class IconDisableView
             .Where(id => id is not (>= 63201 and <= 063899)) // Remove "Region" icons
             .ToList();
         
-        ClippedDraw(filteredIcons, DrawIcon, itemsPerLine, itemHeight);
+        ImGuiClip.ClippedDraw(filteredIcons, DrawIcon, itemsPerLine, itemHeight);
     }
 
     private void DrawIcon(uint iconId)
@@ -65,47 +64,5 @@ public class IconDisableView
             ImGui.SetTooltip($"{iconId}");
         }
         #endif
-    }
-    
-    public static void ClippedDraw<T>(IReadOnlyList<T> data, Action<T> draw, int itemsPerLine, float lineHeight)
-    {
-        ImGuiListClipperPtr clipper;
-        unsafe
-        {
-            clipper = new ImGuiListClipperPtr(ImGuiNative.ImGuiListClipper_ImGuiListClipper());
-        }
-        
-        var maxRows = (int) MathF.Ceiling((float)data.Count / itemsPerLine);
-        
-        clipper.Begin(maxRows, lineHeight);
-        while (clipper.Step())
-        {
-            for (var actualRow = clipper.DisplayStart; actualRow < clipper.DisplayEnd; actualRow++)
-            {
-                if (actualRow >= maxRows)
-                    return;
-
-                if (actualRow < 0)
-                    continue;
-
-                var itemsForRow = data
-                    .Skip(actualRow * itemsPerLine)
-                    .Take(itemsPerLine);
-                
-                var currentIndex = 0;
-                foreach (var item in itemsForRow)
-                {
-                    if (currentIndex++ != 0 && currentIndex < itemsPerLine + 1)
-                    {
-                        ImGui.SameLine();
-                    }
-                    
-                    draw(item);
-                }
-            }
-        }
-
-        clipper.End();
-        clipper.Destroy();
     }
 }
