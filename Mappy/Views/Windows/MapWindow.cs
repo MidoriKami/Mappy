@@ -128,6 +128,11 @@ public unsafe class MapWindow : Window
         UIModule.PlaySound(24u);
 
         ProcessingCommand = false;
+
+        if (TemporaryMarkers.GatheringMarker?.Type is MarkerType.Quest)
+        {
+            TemporaryMarkers.RemoveGatheringMarker();
+        }
     }
 
     private void UpdateSizePosition()
