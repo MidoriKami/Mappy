@@ -14,7 +14,7 @@ namespace Mappy.Views.General;
 
 public class MapSearchView
 {
-    private IEnumerable<ISearchResult>? searchResults;
+    private List<ISearchResult>? searchResults;
     private bool shouldFocusMapSearch;
     private string searchString = string.Empty;
 
@@ -46,7 +46,7 @@ public class MapSearchView
         DrawSearchResults();
     }
     
-    private void SearchTask() => searchResults = MapSearch.Search(searchString, 20);
+    private void SearchTask() => searchResults = MapSearch.Search(searchString);
 
     private void DrawSearchBox()
     {
@@ -73,13 +73,7 @@ public class MapSearchView
         {
             if (searchResults is not null)
             {
-                foreach (var entry in searchResults)
-                {
-                    if (entry.DrawEntry())
-                    {
-                        widget.ShowMapSelectOverlay = false;
-                    }
-                }
+                ImGuiClip.ClippedDraw(searchResults, (entry) => entry.DrawEntry(), 24.0f);
             }
         }
         ImGui.EndChild();

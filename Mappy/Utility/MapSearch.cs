@@ -10,15 +10,14 @@ namespace Mappy.Utility;
 
 public static class MapSearch
 {
-    public static IEnumerable<ISearchResult> Search(string searchTerms, int numResults)
+    public static List<ISearchResult> Search(string searchTerms)
         => AetheryteResults(searchTerms)
             .Concat(PointOfInterestResults(searchTerms))
             .Concat(MapResults(searchTerms))
             .OrderBy(result => result.Label)
-            .Take(numResults)
             .ToList();
 
-    public static IEnumerable<ISearchResult> SearchByMapId(uint map)
+    public static List<ISearchResult> SearchByMapId(uint map)
         => AetheryteResults(string.Empty)
             .Concat(PointOfInterestResults(string.Empty))
             .Concat(MapResults(string.Empty))
