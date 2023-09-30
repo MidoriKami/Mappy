@@ -9,15 +9,13 @@ namespace Mappy;
 
 public sealed class MappyPlugin : IDalamudPlugin
 {
-    public string Name => "Mappy";
-
     public static MappySystem System = null!;
     
     public MappyPlugin(DalamudPluginInterface pluginInterface)
     {
         pluginInterface.Create<Service>();
         
-        KamiCommon.Initialize(pluginInterface, Name);
+        KamiCommon.Initialize(pluginInterface, "Mappy");
         KamiCommon.RegisterLocalizationHandler(key => Strings.ResourceManager.GetString(key, Strings.Culture));
                 
         System = new MappySystem();
