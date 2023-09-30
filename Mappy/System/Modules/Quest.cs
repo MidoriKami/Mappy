@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
@@ -71,7 +72,7 @@ public unsafe class Quest : ModuleBase
         if (!config.HideAcceptedQuests) DrawAcceptedQuests(viewport, map);
         if (!config.HideLeveQuests) DrawLeveQuests(viewport, map);
     }
-    
+
     private void DrawAcceptedQuests(Viewport viewport, Map map)
     {
         var mapData = FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
@@ -80,12 +81,12 @@ public unsafe class Quest : ModuleBase
         foreach (var quest in mapData->QuestDataSpan)
         {
             if (!quest.ShouldRender) continue;
-            
+
             foreach (var questInfo in quest.MarkerData.Span)
             {
                 if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap, Territory.Row: var levelTerritory }) continue;
                 if (levelMap != map.RowId && levelTerritory != map.TerritoryType.Row) continue;
-                
+
                 DrawUtilities.DrawMapIcon(new MappyMapIcon
                 {
                     IconId = questInfo.IconId,
@@ -95,8 +96,34 @@ public unsafe class Quest : ModuleBase
 
                     Radius = questInfo.Radius,
                     RadiusColor = config.InProgressColor,
-                    
+
                     VerticalPosition = questInfo.Y,
+                }, config, viewport, map);
+            }
+        }
+        
+        foreach (var quest in QuestManager.Instance()->NormalQuestsSpan)
+        {
+            if (quest is { QuestId: 0 } or { IsHidden: true }) continue;
+            if (LuminaCache<Lumina.Excel.GeneratedSheets.Quest>.Instance.GetRow(quest.QuestId + 65536u) is not { Name.RawString: var questName }) continue;
+            
+            var questLinkSetEntries = LuminaCache<QuestLinkMarkerSet>.Instance.Where(entry => entry.Unknown1 == quest.QuestId + 65536 && entry.Unknown2 == quest.Sequence);
+        
+            foreach (var questLinkEntry in questLinkSetEntries)
+            {
+                if (LuminaCache<QuestLinkMarker>.Instance.GetRow(questLinkEntry.Unknown0, 0) is not { Unknown1: var levelId, Unknown2: var destinationMap }) continue;
+                if (LuminaCache<Level>.Instance.GetRow(levelId) is not { Map.Row: var levelMap, Territory.Row: var levelTerritory, X: var x, Y: var y, Z: var z }) continue;
+                if (levelMap != map.RowId && levelTerritory != map.TerritoryType.Row) continue;
+        
+                DrawUtilities.DrawMapIcon(new MappyMapIcon
+                {
+                    IconId = 71003,
+                    ObjectPosition = new Vector2(x, z),
+                    OnClickAction = () => MappySystem.MapTextureController.LoadMap(destinationMap),
+        
+                    Tooltip = questName,
+                    
+                    VerticalPosition = y,
                 }, config, viewport, map);
             }
         }
