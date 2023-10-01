@@ -44,7 +44,7 @@ public partial class DrawUtilities
 
     private static IconLayer? GetDirectionalIconLayer(MappyMapIcon iconData, IDirectionalMarkerConfig config)
     {
-        var offsetPosition = new Vector2(8.0f, 24.0f);
+        var offsetPosition = Vector2.Zero;
         
         var isBelowPlayer = false;
         var isAbovePlayer = false;
@@ -62,11 +62,11 @@ public partial class DrawUtilities
 
         if (isBelowPlayer)
         {
-            return new IconLayer(60545, offsetPosition);
+            return new IconLayer(60955, offsetPosition);
         }
         else if (isAbovePlayer)
         {
-            return new IconLayer(60541, offsetPosition);
+            return new IconLayer(60954, offsetPosition);
         }
         else
         {
