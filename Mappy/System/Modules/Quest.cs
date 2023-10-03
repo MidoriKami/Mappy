@@ -116,7 +116,7 @@ public unsafe class Quest : ModuleBase
 
                 foreach (var questLinkEntry in questLinkSetEntries)
                 {
-                    if (LuminaCache<QuestLinkMarker>.Instance.GetRow(questLinkEntry.Unknown0, 0) is not { Unknown1: var levelId, Unknown2: var destinationMap }) continue;
+                    if (LuminaCache<QuestLinkMarker>.Instance.GetRow(questLinkEntry.Unknown0, 0) is not { Level.Row: var levelId, TargetMap.Row: var destinationMap }) continue;
                     if (LuminaCache<Level>.Instance.GetRow(levelId) is not { Map.Row: var levelMap, Territory.Row: var levelTerritory, X: var x, Y: var y, Z: var z }) continue;
                     if (levelMap != map.RowId && levelTerritory != map.TerritoryType.Row) continue;
 
