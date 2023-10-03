@@ -6,15 +6,16 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using KamiLib;
-using KamiLib.Commands;
+using KamiLib.Command;
+using KamiLib.Game;
+using KamiLib.NativeUi;
+using KamiLib.System;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.System;
 using Mappy.System.Modules;
 using Mappy.Utility;
 using Mappy.Views.Components;
-using Condition = KamiLib.GameState.Condition;
-using Node = KamiLib.Atk.Node;
 
 namespace Mappy.Views.Windows;
 

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using KamiLib.Caching;
+using KamiLib.Game;
 using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;

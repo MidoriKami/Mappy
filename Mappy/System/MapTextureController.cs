@@ -4,8 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Dalamud.Interface.Internal;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using KamiLib.Caching;
-using KamiLib.Hooking;
+using KamiLib.Game;
+using KamiLib.NativeUi;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Utility;
 

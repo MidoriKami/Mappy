@@ -1,6 +1,6 @@
 ﻿using Dalamud.Plugin;
 using KamiLib;
-using KamiLib.Commands;
+using KamiLib.System;
 using Mappy.System;
 using Mappy.System.Localization;
 using Mappy.Views.Windows;

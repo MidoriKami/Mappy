@@ -6,7 +6,7 @@ using Dalamud.Game.ClientState.Fates;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using KamiLib.AutomaticUserInterface;
-using KamiLib.Caching;
+using KamiLib.Game;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;

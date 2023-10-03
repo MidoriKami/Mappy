@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Plugin.Ipc;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using KamiLib.Caching;
+using KamiLib.Game;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Utility;
 

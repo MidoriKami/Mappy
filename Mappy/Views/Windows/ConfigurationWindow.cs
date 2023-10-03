@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
 using ImGuiNET;
-using KamiLib.Commands;
+using KamiLib.Command;
 using KamiLib.Interfaces;
-using KamiLib.Utilities;
-using KamiLib.Windows;
+using KamiLib.System;
+using KamiLib.UserInterface;
+using KamiLib.Utility;
 
 namespace Mappy.Views.Windows;
 

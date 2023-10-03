@@ -1,6 +1,6 @@
 ﻿using Dalamud.Plugin.Ipc;
 using Dalamud.Plugin.Ipc.Exceptions;
-using KamiLib.ChatCommands;
+using KamiLib.Game;
 using Lumina.Excel.GeneratedSheets;
 using Mappy;
 using Mappy.System.Localization;

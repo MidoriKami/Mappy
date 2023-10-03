@@ -7,7 +7,7 @@ using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Client.Game.MJI;
 using KamiLib.AutomaticUserInterface;
-using KamiLib.Caching;
+using KamiLib.Game;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;

@@ -5,7 +5,7 @@ using System.Numerics;
 using DailyDuty.System;
 using Dalamud.Interface;
 using Dalamud.Utility;
-using KamiLib.Caching;
+using KamiLib.Game;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
 using Mappy.System;

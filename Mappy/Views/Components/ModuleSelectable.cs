@@ -1,6 +1,6 @@
 ﻿using ImGuiNET;
 using KamiLib.Interfaces;
-using KamiLib.Utilities;
+using KamiLib.Utility;
 using Mappy.Abstracts;
 
 namespace Mappy.Views.Components;

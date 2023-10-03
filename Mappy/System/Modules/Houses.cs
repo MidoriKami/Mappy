@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Client.Game.Housing;
 using KamiLib.AutomaticUserInterface;
-using KamiLib.Caching;
+using KamiLib.Game;
 using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;

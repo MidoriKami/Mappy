@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Numerics;
-using KamiLib.Caching;
+using KamiLib.Game;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 

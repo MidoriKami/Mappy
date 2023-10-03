@@ -6,7 +6,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Interface;
 using KamiLib.AutomaticUserInterface;
-using KamiLib.Caching;
+using KamiLib.Game;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.DataModels;

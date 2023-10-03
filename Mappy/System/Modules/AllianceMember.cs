@@ -4,7 +4,7 @@ using Dalamud.Interface;
 using Dalamud.Memory;
 using FFXIVClientStructs.FFXIV.Client.Game.Group;
 using KamiLib.AutomaticUserInterface;
-using KamiLib.Utilities;
+using KamiLib.Game;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
