@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
+﻿using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.Game;
 using Lumina.Excel.GeneratedSheets;
@@ -65,8 +64,6 @@ public unsafe class Quest : ModuleBase
     public override ModuleName ModuleName => ModuleName.QuestMarkers;
     public override IModuleConfig Configuration { get; protected set; } = new QuestConfig();
 
-    private readonly Dictionary<(uint QuestID, byte SequenceNumber), List<MappyMapIcon>> questLinkMarkerSets = new();
-    
     protected override void DrawMarkers(Viewport viewport, Map map)
     {
         var config = GetConfig<QuestConfig>();
@@ -104,42 +101,25 @@ public unsafe class Quest : ModuleBase
                 }, config, viewport, map);
             }
         }
-        
-        foreach (var quest in QuestManager.Instance()->NormalQuestsSpan)
+
+        foreach (var marker in AgentMap.Instance()->MiniMapQuestLinkContainer.MarkersSpan)
         {
-            if (quest is { QuestId: 0 } or { IsHidden: true }) continue;
-            if (LuminaCache<Lumina.Excel.GeneratedSheets.Quest>.Instance.GetRow(quest.QuestId + 65536u) is not { Name.RawString: var questName }) continue;
-            if (!questLinkMarkerSets.TryGetValue((quest.QuestId, quest.Sequence), out var mapIcons))
+            if (LuminaCache<Level>.Instance.GetRow(marker.LevelId) is not { X: var x, Y: var y, Z: var z }) continue;
+            if (map.RowId != marker.SourceMapId) continue;
+
+            DrawUtilities.DrawMapIcon(new MappyMapIcon
             {
-                var questLinkSetEntries = LuminaCache<QuestLinkMarkerSet>.Instance.Where(entry => entry.Unknown1 == quest.QuestId + 65536 && entry.Unknown2 == quest.Sequence).ToList();
-                var newMapIcons = new List<MappyMapIcon>();
+                IconId = marker.IconId,
+                ObjectPosition = new Vector2(x, z),
 
-                foreach (var questLinkEntry in questLinkSetEntries)
-                {
-                    if (LuminaCache<QuestLinkMarker>.Instance.GetRow(questLinkEntry.Unknown0, 0) is not { Level.Row: var levelId, TargetMap.Row: var destinationMap }) continue;
-                    if (LuminaCache<Level>.Instance.GetRow(levelId) is not { Map.Row: var levelMap, Territory.Row: var levelTerritory, X: var x, Y: var y, Z: var z }) continue;
-                    if (levelMap != map.RowId && levelTerritory != map.TerritoryType.Row) continue;
+                GetTooltipFunc = () => marker.TooltipText.ToString(),
 
-                    newMapIcons.Add(new MappyMapIcon
-                    {
-                        IconId = 71003, // todo: better icon
-                        ObjectPosition = new Vector2(x, z),
-                        OnClickAction = () => MappySystem.MapTextureController.LoadMap(destinationMap),
+                RadiusColor = config.InProgressColor,
 
-                        Tooltip = questName,
-
-                        VerticalPosition = y,
-                    });
-                }
-
-                mapIcons = newMapIcons;
-                questLinkMarkerSets.Add((quest.QuestId, quest.Sequence), mapIcons);
-            }
-
-            foreach (var icon in mapIcons)
-            {
-                DrawUtilities.DrawMapIcon(icon, config, viewport, map);
-            }
+                VerticalPosition = y,
+                
+                OnClickAction = () => MappySystem.MapTextureController.LoadMap(marker.TargetMapId),
+            }, config, viewport, map);
         }
     }
     
