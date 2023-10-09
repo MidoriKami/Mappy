@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
@@ -11,6 +12,7 @@ using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.Utility;
+using QuestLinkMarker = FFXIVClientStructs.FFXIV.Client.UI.Agent.QuestLinkMarker;
 
 namespace Mappy.System.Modules;
 
@@ -102,7 +104,8 @@ public unsafe class Quest : ModuleBase
             }
         }
 
-        foreach (var marker in AgentMap.Instance()->MiniMapQuestLinkContainer.MarkersSpan)
+        var questLinkSpan = new ReadOnlySpan<QuestLinkMarker>(AgentMap.Instance()->MiniMapQuestLinkContainer.Markers, AgentMap.Instance()->MiniMapQuestLinkContainer.MarkerCount);
+        foreach (var marker in questLinkSpan)
         {
             if (LuminaCache<Level>.Instance.GetRow(marker.LevelId) is not { X: var x, Y: var y, Z: var z }) continue;
             if (map.RowId != marker.SourceMapId) continue;
