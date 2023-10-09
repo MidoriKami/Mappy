@@ -129,12 +129,19 @@ public class MapMarkerData
         MapMarkerType.MapLink => MapLinkAction,
         MapMarkerType.InstanceLink => null,
         MapMarkerType.Aetheryte => AetheryteAction,
-        MapMarkerType.Aethernet => null,
+        MapMarkerType.Aethernet => AethernetAction,
         _ => null
     };
 
     private void MapLinkAction() => MappySystem.MapTextureController.LoadMap(DataMap.RowId);
     private void AetheryteAction() => TeleporterController.Instance.Teleport(DataAetheryte);
+    private void AethernetAction()
+    {
+        if (LuminaCache<Aetheryte>.Instance.FirstOrDefault(aetheryte => aetheryte.AethernetName.Row == DataPlaceName.RowId) is not { Territory.Row: var mainAetheryteTerritory }) return;
+        if (LuminaCache<Aetheryte>.Instance.FirstOrDefault(aetheryte => aetheryte.IsAetheryte && aetheryte.Territory.Row == mainAetheryteTerritory) is not { } targetAetheryte) return;
+
+        TeleporterController.Instance.Teleport(targetAetheryte);
+    }
     
     private string? GetDisplayString() => (MapMarkerType) DataType switch
     {
