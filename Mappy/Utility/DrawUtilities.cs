@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System.Drawing;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Interface;
 using ImGuiNET;
 using KamiLib;
 using Lumina.Excel.GeneratedSheets;
@@ -88,6 +90,27 @@ public partial class DrawUtilities
         {
             clickAction();
         }
+    }
+    
+    public static void DrawTextOutlined(Vector2 startPosition, string text, KnownColor textColor = KnownColor.White, KnownColor textOutlineColor = KnownColor.Black)
+    {
+        const int outlineThickness = 1;
+        var textSize = ImGui.CalcTextSize(text);
+        var textSizeOffset = new Vector2(-textSize.X / 2.0f, textSize.Y / 2.0f);
+
+        for (var x = -outlineThickness; x <= outlineThickness; ++x)
+        {
+            for (var y = -outlineThickness; y <= outlineThickness; ++y)
+            {
+                if (x == 0 && y == 0) continue;
+
+                ImGui.SetCursorPos(startPosition + new Vector2(x, y) + textSizeOffset);
+                ImGui.TextColored(textOutlineColor.Vector(), text);
+            }
+        }
+        
+        ImGui.SetCursorPos(startPosition + textSizeOffset);
+        ImGui.TextColored(textColor.Vector(), text);
     }
 
     public static void DrawTooltip(Vector4 color, string primaryText)
