@@ -73,10 +73,18 @@ public class MapSearchView
         {
             if (searchResults is not null)
             {
-                ImGuiClip.ClippedDraw(searchResults, (entry) => entry.DrawEntry(), 24.0f);
+                ImGuiClip.ClippedDraw(searchResults, DrawEntry, 24.0f);
             }
         }
         ImGui.EndChild();
+    }
+
+    private void DrawEntry(ISearchResult result)
+    {
+        if (result.DrawEntry())
+        {
+            widget.ShowMapSelectOverlay = false;
+        }
     }
 
     private void DrawBackground()
