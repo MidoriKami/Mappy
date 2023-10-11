@@ -114,7 +114,18 @@ public unsafe class MapWindow : Window
             var scaledSize = new Vector2(texture.Width, texture.Height) * Viewport.Scale;
             ImGui.Image(texture.ImGuiHandle, scaledSize, Vector2.Zero, Vector2.One, Vector4.One with { W = GetFadePercent() });
 
-            if (!toolbar.ShowMapSelectOverlay) MappySystem.ModuleController.Draw(Viewport, map);
+            if (!toolbar.ShowMapSelectOverlay)
+            {
+                MappySystem.ModuleController.Draw(Viewport, map);
+
+                if (MappySystem.SystemConfig.ShowMapName)
+                {
+                    var mapText = map.PlaceName.Value?.Name.ToString() ?? "Unknown Location";
+                    var textSize = ImGui.CalcTextSize(mapText);
+                    var drawPosition = new Vector2(ImGui.GetContentRegionAvail().X / 2.0f, ImGui.GetContentRegionMax().Y - textSize.Y * 1.5f - ImGui.GetStyle().ItemSpacing.Y - ImGui.GetStyle().FramePadding.Y);
+                    DrawUtilities.DrawTextOutlined(drawPosition, mapText);
+                }
+            }
 
             toolbar.Draw();
             MappySystem.ContextMenuController.Draw();
