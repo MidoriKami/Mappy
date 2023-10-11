@@ -137,8 +137,8 @@ public class MapMarkerData
     private void AetheryteAction() => TeleporterController.Instance.Teleport(DataAetheryte);
     private void AethernetAction()
     {
-        if (LuminaCache<Aetheryte>.Instance.FirstOrDefault(aetheryte => aetheryte.AethernetName.Row == DataPlaceName.RowId) is not { Territory.Row: var mainAetheryteTerritory }) return;
-        if (LuminaCache<Aetheryte>.Instance.FirstOrDefault(aetheryte => aetheryte.IsAetheryte && aetheryte.Territory.Row == mainAetheryteTerritory) is not { } targetAetheryte) return;
+        if (LuminaCache<Aetheryte>.Instance.FirstOrDefault(aetheryte => aetheryte.AethernetName.Row == DataPlaceName.RowId) is not { AethernetGroup: var aethernetGroup }) return;
+        if (LuminaCache<Aetheryte>.Instance.FirstOrDefault(aetheryte => aetheryte.IsAetheryte && aetheryte.AethernetGroup == aethernetGroup) is not { } targetAetheryte) return;
 
         TeleporterController.Instance.Teleport(targetAetheryte);
     }
