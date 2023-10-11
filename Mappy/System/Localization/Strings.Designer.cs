@@ -1115,6 +1115,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show Map Name.
+        /// </summary>
+        internal static string ShowMapName {
+            get {
+                return ResourceManager.GetString("ShowMapName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Misc Tooltips.
         /// </summary>
         internal static string ShowMiscTooltips {

@@ -16,6 +16,9 @@ public interface IWindowConfig
     [BoolConfig("FollowOnOpen", "FollowOnOpenHelp")]
     public bool FollowOnOpen { get; set; }
     
+    [BoolConfig("ShowMapName")]
+    public bool ShowMapName { get; set; }
+    
     [RadioEnumConfig("CenterOnOpen", "CenterOnOpenHelp")]
     public CenterTarget CenterOnOpen { get; set; }
     

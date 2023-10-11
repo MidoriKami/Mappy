@@ -10,6 +10,7 @@ public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDispl
     public bool IgnoreEscapeKey { get; set; } = false;
     public bool FollowPlayer { get; set; } = true;
     public bool FollowOnOpen { get; set; } = false;
+    public bool ShowMapName { get; set; } = true;
     public CenterTarget CenterOnOpen { get; set; } = CenterTarget.Disabled;
     public Vector2 WindowPosition { get; set; } = new(1024.0f, 700.0f);
     public Vector2 WindowSize { get; set; } = new(500.0f, 500.0f);

@@ -563,4 +563,7 @@ Open Map Window to populate data</value>
   <data name="SearchByRegion" xml:space="preserve">
     <value>Search by Region</value>
   </data>
+  <data name="ShowMapName" xml:space="preserve">
+    <value>Show Map Name</value>
+  </data>
 </root>
