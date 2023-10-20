@@ -33,7 +33,7 @@ public unsafe class QuestHelpers
         return list;
     }
 
-    public static IEnumerable<Level> GetActiveLevelsForQuest(QuestWork quest, uint? madId = null)
+    private static IEnumerable<Level> GetActiveLevelsForQuest(QuestWork quest, uint? madId = null)
     {
         var luminaQuest = LuminaCache<CustomQuestSheet>.Instance.GetRow(quest.QuestId + 65536u)!;
         var currentMapId = madId ?? AgentMap.Instance()->CurrentMapId;    
