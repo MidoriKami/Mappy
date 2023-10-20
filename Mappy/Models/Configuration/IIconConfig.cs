@@ -3,8 +3,7 @@
 namespace Mappy.Models;
 
 [Category("IconConfig", -5)]
-public interface IIconConfig
-{
+public interface IIconConfig {
     [BoolConfig("ShowIcon")]
     public bool ShowIcon { get; set; }
     

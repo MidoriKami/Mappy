@@ -3,8 +3,7 @@
 namespace Mappy.Models;
 
 [Category("DisplayOptions", 6)]
-public interface IWindowDisplayConfig
-{
+public interface IWindowDisplayConfig {
     [BoolConfig("HideWithGameGui")] 
     public bool HideWithGameGui { get; set; }
 

@@ -13,21 +13,17 @@ using Mappy.Views.Windows;
 
 namespace Mappy.Views.General;
 
-public class QuestListView
-{
+public class QuestListView {
     private readonly IMapSearchWidget mapWindow;
     
-    public QuestListView(IMapSearchWidget searchWidget)
-    {
+    public QuestListView(IMapSearchWidget searchWidget) {
         mapWindow = searchWidget;
     }
 
-    public void Draw()
-    {
+    public void Draw() {
         ImGui.SetCursorPos(new Vector2(0.0f, 38.5f * ImGuiHelpers.GlobalScale));
 
-        if (ImGui.BeginTable("##QuestListTable", 2, ImGuiTableFlags.Resizable | ImGuiTableFlags.NoPadInnerX, ImGui.GetContentRegionAvail()))
-        {
+        if (ImGui.BeginTable("##QuestListTable", 2, ImGuiTableFlags.Resizable | ImGuiTableFlags.NoPadInnerX, ImGui.GetContentRegionAvail())) {
             ImGui.TableSetupColumn("##QuestList", ImGuiTableColumnFlags.WidthFixed, 250.0f * ImGuiHelpers.GlobalScale);
             
             ImGui.TableNextColumn();
@@ -39,19 +35,15 @@ public class QuestListView
         }
     }
 
-    private void DrawBackground()
-    {
+    private void DrawBackground() {
         var backgroundColor = ImGui.GetColorU32(Vector4.Zero with { W = 0.8f });
 
         ImGui.GetWindowDrawList().AddRectFilled(ImGui.GetCursorScreenPos(), ImGui.GetCursorScreenPos() + ImGui.GetContentRegionMax(), backgroundColor);
     }
     
-    private unsafe void DrawQuests()
-    {
-        if (ImGui.BeginChild("##QuestScrollable", ImGui.GetContentRegionAvail()))
-        {
-            if (Map.Instance()->QuestMarkerData.Size > 0)
-            {
+    private unsafe void DrawQuests() {
+        if (ImGui.BeginChild("##QuestScrollable", ImGui.GetContentRegionAvail())) {
+            if (Map.Instance()->QuestMarkerData.Size > 0) {
                 var questsData = Map.Instance()->QuestMarkerData.GetAllMarkers()
                     .Where(quest => quest.MarkerData.First is not null)
                     .OrderByDescending(quest => quest.MarkerData.First->IconId)
@@ -59,14 +51,10 @@ public class QuestListView
                     .ThenBy(quest => quest.MarkerData.First->TooltipString->ToString())
                     .GroupBy(quest => quest.MarkerData.First->IconId);
                 
-                foreach (var questGroup in questsData)
-                {
-                    foreach (var quest in questGroup)
-                    {
-                        foreach (var location in quest.MarkerData.Span)
-                        {
-                            if (ImGui.Selectable($"##{quest.ObjectiveId}"))
-                            {
+                foreach (var questGroup in questsData) {
+                    foreach (var quest in questGroup) {
+                        foreach (var location in quest.MarkerData.Span) {
+                            if (ImGui.Selectable($"##{quest.ObjectiveId}")) {
                                 if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { Viewport: var viewport }) continue;
                                 if (MappySystem.MapTextureController is not { Ready: true } textureController) continue;
 
@@ -90,9 +78,7 @@ public class QuestListView
                         }
                     }
                 }
-            }
-            else
-            {
+            } else {
                 const string text = "No quests available";
                 var textSize = ImGui.CalcTextSize(text);
                 ImGui.SetCursorPosX(ImGui.GetContentRegionAvail().X / 2.0f - textSize.X / 2.0f);

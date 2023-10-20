@@ -4,8 +4,7 @@ using Mappy.Models.Enums;
 
 namespace Mappy.Models;
 
-public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDisplayConfig, IToolbarConfig, IZoomConfig, IFadeConfig
-{
+public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDisplayConfig, IToolbarConfig, IZoomConfig, IFadeConfig {
     public bool KeepOpen { get; set; } = false;
     public bool IgnoreEscapeKey { get; set; } = false;
     public bool FollowPlayer { get; set; } = true;

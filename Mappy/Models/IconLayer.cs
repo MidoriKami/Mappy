@@ -3,10 +3,8 @@ using Dalamud.Interface.Internal;
 
 namespace Mappy.Models;
 
-public class IconLayer
-{
-    public IconLayer(uint iconId, Vector2 offsetPosition)
-    {
+public class IconLayer {
+    public IconLayer(uint iconId, Vector2 offsetPosition) {
         IconId = iconId;
         PositionOffset = offsetPosition;
     }

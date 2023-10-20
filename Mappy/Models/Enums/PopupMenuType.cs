@@ -1,7 +1,6 @@
 ﻿namespace Mappy.Models.Enums;
 
-public enum PopupMenuType
-{
+public enum PopupMenuType {
     AddMoveFlag,
     TempFlag,
     TempArea,

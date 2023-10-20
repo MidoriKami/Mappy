@@ -4,8 +4,7 @@ using ImGuiNET;
 
 namespace Mappy.Models;
 
-public class Viewport
-{
+public class Viewport {
     public Vector2 Center { get; private set; } = new(1024.0f, 1024.0f);
     public Vector2 Size { get; set; } = new(2048.0f, 2048.0f);
     public Vector2 Offset => Center * Scale - Size / 2.0f;

@@ -7,8 +7,7 @@ using Mappy.Abstracts;
 
 namespace Mappy.Models.Search;
 
-public class PointOfInterestSearchResult : ISearchResult
-{
+public class PointOfInterestSearchResult : ISearchResult {
     public string Label { get; set; }
     public string SubLabel { get; set; }
     public uint IconId { get; set; }

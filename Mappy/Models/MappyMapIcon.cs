@@ -10,8 +10,8 @@ using Action = System.Action;
 
 namespace Mappy.Models;
 
-public class MappyMapIcon
-{
+// Todo: Add option to animate ring
+public class MappyMapIcon {
     public uint IconId { get; set; }
     public List<IconLayer> Layers { get; set; } = new();
     
@@ -35,8 +35,7 @@ public class MappyMapIcon
     
     public Vector4? ColorManipulation { get; set; }
 
-    public Vector2 GetDrawPosition(Map map)
-    {
+    public Vector2 GetDrawPosition(Map map) {
         if (TexturePosition is not null) return TexturePosition.Value;
         if (ObjectPosition is not null) return Position.GetTexturePosition(ObjectPosition.Value, map);
         

@@ -12,8 +12,7 @@ using Mappy.Utility;
 
 namespace Mappy.Views.General;
 
-public class MapSearchView
-{
+public class MapSearchView {
     private List<ISearchResult>? searchResults;
     private bool shouldFocusMapSearch;
     private string searchString = string.Empty;
@@ -26,19 +25,16 @@ public class MapSearchView
 
     private readonly IMapSearchWidget widget;
     
-    public MapSearchView(IMapSearchWidget searchWidget)
-    {
+    public MapSearchView(IMapSearchWidget searchWidget) {
         widget = searchWidget;
     }
     
-    public void Show()
-    {
+    public void Show() {
         shouldFocusMapSearch = true;
         Task.Run(SearchTask);
     }
 
-    public void Draw()
-    {
+    public void Draw() {
         ProcessEnterKey();
 
         DrawBackground();
@@ -48,47 +44,38 @@ public class MapSearchView
     
     private void SearchTask() => searchResults = MapSearch.Search(searchString);
 
-    private void DrawSearchBox()
-    {
+    private void DrawSearchBox() {
         ImGui.SetCursorPos(SearchPosition);
         ImGui.PushItemWidth(SearchWidth);
 
-        if (shouldFocusMapSearch)
-        {
+        if (shouldFocusMapSearch) {
             ImGui.SetKeyboardFocusHere();
             shouldFocusMapSearch = false;
         }
 
-        if (ImGui.InputTextWithHint("###MapSearch", Strings.SearchHint, ref searchString, 60, ImGuiInputTextFlags.AutoSelectAll))
-        {
+        if (ImGui.InputTextWithHint("###MapSearch", Strings.SearchHint, ref searchString, 60, ImGuiInputTextFlags.AutoSelectAll)) {
             Service.Log.Debug("Refreshing Search Results");
             Task.Run(SearchTask);
         }
     }
 
-    private void DrawSearchResults()
-    {
+    private void DrawSearchResults() {
         ImGui.SetCursorPos(SearchPosition + ImGuiHelpers.ScaledVector2(0.0f, 30.0f));
-        if (ImGui.BeginChild("###SearchResultsChild", new Vector2(SearchWidth, RegionSize.Y * 3.0f / 4.0f)))
-        {
-            if (searchResults is not null)
-            {
+        if (ImGui.BeginChild("###SearchResultsChild", new Vector2(SearchWidth, RegionSize.Y * 3.0f / 4.0f))) {
+            if (searchResults is not null) {
                 ImGuiClip.ClippedDraw(searchResults, DrawEntry, 24.0f);
             }
         }
         ImGui.EndChild();
     }
 
-    private void DrawEntry(ISearchResult result)
-    {
-        if (result.DrawEntry())
-        {
+    private void DrawEntry(ISearchResult result) {
+        if (result.DrawEntry()) {
             widget.ShowMapSelectOverlay = false;
         }
     }
 
-    private void DrawBackground()
-    {
+    private void DrawBackground() {
         var drawStart = ImGui.GetWindowPos();
         var drawStop = drawStart + ImGui.GetWindowSize();
         var backgroundColor = ImGui.GetColorU32(Vector4.Zero with { W = 0.8f });
@@ -96,12 +83,10 @@ public class MapSearchView
         ImGui.GetWindowDrawList().AddRectFilled(drawStart, drawStop, backgroundColor);
     }
     
-    private void ProcessEnterKey()
-    {
+    private void ProcessEnterKey() {
         if (!ImGui.IsKeyPressed(ImGuiKey.Enter) & !ImGui.IsKeyPressed(ImGuiKey.KeypadEnter)) return;
         
-        if (searchResults?.FirstOrDefault() is { } validResult)
-        {
+        if (searchResults?.FirstOrDefault() is { } validResult) {
             validResult.Invoke();
             widget.ShowMapSelectOverlay = false;
         }

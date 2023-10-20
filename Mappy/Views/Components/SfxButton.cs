@@ -8,8 +8,7 @@ using Mappy.Utility;
 
 namespace Mappy.Views.Components;
 
-public class SfxButton
-{
+public class SfxButton {
     public required string Label { get; init; }
     public required Action ClickAction { get; init; }
     public uint? MouseOverSfxId { get; init; }
@@ -20,31 +19,24 @@ public class SfxButton
 
     private bool isMouseOver;
 
-    public void Draw()
-    {
+    public void Draw() {
         if(IsIconButton) ImGui.PushFont(UiBuilder.IconFont);
-        if (ImGui.Button(Label, Size ?? Vector2.Zero))
-        {
+        if (ImGui.Button(Label, Size ?? Vector2.Zero)) {
             ClickAction.Invoke();
 
-            if (ClickSfxId is { } clickSfx)
-            {
+            if (ClickSfxId is { } clickSfx) {
                 UIModule.PlaySound(clickSfx);
             }
         }
         if(IsIconButton) ImGui.PopFont();
 
-        if (ImGui.IsItemHovered() && MouseOverSfxId is { } sfxId)
-        {
+        if (ImGui.IsItemHovered() && MouseOverSfxId is { } sfxId) {
             // We weren't hovered, but are now
-            if (!isMouseOver)
-            {
+            if (!isMouseOver) {
                 UIModule.PlaySound(sfxId);
                 isMouseOver = true;
             }
-        }
-        else
-        {
+        } else {
             isMouseOver = false;
         }
 

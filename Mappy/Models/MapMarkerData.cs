@@ -8,16 +8,15 @@ using Dalamud.Utility;
 using KamiLib.Game;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
+using Mappy.Models.ModuleConfiguration;
 using Mappy.System;
 using Mappy.System.Localization;
-using Mappy.System.Modules;
 using Mappy.Utility;
 using Action = System.Action;
 
 namespace Mappy.DataModels;
 
-public enum MapMarkerType
-{
+public enum MapMarkerType {
     Standard,
     MapLink,
     InstanceLink,
@@ -25,8 +24,8 @@ public enum MapMarkerType
     Aethernet
 }
 
-public class MapMarkerData
-{
+// Todo: Basically, remove this.
+public class MapMarkerData {
     private readonly MapIconConfig settings;
     
     private readonly MapMarker data;
@@ -41,25 +40,20 @@ public class MapMarkerData
 
     private static readonly Dictionary<uint, string> MiscIconNameCache = new();
 
-    public MapMarkerData(MapMarker marker, MapIconConfig config)
-    {
+    public MapMarkerData(MapMarker marker, MapIconConfig config) {
         data = marker;
         settings = config;
     }
 
-    public void Draw(Viewport viewport, Map map)
-    {
-        if (IconId is > 063200 and < 63900 || map.Id.RawString.StartsWith("world"))
-        {
-            DrawUtilities.DrawMapIcon(new MappyMapIcon
-            {
+    public void Draw(Viewport viewport, Map map) {
+        if (IconId is > 063200 and < 63900 || map.Id.RawString.StartsWith("world")) {
+            DrawUtilities.DrawMapIcon(new MappyMapIcon {
                 IconId = IconId,
                 TexturePosition = Position,
                 ColorManipulation = new Vector4(0.75f, 0.75f, 0.75f, 1.0f),
             }, settings, viewport, map);
             
-            DrawUtilities.DrawMapText(new MappyMapText
-            {
+            DrawUtilities.DrawMapText(new MappyMapText {
                 Text = PlaceName.Name.ToDalamudString().TextValue,
                 TexturePosition = Position,
                 UseLargeFont = true,
@@ -73,11 +67,8 @@ public class MapMarkerData
                 OnClick = GetClickAction(),
                 
             }, viewport, map);
-        }
-        else
-        {
-            DrawUtilities.DrawMapIcon(new MappyMapIcon
-            {
+        } else {
+            DrawUtilities.DrawMapIcon(new MappyMapIcon {
                 IconId = IconId,
                 TexturePosition = Position,
             
@@ -91,30 +82,23 @@ public class MapMarkerData
         }
     }
 
-    private string GetTooltipString()
-    {
-        if (GetDisplayString() is null && settings.ShowMiscTooltips)
-        {
-            if (!MiscIconNameCache.ContainsKey(IconId))
-            {
-                if (LuminaCache<MapSymbol>.Instance.FirstOrDefault(symbol => symbol.Icon == IconId) is { PlaceName.Value.Name.RawString: var name })
-                {
+    private string GetTooltipString() {
+        if (GetDisplayString() is null && settings.ShowMiscTooltips) {
+            if (!MiscIconNameCache.ContainsKey(IconId)) {
+                if (LuminaCache<MapSymbol>.Instance.FirstOrDefault(symbol => symbol.Icon == IconId) is { PlaceName.Value.Name.RawString: var name }) {
                     MiscIconNameCache.Add(IconId, name);
                 }
             }
 
             return MiscIconNameCache.TryGetValue(IconId, out var value) ? value : string.Empty;
-        }
-        else if (GetDisplayString() is { } displayString)
-        {
+        } else if (GetDisplayString() is { } displayString) {
             return displayString;
         }
 
         return string.Empty;
     }
     
-    private string GetSecondaryTooltipString() => (MapMarkerType?) DataType switch
-    {
+    private string GetSecondaryTooltipString() => (MapMarkerType?) DataType switch {
         MapMarkerType.Standard => string.Empty,
         MapMarkerType.MapLink => string.Empty,
         MapMarkerType.InstanceLink => string.Empty,
@@ -123,8 +107,7 @@ public class MapMarkerData
         _ => string.Empty
     };
 
-    private Action? GetClickAction() => (MapMarkerType?) DataType switch
-    {
+    private Action? GetClickAction() => (MapMarkerType?) DataType switch {
         MapMarkerType.Standard => null,
         MapMarkerType.MapLink => MapLinkAction,
         MapMarkerType.InstanceLink => null,
@@ -135,16 +118,14 @@ public class MapMarkerData
 
     private void MapLinkAction() => MappySystem.MapTextureController.LoadMap(DataMap.RowId);
     private void AetheryteAction() => TeleporterController.Instance.Teleport(DataAetheryte);
-    private void AethernetAction()
-    {
+    private void AethernetAction() {
         if (LuminaCache<Aetheryte>.Instance.FirstOrDefault(aetheryte => aetheryte.AethernetName.Row == DataPlaceName.RowId) is not { AethernetGroup: var aethernetGroup }) return;
         if (LuminaCache<Aetheryte>.Instance.FirstOrDefault(aetheryte => aetheryte.IsAetheryte && aetheryte.AethernetGroup == aethernetGroup) is not { } targetAetheryte) return;
 
         TeleporterController.Instance.Teleport(targetAetheryte);
     }
     
-    private string? GetDisplayString() => (MapMarkerType) DataType switch
-    {
+    private string? GetDisplayString() => (MapMarkerType) DataType switch {
         MapMarkerType.Standard => GetStandardMarkerString(),
         MapMarkerType.MapLink => PlaceName.Name.ToDalamudString().TextValue,
         MapMarkerType.InstanceLink => null,
@@ -153,8 +134,7 @@ public class MapMarkerData
         _ => null
     };
 
-    private Vector4 GetDisplayColor() => (MapMarkerType) DataType switch
-    {
+    private Vector4 GetDisplayColor() => (MapMarkerType) DataType switch {
         MapMarkerType.Standard => settings.TooltipColor,
         MapMarkerType.MapLink => settings.MapLinkColor,
         MapMarkerType.InstanceLink => settings.InstanceLinkColor,
@@ -163,8 +143,7 @@ public class MapMarkerData
         _ => settings.TooltipColor
     };
 
-    private string? GetStandardMarkerString()
-    {
+    private string? GetStandardMarkerString() {
         var placeName = PlaceName.Name.ToDalamudString().TextValue;
         if (placeName != string.Empty) return placeName;
 

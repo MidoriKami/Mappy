@@ -5,8 +5,7 @@ using Mappy.Models.Enums;
 namespace Mappy.Models;
 
 [Category("WindowOptions")]
-public interface IWindowConfig
-{
+public interface IWindowConfig {
     [BoolConfig("KeepOpen")]
     public bool KeepOpen { get; set; }
     

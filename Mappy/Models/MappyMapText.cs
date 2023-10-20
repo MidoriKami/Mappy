@@ -7,8 +7,7 @@ using Action = System.Action;
 
 namespace Mappy.Models;
 
-public class MappyMapText
-{
+public class MappyMapText {
     public string Text { get; set; } = string.Empty;
     public Vector4 TextColor { get; set; } = KnownColor.White.Vector();
     public Vector4 OutlineColor { get; set; } = KnownColor.Black.Vector();
@@ -19,8 +18,7 @@ public class MappyMapText
     public Action? OnClick { get; set; }
     public bool UseLargeFont { get; set; }
     
-    public Vector2 GetDrawPosition(Map map)
-    {
+    public Vector2 GetDrawPosition(Map map) {
         if (TexturePosition is not null) return TexturePosition.Value;
         if (ObjectPosition is not null) return Position.GetTexturePosition(ObjectPosition.Value, map);
         

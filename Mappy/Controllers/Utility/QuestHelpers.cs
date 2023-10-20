@@ -9,8 +9,7 @@ using Lumina.Excel.GeneratedSheets;
 
 namespace Mappy.Utility;
 
-public unsafe class QuestHelpers
-{
+public unsafe class QuestHelpers {
     public static IEnumerable<Level>? GetActiveLevelsForQuest(string questName, uint mapId) => 
         (from quest in GetAcceptedQuests()
             let luminaData = LuminaCache<CustomQuestSheet>.Instance.GetRow(quest.QuestId + 65536u)!
@@ -18,14 +17,11 @@ public unsafe class QuestHelpers
             select GetActiveLevelsForQuest(quest, mapId))
         .FirstOrDefault();
 
-    private static IEnumerable<QuestWork> GetAcceptedQuests()
-    {
+    private static IEnumerable<QuestWork> GetAcceptedQuests() {
         var list = new List<QuestWork>();
         
-        foreach (var quest in QuestManager.Instance()->NormalQuestsSpan)
-        {
-            if (quest is { IsHidden: false, QuestId: > 0 })
-            {
+        foreach (var quest in QuestManager.Instance()->NormalQuestsSpan) {
+            if (quest is { IsHidden: false, QuestId: > 0 }) {
                 list.Add(quest);
             }
         }
@@ -33,8 +29,7 @@ public unsafe class QuestHelpers
         return list;
     }
 
-    private static IEnumerable<Level> GetActiveLevelsForQuest(QuestWork quest, uint? madId = null)
-    {
+    private static IEnumerable<Level> GetActiveLevelsForQuest(QuestWork quest, uint? madId = null) {
         var luminaQuest = LuminaCache<CustomQuestSheet>.Instance.GetRow(quest.QuestId + 65536u)!;
         var currentMapId = madId ?? AgentMap.Instance()->CurrentMapId;    
         

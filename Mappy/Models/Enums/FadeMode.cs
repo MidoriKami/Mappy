@@ -4,17 +4,16 @@ using KamiLib.AutomaticUserInterface;
 namespace Mappy.Models.Enums;
 
 [Flags]
-public enum FadeMode
-{
+public enum FadeMode {
     [EnumLabel("Always")]
-    Always = 0x01,
+    Always = 1 << 0,
     
     [EnumLabel("WhenMoving")]
-    WhenMoving = 0x02,
+    WhenMoving = 1 << 2,
     
     [EnumLabel("WhenFocused")]
-    WhenFocused = 0x04,
+    WhenFocused = 1 << 3,
     
     [EnumLabel("WhenUnFocused")]
-    WhenUnFocused = 0x08,
+    WhenUnFocused = 1 << 4,
 }

@@ -12,14 +12,12 @@ using Mappy.Views.Components;
 
 namespace Mappy.Views.Tabs;
 
-public class ModuleConfigurationTab : ISelectionWindowTab
-{
+public class ModuleConfigurationTab : ISelectionWindowTab {
     public string TabName => Strings.Modules;
     public ISelectable? LastSelection { get; set; }
     public IEnumerable<ISelectable> GetTabSelectables() => MappySystem.ModuleController.Modules.Select(module => new ModuleSelectable(module));
 
-    public void DrawTabExtras()
-    {
+    public void DrawTabExtras() {
         var buttonSize = ImGuiHelpers.ScaledVector2(30.0f);
         var region = ImGui.GetContentRegionAvail();
         

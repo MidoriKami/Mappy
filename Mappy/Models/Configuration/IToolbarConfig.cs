@@ -3,8 +3,7 @@
 namespace Mappy.Models;
 
 [Category("ToolbarOptions", 4)]
-public interface IToolbarConfig
-{
+public interface IToolbarConfig {
     [BoolConfig("AlwaysShowToolbar")]
     public bool AlwaysShowToolbar { get; set; }
     

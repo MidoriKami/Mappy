@@ -2,8 +2,7 @@
 
 namespace Mappy.Models.Enums;
 
-public enum ModuleName
-{
+public enum ModuleName {
     [EnumLabel("Player")]
     Player,
     

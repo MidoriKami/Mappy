@@ -16,8 +16,7 @@ using Mappy.Views.Windows;
 
 namespace Mappy.Views.Components;
 
-public class MapToolbar : IMapSearchWidget
-{
+public class MapToolbar : IMapSearchWidget {
     private readonly Window owner;
     public bool ShowMapSelectOverlay { get; set; }
     public bool ShowQuestListOverlay { get; set; }
@@ -40,26 +39,20 @@ public class MapToolbar : IMapSearchWidget
     private readonly MapRegionView regionView;
     private readonly QuestListView questListView;
 
-    public MapToolbar(Window owner)
-    {
+    public MapToolbar(Window owner) {
         this.owner = owner;
         searchView = new MapSearchView(this);
         regionView = new MapRegionView(this);
         questListView = new QuestListView(this);
 
-        mapRegionSearchButton = new DefaultIconSfxButton
-        {
-            ClickAction = () =>
-            {
-                if (!showRegionSearchView)
-                {
+        mapRegionSearchButton = new DefaultIconSfxButton {
+            ClickAction = () => {
+                if (!showRegionSearchView) {
                     regionView.Show();
                     ShowMapSelectOverlay = true;
                     showRegionSearchView = true;
                     showTextSearchView = false;
-                }
-                else
-                {
+                }else {
                     ShowMapSelectOverlay = false;
                     showRegionSearchView = false;
                     showTextSearchView = false;
@@ -70,19 +63,14 @@ public class MapToolbar : IMapSearchWidget
             Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
         };
 
-        mapTextSearchButton = new DefaultIconSfxButton
-        {
-            ClickAction = () =>
-            {
-                if (!showTextSearchView)
-                {
+        mapTextSearchButton = new DefaultIconSfxButton {
+            ClickAction = () => {
+                if (!showTextSearchView) {
                     searchView.Show();
                     ShowMapSelectOverlay = true;
                     showRegionSearchView = false;
                     showTextSearchView = true;
-                }
-                else
-                {
+                }else {
                     ShowMapSelectOverlay = false;
                     showRegionSearchView = false;
                     showTextSearchView = false;
@@ -93,10 +81,8 @@ public class MapToolbar : IMapSearchWidget
             Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
         };
 
-        mapLayersButton = new DefaultIconSfxButton
-        {
-            ClickAction = () =>
-            {
+        mapLayersButton = new DefaultIconSfxButton {
+            ClickAction = () => {
                 ImGui.OpenPopup("MapLayersPopup");
             },
             Label = FontAwesomeIcon.LayerGroup.ToIconString() + "##MapLayersButton",
@@ -104,10 +90,8 @@ public class MapToolbar : IMapSearchWidget
             Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
         };
 
-        followPlayerButton = new DefaultIconSfxButton
-        {
-            ClickAction = () =>
-            {
+        followPlayerButton = new DefaultIconSfxButton {
+            ClickAction = () => {
                 MappySystem.MapTextureController.MoveMapToPlayer();
                 MappySystem.SystemConfig.FollowPlayer = !MappySystem.SystemConfig.FollowPlayer;
                 MappyPlugin.System.SaveConfig();
@@ -117,10 +101,8 @@ public class MapToolbar : IMapSearchWidget
             Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
         };
 
-        centerOnPlayerButton = new DefaultIconSfxButton
-        {
-            ClickAction = () =>
-            {
+        centerOnPlayerButton = new DefaultIconSfxButton {
+            ClickAction = () => {
                 if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { Viewport: var viewport }) return;
                 if (Service.ClientState.LocalPlayer is not { Position: var playerPosition }) return;
                 if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
@@ -133,12 +115,9 @@ public class MapToolbar : IMapSearchWidget
             Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
         };
 
-        configurationButton = new DefaultIconSfxButton
-        {
-            ClickAction = () =>
-            {
-                if (KamiCommon.WindowManager.GetWindowOfType<ConfigurationWindow>() is {} configurationWindow)
-                {
+        configurationButton = new DefaultIconSfxButton {
+            ClickAction = () => {
+                if (KamiCommon.WindowManager.GetWindowOfType<ConfigurationWindow>() is {} configurationWindow) {
                     configurationWindow.IsOpen = !configurationWindow.IsOpen;
                     configurationWindow.Collapsed = false;
                 }
@@ -148,10 +127,8 @@ public class MapToolbar : IMapSearchWidget
             Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
         };
 
-        openLockButton = new DefaultIconSfxButton
-        {
-            ClickAction = () =>
-            {
+        openLockButton = new DefaultIconSfxButton {
+            ClickAction = () => {
                 MappySystem.SystemConfig.HideWindowFrame = false;
                 MappySystem.SystemConfig.LockWindow = false;
                 MappyPlugin.System.SaveConfig();
@@ -161,10 +138,8 @@ public class MapToolbar : IMapSearchWidget
             Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
         };
         
-        closeLockButton = new DefaultIconSfxButton
-        {
-            ClickAction = () =>
-            {
+        closeLockButton = new DefaultIconSfxButton {
+            ClickAction = () => {
                 MappySystem.SystemConfig.HideWindowFrame = true;
                 MappySystem.SystemConfig.LockWindow = true;
                 MappyPlugin.System.SaveConfig();
@@ -174,10 +149,8 @@ public class MapToolbar : IMapSearchWidget
             Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
         };
 
-        centerMapButton = new DefaultIconSfxButton
-        {
-            ClickAction = () =>
-            {
+        centerMapButton = new DefaultIconSfxButton {
+            ClickAction = () => {
                 if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { Viewport: var viewport }) return;
                 
                 MappySystem.SystemConfig.FollowPlayer = false;
@@ -190,10 +163,8 @@ public class MapToolbar : IMapSearchWidget
             Size = ImGuiHelpers.ScaledVector2(26.0f, 23.0f),
         };
 
-        questListButton = new DefaultIconSfxButton
-        {
-            ClickAction = () =>
-            {
+        questListButton = new DefaultIconSfxButton {
+            ClickAction = () => {
                 ShowQuestListOverlay = !ShowQuestListOverlay;
             },
             Label = FontAwesomeIcon.Question.ToIconString() + "##QuestListButton",
@@ -202,22 +173,19 @@ public class MapToolbar : IMapSearchWidget
         };
     }
 
-    public void Draw()
-    {
+    public void Draw() {
         if (!owner.IsFocused) ShowMapSelectOverlay = false;
 
         var hoverShow = MappySystem.SystemConfig.ShowToolbarOnHover && Bound.IsCursorInWindow();
         var alwaysShow = MappySystem.SystemConfig.AlwaysShowToolbar;
         var focusedShow = owner.IsFocused;
         
-        if (focusedShow || alwaysShow || hoverShow || ShowQuestListOverlay)
-        {
+        if (focusedShow || alwaysShow || hoverShow || ShowQuestListOverlay) {
             var regionAvailable = ImGui.GetContentRegionAvail();
             
             ImGui.SetCursorPos(Vector2.Zero);
             ImGui.PushStyleColor(ImGuiCol.ChildBg, new Vector4(0.0f, 0.0f, 0.0f, 0.80f));        
-            if (ImGui.BeginChild("###Toolbar", regionAvailable with { Y = 40.0f * ImGuiHelpers.GlobalScale }, true, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
-            {
+            if (ImGui.BeginChild("###Toolbar", regionAvailable with { Y = 40.0f * ImGuiHelpers.GlobalScale }, true, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)) {
                 DrawMapLayersWidget();
                 ImGui.SameLine();
                 DrawFollowPlayerWidget();
@@ -247,10 +215,8 @@ public class MapToolbar : IMapSearchWidget
         DrawQuestList();
     }
 
-    private void DrawMapSearch()
-    {
-        if (!ShowMapSelectOverlay || ShowMapSelectOverlay && ImGui.IsKeyPressed(ImGuiKey.Escape))
-        {
+    private void DrawMapSearch() {
+        if (!ShowMapSelectOverlay || ShowMapSelectOverlay && ImGui.IsKeyPressed(ImGuiKey.Escape)) {
             ShowMapSelectOverlay = false;
             showRegionSearchView = false;
             showTextSearchView = false;
@@ -261,34 +227,27 @@ public class MapToolbar : IMapSearchWidget
         if (showTextSearchView) searchView.Draw();
     }
 
-    private void DrawQuestList()
-    {
-        if (!ShowQuestListOverlay) {return;}
+    private void DrawQuestList() {
+        if (!ShowQuestListOverlay) return;
 
         questListView.Draw();
     }
     
-    private void DrawMapLayersWidget()
-    {
+    private void DrawMapLayersWidget() {
         mapLayersButton.Draw();
 
-        if (ImGui.BeginPopup("MapLayersPopup"))
-        {
-            if (MappySystem.MapTextureController is { Ready: true, MapLayers: var layers, CurrentMap: var map })
-            {
-                if (layers.Count is 0)
-                {
+        if (ImGui.BeginPopup("MapLayersPopup")) {
+            if (MappySystem.MapTextureController is { Ready: true, MapLayers: var layers, CurrentMap: var map }) {
+                if (layers.Count is 0) {
                     ImGui.TextColored(KnownColor.Gray.Vector(), Strings.NoLayersInfo);
                 }
             
-                foreach (var layer in layers)
-                {
+                foreach (var layer in layers) {
                     var subAreaName = layer.GetSubName();
                     
                     if(subAreaName == string.Empty) continue;
 
-                    if (ImGui.Selectable($"{subAreaName}##{layer.Id.RawString}", layer.RowId == map.RowId))
-                    {
+                    if (ImGui.Selectable($"{subAreaName}##{layer.Id.RawString}", layer.RowId == map.RowId)) {
                         MappySystem.MapTextureController.LoadMap(layer.RowId);
                     }
                 }
@@ -298,8 +257,7 @@ public class MapToolbar : IMapSearchWidget
         }
     }
 
-    private void DrawFollowPlayerWidget()
-    {
+    private void DrawFollowPlayerWidget() {
         var followPlayer = MappySystem.SystemConfig.FollowPlayer;
 
         if (followPlayer) ImGui.PushStyleColor(ImGuiCol.Button, KnownColor.Red.Vector());
@@ -307,28 +265,22 @@ public class MapToolbar : IMapSearchWidget
         if (followPlayer) ImGui.PopStyleColor();
     }
 
-    private void DrawLockUnlockWidget()
-    {
-        if (MappySystem.SystemConfig.HideWindowFrame)
-        {
+    private void DrawLockUnlockWidget() {
+        if (MappySystem.SystemConfig.HideWindowFrame) {
            openLockButton.Draw();
-        }
-        else
-        {
+        } else {
             closeLockButton.Draw();
         }
     }
     
-    private void DrawCursorPosition()
-    {
+    private void DrawCursorPosition() {
         if (ShowMapSelectOverlay) return;
         if (MappySystem.MapTextureController is not { Ready: true, CurrentMap: var map }) return;
         if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not {} mapWindow) return;
 
         var cursorScreenPosition = ImGui.GetMousePos();
 
-        if (Bound.IsBoundedBy(cursorScreenPosition, mapWindow.Viewport.StartPosition, mapWindow.Viewport.StartPosition + mapWindow.Viewport.Size))
-        {
+        if (Bound.IsBoundedBy(cursorScreenPosition, mapWindow.Viewport.StartPosition, mapWindow.Viewport.StartPosition + mapWindow.Viewport.Size)) {
             var cursorPosition = Position.GetRawTexturePosition(ImGui.GetMousePos() - mapWindow.Viewport.StartPosition, map, mapWindow.Viewport);
 
             var mapCoordinates = MapUtil.WorldToMap(cursorPosition, map);

@@ -1,7 +1,6 @@
 ﻿namespace Mappy.Models.Enums;
 
-public enum MarkerType
-{
+public enum MarkerType {
     Unknown,
     Flag,
     Gathering,

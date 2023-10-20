@@ -3,8 +3,7 @@
 namespace Mappy.Models;
 
 [Category("ModuleOptions", -10)]
-public interface IModuleConfig
-{
+public interface IModuleConfig {
     [BoolConfig("Enable")]
     public bool Enable { get; set; }
     

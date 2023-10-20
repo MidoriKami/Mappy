@@ -9,10 +9,8 @@ using Mappy.System.Localization;
 
 namespace Mappy.Views.General;
 
-public class IconDisableView
-{
-    public void Draw()
-    {
+public class IconDisableView {
+    public void Draw() {
         if (MappySystem.SystemConfig is not { SeenIcons: var seenIcons }) return;
 
         ImGui.Text(Strings.IconDisableInfo);
@@ -36,8 +34,7 @@ public class IconDisableView
         ImGuiClip.ClippedDraw(filteredIcons, DrawIcon, itemsPerLine, itemHeight);
     }
 
-    private void DrawIcon(uint iconId)
-    {
+    private void DrawIcon(uint iconId) {
         if (Service.TextureProvider.GetIcon(iconId) is not { } iconTexture) return;
         if (MappySystem.SystemConfig is not { DisallowedIcons: var disallowedIcons }) return;
 
@@ -51,16 +48,14 @@ public class IconDisableView
         ImGui.Image(iconTexture.ImGuiHandle, size);
         ImGui.GetWindowDrawList().AddRect(start, stop, color, 5.0f, ImDrawFlags.None, 3.0f);
 
-        if (ImGui.IsItemClicked())
-        {
+        if (ImGui.IsItemClicked()) {
             if (disabled) disallowedIcons.Remove(iconId);
             else disallowedIcons.Add(iconId);
             MappyPlugin.System.SaveConfig();
         }
         
         #if DEBUG
-        if (ImGui.IsItemHovered())
-        {
+        if (ImGui.IsItemHovered()) {
             ImGui.SetTooltip($"{iconId}");
         }
         #endif

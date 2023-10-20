@@ -4,8 +4,7 @@ using KamiLib.AutomaticUserInterface;
 namespace Mappy.Models;
 
 [Category("TooltipConfig", -3)]
-public interface ITooltipConfig
-{
+public interface ITooltipConfig {
     [BoolConfig("ShowTooltip")]
     public bool ShowTooltip { get; set; }
     

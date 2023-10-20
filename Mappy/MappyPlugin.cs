@@ -7,12 +7,10 @@ using Mappy.Views.Windows;
 
 namespace Mappy;
 
-public sealed class MappyPlugin : IDalamudPlugin
-{
+public sealed class MappyPlugin : IDalamudPlugin {
     public static MappySystem System = null!;
     
-    public MappyPlugin(DalamudPluginInterface pluginInterface)
-    {
+    public MappyPlugin(DalamudPluginInterface pluginInterface) {
         pluginInterface.Create<Service>();
         
         KamiCommon.Initialize(pluginInterface, "Mappy");
@@ -27,8 +25,7 @@ public sealed class MappyPlugin : IDalamudPlugin
         KamiCommon.WindowManager.AddWindow(new MapWindow());
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
         KamiCommon.Dispose();
         
         System.Unload();

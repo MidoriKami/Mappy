@@ -2,8 +2,7 @@
 
 namespace Mappy.Models.Enums;
 
-public enum CenterTarget
-{
+public enum CenterTarget {
     [EnumLabel("Disabled")]
     Disabled = 0,
 
