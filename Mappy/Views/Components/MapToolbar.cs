@@ -6,6 +6,7 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Utility;
 using ImGuiNET;
 using KamiLib;
+using KamiLib.Utility;
 using Mappy.Interfaces;
 using Mappy.System;
 using Mappy.System.Localization;
