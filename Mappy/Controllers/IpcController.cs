@@ -147,7 +147,6 @@ public class IpcController : IDisposable {
     // public ICallGateSubscriber<string, bool>? RemoveLineIpcFunction = null;
     // public ICallGateSubscriber<bool>? IsReadyIpcFunction = null;
 
-    // Todo: Add Tooltips
     public IpcController() {
         // // Copy/Paste this to subscribe to these functions, be sure to check for IPCNotReady exceptions ;)
         // AddWorldMarkerIpcFunction = Service.PluginInterface.GetIpcSubscriber<uint, Vector2, uint, string, string, string>("Mappy.World.AddMarker");
