@@ -34,7 +34,7 @@ public unsafe class Fates : ModuleBase {
                 IconId = fate.Value->MapIconId,
                 ObjectPosition = new Vector2(fate.Value->Location.X, fate.Value->Location.Z),
             
-                Radius = (FateState)fate.Value->State is FateState.Running ? fate.Value->Radius : 0.0f,
+                MinimumRadius = (FateState)fate.Value->State is FateState.Running ? fate.Value->Radius : 0.0f,
                 RadiusColor = GetFateRingColor(fate),
             
                 Tooltip = $"Lv. {fate.Value->Level} {fate.Value->Name}",

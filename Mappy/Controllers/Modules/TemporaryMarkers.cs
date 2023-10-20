@@ -16,11 +16,8 @@ public unsafe class TemporaryMarkers : ModuleBase {
     public static TemporaryMapMarker? FlagMarker { get; private set; }
     public static TemporaryMapMarker? GatheringMarker { get; private set; }
 
-    private int counter;
-
     protected override void DrawMarkers(Viewport viewport, Map map) {
         var config = GetConfig<TemporaryMarkersConfig>();
-        counter++;
 
         if (GatheringMarker is not null && GatheringMarker.MapID == map.RowId) {
             DrawUtilities.DrawMapIcon(new MappyMapIcon {
@@ -29,7 +26,8 @@ public unsafe class TemporaryMarkers : ModuleBase {
                 
                 Tooltip = GatheringMarker.TooltipText,
                 
-                Radius = GatheringMarker.Type is MarkerType.Quest ? GetAnimatedRadius(GatheringMarker.Radius, counter, 10.0f) : GatheringMarker.Radius,
+                Animate = GatheringMarker.Type is MarkerType.Quest,
+                MinimumRadius = GatheringMarker.Radius,
                 RadiusColor = config.CircleColor,
             }, config, viewport, map);
             
@@ -47,12 +45,6 @@ public unsafe class TemporaryMarkers : ModuleBase {
             FlagMarker.ShowContextMenu(viewport, map);
         }
     }
-
-    private static float GetAnimatedRadius(float originalRadius, int counter, float minRadius)
-        => MathF.Max(minRadius, originalRadius * Pulse(counter));
-    
-    private static float Pulse(float time) 
-        => 0.5f * (1 + MathF.Sin(2.0f * MathF.PI * 0.005f * time));
 
     public static void SetFlagMarker(TemporaryMapMarker marker) 
         => FlagMarker = marker;

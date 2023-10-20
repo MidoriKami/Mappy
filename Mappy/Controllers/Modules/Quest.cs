@@ -43,7 +43,7 @@ public unsafe class Quest : ModuleBase {
 
                     Tooltip = quest.Label.ToString(),
 
-                    Radius = questInfo.Radius,
+                    MinimumRadius = questInfo.Radius,
                     RadiusColor = config.InProgressColor,
 
                     VerticalPosition = questInfo.Y,
@@ -86,7 +86,7 @@ public unsafe class Quest : ModuleBase {
 
                     Tooltip = $"Lv. {markerData.RecommendedLevel} {markerData.TooltipString->ToString()}",
 
-                    Radius = markerData.Radius,
+                    MinimumRadius = markerData.Radius,
                     RadiusColor = config.InProgressColor,
                     
                     VerticalPosition = markerData.Y,
@@ -113,7 +113,7 @@ public unsafe class Quest : ModuleBase {
 
                     Tooltip = quest.Label.ToString(),
 
-                    Radius = questInfo.Radius,
+                    MinimumRadius = questInfo.Radius,
                     RadiusColor = config.LeveQuestColor,
                     
                     VerticalPosition = questInfo.Y,
@@ -131,7 +131,7 @@ public unsafe class Quest : ModuleBase {
 
                 Tooltip = markerInfo.TooltipString->ToString(),
 
-                Radius = markerInfo.Radius,
+                MinimumRadius = markerInfo.Radius,
                 RadiusColor = config.LeveQuestColor,
                 
                 VerticalPosition = markerInfo.Y,
