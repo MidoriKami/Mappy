@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Drawing;
-using System.Numerics;
-using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;

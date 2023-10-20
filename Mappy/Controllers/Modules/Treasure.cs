@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Drawing;
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Interface;
-using KamiLib.AutomaticUserInterface;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.Models.ModuleConfiguration;
 using Mappy.Utility;
-using Mappy.Views.Attributes;
 
 namespace Mappy.System.Modules;
 

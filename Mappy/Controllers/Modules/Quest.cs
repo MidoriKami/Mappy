@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Drawing;
 using System.Numerics;
-using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Application.Network.WorkDefinitions;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;

@@ -11,7 +11,6 @@ using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
 using Mappy.Models.ModuleConfiguration;
 using Mappy.System;
-using Mappy.System.Modules;
 
 namespace Mappy.Utility;
 
