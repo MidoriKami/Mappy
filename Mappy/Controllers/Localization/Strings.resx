@@ -373,7 +373,7 @@
     <value>Show Misc Tooltips</value>
   </data>
   <data name="ShowMiscTooltipsHelp" xml:space="preserve">
-    <value>Shows tooltips for map icons such as "Repair", "Shop", "Trader</value>
+    <value>Shows tooltips for map icons such as "Repair", "Shop", "Trader"</value>
   </data>
   <data name="TooltipConfig" xml:space="preserve">
     <value>Tooltip Config</value>
