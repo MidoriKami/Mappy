@@ -210,7 +210,7 @@ public unsafe class MapWindow : Window {
 
         // Only allow Context, Zoom, an DragStart if cursor is over the map
         if (Bound.IsCursorInWindow() && !Bound.IsCursorInWindowHeader()) {
-            if (ImGui.IsItemHovered() && !toolbar.ShowQuestListOverlay) {
+            if (ImGui.IsItemHovered() && !toolbar.IsHoveringQuestList) {
                 ProcessContextMenu();
                 ProcessZoomChange();
             }
