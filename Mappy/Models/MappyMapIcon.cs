@@ -19,8 +19,10 @@ public class MappyMapIcon {
     public uint IconId {
         get => iconId;
         set {
-            iconId = value;
-            texture = null;
+            if (value != iconId) {
+                iconId = value;
+                texture = null;
+            }
         }
     }
 

@@ -47,6 +47,7 @@ public unsafe class Quest : ModuleBase {
                     VerticalPosition = questInfo.Y,
                 }, icon => {
                     icon.RadiusColor = config.InProgressColor;
+                    icon.IconId = questInfo.IconId;
                 });
             }
         }
@@ -66,6 +67,7 @@ public unsafe class Quest : ModuleBase {
                 OnClickAction = () => MappySystem.MapTextureController.LoadMap(marker.TargetMapId),
             }, icon => {
                 icon.RadiusColor = config.InProgressColor;
+                icon.IconId = marker.IconId;
             });
         }
     }
@@ -89,6 +91,7 @@ public unsafe class Quest : ModuleBase {
                     VerticalPosition = markerData.Y,
                 }, icon => {
                     icon.RadiusColor = config.InProgressColor;
+                    icon.IconId = markerData.IconId;
                 });
             }
         }
@@ -116,6 +119,7 @@ public unsafe class Quest : ModuleBase {
                     VerticalPosition = questInfo.Y,
                 }, icon => {
                     icon.RadiusColor = config.LeveQuestColor;
+                    icon.IconId = questInfo.IconId;
                 });
             }
         }
@@ -134,6 +138,7 @@ public unsafe class Quest : ModuleBase {
                 VerticalPosition = markerInfo.Y,
             }, icon => {
                 icon.RadiusColor = config.LeveQuestColor;
+                icon.IconId = markerInfo.IconId;
             });
         }
     }
