@@ -12,7 +12,6 @@ using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.Models.ModuleConfiguration;
 using Mappy.System.Localization;
-using Mappy.Utility;
 
 namespace Mappy.System.Modules;
 
@@ -41,22 +40,25 @@ public unsafe class Houses : ModuleBase {
         }
     });
 
-    protected override void DrawMarkers(Viewport viewport, Map map) {
+    protected override void UpdateMarkers(Viewport viewport, Map map) {
         var config = GetConfig<HousingConfig>();
         
         foreach (var marker in housingMarkers) {
-            DrawUtilities.DrawMapIcon(new MappyMapIcon {
+            UpdateIcon((marker.RowId, marker.SubRowId), () => new MappyMapIcon {
+                MarkerId = (marker.RowId, marker.SubRowId),
                 IconId = GetIconId(marker, map),
                 ObjectPosition = new Vector2(marker.X, marker.Z),
-            
                 Tooltip = GetTooltip(marker),
-            }, config, viewport, map);
+            }, icon => {
+                icon.IconId = GetIconId(marker, map);
+            });
 
             if (config.ShowHousingNumber && marker.SubRowId is not (61 or 60)) {
-                DrawUtilities.DrawMapText(new MappyMapText {
+                UpdateText((marker.RowId, marker.SubRowId), () => new MappyMapText {
+                    TextId = (marker.RowId, marker.SubRowId),
                     Text = $"{marker.SubRowId + 1}",
                     ObjectPosition = new Vector2(marker.X, marker.Z) + new Vector2(4.0f, 4.0f),
-                }, viewport, map);
+                });
             }
         }
     }

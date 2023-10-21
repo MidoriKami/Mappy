@@ -30,58 +30,57 @@ public class MapIcons : ModuleBase {
         }
     });
 
-    protected override void DrawMarkers(Viewport viewport, Map map) {
+    protected override void UpdateMarkers(Viewport viewport, Map map) {
         var config = GetConfig<MapIconConfig>();
         
         foreach (var marker in mapMarkers) {
             if (config.AetherytesOnTop && marker.GetMarkerType() is MapMarkerType.Aetheryte) continue;
 
-            DrawMarker(marker, viewport, map);
+            DrawMarker(marker, map);
         }
 
         if (config.AetherytesOnTop) {
             foreach (var aetheryte in mapMarkers.Where(marker => marker.GetMarkerType() is MapMarkerType.Aetheryte)) {
-                DrawMarker(aetheryte, viewport, map);
+                DrawMarker(aetheryte, map);
             }
         }
     }
 
-    private void DrawMarker(MapMarker marker, Viewport viewport, Map map) {
+    private void DrawMarker(MapMarker marker, Map map) {
         var config = GetConfig<MapIconConfig>();
         
         if (marker.Icon is > 063200 and < 63900 || map.Id.RawString.StartsWith("world")) {
-            DrawUtilities.DrawMapIcon(new MappyMapIcon {
+            UpdateIcon((marker.RowId, marker.SubRowId), () => new MappyMapIcon {
+                MarkerId = (marker.RowId, marker.SubRowId),
                 IconId = marker.Icon,
                 TexturePosition = marker.GetPosition(),
                 ColorManipulation = new Vector4(0.75f, 0.75f, 0.75f, 1.0f),
-            }, config, viewport, map);
+            });
             
-            DrawUtilities.DrawMapText(new MappyMapText {
+            UpdateText((marker.RowId, marker.SubRowId), () => new MappyMapText {
+                TextId = (marker.RowId, marker.SubRowId),
                 Text = GetTooltipString(marker),
                 TexturePosition = marker.GetPosition(),
                 UseLargeFont = true,
-                
                 TextColor = KnownColor.Black.Vector(),
                 OutlineColor = KnownColor.White.Vector(),
-                
                 HoverColor = KnownColor.White.Vector(),
                 HoverOutlineColor = KnownColor.RoyalBlue.Vector(),
-                
                 OnClick = marker.GetClickAction(),
-                
-            }, viewport, map);
+            });
+
         } else {
-            DrawUtilities.DrawMapIcon(new MappyMapIcon {
+            UpdateIcon((marker.RowId, marker.SubRowId), () => new MappyMapIcon {
+                MarkerId = (marker.RowId, marker.SubRowId),
                 IconId = marker.Icon,
                 TexturePosition = marker.GetPosition(),
-            
                 GetTooltipFunc = () => GetTooltipString(marker),
                 GetTooltipExtraTextFunc = config.ShowTeleportCostTooltips ? marker.GetSecondaryTooltipString : () => string.Empty,
                 GetTooltipColorFunc = () => GetDisplayColor(marker, config),
-            
                 OnClickAction = marker.GetClickAction(),
-            
-            }, config, viewport, map);
+            }, icon => {
+                icon.GetTooltipExtraTextFunc = config.ShowTeleportCostTooltips ? marker.GetSecondaryTooltipString : () => string.Empty;
+            });
         }
     }
     

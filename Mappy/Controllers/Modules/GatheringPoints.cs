@@ -8,7 +8,6 @@ using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.Models.ModuleConfiguration;
-using Mappy.Utility;
 
 namespace Mappy.System.Modules;
 
@@ -23,23 +22,18 @@ public class GatheringPoints : ModuleBase {
         return base.ShouldDrawMarkers(map);
     }
 
-    protected override void DrawMarkers(Viewport viewport, Map map) {
-        var config = GetConfig<GatheringPointConfig>();
-        
+    protected override void UpdateMarkers(Viewport viewport, Map map) {
         foreach (var obj in Service.ObjectTable) {
             if(obj.ObjectKind != ObjectKind.GatheringPoint) continue;
 
             if(!IsTargetable(obj)) continue;
             
-            var gatheringPoint = LuminaCache<GatheringPoint>.Instance.GetRow(obj.DataId)!;
-            var gatheringPointBase = LuminaCache<GatheringPointBase>.Instance.GetRow(gatheringPoint.GatheringPointBase.Row)!;
-
-            DrawUtilities.DrawMapIcon(new MappyMapIcon {
+            UpdateIcon(obj.ObjectId, () => new MappyMapIcon {
+                MarkerId = obj.ObjectId,
                 IconId = GetIconIdForGatheringNode(obj),
                 ObjectPosition = new Vector2(obj.Position.X, obj.Position.Z),
-                
-                Tooltip = $"Lv. {gatheringPointBase.GatheringLevel} {obj.Name.TextValue}",
-            }, config, viewport, map);
+                Tooltip = $"Lv. {GetGatheringPointLevel(obj)} {obj.Name.TextValue}",
+            }); // Gathering points don't change, so it doesn't need to be updated.
         }
     }
 
@@ -57,5 +51,12 @@ public class GatheringPoints : ModuleBase {
             5 => 60445,
             _ => throw new Exception($"Unknown Gathering Type: {gatheringPointBase.GatheringType.Row}")
         };
+    }
+
+    private string GetGatheringPointLevel(GameObject obj) {
+        var gatheringPoint = LuminaCache<GatheringPoint>.Instance.GetRow(obj.DataId)!;
+        var gatheringPointBase = LuminaCache<GatheringPointBase>.Instance.GetRow(gatheringPoint.GatheringPointBase.Row)!;
+
+        return gatheringPointBase.GatheringLevel.ToString();
     }
 }

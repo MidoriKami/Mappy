@@ -4,7 +4,6 @@ using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.Models.ModuleConfiguration;
-using Mappy.Utility;
 
 namespace Mappy.System.Modules;
 
@@ -12,9 +11,7 @@ public class PluginIntegrations : ModuleBase {
     public override ModuleName ModuleName => ModuleName.PluginIntegrations;
     public override IModuleConfig Configuration { get; protected set; } = new PluginIntegrationsConfig();
 
-    protected override void DrawMarkers(Viewport viewport, Map map) {
-        var config = GetConfig<PluginIntegrationsConfig>();
-        
+    protected override void UpdateMarkers(Viewport viewport, Map map) {
         var windowPos = ImGui.GetWindowPos();
         
         foreach (var (_, marker) in IpcController.LineMarkers) {
@@ -26,18 +23,17 @@ public class PluginIntegrations : ModuleBase {
             ImGui.GetWindowDrawList().AddLine(start, stop, ImGui.GetColorU32(marker.Color), marker.Thickness);
         }
         
-        foreach (var (_, marker) in IpcController.Markers) {
+        foreach (var (markerId, marker) in IpcController.Markers) {
             if (map.RowId != marker.MapId) continue;
 
-            DrawUtilities.DrawMapIcon(new MappyMapIcon {
+            UpdateIcon(markerId, () => new MappyMapIcon {
+                MarkerId = markerId,
                 IconId = marker.IconId,
                 TexturePosition = marker.PositionType is PositionType.Texture ? marker.Position : null,
                 ObjectPosition = marker.PositionType is PositionType.World ? marker.Position : null,
-                
                 Tooltip = marker.Tooltip,
                 TooltipExtraText = marker.Description,
-                
-            }, config, viewport, map);
+            });
         }
     }
 }

@@ -6,7 +6,6 @@ using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.Models.ModuleConfiguration;
-using Mappy.Utility;
 
 namespace Mappy.System.Modules;
 
@@ -23,18 +22,19 @@ public class Hostiles : ModuleBase {
         return base.ShouldDrawMarkers(map);
     }
 
-    protected override void DrawMarkers(Viewport viewport, Map map) {
-        var config = GetConfig<HostilesConfiguration>();
-        
+    protected override void UpdateMarkers(Viewport viewport, Map map) {
         foreach (var obj in Service.ObjectTable) {
             if (obj as BattleNpc is not { BattleNpcKind: BattleNpcSubKind.Enemy } battleNpc) continue;
             
-            DrawUtilities.DrawMapIcon(new MappyMapIcon {
+            UpdateIcon(obj.ObjectId, () => new MappyMapIcon {
+                MarkerId = obj.ObjectId,
                 IconId = GetIconForBattleNpc(battleNpc),
                 ObjectPosition = new Vector2(battleNpc.Position.X, battleNpc.Position.Z),
-                
                 Tooltip = $"Lv. {battleNpc.Level} {battleNpc.Name.TextValue}",
-            }, config, viewport, map);
+            }, icon => {
+                icon.IconId = GetIconForBattleNpc(battleNpc);
+                icon.ObjectPosition = new Vector2(battleNpc.Position.X, battleNpc.Position.Z);
+            });
         }
     }
 

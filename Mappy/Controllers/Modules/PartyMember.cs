@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using Dalamud.Memory;
 using FFXIVClientStructs.FFXIV.Client.Game.Group;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
@@ -22,7 +21,7 @@ public unsafe class PartyMember : ModuleBase {
         return base.ShouldDrawMarkers(map);
     }
     
-    protected override void DrawMarkers(Viewport viewport, Map map) {
+    protected override void UpdateMarkers(Viewport viewport, Map map) {
         if (Service.ClientState.LocalPlayer is not { ObjectId: var playerObjectId }) return;
         var config = GetConfig<PartyMemberConfig>();
 
@@ -30,13 +29,17 @@ public unsafe class PartyMember : ModuleBase {
             if (member.ObjectID is 0xE0000000 or 0) continue;
             if (member.ObjectID == playerObjectId) continue;
             
-            DrawUtilities.DrawMapIcon(new MappyMapIcon {
+            UpdateIcon(member.ObjectID, () => new MappyMapIcon {
+                MarkerId = member.ObjectID,
                 IconId = config.DisplayJobIcons ? member.ClassJob + 62000u : config.SelectedIcon,
                 ObjectPosition = new Vector2(member.X, member.Z),
-                
                 TooltipExtraIcon = member.ClassJob + 62000u,
-                Tooltip = MemoryHelper.ReadStringNullTerminated((nint)member.Name),
-            }, config, viewport, map);
+                Tooltip = member.GetName(),
+            }, icon => {
+                icon.IconId = config.DisplayJobIcons ? member.ClassJob + 62000u : config.SelectedIcon;
+                icon.ObjectPosition = new Vector2(member.X, member.Z);
+                icon.TooltipExtraIcon = member.ClassJob + 62000u;
+            });
         }
     }
 

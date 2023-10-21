@@ -9,7 +9,7 @@ using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.Models.ModuleConfiguration;
-using Mappy.Utility;
+using Map = Lumina.Excel.GeneratedSheets.Map;
 using QuestLinkMarker = FFXIVClientStructs.FFXIV.Client.UI.Agent.QuestLinkMarker;
 
 namespace Mappy.System.Modules;
@@ -18,15 +18,15 @@ public unsafe class Quest : ModuleBase {
     public override ModuleName ModuleName => ModuleName.QuestMarkers;
     public override IModuleConfig Configuration { get; protected set; } = new QuestConfig();
 
-    protected override void DrawMarkers(Viewport viewport, Map map) {
+    protected override void UpdateMarkers(Viewport viewport, Map map) {
         var config = GetConfig<QuestConfig>();
 
-        if (!config.HideUnacceptedQuests) DrawUnacceptedQuests(viewport, map);
-        if (!config.HideAcceptedQuests) DrawAcceptedQuests(viewport, map);
-        if (!config.HideLeveQuests) DrawLeveQuests(viewport, map);
+        if (!config.HideUnacceptedQuests) DrawUnacceptedQuests(map);
+        if (!config.HideAcceptedQuests) DrawAcceptedQuests(map);
+        if (!config.HideLeveQuests) DrawLeveQuests(map);
     }
 
-    private void DrawAcceptedQuests(Viewport viewport, Map map) {
+    private void DrawAcceptedQuests(Map map) {
         var mapData = FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
         var config = GetConfig<QuestConfig>();
 
@@ -37,17 +37,17 @@ public unsafe class Quest : ModuleBase {
                 if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap, Territory.Row: var levelTerritory }) continue;
                 if (levelMap != map.RowId && levelTerritory != map.TerritoryType.Row) continue;
 
-                DrawUtilities.DrawMapIcon(new MappyMapIcon {
+                UpdateIcon((questInfo.ObjectiveId, questInfo.LevelId), () => new MappyMapIcon {
+                    MarkerId = (questInfo.ObjectiveId, questInfo.LevelId),
                     IconId = questInfo.IconId,
                     ObjectPosition = new Vector2(questInfo.X, questInfo.Z),
-
                     Tooltip = quest.Label.ToString(),
-
                     MinimumRadius = questInfo.Radius,
                     RadiusColor = config.InProgressColor,
-
                     VerticalPosition = questInfo.Y,
-                }, config, viewport, map);
+                }, icon => {
+                    icon.RadiusColor = config.InProgressColor;
+                });
             }
         }
 
@@ -56,22 +56,21 @@ public unsafe class Quest : ModuleBase {
             if (LuminaCache<Level>.Instance.GetRow(marker.LevelId) is not { X: var x, Y: var y, Z: var z }) continue;
             if (map.RowId != marker.SourceMapId) continue;
 
-            DrawUtilities.DrawMapIcon(new MappyMapIcon {
+            UpdateIcon((marker.QuestId, marker.LevelId), () => new MappyMapIcon {
+                MarkerId = (marker.QuestId, marker.LevelId),
                 IconId = marker.IconId,
                 ObjectPosition = new Vector2(x, z),
-
                 GetTooltipFunc = () => marker.TooltipText.ToString(),
-
                 RadiusColor = config.InProgressColor,
-
                 VerticalPosition = y,
-                
                 OnClickAction = () => MappySystem.MapTextureController.LoadMap(marker.TargetMapId),
-            }, config, viewport, map);
+            }, icon => {
+                icon.RadiusColor = config.InProgressColor;
+            });
         }
     }
     
-    private void DrawUnacceptedQuests(Viewport viewport, Map map) {
+    private void DrawUnacceptedQuests(Map map) {
         var mapData = FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
         var config = GetConfig<QuestConfig>();
         
@@ -80,22 +79,22 @@ public unsafe class Quest : ModuleBase {
                 if (LuminaCache<Level>.Instance.GetRow(markerData.LevelId) is not { Map.Row: var levelMap }) continue;
                 if (levelMap != map.RowId) continue;
 
-                DrawUtilities.DrawMapIcon(new MappyMapIcon {
+                UpdateIcon((markerData.ObjectiveId, markerData.LevelId), () => new MappyMapIcon {
+                    MarkerId = (markerData.ObjectiveId, markerData.LevelId),
                     IconId = markerData.IconId,
                     ObjectPosition = new Vector2(markerData.X, markerData.Z),
-
                     Tooltip = $"Lv. {markerData.RecommendedLevel} {markerData.TooltipString->ToString()}",
-
                     MinimumRadius = markerData.Radius,
                     RadiusColor = config.InProgressColor,
-                    
                     VerticalPosition = markerData.Y,
-                }, config, viewport, map);
+                }, icon => {
+                    icon.RadiusColor = config.InProgressColor;
+                });
             }
         }
     }
     
-    private void DrawLeveQuests(Viewport viewport, Map map) {
+    private void DrawLeveQuests(Map map) {
         var mapData = FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
         var config = GetConfig<QuestConfig>();
 
@@ -107,17 +106,17 @@ public unsafe class Quest : ModuleBase {
                 if (LuminaCache<Level>.Instance.GetRow(questInfo.LevelId) is not { Map.Row: var levelMap, Territory.Row: var levelTerritory } ) continue;
                 if (levelMap != map.RowId && levelTerritory != map.TerritoryType.Row) continue;
                 
-                DrawUtilities.DrawMapIcon(new MappyMapIcon {
+                UpdateIcon(quest.ObjectiveId, () => new MappyMapIcon {
+                    MarkerId = quest.ObjectiveId,
                     IconId = questInfo.IconId,
                     ObjectPosition = new Vector2(questInfo.X, questInfo.Z),
-
                     Tooltip = quest.Label.ToString(),
-
                     MinimumRadius = questInfo.Radius,
                     RadiusColor = config.LeveQuestColor,
-                    
                     VerticalPosition = questInfo.Y,
-                }, config, viewport, map);
+                }, icon => {
+                    icon.RadiusColor = config.LeveQuestColor;
+                });
             }
         }
         
@@ -125,17 +124,17 @@ public unsafe class Quest : ModuleBase {
             if(LuminaCache<Level>.Instance.GetRow(markerInfo.LevelId) is not { Map.Row: var levelMap, Territory.Row: var levelTerritory } ) continue;
             if (levelMap != map.RowId && levelTerritory != map.TerritoryType.Row) continue;
             
-            DrawUtilities.DrawMapIcon(new MappyMapIcon {
+            UpdateIcon((markerInfo.ObjectiveId, markerInfo.LevelId), () => new MappyMapIcon {
+                MarkerId = (markerInfo.ObjectiveId, markerInfo.LevelId),
                 IconId = markerInfo.IconId,
                 TexturePosition = new Vector2(markerInfo.X, markerInfo.Z),
-
                 Tooltip = markerInfo.TooltipString->ToString(),
-
                 MinimumRadius = markerInfo.Radius,
                 RadiusColor = config.LeveQuestColor,
-                
                 VerticalPosition = markerInfo.Y,
-            }, config, viewport, map);
+            }, icon => {
+                icon.RadiusColor = config.LeveQuestColor;
+            });
         }
     }
 

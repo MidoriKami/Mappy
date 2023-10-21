@@ -7,7 +7,6 @@ using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.Models.ModuleConfiguration;
-using Mappy.Utility;
 
 namespace Mappy.System.Modules;
 
@@ -15,19 +14,19 @@ public class Treasure : ModuleBase {
     public override ModuleName ModuleName => ModuleName.TreasureMarkers;
     public override IModuleConfig Configuration { get; protected set; } = new TreasureConfig();
 
-    protected override void DrawMarkers(Viewport viewport, Map map) {
+    protected override void UpdateMarkers(Viewport viewport, Map map) {
         var config = GetConfig<TreasureConfig>();
         
         foreach (var obj in Service.ObjectTable) {
             if (obj.ObjectKind != ObjectKind.Treasure) continue;
             if(!IsTargetable(obj)) continue;
-            
-            DrawUtilities.DrawMapIcon(new MappyMapIcon {
+
+            UpdateIcon(obj.ObjectId, () => new MappyMapIcon {
+                MarkerId = obj.ObjectId,
                 IconId = config.SelectedIcon,
                 ObjectPosition = new Vector2(obj.Position.X, obj.Position.Z),
-
                 Tooltip = obj.Name.TextValue,
-            }, config, viewport, map);
+            });
         }
     }
 

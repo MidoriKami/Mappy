@@ -9,7 +9,6 @@ using ImGuiNET;
 using KamiLib.Utility;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
-using Mappy.Models.ModuleConfiguration;
 using Mappy.System;
 
 namespace Mappy.Utility;
@@ -43,25 +42,8 @@ public partial class DrawUtilities {
         _ => iconId,
     };
 
-    private static IconLayer? GetDirectionalIconLayer(MappyMapIcon iconData, IDirectionalMarkerConfig config) {
-        var offsetPosition = Vector2.Zero;
-        
-        var isBelowPlayer = false;
-        var isAbovePlayer = false;
-
-        if (Service.ClientState is { LocalPlayer.Position.Y: var playerHeight }) {
-            var distance = playerHeight - iconData.VerticalPosition;
-
-            if (Math.Abs(distance) > config.DistanceThreshold) {
-                isBelowPlayer = distance > 0;
-                isAbovePlayer = distance < 0;
-            }
-        }
-
-        if (isBelowPlayer) return new IconLayer(60955, offsetPosition);
-        if (isAbovePlayer) return new IconLayer(60954, offsetPosition);
-        return null;
-    }
+    private static readonly IconLayer BelowPlayer = new(60955, Vector2.Zero);
+    private static readonly IconLayer AbovePlayer = new(60954, Vector2.Zero);
     
     private static bool IsIconDisabled(uint iconId) {
         if (MappySystem.SystemConfig is not { SeenIcons: var seenIcons, DisallowedIcons: var disallowedIcons }) return true;

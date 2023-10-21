@@ -12,9 +12,18 @@ using Action = System.Action;
 namespace Mappy.Models;
 
 public class MappyMapIcon {
-    // public required object MarkerId { get; init; } // Todo: use new marker management system
-    
-    public uint IconId { get; set; }
+    public required object MarkerId { get; init; }
+    public bool Stale { get; set; }
+
+    private uint iconId;
+    public uint IconId {
+        get => iconId;
+        set {
+            iconId = value;
+            texture = null;
+        }
+    }
+
     public List<IconLayer> Layers { get; set; } = new();
     
     public float MinimumRadius { get; set; }
@@ -49,7 +58,8 @@ public class MappyMapIcon {
     
     public Action? OnClickAction { get; set; }
 
-    public IDalamudTextureWrap? IconTexture => Service.TextureProvider.GetIcon(IconId);
+    private IDalamudTextureWrap? texture;
+    public IDalamudTextureWrap? IconTexture => texture ??= Service.TextureProvider.GetIcon(IconId);
     
     private static float GetAnimatedRadius(float originalRadius, long counter, float minRadius)
         => MathF.Max(minRadius, originalRadius * Pulse(counter));

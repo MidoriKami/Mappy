@@ -25,7 +25,7 @@ public unsafe class Player : ModuleBase {
         return base.ShouldDrawMarkers(map);
     }
 
-    protected override void DrawMarkers(Viewport viewport, Map map) {
+    protected override void UpdateMarkers(Viewport viewport, Map map) {
         var config = GetConfig<PlayerConfig>();
         
         if(config.ShowCone) DrawLookLine(Service.ClientState.LocalPlayer!);

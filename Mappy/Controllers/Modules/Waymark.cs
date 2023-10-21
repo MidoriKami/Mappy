@@ -7,7 +7,6 @@ using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.Models.ModuleConfiguration;
-using Mappy.Utility;
 using FieldMarker = Lumina.Excel.GeneratedSheets.FieldMarker;
 using Map = Lumina.Excel.GeneratedSheets.Map;
 
@@ -25,16 +24,18 @@ public unsafe class Waymark : ModuleBase {
         return base.ShouldDrawMarkers(map);
     }
     
-    protected override void DrawMarkers(Viewport viewport, Map map) {
+    protected override void UpdateMarkers(Viewport viewport, Map map) {
         var markerSpan = MarkingController.Instance()->FieldMarkerArraySpan;
-        var config = GetConfig<WaymarkConfig>();
         
         foreach (var index in Enumerable.Range(0, 8)) {
             if (markerSpan[index] is { Active: true } marker) {
-                DrawUtilities.DrawMapIcon(new MappyMapIcon {
+                UpdateIcon(index, () => new MappyMapIcon {
+                    MarkerId = index,
                     IconId = GetIconForMarkerIndex(index),
                     ObjectPosition = new Vector2(marker.X, marker.Z) / 1000.0f,
-                }, config, viewport, map);
+                }, icon => {
+                    icon.ObjectPosition = new Vector2(marker.X, marker.Z) / 1000.0f;
+                });
             }
         }
     }

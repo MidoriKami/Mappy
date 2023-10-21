@@ -1,28 +1,63 @@
-﻿using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiLib.AutomaticUserInterface;
 using KamiLib.FileIO;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
 using Mappy.Models.Enums;
+using Mappy.Utility;
 using MapData = Mappy.System.MapData;
 
 namespace Mappy.Abstracts;
 
-// Todo: Implement system for managing markers so they don't have to be "new"'d every frame
 public abstract unsafe class ModuleBase {
     public abstract ModuleName ModuleName { get; }
     public abstract IModuleConfig Configuration { get; protected set; }
     protected T GetConfig<T>() where T : IModuleConfig => (T) Configuration;
 
+    private readonly List<MappyMapIcon> mapIcons = new();
+    private readonly List<MappyMapText> mapText = new();
+
     // Map Marker
     public virtual void ZoneChanged(uint territoryType) { }
     public virtual void LoadForMap(MapData mapData) { }
-    protected abstract void DrawMarkers(Viewport viewport, Map map);
     protected virtual bool ShouldDrawMarkers(Map map) => Configuration.Enable;
+    protected abstract void UpdateMarkers(Viewport viewport, Map map);
     public void Draw(Viewport viewport, Map map) {
         if (!ShouldDrawMarkers(map)) return;
         
-        DrawMarkers(viewport, map);
+        foreach (var icon in mapIcons) icon.Stale = true;
+        foreach (var text in mapText) text.Stale = true;
+        
+        UpdateMarkers(viewport, map);
+
+        mapIcons.RemoveAll(icon => icon.Stale);
+        mapText.RemoveAll(text => text.Stale);
+        
+        foreach(var icon in mapIcons) DrawUtilities.DrawMapIcon(icon, Configuration, viewport, map);
+        foreach(var text in mapText) DrawUtilities.DrawMapText(text, viewport, map);
+    }
+
+    protected void UpdateIcon(object markerId, Func<MappyMapIcon> makeNewIcon, Action<MappyMapIcon>? updateIcon = null) {
+        if (mapIcons.FirstOrDefault(mapIcon => mapIcon.MarkerId.Equals(markerId)) is { } icon) {
+            icon.Stale = false;
+            updateIcon?.Invoke(icon);
+        }
+        else {
+            mapIcons.Add(makeNewIcon());
+        }
+    }
+
+    protected void UpdateText(object textId, Func<MappyMapText> makeNewText, Action<MappyMapText>? updateText = null) {
+        if (mapText.FirstOrDefault(mapTextLabel => mapTextLabel.TextId.Equals(textId)) is { } text) {
+            text.Stale = false;
+            updateText?.Invoke(text);
+        }
+        else {
+            mapText.Add(makeNewText());
+        }
     }
 
     // File IO

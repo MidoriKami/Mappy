@@ -8,8 +8,18 @@ public class IconLayer {
         IconId = iconId;
         PositionOffset = offsetPosition;
     }
-    
-    public uint IconId { get; set; }
+
+    private uint _iconId { get; set; }
+
+    public uint IconId {
+        get => _iconId;
+        set {
+            _iconId = value;
+            texture = null;
+        }
+    }
+
     public Vector2 PositionOffset { get; set; }
-    public IDalamudTextureWrap? IconTexture => Service.TextureProvider.GetIcon(IconId);
+    private IDalamudTextureWrap? texture;
+    public IDalamudTextureWrap? IconTexture => texture ??= Service.TextureProvider.GetIcon(IconId);
 }

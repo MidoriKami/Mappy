@@ -8,7 +8,6 @@ using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.Models.ModuleConfiguration;
-using Mappy.Utility;
 
 namespace Mappy.System.Modules;
 
@@ -22,26 +21,29 @@ public class Pet : ModuleBase {
         return base.ShouldDrawMarkers(map);
     }
     
-    protected override void DrawMarkers(Viewport viewport, Map map) {
+    protected override void UpdateMarkers(Viewport viewport, Map map) {
         foreach (var obj in Service.PartyList) {
-            DrawPet(obj.ObjectId, viewport, map);
+            DrawPet(obj.ObjectId);
         }
 
         if (Service.PartyList.Length is 0 && Service.ClientState.LocalPlayer is { } player) {
-            DrawPet(player.ObjectId, viewport, map);
+            DrawPet(player.ObjectId);
         }
     }
     
-    private void DrawPet(uint ownerID, Viewport viewport, Map map) {
+    private void DrawPet(uint ownerID) {
         var config = GetConfig<PetConfig>();
         
         foreach (var obj in OwnedPets(ownerID)) {
-            DrawUtilities.DrawMapIcon(new MappyMapIcon {
+            UpdateIcon(obj.ObjectId, () => new MappyMapIcon {
+                MarkerId = obj.ObjectId,
                 IconId = config.SelectedIcon,
                 ObjectPosition = new Vector2(obj.Position.X, obj.Position.Z),
-                
                 Tooltip = obj.Name.TextValue,
-            }, config, viewport, map);
+            }, icon => {
+                icon.IconId = config.SelectedIcon;
+                icon.ObjectPosition = new Vector2(obj.Position.X, obj.Position.Z);
+            });
         }
     }
     

@@ -10,7 +10,6 @@ using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.Models.ModuleConfiguration;
 using Mappy.System.Localization;
-using Mappy.Utility;
 
 namespace Mappy.System.Modules;
 
@@ -24,25 +23,27 @@ public unsafe class Fates : ModuleBase {
         return base.ShouldDrawMarkers(map);
     }
 
-    protected override void DrawMarkers(Viewport viewport, Map map) {
-        var config = GetConfig<FateConfig>();
-        
+    protected override void UpdateMarkers(Viewport viewport, Map map) {
         foreach (var fate in FateManager.Instance()->Fates.Span) {
             if (fate.Value is null) continue;
             
-            DrawUtilities.DrawMapIcon(new MappyMapIcon {
+            UpdateIcon(fate.Value->FateId, () => new MappyMapIcon {
+                MarkerId = fate.Value->FateId,
                 IconId = fate.Value->MapIconId,
                 ObjectPosition = new Vector2(fate.Value->Location.X, fate.Value->Location.Z),
-            
                 MinimumRadius = (FateState)fate.Value->State is FateState.Running ? fate.Value->Radius : 0.0f,
                 RadiusColor = GetFateRingColor(fate),
-            
                 Tooltip = $"Lv. {fate.Value->Level} {fate.Value->Name}",
                 TooltipExtraText = GetFateSecondaryTooltip(fate, fate.Value->IsExpBonus),
-            
                 Layers = GetFateLayers(fate),
                 VerticalPosition = fate.Value->Location.Y,
-            }, config, viewport, map);
+            }, icon => {
+                icon.ObjectPosition = new Vector2(fate.Value->Location.X, fate.Value->Location.Z);
+                icon.MinimumRadius = (FateState) fate.Value->State is FateState.Running ? fate.Value->Radius : 0.0f;
+                icon.RadiusColor = GetFateRingColor(fate);
+                icon.TooltipExtraText = GetFateSecondaryTooltip(fate, fate.Value->IsExpBonus);
+                icon.VerticalPosition = fate.Value->Location.Y;
+            });
         }
     }
 

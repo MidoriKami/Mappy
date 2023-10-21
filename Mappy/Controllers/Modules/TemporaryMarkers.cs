@@ -1,10 +1,8 @@
-﻿using System;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+﻿using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.Models.ModuleConfiguration;
-using Mappy.Utility;
 using ModuleBase = Mappy.Abstracts.ModuleBase;
 
 namespace Mappy.System.Modules;
@@ -16,31 +14,30 @@ public unsafe class TemporaryMarkers : ModuleBase {
     public static TemporaryMapMarker? FlagMarker { get; private set; }
     public static TemporaryMapMarker? GatheringMarker { get; private set; }
 
-    protected override void DrawMarkers(Viewport viewport, Map map) {
+    protected override void UpdateMarkers(Viewport viewport, Map map) {
         var config = GetConfig<TemporaryMarkersConfig>();
 
         if (GatheringMarker is not null && GatheringMarker.MapID == map.RowId) {
-            DrawUtilities.DrawMapIcon(new MappyMapIcon {
+            UpdateIcon(GatheringMarker, () => new MappyMapIcon {
+                MarkerId = GatheringMarker,
                 IconId = GatheringMarker.IconID,
                 ObjectPosition = GatheringMarker.Position,
-                
                 Tooltip = GatheringMarker.TooltipText,
-                
                 Animate = GatheringMarker.Type is MarkerType.Quest,
                 MinimumRadius = GatheringMarker.Radius,
                 RadiusColor = config.CircleColor,
-            }, config, viewport, map);
+            });
             
             GatheringMarker.ShowContextMenu(viewport, map);
         }
    
         if (FlagMarker is not null && FlagMarker.MapID == map.RowId && AgentMap.Instance() is not null && AgentMap.Instance()->IsFlagMarkerSet is 1) {
-            DrawUtilities.DrawMapIcon(new MappyMapIcon {
+            UpdateIcon(FlagMarker, () => new MappyMapIcon {
+                MarkerId = FlagMarker,
                 IconId = FlagMarker.IconID,
                 ObjectPosition = FlagMarker.Position,
-                
-                Tooltip = FlagMarker.TooltipText,
-            }, config, viewport, map);
+                Tooltip = FlagMarker.TooltipText
+            });
 
             FlagMarker.ShowContextMenu(viewport, map);
         }

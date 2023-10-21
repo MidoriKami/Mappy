@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Types;
@@ -15,7 +16,7 @@ namespace Mappy.Utility;
 
 public partial class DrawUtilities {
     public static void DrawMapIcon(MappyMapIcon iconData, object configuration, Viewport viewport, Map map) {
-        iconData.IconId = TryReplaceIconId(iconData.IconId);
+        TryUpdateIconId(iconData);
         if (iconData is { IconId: 0 } or { IconTexture: null }) return;
 
         var drawPosition = iconData.GetDrawPosition(map);
@@ -48,16 +49,29 @@ public partial class DrawUtilities {
                         break;
                 }
             }
-            
-            if (configuration is IDirectionalMarkerConfig { EnableDirectionalMarker: true } directionalMarkerConfig) {
-                if (GetDirectionalIconLayer(iconData, directionalMarkerConfig) is { } layer) {
-                    iconData.Layers.Add(layer);
-                }
-            }
 
             foreach (var layer in iconData.Layers.Where(layer => !IsIconDisabled(layer.IconId))) {
                 DrawIconTexture(layer.IconTexture, viewport, drawPosition + layer.PositionOffset * iconConfig.IconScale / viewport.Scale, iconConfig.IconScale);
             }
+
+            if (configuration is IDirectionalMarkerConfig { EnableDirectionalMarker: true, DistanceThreshold: var threshold }) {
+                if (Service.ClientState is { LocalPlayer.Position.Y: var playerHeight }) {
+                    var distance = playerHeight - iconData.VerticalPosition;
+
+                    if (Math.Abs(distance) > threshold) {
+                        if (distance > 0) DrawIconTexture(BelowPlayer.IconTexture, viewport, drawPosition + BelowPlayer.PositionOffset * iconConfig.IconScale / viewport.Scale, iconConfig.IconScale);
+                        if (distance < 0) DrawIconTexture(AbovePlayer.IconTexture, viewport, drawPosition + AbovePlayer.PositionOffset * iconConfig.IconScale / viewport.Scale, iconConfig.IconScale);
+                    }
+                }
+            }
+        }
+    }
+    
+    private static void TryUpdateIconId(MappyMapIcon iconData) {
+        var replacementId = TryReplaceIconId(iconData.IconId);
+
+        if (iconData.IconId != replacementId) {
+            iconData.IconId = replacementId;
         }
     }
 

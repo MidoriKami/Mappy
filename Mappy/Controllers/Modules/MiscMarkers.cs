@@ -9,7 +9,6 @@ using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.Models.ModuleConfiguration;
-using Mappy.Utility;
 using Map = Lumina.Excel.GeneratedSheets.Map;
 
 namespace Mappy.System.Modules;
@@ -19,18 +18,18 @@ public unsafe class MiscMarkers : ModuleBase {
     public override IModuleConfig Configuration { get; protected set; } = new MiscConfig();
     private readonly Dictionary<uint, string> cardRewardCache = new();
 
-    protected override void DrawMarkers(Viewport viewport, Map map) {
+    protected override void UpdateMarkers(Viewport viewport, Map map) {
         var data = FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
         
-        DrawMapMarkerContainer(data->GuildLeveAssignmentMapMarkerData, viewport, map);
-        DrawMapMarkerContainer(data->GuildOrderGuideMarkerData, viewport, map);
-        DrawMapMarkerContainer(data->GemstoneTraderMarkerData, viewport, map);
+        DrawMapMarkerContainer(data->GuildLeveAssignmentMapMarkerData, map);
+        DrawMapMarkerContainer(data->GuildOrderGuideMarkerData, map);
+        DrawMapMarkerContainer(data->GemstoneTraderMarkerData, map);
         
-        DrawCustomTalkMarkers(viewport, map);
-        DrawTripleTriadMarkers(viewport, map);
+        DrawCustomTalkMarkers(map);
+        DrawTripleTriadMarkers(map);
     }
     
-    private void DrawTripleTriadMarkers(Viewport viewport, Map map) {
+    private void DrawTripleTriadMarkers(Map map) {
         var data = FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
 
         foreach (var markerInfo in data->TripleTriadMarkerData.GetAllMarkers()) {
@@ -47,43 +46,41 @@ public unsafe class MiscMarkers : ModuleBase {
                     cardRewardCache.Add(subLocation.ObjectiveId, string.Join("\n", cardRewards));
                 }
                 
-                DrawObjective(subLocation, viewport, map, subLocation.TooltipString->ToString(), cardRewardCache[subLocation.ObjectiveId]);
+                DrawObjective(subLocation, map, subLocation.TooltipString->ToString(), cardRewardCache[subLocation.ObjectiveId]);
             }
         }
     }
     
-    private void DrawMapMarkerContainer(MapMarkerContainer container, Viewport viewport, Map map) {
+    private void DrawMapMarkerContainer(MapMarkerContainer container, Map map) {
         foreach (var markerInfo in container.GetAllMarkers()) {
             foreach (var subLocation in markerInfo.MarkerData.Span) {
-                DrawObjective(subLocation, viewport, map, subLocation.TooltipString->ToString());
+                DrawObjective(subLocation, map, subLocation.TooltipString->ToString());
             }
         }
     }
     
-    private void DrawCustomTalkMarkers(Viewport viewport, Map map) {
+    private void DrawCustomTalkMarkers(Map map) {
         var data = FFXIVClientStructs.FFXIV.Client.Game.UI.Map.Instance();
         
         foreach (var markerInfo in data->CustomTalkMarkerData.GetAllMarkers()) {
             foreach (var subLocation in markerInfo.MarkerData.Span) {
                 if(markerInfo.Label.ToString().IsNullOrEmpty() && subLocation.IconId is not 61731) continue;
                 
-                DrawObjective(subLocation, viewport, map, subLocation.TooltipString->ToString());
+                DrawObjective(subLocation, map, subLocation.TooltipString->ToString());
             }
         }
     }
     
-    private void DrawObjective(MapMarkerData markerInfo, Viewport viewport, Map map, string tooltip, string? secondaryTooltip = null) {
+    private void DrawObjective(MapMarkerData markerInfo, Map map, string tooltip, string? secondaryTooltip = null) {
         if (LuminaCache<Level>.Instance.GetRow(markerInfo.LevelId) is not { } levelData) return;
         if (levelData.Map.Row != map.RowId) return;
         
-        var config = GetConfig<MiscConfig>();
-
-        DrawUtilities.DrawMapIcon(new MappyMapIcon {
+        UpdateIcon((markerInfo.ObjectiveId, markerInfo.LevelId), () => new MappyMapIcon {
+            MarkerId = (markerInfo.ObjectiveId, markerInfo.LevelId),
             IconId = markerInfo.IconId is 60091 ? 61731 : markerInfo.IconId,
             ObjectPosition = new Vector2(markerInfo.X, markerInfo.Z),
-            
             Tooltip = tooltip,
             TooltipExtraText = secondaryTooltip ?? string.Empty,
-        }, config, viewport, map);
+        });
     }
 }
