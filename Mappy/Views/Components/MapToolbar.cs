@@ -20,7 +20,8 @@ public class MapToolbar : IMapSearchWidget {
     private readonly Window owner;
     public bool ShowMapSelectOverlay { get; set; }
     public bool ShowQuestListOverlay { get; set; }
-    
+    public bool IsHoveringQuestList => questListView.IsQuestListHovered;
+
     private bool showRegionSearchView;
     private bool showTextSearchView;
 
@@ -43,7 +44,7 @@ public class MapToolbar : IMapSearchWidget {
         this.owner = owner;
         searchView = new MapSearchView(this);
         regionView = new MapRegionView(this);
-        questListView = new QuestListView(this);
+        questListView = new QuestListView();
 
         mapRegionSearchButton = new DefaultIconSfxButton {
             ClickAction = () => {
@@ -228,7 +229,10 @@ public class MapToolbar : IMapSearchWidget {
     }
 
     private void DrawQuestList() {
-        if (!ShowQuestListOverlay) return;
+        if (!ShowQuestListOverlay) {
+            questListView.TryStopAnimation();
+            return;
+        }
 
         questListView.Draw();
     }

@@ -53,4 +53,24 @@ public class ModuleController {
             module.Update();
         }
     }
+
+    public MappyMapIcon? GetMapMarker(object markerId) {
+        foreach (var module in Modules) {
+            if (module.MapIcons.FirstOrDefault(mapMarker => mapMarker.MarkerId.Equals(markerId)) is { } marker) {
+                return marker;
+            }
+        }
+
+        return null;
+    }
+
+    public MappyMapText? GetMapText(object textId) {
+        foreach (var module in Modules) {
+            if (module.MapText.FirstOrDefault(mapMarker => mapMarker.TextId.Equals(textId)) is { } marker) {
+                return marker;
+            }
+        }
+
+        return null;
+    }
 }

@@ -20,6 +20,9 @@ public abstract unsafe class ModuleBase {
     private readonly List<MappyMapIcon> mapIcons = new();
     private readonly List<MappyMapText> mapText = new();
 
+    public IReadOnlyList<MappyMapIcon> MapIcons => mapIcons;
+    public IReadOnlyList<MappyMapText> MapText => mapText;
+
     // Map Marker
     public virtual void ZoneChanged(uint territoryType) { }
     public virtual void LoadForMap(MapData mapData) { }

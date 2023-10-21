@@ -6,7 +6,7 @@ using Dalamud.Interface.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using ImGuiNET;
 using KamiLib;
-using Mappy.Interfaces;
+using Mappy.Models;
 using Mappy.System;
 using Mappy.Utility;
 using Mappy.Views.Windows;
@@ -14,11 +14,8 @@ using Mappy.Views.Windows;
 namespace Mappy.Views.General;
 
 public class QuestListView {
-    private readonly IMapSearchWidget mapWindow;
-    
-    public QuestListView(IMapSearchWidget searchWidget) {
-        mapWindow = searchWidget;
-    }
+    private MappyMapIcon? focusedMarker;
+    public bool IsQuestListHovered;
 
     public void Draw() {
         ImGui.SetCursorPos(new Vector2(0.0f, 38.5f * ImGuiHelpers.GlobalScale));
@@ -35,6 +32,13 @@ public class QuestListView {
         }
     }
 
+    public void TryStopAnimation() {
+        if (focusedMarker is not null) {
+            focusedMarker.Animate = false;
+            focusedMarker = null;
+        }
+    }
+    
     private void DrawBackground() {
         var backgroundColor = ImGui.GetColorU32(Vector4.Zero with { W = 0.8f });
 
@@ -53,7 +57,7 @@ public class QuestListView {
                 
                 foreach (var questGroup in questsData) {
                     foreach (var quest in questGroup) {
-                        foreach (var location in quest.MarkerData.Span) {
+                        foreach (var marker in quest.MarkerData.Span) {
                             if (ImGui.Selectable($"##{quest.ObjectiveId}")) {
                                 if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is not { Viewport: var viewport }) continue;
                                 if (MappySystem.MapTextureController is not { Ready: true } textureController) continue;
@@ -61,18 +65,20 @@ public class QuestListView {
                                 MappySystem.SystemConfig.FollowPlayer = false;
                                 textureController.MoveMapToPlayer();
                     
-                                var objectPosition = Position.GetTexturePosition(new Vector2(location.X, location.Z), textureController.CurrentMap);
+                                var objectPosition = Position.GetTexturePosition(new Vector2(marker.X, marker.Z), textureController.CurrentMap);
                                 viewport.SetViewportCenter(objectPosition);
-                                mapWindow.ShowQuestListOverlay = false;
+                                viewport.SetViewportZoom(1.20f);
+
+                                AnimateMarker(marker);
                             }
             
                             ImGui.SameLine();
                             ImGui.SetCursorPosY(ImGui.GetCursorPosY() - 2.0f * ImGuiHelpers.GlobalScale);
-                            var icon = Service.TextureProvider.GetIcon(location.IconId)!;
+                            var icon = Service.TextureProvider.GetIcon(marker.IconId)!;
                             ImGui.Image(icon.ImGuiHandle, ImGuiHelpers.ScaledVector2(24.0f, 24.0f));
             
                             ImGui.SameLine();
-                            ImGui.Text($"Lv. {location.RecommendedLevel} {location.TooltipString->ToString()}");
+                            ImGui.Text($"Lv. {marker.RecommendedLevel} {marker.TooltipString->ToString()}");
             
                             ImGuiHelpers.ScaledDummy(3.0f);
                         }
@@ -86,5 +92,19 @@ public class QuestListView {
             }
         }
         ImGui.EndChild();
+        IsQuestListHovered = ImGui.IsItemHovered();
+    }
+    
+    private void AnimateMarker(MapMarkerData location) {
+        if (focusedMarker is not null) {
+            focusedMarker.Animate = false;
+        }
+        
+        focusedMarker = MappySystem.ModuleController.GetMapMarker((location.ObjectiveId, location.LevelId));
+        
+        if (focusedMarker is not null) {
+            focusedMarker.Animate = true;
+            focusedMarker.AnimationRadius = 75.0f;
+        }
     }
 }
