@@ -9,7 +9,6 @@ using KamiLib.AutomaticUserInterface;
 
 namespace Mappy.Views.Attributes;
 
-// Todo: Maybe add icon search idk.
 public class IconSelection : DrawableAttribute {
     private readonly uint[] options;
     
