@@ -15,21 +15,13 @@ public class TemporaryMapMarker {
     public string TooltipText { get; init; } = string.Empty;
 
     public void ShowContextMenu(Viewport viewport, Map map) {
-        // Markers that don't have area rings
-        if (Type is MarkerType.Flag)
-        {
-            if (!ImGui.IsItemClicked(ImGuiMouseButton.Right)) return;
+        var markerLocation = Utility.Position.GetTexturePosition(Position, map);
+        var markerScreePosition = markerLocation * viewport.Scale + viewport.StartPosition - viewport.Offset;
+        var cursorLocation = ImGui.GetMousePos();
             
-            MappySystem.ContextMenuController.Show(PopupMenuType.TempFlag);
-        } else { // Markers that do have area rings
-            var markerLocation = Utility.Position.GetTexturePosition(Position, map);
-            var markerScreePosition = markerLocation * viewport.Scale + viewport.StartPosition - viewport.Offset;
-            var cursorLocation = ImGui.GetMousePos();
-            
-            if (Vector2.Distance(markerScreePosition, cursorLocation) > Radius * viewport.Scale) return;
-            if (!ImGui.IsMouseClicked(ImGuiMouseButton.Right)) return;
+        if (Vector2.Distance(markerScreePosition, cursorLocation) > Radius * viewport.Scale) return;
+        if (!ImGui.IsMouseClicked(ImGuiMouseButton.Right)) return;
 
-            MappySystem.ContextMenuController.Show(PopupMenuType.TempArea);
-        }
+        MappySystem.ContextMenuController.Show(PopupMenuType.TempArea);
     }
 }

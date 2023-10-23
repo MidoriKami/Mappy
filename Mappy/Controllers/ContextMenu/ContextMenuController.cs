@@ -9,9 +9,9 @@ namespace Mappy.System;
 
 public class ContextMenuController {
     private readonly List<IContextMenuEntry> entries = new() {
-        new FlagContextMenuEntry(),
         new MarkedAreaContextMenuEntry(),
         new AddMoveFlagContextMenuEntry(),
+        new RemoveFlagContextMenuEntry(),
         new ParentMapContextMenuEntry(),
         new ViewRegionMapContextMenuEntry(),
         new SourceMapContextMenuEntry(),
@@ -35,8 +35,6 @@ public class ContextMenuController {
             } else {
                 wasWindowOpened = true;
 
-                if (activeTypes.Contains(PopupMenuType.TempFlag)) activeTypes.Remove(PopupMenuType.AddMoveFlag);
-            
                 foreach (var entry in entries.Where(contextEntry => activeTypes.Contains(contextEntry.Type)))
                 {
                     entry.Draw();

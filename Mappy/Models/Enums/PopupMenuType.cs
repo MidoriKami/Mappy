@@ -2,7 +2,7 @@
 
 public enum PopupMenuType {
     AddMoveFlag,
-    TempFlag,
+    RemoveFlag,
     TempArea,
     ViewParentMap,
     ViewRegionMap,

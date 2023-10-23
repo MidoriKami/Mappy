@@ -255,7 +255,8 @@ public unsafe class MapWindow : Window {
                 PopupMenuType.ViewParentMap,
                 PopupMenuType.ViewRegionMap,
                 PopupMenuType.ViewSource,
-                PopupMenuType.ViewFirst);
+                PopupMenuType.ViewFirst,
+                PopupMenuType.RemoveFlag);
         }
     }
 
