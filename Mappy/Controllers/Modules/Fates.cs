@@ -24,25 +24,25 @@ public unsafe class Fates : ModuleBase {
     }
 
     protected override void UpdateMarkers(Viewport viewport, Map map) {
-        foreach (var fate in FateManager.Instance()->Fates.Span) {
-            if (fate.Value is null) continue;
+        foreach (FateContext* fate in FateManager.Instance()->Fates.Span) {
+            if (fate is null) continue;
             
-            UpdateIcon(fate.Value->FateId, () => new MappyMapIcon {
-                MarkerId = fate.Value->FateId,
-                IconId = fate.Value->MapIconId,
-                ObjectPosition = new Vector2(fate.Value->Location.X, fate.Value->Location.Z),
-                MinimumRadius = (FateState)fate.Value->State is FateState.Running ? fate.Value->Radius : 0.0f,
+            UpdateIcon(fate->StartTimeEpoch, () => new MappyMapIcon {
+                MarkerId = fate->StartTimeEpoch,
+                IconId = fate->MapIconId,
+                ObjectPosition = new Vector2(fate->Location.X, fate->Location.Z),
+                MinimumRadius = (FateState)fate->State is FateState.Running ? fate->Radius : 0.0f,
                 RadiusColor = GetFateRingColor(fate),
-                Tooltip = $"Lv. {fate.Value->Level} {fate.Value->Name}",
-                TooltipExtraText = GetFateSecondaryTooltip(fate, fate.Value->IsExpBonus),
+                Tooltip = $"Lv. {fate->Level} {fate->Name}",
+                TooltipExtraText = GetFateSecondaryTooltip(fate, fate->IsExpBonus),
                 Layers = GetFateLayers(fate),
-                VerticalPosition = fate.Value->Location.Y,
+                VerticalPosition = fate->Location.Y,
             }, icon => {
-                icon.ObjectPosition = new Vector2(fate.Value->Location.X, fate.Value->Location.Z);
-                icon.MinimumRadius = (FateState) fate.Value->State is FateState.Running ? fate.Value->Radius : 0.0f;
+                icon.ObjectPosition = new Vector2(fate->Location.X, fate->Location.Z);
+                icon.MinimumRadius = (FateState) fate->State is FateState.Running ? fate->Radius : 0.0f;
                 icon.RadiusColor = GetFateRingColor(fate);
-                icon.TooltipExtraText = GetFateSecondaryTooltip(fate, fate.Value->IsExpBonus);
-                icon.VerticalPosition = fate.Value->Location.Y;
+                icon.TooltipExtraText = GetFateSecondaryTooltip(fate, fate->IsExpBonus);
+                icon.VerticalPosition = fate->Location.Y;
             });
         }
     }
