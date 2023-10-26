@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.Housing;
 using KamiLib.Game;
 using Lumina.Excel;
@@ -89,6 +90,7 @@ public unsafe class Houses : ModuleBase {
     };
 
     private bool IsHousingManagerValid() {
+        if (Util.AssemblyVersion is "9.0.0.5") return false;
         if (HousingManager.Instance() is null) return false;
         if (HousingManager.Instance()->OutdoorTerritory is null) return false;
 
