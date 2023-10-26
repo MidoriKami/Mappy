@@ -43,6 +43,15 @@ public unsafe class Houses : ModuleBase {
 
     protected override void UpdateMarkers(Viewport viewport, Map map) {
         var config = GetConfig<HousingConfig>();
+
+        if (Util.AssemblyVersion is "9.0.0.5") {
+            UpdateText("DalamudVersion9.0.0.5Disable", () => new MappyMapText {
+                TextId = "DalamudVersion9.0.0.5Disable",
+                Text = "Incompatible Dalamud Version\nModule disabled until Dalamud v9.0.0.6",
+                TexturePosition = new Vector2(1024.0f, 2048.0f),
+            });
+            return;
+        }
         
         foreach (var marker in housingMarkers) {
             UpdateIcon((marker.RowId, marker.SubRowId), () => new MappyMapIcon {
@@ -90,7 +99,6 @@ public unsafe class Houses : ModuleBase {
     };
 
     private bool IsHousingManagerValid() {
-        if (Util.AssemblyVersion is "9.0.0.5") return false;
         if (HousingManager.Instance() is null) return false;
         if (HousingManager.Instance()->OutdoorTerritory is null) return false;
 
