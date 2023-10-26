@@ -27,8 +27,8 @@ public unsafe class Fates : ModuleBase {
         foreach (FateContext* fate in FateManager.Instance()->Fates.Span) {
             if (fate is null) continue;
             
-            UpdateIcon(fate->StartTimeEpoch, () => new MappyMapIcon {
-                MarkerId = fate->StartTimeEpoch,
+            UpdateIcon(fate->FateId,() => new MappyMapIcon {
+                MarkerId = fate->FateId,
                 IconId = fate->MapIconId,
                 ObjectPosition = new Vector2(fate->Location.X, fate->Location.Z),
                 MinimumRadius = (FateState)fate->State is FateState.Running ? fate->Radius : 0.0f,
@@ -38,6 +38,7 @@ public unsafe class Fates : ModuleBase {
                 Layers = GetFateLayers(fate),
                 VerticalPosition = fate->Location.Y,
             }, icon => {
+                icon.IconId = fate->MapIconId;
                 icon.ObjectPosition = new Vector2(fate->Location.X, fate->Location.Z);
                 icon.MinimumRadius = (FateState) fate->State is FateState.Running ? fate->Radius : 0.0f;
                 icon.RadiusColor = GetFateRingColor(fate);
