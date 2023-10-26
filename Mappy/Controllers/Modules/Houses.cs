@@ -67,9 +67,9 @@ public unsafe class Houses : ModuleBase {
         if (GetHousingLandSet(map) is not {} housingSizeInfo) return 0;
 
         return marker.SubRowId switch {
-            60 when IsHousingManagerValid() => (uint) HousingManager.Instance()->HousingOutdoorTerritory->GetPlotIcon(128),
-            61 when IsHousingManagerValid() => (uint) HousingManager.Instance()->HousingOutdoorTerritory->GetPlotIcon(129),
-            _  when IsHousingManagerValid() => (uint) HousingManager.Instance()->HousingOutdoorTerritory->GetPlotIcon((byte) marker.SubRowId),
+            60 when IsHousingManagerValid() => (uint) HousingManager.Instance()->OutdoorTerritory->GetPlotIcon(128),
+            61 when IsHousingManagerValid() => (uint) HousingManager.Instance()->OutdoorTerritory->GetPlotIcon(129),
+            _  when IsHousingManagerValid() => (uint) HousingManager.Instance()->OutdoorTerritory->GetPlotIcon((byte) marker.SubRowId),
                 
             60 when !IsHousingManagerValid() => 60789,
             61 when !IsHousingManagerValid() => 60789,
@@ -90,7 +90,7 @@ public unsafe class Houses : ModuleBase {
 
     private bool IsHousingManagerValid() {
         if (HousingManager.Instance() is null) return false;
-        if (HousingManager.Instance()->HousingOutdoorTerritory is null) return false;
+        if (HousingManager.Instance()->OutdoorTerritory is null) return false;
 
         return true;
     }
