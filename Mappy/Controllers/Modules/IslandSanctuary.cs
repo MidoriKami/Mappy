@@ -34,7 +34,7 @@ public unsafe class IslandSanctuary : ModuleBase {
 
         foreach (var obj in Service.ObjectTable) {
             if (obj.ObjectKind is not ObjectKind.CardStand) continue;
-            if (gatheringObjectNames.FirstOrDefault(luminaObject => string.Compare(luminaObject.Name.Value?.Singular.RawString, obj.Name.TextValue, StringComparison.OrdinalIgnoreCase) == 0) is not { MapIcon: var mapIcon } luminaData) continue;
+            if (gatheringObjectNames.FirstOrDefault(luminaObject => string.Equals(luminaObject.Name.Value?.Singular.RawString, obj.Name.TextValue, StringComparison.OrdinalIgnoreCase)) is not { MapIcon: var mapIcon } luminaData) continue;
 
             switch (luminaData.Unknown2) {
                 case 1 when !config.Logging:
@@ -45,8 +45,8 @@ public unsafe class IslandSanctuary : ModuleBase {
                     continue;
             }
 
-            UpdateIcon(obj.ObjectId, () => new MappyMapIcon {
-                MarkerId = obj.ObjectId,
+            UpdateIcon(obj.Position, () => new MappyMapIcon {
+                MarkerId = obj.Position,
                 IconId = mapIcon,
                 ObjectPosition = new Vector2(obj.Position.X, obj.Position.Z),
                 Tooltip = obj.Name.TextValue,
