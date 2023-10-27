@@ -30,7 +30,7 @@ public static class MapMarkerExtensions {
     
     public static string GetDisplayString(this MapMarker marker) => marker.GetMarkerType() switch {
         MapMarkerType.Standard => marker.GetStandardMarkerString(),
-        MapMarkerType.MapLink => marker.GetPlaceNameData().Name.ToDalamudString().TextValue,
+        MapMarkerType.MapLink => marker.GetMarkerLabel(),
         MapMarkerType.InstanceLink => string.Empty,
         MapMarkerType.Aetheryte => marker.GetAetheryteData().PlaceName.Value?.Name.ToDalamudString().TextValue ?? string.Empty,
         MapMarkerType.Aethernet => marker.GetPlaceNameData().Name.ToDalamudString().TextValue,
