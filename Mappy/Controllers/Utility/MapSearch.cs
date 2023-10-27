@@ -13,6 +13,7 @@ public static class MapSearch {
         => AetheryteResults(searchTerms)
             .Concat(PointOfInterestResults(searchTerms))
             .Concat(MapResults(searchTerms))
+            .Where(result => result is not { Label: "" })
             .OrderBy(result => result.Label)
             .ToList();
 
