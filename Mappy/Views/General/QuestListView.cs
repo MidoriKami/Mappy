@@ -1,9 +1,11 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using FFXIVClientStructs.STD;
 using ImGuiNET;
 using KamiLib;
 using Mappy.Models;
@@ -47,8 +49,8 @@ public class QuestListView {
     
     private unsafe void DrawQuests() {
         if (ImGui.BeginChild("##QuestScrollable", ImGui.GetContentRegionAvail())) {
-            if (Map.Instance()->QuestMarkerData.Size > 0) {
-                var questsData = Map.Instance()->QuestMarkerData.GetAllMarkers()
+            if (Map.Instance()->UnacceptedQuests.Size > 0) {
+                var questsData = GetAllMarkers(Map.Instance()->UnacceptedQuests)
                     .Where(quest => quest.MarkerData.First is not null)
                     .OrderByDescending(quest => quest.MarkerData.First->IconId)
                     .ThenBy(quest => quest.MarkerData.First->RecommendedLevel)
@@ -106,5 +108,15 @@ public class QuestListView {
             focusedMarker.Animate = true;
             focusedMarker.AnimationRadius = 75.0f;
         }
+    }
+    
+    private IEnumerable<MarkerInfo> GetAllMarkers(StdList<MarkerInfo> markers) {
+        var list = new List<MarkerInfo>();
+        
+        foreach (var marker in markers.GetEnumerator()) {
+            list.Add(marker);
+        }
+
+        return list;
     }
 }

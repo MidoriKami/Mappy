@@ -12,6 +12,9 @@ public interface IQuestColorConfig {
     
     [ColorConfig("LeveQuestColor", 0, 133, 5, 97)]
     public Vector4 LeveQuestColor { get; set; }
+    
+    [ColorConfig("UnacceptedQuestColor", 0, 133, 5, 97)]
+    public Vector4 UnacceptedQuestColor { get; set; }
 }
 
 [Category("DirectionalMarker", 1)]
@@ -33,7 +36,8 @@ public class QuestConfig : IModuleConfig, IIconConfig, ITooltipConfig, IQuestCol
     public Vector4 TooltipColor { get; set; } = KnownColor.White.Vector();
     public Vector4 InProgressColor { get; set; } = KnownColor.OrangeRed.Vector() with { W = 0.33f };
     public Vector4 LeveQuestColor { get; set; } = new Vector4(0, 133, 5, 97) / 255.0f;
-    
+    public Vector4 UnacceptedQuestColor { get; set; } = KnownColor.Aqua.Vector() with { W = 0.50f };
+
     [BoolConfig("HideUnacceptedQuests")]
     public bool HideUnacceptedQuests { get; set; } = false;
 
