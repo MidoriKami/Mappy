@@ -569,4 +569,7 @@ Open Map Window to populate data</value>
   <data name="UnacceptedQuestColor" xml:space="preserve">
     <value>Unaccepted Quest Color</value>
   </data>
+  <data name="ScaleCone" xml:space="preserve">
+    <value>Ignore Map Zoom</value>
+  </data>
 </root>

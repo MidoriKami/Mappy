@@ -48,8 +48,8 @@ public unsafe class Player : ModuleBase {
         var playerPosition = Position.GetTexturePosition(player, map);
         var drawPosition = mapWindow.Viewport.GetImGuiWindowDrawPosition(playerPosition);
 
-        var lineLength = config.ConeRadius * mapWindow.Viewport.Scale;
-        
+        var lineLength = config.ScaleCone ? config.ConeRadius : config.ConeRadius * mapWindow.Viewport.Scale;
+
         var halfConeAngle = DegreesToRadians(config.ConeAngle) / 2.0f;
         
         DrawAngledLineFromCenter(drawPosition, lineLength, angle - halfConeAngle);
