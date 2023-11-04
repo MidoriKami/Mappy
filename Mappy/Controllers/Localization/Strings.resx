@@ -572,4 +572,7 @@ Open Map Window to populate data</value>
   <data name="ScaleCone" xml:space="preserve">
     <value>Ignore Map Zoom</value>
   </data>
+  <data name="ScaleConeHelp" xml:space="preserve">
+    <value>Toggle will affect whether cone changes size when zooming in/out on map</value>
+  </data>
 </root>

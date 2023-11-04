@@ -24,7 +24,7 @@ public class PlayerConfig : IModuleConfig, IIconConfig, IPlayerColorConfig {
     [BoolConfig("ShowCone")]
     public bool ShowCone { get; set; } = true;
 
-    [BoolConfig("ScaleCone")]
+    [BoolConfig("ScaleCone", "ScaleConeHelp")]
     public bool ScaleCone { get; set; } = true;
 
     [FloatConfig("ConeRadius", 0.0f, 360.0f)]
