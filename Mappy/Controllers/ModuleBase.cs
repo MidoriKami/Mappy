@@ -143,5 +143,5 @@ public abstract unsafe class ModuleBase {
     }
 
     private void PrintConfirmation() => Chat.Print(Strings.Command, Configuration.Enable ? $"{Strings.Enabling} {ModuleName.Label()}" : $"{Strings.Disabling} {ModuleName.Label()}");
-    private void PrintPvPError() => Chat.Print(Strings.Command, Strings.PvPError);
+    private void PrintPvPError() => Chat.PrintError(Strings.PvPError);
 }
