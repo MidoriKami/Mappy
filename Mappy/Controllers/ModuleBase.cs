@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiLib.AutomaticUserInterface;
+using KamiLib.Command;
 using KamiLib.FileIO;
+using KamiLib.Game;
+using KamiLib.System;
+using KamiLib.Utility;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Models;
 using Mappy.Models.Enums;
+using Mappy.System.Localization;
 using Mappy.Utility;
 using MapData = Mappy.System.MapData;
 
@@ -22,6 +27,14 @@ public abstract unsafe class ModuleBase {
 
     public IReadOnlyList<MappyMapIcon> MapIcons => mapIcons;
     public IReadOnlyList<MappyMapText> MapText => mapText;
+
+    protected string ModuleCommand => ModuleName.ToString().ToLower();
+    
+    protected ModuleBase() {
+        CommandController.RegisterDoubleTierCommand(EnableModuleHandler, new DoubleTierCommandHandler("EnableModuleHelp", ModuleCommand, "enable"));
+        CommandController.RegisterDoubleTierCommand(DisableModuleHandler, new DoubleTierCommandHandler("DisableModuleHelp", ModuleCommand, "disable"));
+        CommandController.RegisterDoubleTierCommand(ToggleModuleHandler, new DoubleTierCommandHandler("ToggleModuleHelp", ModuleCommand, "toggle"));
+    }
 
     // Map Marker
     public virtual void ZoneChanged(uint territoryType) { }
@@ -91,4 +104,44 @@ public abstract unsafe class ModuleBase {
     }
 
     protected static bool IsLocalPlayerValid() => Service.ClientState.LocalPlayer is not null;
+    
+    // Commands
+    private void EnableModuleHandler(params string[] _)
+    {
+        if (Service.ClientState.IsPvP) {
+            PrintPvPError();
+            return;
+        }
+
+        Configuration.Enable = true;
+        PrintConfirmation();
+        SaveConfig();
+    }
+    
+    private void DisableModuleHandler(params string[] _)
+    {
+        if (Service.ClientState.IsPvP) {
+            PrintPvPError();
+            return;
+        }
+
+        Configuration.Enable = false;
+        PrintConfirmation();
+        SaveConfig();
+    }
+    
+    private void ToggleModuleHandler(params string[] _)
+    {
+        if (Service.ClientState.IsPvP) {
+            PrintPvPError();
+            return;
+        }
+        
+        Configuration.Enable = !Configuration.Enable;
+        PrintConfirmation();
+        SaveConfig();
+    }
+
+    private void PrintConfirmation() => Chat.Print(Strings.Command, Configuration.Enable ? $"{Strings.Enabling} {ModuleName.Label()}" : $"{Strings.Disabling} {ModuleName.Label()}");
+    private void PrintPvPError() => Chat.Print(Strings.Command, Strings.PvPError);
 }

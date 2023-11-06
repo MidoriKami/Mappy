@@ -575,4 +575,25 @@ Open Map Window to populate data</value>
   <data name="ScaleConeHelp" xml:space="preserve">
     <value>Toggle will affect whether cone changes size when zooming in/out on map</value>
   </data>
+  <data name="Command" xml:space="preserve">
+    <value>Command</value>
+  </data>
+  <data name="Enabling" xml:space="preserve">
+    <value>Enabling</value>
+  </data>
+  <data name="Disabling" xml:space="preserve">
+    <value>Disabling</value>
+  </data>
+  <data name="EnableModuleHelp" xml:space="preserve">
+    <value>Enable the module</value>
+  </data>
+  <data name="DisableModuleHelp" xml:space="preserve">
+    <value>Disable the module</value>
+  </data>
+  <data name="ToggleModuleHelp" xml:space="preserve">
+    <value>ToggleTheModule</value>
+  </data>
+  <data name="PvPError" xml:space="preserve">
+    <value>Mappy is not available in PvP.</value>
+  </data>
 </root>

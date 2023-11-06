@@ -195,6 +195,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Command.
+        /// </summary>
+        internal static string Command {
+            get {
+                return ResourceManager.GetString("Command", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cone Angle.
         /// </summary>
         internal static string ConeAngle {
@@ -236,6 +245,24 @@ namespace Mappy.System.Localization {
         internal static string Disabled {
             get {
                 return ResourceManager.GetString("Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disable the module.
+        /// </summary>
+        internal static string DisableModuleHelp {
+            get {
+                return ResourceManager.GetString("DisableModuleHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disabling.
+        /// </summary>
+        internal static string Disabling {
+            get {
+                return ResourceManager.GetString("Disabling", resourceCulture);
             }
         }
         
@@ -308,6 +335,24 @@ namespace Mappy.System.Localization {
         internal static string EnableIntegrations {
             get {
                 return ResourceManager.GetString("EnableIntegrations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable the module.
+        /// </summary>
+        internal static string EnableModuleHelp {
+            get {
+                return ResourceManager.GetString("EnableModuleHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enabling.
+        /// </summary>
+        internal static string Enabling {
+            get {
+                return ResourceManager.GetString("Enabling", resourceCulture);
             }
         }
         
@@ -980,6 +1025,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mappy is not available in PvP..
+        /// </summary>
+        internal static string PvPError {
+            get {
+                return ResourceManager.GetString("PvPError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Quarrying.
         /// </summary>
         internal static string Quarrying {
@@ -1030,6 +1084,24 @@ namespace Mappy.System.Localization {
         internal static string RemoveQuestMarker {
             get {
                 return ResourceManager.GetString("RemoveQuestMarker", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ignore Map Zoom.
+        /// </summary>
+        internal static string ScaleCone {
+            get {
+                return ResourceManager.GetString("ScaleCone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle will affect whether cone changes size when zooming in/out on map.
+        /// </summary>
+        internal static string ScaleConeHelp {
+            get {
+                return ResourceManager.GetString("ScaleConeHelp", resourceCulture);
             }
         }
         
@@ -1133,7 +1205,7 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Shows tooltips for map icons such as &quot;Repair&quot;, &quot;Shop&quot;, &quot;Trader.
+        ///   Looks up a localized string similar to Shows tooltips for map icons such as &quot;Repair&quot;, &quot;Shop&quot;, &quot;Trader&quot;.
         /// </summary>
         internal static string ShowMiscTooltipsHelp {
             get {
@@ -1250,6 +1322,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ToggleTheModule.
+        /// </summary>
+        internal static string ToggleModuleHelp {
+            get {
+                return ResourceManager.GetString("ToggleModuleHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Toolbar Options.
         /// </summary>
         internal static string ToolbarOptions {
@@ -1282,6 +1363,15 @@ namespace Mappy.System.Localization {
         internal static string TreasureMarkers {
             get {
                 return ResourceManager.GetString("TreasureMarkers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unaccepted Quest Color.
+        /// </summary>
+        internal static string UnacceptedQuestColor {
+            get {
+                return ResourceManager.GetString("UnacceptedQuestColor", resourceCulture);
             }
         }
         
