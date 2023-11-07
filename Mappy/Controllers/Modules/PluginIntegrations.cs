@@ -33,6 +33,9 @@ public class PluginIntegrations : ModuleBase {
                 ObjectPosition = marker.PositionType is PositionType.World ? marker.Position : null,
                 Tooltip = marker.Tooltip,
                 TooltipExtraText = marker.Description,
+            }, icon => {
+                icon.TexturePosition = marker.PositionType is PositionType.Texture ? marker.Position : null;
+                icon.ObjectPosition = marker.PositionType is PositionType.World ? marker.Position : null;
             });
         }
     }
