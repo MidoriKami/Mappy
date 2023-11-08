@@ -31,7 +31,6 @@ public class IpcArrowMarker {
     public required float Thickness { get; init; }
 }
 
-
 public class IpcCircleMarker
 {
     public required Vector2 Center { get; init; }
@@ -39,9 +38,9 @@ public class IpcCircleMarker
     public required uint MapId { get; init; }
     public required Vector4 Color { get; init; }
     public int Segments { get; init; }
-    public float? Thickness { get; init; }
+    public float Thickness { get; init; }
+    public bool Fill { get; init; }
 }
-
 
 public class IpcController : IDisposable {
     // Mappy uses three different coordinate systems
@@ -145,32 +144,6 @@ public class IpcController : IDisposable {
     // Returns whether the marker was successfully removed or not
     private static ICallGateProvider<string, bool>? _removeLine;
 
-    // Adds a filled circle to the map
-    //
-    // Function signature: string AddCircleFilledMarker(Vector2 center, uint radius, uint mapId, Vector4 color, int segments);
-    //
-    // Center                 Vector2       The Center Coordinates of the Circle, uses Map Coordinates
-    // Radius                 float         The Radius of the circle
-    // MapId                  uint          id representing a mapId, a value of 0 will place the line in the map the player is currently located in
-    // Color                  Vector4       The color of the circle
-    // Segments               int           The number of segments
-    //
-    // Return a unique identifier for the added marker, string.Empty if it failed to add the marker
-    private static ICallGateProvider<Vector2, float, uint, Vector4, int, string>? _addMapCoordCircleFilled;
-
-    // Adds a filled circle to the map
-    //
-    // Function signature: string AddCircleFilledMarker(Vector2 center, uint radius, uint mapId, Vector4 color, int segments);
-    //
-    // Center                 Vector2       The Center Coordinates of the Circle, uses Texture Coordinates
-    // Radius                 float         The Radius of the circle
-    // MapId                  uint          id representing a mapId, a value of 0 will place the line in the map the player is currently located in
-    // Color                  Vector4       The color of the circle
-    // Segments               int           The number of segments
-    //
-    // Return a unique identifier for the added marker, string.Empty if it failed to add the marker
-    private static ICallGateProvider<Vector2, float, uint, Vector4, int, string>? _addTextureCircleFilled;
-
     // Adds a circle to the map
     //
     // Function signature: string AddCircleMarker(Vector2 center, uint radius, uint mapId, Vector4 color, int segments, float thickness);
@@ -181,9 +154,10 @@ public class IpcController : IDisposable {
     // Color                  Vector4       The color of the circle
     // Segments               int           The number of segments
     // Thickness              float         The thickness of the circle
+    // Fill                   bool          If the circle should be filled with the color
     //
     // Return a unique identifier for the added marker, string.Empty if it failed to add the marker
-    private static ICallGateProvider<Vector2, float, uint, Vector4, int, float, string>? _addMapCoordCircle;
+    private static ICallGateProvider<Vector2, float, uint, Vector4, int, float, bool, string>? _addMapCoordCircle;
 
     // Adds a circle to the map
     //
@@ -195,9 +169,10 @@ public class IpcController : IDisposable {
     // Color                  Vector4       The color of the circle
     // Segments               int           The number of segments
     // Thickness              float         The thickness of the circle
+    // Fill                   bool          If the circle should be filled with the color
     //
     // Return a unique identifier for the added marker, string.Empty if it failed to add the marker
-    private static ICallGateProvider<Vector2, float, uint, Vector4, int, float, string>? _addTextureCircle;
+    private static ICallGateProvider<Vector2, float, uint, Vector4, int, float, bool, string>? _addTextureCircle;
 
     // Removes the specified circle marker
     //
@@ -222,6 +197,9 @@ public class IpcController : IDisposable {
     // public ICallGateSubscriber<Vector2, Vector2, uint, Vector4, float, string>? AddMapCoordLineIpcFunction = null;
     // public ICallGateSubscriber<string, bool>? RemoveLineIpcFunction = null;
     // public ICallGateSubscriber<bool>? IsReadyIpcFunction = null;
+    // public ICallGateSubscriber<Vector2, float, uint, Vector4, int, float, string>? AddMapCoordCircleIpcFunction = null;
+    // public ICallGateSubscriber<Vector2, float, uint, Vector4, int, float, string>? AddTextureCircleIpcFunction = null;
+    // public ICallGateSubscriber<string, bool>? RemoveCircleIpcFunction = null;
 
     public IpcController() {
         // // Copy/Paste this to subscribe to these functions, be sure to check for IPCNotReady exceptions ;)
@@ -233,9 +211,7 @@ public class IpcController : IDisposable {
         // AddTextureLineIpcFunction = Service.PluginInterface.GetIpcSubscriber<Vector2, Vector2, uint, Vector4, float, string>("Mappy.Texture.AddLine");
         // AddMapCoordLineIpcFunction = Service.PluginInterface.GetIpcSubscriber<Vector2, Vector2, uint, Vector4, float, string>("Mappy.MapCoord.AddLine");
         // RemoveLineIpcFunction = Service.PluginInterface.GetIpcSubscriber<string, bool>("Mappy.RemoveLine");
-        // AddMapCoordCircleFilledIpcFunction = Service.PluginInterface.GetIpcSubscriber<Vector2, float, uint, Vector4, int, string>("Mappy.Mapcoord.AddCircleFilled");
-        // AddTextureCircleFilledIpcFunction = Service.PluginInterface.GetIpcSubscriber<Vector2, float, uint, Vector4, int, string>("Mappy.Texture.AddCircleFilled");
-        // AddMapCoordCircleIpcFunction = Service.PluginInterface.GetIpcSubscriber<Vector2, float, uint, Vector4, int, float, string>("Mappy.Mapcoord.AddCircle");
+        // AddMapCoordCircleIpcFunction = Service.PluginInterface.GetIpcSubscriber<Vector2, float, uint, Vector4, int, float, string>("Mappy.MapCoord.AddCircle");
         // AddTextureCircleIpcFunction = Service.PluginInterface.GetIpcSubscriber<Vector2, float, uint, Vector4, int, float, string>("Mappy.Texture.AddCircle");
         // RemoveCircleIpcFunction = Service.PluginInterface.GetIpcSubscriber<string, bool>("Mappy.RemoveCircle");
         // IsReadyIpcFunction = Service.PluginInterface.GetIpcSubscriber<bool>("Mappy.IsReady");
@@ -248,10 +224,8 @@ public class IpcController : IDisposable {
         _addTextureLine = Service.PluginInterface.GetIpcProvider<Vector2, Vector2, uint, Vector4, float, string>("Mappy.Texture.AddLine");
         _addMapCoordLine = Service.PluginInterface.GetIpcProvider<Vector2, Vector2, uint, Vector4, float, string>("Mappy.MapCoord.AddLine");
         _removeLine = Service.PluginInterface.GetIpcProvider<string, bool>("Mappy.RemoveLine");
-        _addMapCoordCircleFilled = Service.PluginInterface.GetIpcProvider<Vector2, float, uint, Vector4, int, string>("Mappy.Mapcoord.AddCircleFilled");
-        _addTextureCircleFilled = Service.PluginInterface.GetIpcProvider<Vector2, float, uint, Vector4, int, string>("Mappy.Texture.AddCircleFilled");
-        _addMapCoordCircle = Service.PluginInterface.GetIpcProvider<Vector2, float, uint, Vector4, int, float, string>("Mappy.Mapcoord.AddCircle");
-        _addTextureCircle = Service.PluginInterface.GetIpcProvider<Vector2, float, uint, Vector4, int, float, string>("Mappy.Texture.AddCircle");
+        _addMapCoordCircle = Service.PluginInterface.GetIpcProvider<Vector2, float, uint, Vector4, int, float, bool, string>("Mappy.MapCoord.AddCircle");
+        _addTextureCircle = Service.PluginInterface.GetIpcProvider<Vector2, float, uint, Vector4, int, float, bool, string>("Mappy.Texture.AddCircle");
         _removeCircle = Service.PluginInterface.GetIpcProvider<string, bool>("Mappy.RemoveCircle");
         _isReady = Service.PluginInterface.GetIpcProvider<bool>("Mappy.IsReady");
         
@@ -263,8 +237,6 @@ public class IpcController : IDisposable {
         _addTextureLine.RegisterFunc(AddTextureLine);
         _addMapCoordLine.RegisterFunc(AddMapCoordLine);
         _removeLine.RegisterFunc(RemoveLine);
-        _addMapCoordCircleFilled.RegisterFunc(AddMapCoordCircleFilled);
-        _addTextureCircleFilled.RegisterFunc(AddTextureCircleFilled);
         _addMapCoordCircle.RegisterFunc(AddMapCoordCircle);
         _addTextureCircle.RegisterFunc(AddTextureCircle);
         _removeCircle.RegisterFunc(RemoveCircle);
@@ -333,7 +305,7 @@ public class IpcController : IDisposable {
     private static bool RemoveLine(string id)
         => LineMarkers.Remove(id) || Markers.Remove(id) || CircleMarkers.Remove(id);
 
-    private static unsafe string AddMapCoordCircleFilled(Vector2 center, float radius, uint mapId, Vector4 color, int num_segments)
+    private static unsafe string AddMapCoordCircle(Vector2 center, float radius, uint mapId, Vector4 color, int numSegments, float thickness, bool fill)
     {
         if (AgentMap.Instance() is null) return string.Empty;
 
@@ -350,16 +322,17 @@ public class IpcController : IDisposable {
             Radius = radius,
             MapId = mapId,
             Color = color,
-            Segments = num_segments
+            Segments = numSegments,
+            Thickness = thickness,
+            Fill = fill,
         }) ? newId : string.Empty;
     }
-    private static unsafe string AddTextureCircleFilled(Vector2 center, float radius, uint mapId, Vector4 color, int num_segments)
+
+    private static unsafe string AddTextureCircle(Vector2 center, float radius, uint mapId, Vector4 color, int numSegments, float thickness, bool fill)
     {
         if (AgentMap.Instance() is null) return string.Empty;
 
         mapId = mapId is 0 ? AgentMap.Instance()->CurrentMapId : mapId;
-        if (LuminaCache<Map>.Instance.GetRow(mapId) is not { } map) return string.Empty;
-
         var newId = Guid.NewGuid().ToString("N");
 
         return CircleMarkers.TryAdd(newId, new IpcCircleMarker
@@ -368,49 +341,9 @@ public class IpcController : IDisposable {
             Radius = radius,
             MapId = mapId,
             Color = color,
-            Segments = num_segments
-        }) ? newId : string.Empty;
-    }
-
-    private static unsafe string AddMapCoordCircle(Vector2 center, float radius, uint mapId, Vector4 color, int num_segments, float thickness)
-    {
-        if (AgentMap.Instance() is null) return string.Empty;
-
-        mapId = mapId is 0 ? AgentMap.Instance()->CurrentMapId : mapId;
-        if (LuminaCache<Map>.Instance.GetRow(mapId) is not { } map) return string.Empty;
-
-        var newId = Guid.NewGuid().ToString("N");
-
-        var adjustedStart = Position.MapToWorld(center, map);
-
-        return CircleMarkers.TryAdd(newId, new IpcCircleMarker
-        {
-            Center = Position.GetTexturePosition(adjustedStart, map),
-            Radius = radius,
-            MapId = mapId,
-            Color = color,
-            Segments = num_segments,
-            Thickness = thickness
-        }) ? newId : string.Empty;
-    }
-
-    private static unsafe string AddTextureCircle(Vector2 center, float radius, uint mapId, Vector4 color, int num_segments, float thickness)
-    {
-        if (AgentMap.Instance() is null) return string.Empty;
-
-        mapId = mapId is 0 ? AgentMap.Instance()->CurrentMapId : mapId;
-        if (LuminaCache<Map>.Instance.GetRow(mapId) is not { } map) return string.Empty;
-
-        var newId = Guid.NewGuid().ToString("N");
-
-        return CircleMarkers.TryAdd(newId, new IpcCircleMarker
-        {
-            Center = center,
-            Radius = radius,
-            MapId = mapId,
-            Color = color,
-            Segments = num_segments,
-            Thickness = thickness
+            Segments = numSegments,
+            Thickness = thickness,
+            Fill = fill,
         }) ? newId : string.Empty;
     }
 
@@ -453,8 +386,6 @@ public class IpcController : IDisposable {
         _addTextureLine?.UnregisterFunc();
         _addMapCoordLine?.UnregisterFunc();
         _removeLine?.UnregisterFunc();
-        _addMapCoordCircleFilled?.UnregisterFunc();
-        _addTextureCircleFilled?.UnregisterFunc();
         _addMapCoordCircle?.UnregisterFunc();
         _addTextureCircle?.UnregisterFunc();
         _removeCircle?.UnregisterFunc();
