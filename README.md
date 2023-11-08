@@ -22,7 +22,7 @@ Integrates seamlessly into the games built in functions, for example pressing `m
 # Mappy IPC
 Mappy provides various functions to other plugins to allow interplugin communication, and example usage is illustrated below.
 
-Each function is more thoroughly documented in the [IpcController](https://github.com/MidoriKami/Mappy/blob/master/Mappy/System/IpcController.cs).
+Each function is more thoroughly documented in the [IpcController](https://github.com/MidoriKami/Mappy/blob/master/Mappy/Controllers/IpcController.cs).
 
 ```cs
     private readonly List<string> registeredMarkers = new();
