@@ -22,7 +22,25 @@ public class PluginIntegrations : ModuleBase {
             
             ImGui.GetWindowDrawList().AddLine(start, stop, ImGui.GetColorU32(marker.Color), marker.Thickness);
         }
-        
+
+        foreach (var (_, marker) in IpcController.CircleFilledMarkers)
+        {
+            if (map.RowId != marker.MapId) continue;
+
+            var center = windowPos + marker.Center * viewport.Scale - viewport.Offset;
+
+            ImGui.GetWindowDrawList().AddCircleFilled(center, marker.Radius, ImGui.GetColorU32(marker.Color), marker.Segments);
+        }
+
+        foreach (var (_, marker) in IpcController.CircleMarkers)
+        {
+            if (map.RowId != marker.MapId) continue;
+
+            var center = windowPos + marker.Center * viewport.Scale - viewport.Offset;
+
+            ImGui.GetWindowDrawList().AddCircle(center, marker.Radius, ImGui.GetColorU32(marker.Color), marker.Segments, marker.Thickness);
+        }
+
         foreach (var (markerId, marker) in IpcController.Markers) {
             if (map.RowId != marker.MapId) continue;
 

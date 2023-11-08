@@ -36,6 +36,11 @@ Each function is more thoroughly documented in the [IpcController](https://githu
     public ICallGateSubscriber<Vector2, Vector2, uint, Vector4, float, string>? AddTextureLineIpcFunction = null;
     public ICallGateSubscriber<Vector2, Vector2, uint, Vector4, float, string>? AddMapCoordLineIpcFunction = null;
     public ICallGateSubscriber<string, bool>? RemoveLineIpcFunction = null;
+    public ICallGateSubscriber<Vector2, float, uint, Vector4, int, string>? AddMapCoordCircleFilled = null;
+    public ICallGateSubscriber<Vector2, float, uint, Vector4, int, string>? AddTextureCircleFilled = null;
+    public ICallGateSubscriber<Vector2, float, uint, Vector4, int, float, string>? AddMapCoordCircle = null;
+    public ICallGateSubscriber<Vector2, float, uint, Vector4, int, float, string>? AddTextureCircle = null;
+    public ICallGateSubscriber<string, bool>? RemoveCircle = null;
     public ICallGateSubscriber<bool>? IsReadyIpcFunction = null;
 ```
 
@@ -49,6 +54,11 @@ Each function is more thoroughly documented in the [IpcController](https://githu
         AddTextureLineIpcFunction = Service.PluginInterface.GetIpcSubscriber<Vector2, Vector2, uint, Vector4, float, string>("Mappy.Texture.AddLine");
         AddMapCoordLineIpcFunction = Service.PluginInterface.GetIpcSubscriber<Vector2, Vector2, uint, Vector4, float, string>("Mappy.MapCoord.AddLine");
         RemoveLineIpcFunction = Service.PluginInterface.GetIpcSubscriber<string, bool>("Mappy.RemoveLine");
+        AddMapCoordCircleFilledIpcFunction = Service.PluginInterface.GetIpcSubscriber<Vector2, float, uint, Vector4, int, string>("Mappy.Mapcoord.AddCircleFilled");
+        AddTextureCircleFilledIpcFunction = Service.PluginInterface.GetIpcSubscriber<Vector2, float, uint, Vector4, int, string>("Mappy.Texture.AddCircleFilled");
+        AddMapCoordCircleIpcFunction = Service.PluginInterface.GetIpcSubscriber<Vector2, float, uint, Vector4, int, float, string>("Mappy.Mapcoord.AddCircle");
+        AddTextureCircleIpcFunction = Service.PluginInterface.GetIpcSubscriber<Vector2, float, uint, Vector4, int, float, string>("Mappy.Texture.AddCircle");
+        RemoveCircleIpcFunction = Service.PluginInterface.GetIpcSubscriber<string, bool>("Mappy.RemoveCircle");
         IsReadyIpcFunction = Service.PluginInterface.GetIpcSubscriber<bool>("Mappy.IsReady");
 ```
 
