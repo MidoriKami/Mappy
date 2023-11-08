@@ -23,8 +23,9 @@ public class PluginIntegrations : ModuleBase {
             ImGui.GetWindowDrawList().AddLine(start, stop, ImGui.GetColorU32(marker.Color), marker.Thickness);
         }
 
-        foreach (var (_, marker) in IpcController.CircleFilledMarkers)
+        foreach (var (_, marker) in IpcController.CircleMarkers)
         {
+            if (marker.Thickness != null) continue;
             if (map.RowId != marker.MapId) continue;
 
             var center = windowPos + marker.Center * viewport.Scale - viewport.Offset;
@@ -34,11 +35,12 @@ public class PluginIntegrations : ModuleBase {
 
         foreach (var (_, marker) in IpcController.CircleMarkers)
         {
+            if (marker.Thickness == null) continue;
             if (map.RowId != marker.MapId) continue;
 
             var center = windowPos + marker.Center * viewport.Scale - viewport.Offset;
 
-            ImGui.GetWindowDrawList().AddCircle(center, marker.Radius, ImGui.GetColorU32(marker.Color), marker.Segments, marker.Thickness);
+            ImGui.GetWindowDrawList().AddCircle(center, marker.Radius, ImGui.GetColorU32(marker.Color), marker.Segments, (float)marker.Thickness);
         }
 
         foreach (var (markerId, marker) in IpcController.Markers) {

@@ -31,14 +31,6 @@ public class IpcArrowMarker {
     public required float Thickness { get; init; }
 }
 
-public class IpcCircleFilledMarker
-{
-    public required Vector2 Center { get; init; }
-    public required float Radius { get; init; }
-    public required uint MapId { get; init; }
-    public required Vector4 Color { get; init; }
-    public int Segments { get; init; }
-}
 
 public class IpcCircleMarker
 {
@@ -47,7 +39,7 @@ public class IpcCircleMarker
     public required uint MapId { get; init; }
     public required Vector4 Color { get; init; }
     public int Segments { get; init; }
-    public float Thickness { get; init; }
+    public float? Thickness { get; init; }
 }
 
 
@@ -218,7 +210,6 @@ public class IpcController : IDisposable {
 
     public static Dictionary<string, IpcMapMarker> Markers = new();
     public static Dictionary<string, IpcArrowMarker> LineMarkers = new();
-    public static Dictionary<string, IpcCircleFilledMarker> CircleFilledMarkers = new();
     public static Dictionary<string, IpcCircleMarker> CircleMarkers = new();
 
     // // Copy/Paste this to subscribe to these functions, be sure to check for IPCNotReady exceptions ;)
@@ -298,7 +289,7 @@ public class IpcController : IDisposable {
         return AddWorldMarker(iconId, scaledObjectPosition, mapId, tooltip, secondaryTooltip);
     }
     private static bool RemoveMarker(string markerId)
-        => LineMarkers.Remove(markerId) || Markers.Remove(markerId) || CircleFilledMarkers.Remove(markerId) || CircleMarkers.Remove(markerId);
+        => LineMarkers.Remove(markerId) || Markers.Remove(markerId) || CircleMarkers.Remove(markerId);
 
     private static unsafe string AddMapCoordLine(Vector2 start, Vector2 stop, uint mapId, Vector4 color, float thickness)
     {
@@ -340,7 +331,7 @@ public class IpcController : IDisposable {
     }
 
     private static bool RemoveLine(string id)
-        => LineMarkers.Remove(id) || Markers.Remove(id) || CircleFilledMarkers.Remove(id) || CircleMarkers.Remove(id);
+        => LineMarkers.Remove(id) || Markers.Remove(id) || CircleMarkers.Remove(id);
 
     private static unsafe string AddMapCoordCircleFilled(Vector2 center, float radius, uint mapId, Vector4 color, int num_segments)
     {
@@ -353,7 +344,7 @@ public class IpcController : IDisposable {
 
         var adjustedStart = Position.MapToWorld(center, map);
 
-        return CircleFilledMarkers.TryAdd(newId, new IpcCircleFilledMarker
+        return CircleMarkers.TryAdd(newId, new IpcCircleMarker
         {
             Center = Position.GetTexturePosition(adjustedStart, map),
             Radius = radius,
@@ -371,7 +362,7 @@ public class IpcController : IDisposable {
 
         var newId = Guid.NewGuid().ToString("N");
 
-        return CircleFilledMarkers.TryAdd(newId, new IpcCircleFilledMarker
+        return CircleMarkers.TryAdd(newId, new IpcCircleMarker
         {
             Center = center,
             Radius = radius,
@@ -424,7 +415,7 @@ public class IpcController : IDisposable {
     }
 
     private static bool RemoveCircle(string id)
-        => LineMarkers.Remove(id) || Markers.Remove(id) || CircleFilledMarkers.Remove(id) || CircleMarkers.Remove(id); 
+        => LineMarkers.Remove(id) || Markers.Remove(id) || CircleMarkers.Remove(id); 
 
     private static bool IsReady()
         => MappySystem.MapTextureController is { Ready: true };
