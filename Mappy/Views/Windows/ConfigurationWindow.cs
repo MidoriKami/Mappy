@@ -13,12 +13,12 @@ public class ConfigurationWindow : TabbedSelectionWindow {
     private readonly List<ISelectionWindowTab> tabs;
     private readonly List<ITabItem> regularTabs;
 
-    public ConfigurationWindow() : base("Mappy - Configuration Window", 50.0f, 150.0f) {
+    public ConfigurationWindow() : base("Mappy - Configuration Window", 0.0f, 150.0f) {
         tabs = new List<ISelectionWindowTab>(Reflection.ActivateOfInterface<ISelectionWindowTab>());
         regularTabs = new List<ITabItem>(Reflection.ActivateOfInterface<ITabItem>());
         
         SizeConstraints = new WindowSizeConstraints {
-            MinimumSize = new Vector2(560, 450),
+            MinimumSize = new Vector2(560, 475),
             MaximumSize = new Vector2(9999,9999),
         };
         
@@ -36,17 +36,11 @@ public class ConfigurationWindow : TabbedSelectionWindow {
 
         return true;
     }
-
-    protected override void DrawWindowExtras() {
-        PluginVersion.Instance.DrawVersionText();
-        
-        base.DrawWindowExtras();
-    }
     
     [BaseCommandHandler("OpenConfigWindow")]
     public void OpenConfigWindow() {
         if (Service.ClientState.IsPvP) return;
-            
+
         Toggle();
     }
 }
