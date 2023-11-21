@@ -596,4 +596,16 @@ Open Map Window to populate data</value>
   <data name="PvPError" xml:space="preserve">
     <value>Mappy is not available in PvP.</value>
   </data>
+  <data name="OpenMapWindow" xml:space="preserve">
+    <value>Open Map Window</value>
+  </data>
+  <data name="ToggleMapWindow" xml:space="preserve">
+    <value>Toggle Map Window</value>
+  </data>
+  <data name="CloseMapWindow" xml:space="preserve">
+    <value>Close Map Window</value>
+  </data>
+  <data name="OpenIPCDemo" xml:space="preserve">
+    <value>Open IPC Demo</value>
+  </data>
 </root>

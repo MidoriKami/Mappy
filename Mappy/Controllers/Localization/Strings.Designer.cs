@@ -195,6 +195,15 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close Map Window.
+        /// </summary>
+        internal static string CloseMapWindow {
+            get {
+                return ResourceManager.GetString("CloseMapWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Command.
         /// </summary>
         internal static string Command {
@@ -953,6 +962,24 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open IPC Demo.
+        /// </summary>
+        internal static string OpenIPCDemo {
+            get {
+                return ResourceManager.GetString("OpenIPCDemo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open Map Window.
+        /// </summary>
+        internal static string OpenMapWindow {
+            get {
+                return ResourceManager.GetString("OpenMapWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Outline Color.
         /// </summary>
         internal static string OutlineColor {
@@ -1318,6 +1345,15 @@ namespace Mappy.System.Localization {
         internal static string TimeRemaining {
             get {
                 return ResourceManager.GetString("TimeRemaining", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle Map Window.
+        /// </summary>
+        internal static string ToggleMapWindow {
+            get {
+                return ResourceManager.GetString("ToggleMapWindow", resourceCulture);
             }
         }
         
