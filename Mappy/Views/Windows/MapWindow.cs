@@ -284,7 +284,7 @@ public unsafe class MapWindow : Window {
     }
     
     // ReSharper disable once UnusedMember.Local
-    [SingleTierCommandHandler("OpenMapWindow", "toggle")]
+    [SingleTierCommandHandler("ToggleMapWindow", "toggle")]
     private void ToggleMapWindow() {
         if (Service.ClientState.IsPvP) {
             Service.Chat.PrintError(Strings.PvPError);
@@ -295,7 +295,7 @@ public unsafe class MapWindow : Window {
     }
     
     // ReSharper disable once UnusedMember.Local
-    [SingleTierCommandHandler("OpenMapWindow", "close")]
+    [SingleTierCommandHandler("CloseMapWindow", "close")]
     private void CloseMapWindow() {
         IsOpen = false;
     }
