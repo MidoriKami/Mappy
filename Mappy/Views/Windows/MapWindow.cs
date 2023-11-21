@@ -16,6 +16,7 @@ using KamiLib.Utility;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.System;
+using Mappy.System.Localization;
 using Mappy.System.Modules;
 using Mappy.Utility;
 using Mappy.Views.Components;
@@ -271,6 +272,34 @@ public unsafe class MapWindow : Window {
         }
     }
 
+    // ReSharper disable once UnusedMember.Local
+    [SingleTierCommandHandler("OpenMapWindow", "open")]
+    private void OpenMapWindow() {
+        if (Service.ClientState.IsPvP) {
+            Service.Chat.PrintError(Strings.PvPError);
+            return;
+        }
+
+        IsOpen = true;
+    }
+    
+    // ReSharper disable once UnusedMember.Local
+    [SingleTierCommandHandler("OpenMapWindow", "toggle")]
+    private void ToggleMapWindow() {
+        if (Service.ClientState.IsPvP) {
+            Service.Chat.PrintError(Strings.PvPError);
+            return;
+        }
+        
+        Toggle();
+    }
+    
+    // ReSharper disable once UnusedMember.Local
+    [SingleTierCommandHandler("OpenMapWindow", "close")]
+    private void CloseMapWindow() {
+        IsOpen = false;
+    }
+    
     // ReSharper disable once UnusedMember.Local
     [DoubleTierCommandHandler("GoToCommandHelp", "map", "goto")]
     private void GoToCommand(params string[] args) {
