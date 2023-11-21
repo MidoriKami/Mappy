@@ -92,14 +92,16 @@ public unsafe class GameIntegration : IDisposable {
     }
 
     public void Update() {
-        if (integrationsEnabled && !MappySystem.SystemConfig.EnableIntegrations) {
-            Disable();
-        }
-
-        if (!integrationsEnabled && MappySystem.SystemConfig.EnableIntegrations) {
+        if (!integrationsEnabled && MappySystem.SystemConfig.EnableIntegrations && !IsVanillaMapOpen) {
             Enable();
         }
+
+        if (integrationsEnabled && (!MappySystem.SystemConfig.EnableIntegrations || IsVanillaMapOpen)) {
+            Disable();
+        }
     }
+
+    private bool IsVanillaMapOpen => AgentMap.Instance()->AgentInterface.AddonId != 0;
     
     private void OpenMapById(AgentMap* agent, uint mapId) 
         => Safety.ExecuteSafe(() => {
