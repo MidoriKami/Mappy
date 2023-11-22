@@ -1,9 +1,11 @@
-﻿using ImGuiNET;
+﻿using System;
+using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Abstracts;
 using Mappy.Models;
 using Mappy.Models.Enums;
 using Mappy.Models.ModuleConfiguration;
+using Mappy.Utility;
 
 namespace Mappy.System.Modules;
 
@@ -26,17 +28,34 @@ public class PluginIntegrations : ModuleBase {
         foreach (var (markerId, marker) in IpcController.Markers) {
             if (map.RowId != marker.MapId) continue;
 
-            UpdateIcon(markerId, () => new MappyMapIcon {
-                MarkerId = markerId,
-                IconId = marker.IconId,
-                TexturePosition = marker.PositionType is PositionType.Texture ? marker.Position : null,
-                ObjectPosition = marker.PositionType is PositionType.World ? marker.Position : null,
-                Tooltip = marker.Tooltip,
-                TooltipExtraText = marker.Description,
-            }, icon => {
-                icon.TexturePosition = marker.PositionType is PositionType.Texture ? marker.Position : null;
-                icon.ObjectPosition = marker.PositionType is PositionType.World ? marker.Position : null;
-            });
+            switch (marker.Type) {
+                case IpcMarkerType.Image:
+                    UpdateIcon(markerId, () => new MappyMapIcon {
+                        MarkerId = markerId,
+                        IconId = marker.IconId,
+                        TexturePosition = marker.PositionType is PositionType.Texture ? marker.Position : null,
+                        ObjectPosition = marker.PositionType is PositionType.World ? marker.Position : null,
+                        Tooltip = marker.Tooltip,
+                        TooltipExtraText = marker.Description,
+                    }, icon => {
+                        icon.TexturePosition = marker.PositionType is PositionType.Texture ? marker.Position : null;
+                        icon.ObjectPosition = marker.PositionType is PositionType.World ? marker.Position : null;
+                    });
+                    break;
+                
+                case IpcMarkerType.Shape:
+                    var position = marker.PositionType switch {
+                        PositionType.Texture => marker.Position,
+                        PositionType.World => Position.GetTexturePosition(marker.Position, map),
+                        _ => throw new ArgumentOutOfRangeException()
+                    };
+                    
+                    var center = windowPos + position * viewport.Scale - viewport.Offset;
+                    
+                    ImGui.GetWindowDrawList().AddCircleFilled(center, marker.Radius, ImGui.GetColorU32(marker.FillColor), marker.Segments);
+                    ImGui.GetWindowDrawList().AddCircle(center, marker.Radius, ImGui.GetColorU32(marker.OutlineColor), marker.Segments);
+                    break;
+            }
         }
     }
 }

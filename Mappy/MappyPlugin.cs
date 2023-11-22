@@ -23,6 +23,7 @@ public sealed class MappyPlugin : IDalamudPlugin {
         
         KamiCommon.WindowManager.AddConfigurationWindow(new ConfigurationWindow());
         KamiCommon.WindowManager.AddWindow(new MapWindow());
+        KamiCommon.WindowManager.AddWindow(new IpcDemoWindow());
     }
 
     public void Dispose() {
