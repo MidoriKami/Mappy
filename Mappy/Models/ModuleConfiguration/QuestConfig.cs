@@ -51,5 +51,5 @@ public class QuestConfig : IModuleConfig, IIconConfig, ITooltipConfig, IQuestCol
     public float DistanceThreshold { get; set; } = 20.0f;
     
     [BoolConfig("IgnoreJournalSetting", "IgnoreJournalSettingHelp")]
-    public bool IgnoreJournalSetting { get; set; } = false;
+    public bool IgnoreJournalSetting { get; set; } = true;
 }
