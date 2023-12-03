@@ -49,4 +49,7 @@ public class QuestConfig : IModuleConfig, IIconConfig, ITooltipConfig, IQuestCol
 
     public bool EnableDirectionalMarker { get; set; } = true;
     public float DistanceThreshold { get; set; } = 20.0f;
+    
+    [BoolConfig("IgnoreJournalSetting", "IgnoreJournalSettingHelp")]
+    public bool IgnoreJournalSetting { get; set; } = false;
 }

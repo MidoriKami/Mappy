@@ -608,4 +608,10 @@ Open Map Window to populate data</value>
   <data name="OpenIPCDemo" xml:space="preserve">
     <value>Open IPC Demo</value>
   </data>
+  <data name="IgnoreJournalSetting" xml:space="preserve">
+    <value>Ignore Journal Visibility Setting</value>
+  </data>
+  <data name="IgnoreJournalSettingHelp" xml:space="preserve">
+    <value>Ignores the visibility setting in the journal and shows all quests.</value>
+  </data>
 </root>

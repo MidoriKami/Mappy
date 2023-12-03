@@ -28,7 +28,7 @@ public unsafe class Quest : ModuleBase {
         }
         
         if (!config.HideAcceptedQuests) {
-            mapData->QuestDataSpan.DrawMarkers(DrawMarker, map, null, null, null, () => config.InProgressColor);
+            mapData->QuestDataSpan.DrawMarkers(DrawMarker, map, null, null, null, () => config.InProgressColor, config.IgnoreJournalSetting);
             DrawQuestLinkMarkers(map);
         }
 

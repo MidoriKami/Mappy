@@ -12,9 +12,10 @@ public static class SpanExtensions {
         Func<MapMarkerData, string>? tooltipExtraText = null,
         Func<MapMarkerData, bool>? filterFunction = null,
         Func<MarkerInfo, bool>? parentFilter = null,
-        Func<object>? extraData = null) {
+        Func<object>? extraData = null,
+        bool ignoreVisibility = false) {
         foreach (var markerInfo in span) {
-            if (!markerInfo.ShouldRender) continue;
+            if (!markerInfo.ShouldRender && !ignoreVisibility) continue;
             if (parentFilter is not null) {
                 if (parentFilter.Invoke(markerInfo)) {
                     continue;

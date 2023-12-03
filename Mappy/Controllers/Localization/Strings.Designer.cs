@@ -746,6 +746,24 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ignore Journal Visibility Setting.
+        /// </summary>
+        internal static string IgnoreJournalSetting {
+            get {
+                return ResourceManager.GetString("IgnoreJournalSetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ignores the visibility setting in the journal and shows all quests..
+        /// </summary>
+        internal static string IgnoreJournalSettingHelp {
+            get {
+                return ResourceManager.GetString("IgnoreJournalSettingHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Active Quest Color.
         /// </summary>
         internal static string InProgressColor {

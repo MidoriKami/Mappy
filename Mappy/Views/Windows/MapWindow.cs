@@ -73,7 +73,7 @@ public unsafe class MapWindow : Window {
         if (MappySystem.SystemConfig.HideInCombat && Condition.IsInCombat()) return false;
         if (MappySystem.SystemConfig.HideBetweenAreas && Condition.IsBetweenAreas()) return false;
         if (MappySystem.SystemConfig.HideWithGameGui && Node.IsAddonReady(NameplateAddon) && !NameplateAddon->RootNode->IsVisible) return false;
-        if (MappySystem.SystemConfig.HideWithGameGui && Control.Instance() is not null && Marshal.ReadByte((nint) TargetSystem.Instance(), 0x5300) is 1 ) return false; // Checks TargetSystem.ShouldHideWindows
+        if (MappySystem.SystemConfig.HideWithGameGui && Control.Instance()->TargetSystem.TargetModeIndex is 1) return false;
 
         return true;
     }
