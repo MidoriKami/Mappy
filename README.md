@@ -27,6 +27,7 @@ Each function is more thoroughly documented in the [IpcController](https://githu
 Additionally there is also an IPC Demo window that demonstrates utilizing the IPC to do some basic tasks [IpcDemoWindow](https://github.com/MidoriKami/Mappy/blob/master/Mappy/Views/Windows/IpcDemoWindow.cs).
 
 _**Be sure to save the ID's of the generated markers so you can remove them when you are done!**_
+
 Failure to do so means that when your plugin unloads, it won't clear any markers that you have told Mappy to draw.
 
 ![image](https://github.com/MidoriKami/Mappy/assets/9083275/160308b3-287c-4103-812d-08bef3277658)
