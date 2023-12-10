@@ -20,13 +20,15 @@ Integrates seamlessly into the games built in functions, for example pressing `m
 ![image](https://github.com/MidoriKami/Mappy/assets/9083275/f02ffcd2-b290-4764-8a1a-9a6e9843e576)
 
 # Mappy IPC
-Mappy provides various functions to other plugins to allow interplugin communication, and example usage is illustrated below.
+Mappy provides various functions to other plugins to allow interplugin communication.
 
-Each function is more thoroughly documented in the [IpcController](https://github.com/MidoriKami/Mappy/blob/master/Mappy/Controllers/IpcController.cs).
+The functional API is documented here: [IpcController](https://github.com/MidoriKami/Mappy/blob/master/Mappy/Controllers/IpcController.cs)
 
-Additionally there is also an IPC Demo window that demonstrates utilizing the IPC to do some basic tasks [IpcDemoWindow](https://github.com/MidoriKami/Mappy/blob/master/Mappy/Views/Windows/IpcDemoWindow.cs).
+A demonstration is documented here: [IpcDemoWindow](https://github.com/MidoriKami/Mappy/blob/master/Mappy/Views/Windows/IpcDemoWindow.cs)
 
-_**Be sure to save the ID's of the generated markers so you can remove them when you are done!**_
+While ingame you can use the command `/mappy ipcdemo` to open the IPC Demo Window, and see how the IPC works with Mappy.
+
+_**Functions that add markers return UUID's, be sure to save the ID's of the generated markers so you can remove them when you are done!**_
 
 Failure to do so means that when your plugin unloads, it won't clear any markers that you have told Mappy to draw.
 
