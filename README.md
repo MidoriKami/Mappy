@@ -24,6 +24,8 @@ Mappy provides various functions to other plugins to allow interplugin communica
 
 Each function is more thoroughly documented in the [IpcController](https://github.com/MidoriKami/Mappy/blob/master/Mappy/Controllers/IpcController.cs).
 
+Additionally there is also an IPC Demo window that demonstrates utilizing the IPC to do some basic tasks [IpcDemoWindow](https://github.com/MidoriKami/Mappy/blob/master/Mappy/Views/Windows/IpcDemoWindow.cs).
+
 ```cs
     private readonly List<string> registeredMarkers = new();
 
