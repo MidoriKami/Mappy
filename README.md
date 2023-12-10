@@ -1,5 +1,5 @@
 # Mappy
-[![Download count](https://img.shields.io/endpoint?url=https://vz32sgcoal.execute-api.us-east-1.amazonaws.com/Mappy)](https://github.com/MidoriKami/Mappy)
+[![Download count](https://img.shields.io/endpoint?url=https://qzysathwfhebdai6xgauhz4q7m0mzmrf.lambda-url.us-east-1.on.aws/Mappy)](https://github.com/MidoriKami/Mappy)
 
 Mappy is a XivLauncher/Dalamud plugin.
 
