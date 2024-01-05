@@ -23,6 +23,7 @@ public class SystemConfig : IWindowConfig, IGameIntegrationsConfig, IWindowDispl
     public bool ZoomInOnFlag { get; set; } = true;
     public bool FocusObjective { get; set; } = true;
     public bool EnableIntegrations  { get; set; } = true;
+    public bool IntegrationsUnCollapse { get; set; } = true;
     public bool HideWithGameGui { get; set; } = true;
     public bool HideBetweenAreas { get; set; } = false;
     public bool HideInDuties { get; set; } = false;

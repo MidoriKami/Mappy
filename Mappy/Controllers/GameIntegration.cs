@@ -106,6 +106,14 @@ public unsafe class GameIntegration : IDisposable {
     private void OpenMapById(AgentMap* agent, uint mapId) 
         => Safety.ExecuteSafe(() => {
             MappySystem.MapTextureController.LoadMap(mapId);
+            if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is {} mapWindow) {
+                if (MappySystem.SystemConfig.IntegrationsUnCollapse) {
+                    mapWindow.UnCollapseOrToggle();
+                }
+                else {
+                    mapWindow.Toggle();
+                }
+            }
         }, "Exception during OpenMapByMapId");
 
     private void OpenMap(AgentMap* agent, OpenMapInfo* mapInfo) 
@@ -114,6 +122,11 @@ public unsafe class GameIntegration : IDisposable {
 
             if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is { Viewport: var viewport } mapWindow) {
                 ImGui.SetWindowFocus(mapWindow.WindowName);
+                
+                if (MappySystem.SystemConfig.IntegrationsUnCollapse) {
+                    mapWindow.UnCollapseOrToggle();
+                }
+                
                 mapWindow.IsOpen = true;
                 mapWindow.ProcessingCommand = true;
             
@@ -202,8 +215,14 @@ public unsafe class GameIntegration : IDisposable {
 #endif
         
             if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is {} mapWindow) {
+                if (MappySystem.SystemConfig.IntegrationsUnCollapse) {
+                    mapWindow.UnCollapseOrToggle();
+                }
+                else {
+                    mapWindow.Toggle();
+                }
+                
                 ImGui.SetWindowFocus(mapWindow.WindowName);
-                mapWindow.IsOpen = !mapWindow.IsOpen;
             }
         }, "Exception during OnShowHook");
 

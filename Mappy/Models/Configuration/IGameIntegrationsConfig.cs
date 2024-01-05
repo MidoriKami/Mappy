@@ -6,4 +6,7 @@ namespace Mappy.Models;
 public interface IGameIntegrationsConfig {
     [BoolDescriptionConfig("EnableIntegrations", "IntegrationsDescription")]
     public bool EnableIntegrations { get; set; }
+    
+    [BoolConfig("UnCollapseWindow")]
+    public bool IntegrationsUnCollapse { get; set; }
 }

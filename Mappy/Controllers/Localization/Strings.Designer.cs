@@ -1376,7 +1376,7 @@ namespace Mappy.System.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ToggleTheModule.
+        ///   Looks up a localized string similar to Toggle the module.
         /// </summary>
         internal static string ToggleModuleHelp {
             get {
@@ -1426,6 +1426,15 @@ namespace Mappy.System.Localization {
         internal static string UnacceptedQuestColor {
             get {
                 return ResourceManager.GetString("UnacceptedQuestColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Un-Collapse Window on Command.
+        /// </summary>
+        internal static string UnCollapseWindow {
+            get {
+                return ResourceManager.GetString("UnCollapseWindow", resourceCulture);
             }
         }
         

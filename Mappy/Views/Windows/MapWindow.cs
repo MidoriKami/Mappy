@@ -32,6 +32,7 @@ public unsafe class MapWindow : Window {
     private Vector2 lastWindowSize = Vector2.Zero;
     private readonly MapToolbar toolbar;
     public bool ProcessingCommand;
+    private bool isCollapsed;
     
     public const ImGuiWindowFlags DefaultFlags = 
         ImGuiWindowFlags.NoFocusOnAppearing |
@@ -78,6 +79,17 @@ public unsafe class MapWindow : Window {
         return true;
     }
 
+    public void UnCollapseOrToggle() {
+        if (isCollapsed) {
+            isCollapsed = false;
+            Collapsed = false;
+            IsOpen = true;
+        }
+        else {
+            Toggle();
+        }
+    }
+
     public override void OnOpen() {
         UIModule.PlaySound(23u);
 
@@ -109,7 +121,14 @@ public unsafe class MapWindow : Window {
         ImGui.SetWindowFocus(WindowName);
     }
 
+    public override void Update() {
+        isCollapsed = true;
+    }
+
     public override void Draw() {
+        isCollapsed = false;
+        Collapsed = null;
+
         UpdateSizePosition();
 
         if (MappySystem.MapTextureController is not { Ready: true, MapTexture: var texture, CurrentMap: var map }) return;
