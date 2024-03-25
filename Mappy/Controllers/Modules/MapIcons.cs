@@ -49,7 +49,20 @@ public class MapIcons : ModuleBase {
     private void DrawMarker(MapMarker marker, Map map) {
         var config = GetConfig<MapIconConfig>();
         
-        if (marker.Icon is > 063200 and < 63900 || map.Id.RawString.StartsWith("world")) {
+        if (marker.Type == 1) {
+            // subzone labels
+            UpdateText((marker.RowId, marker.SubRowId), () => new MappyMapText {
+                TextId = (marker.RowId, marker.SubRowId),
+                Text = GetTooltipString(marker),
+                TexturePosition = marker.GetPosition(),
+                UseLargeFont = false,
+                TextColor = KnownColor.Black.Vector(),
+                OutlineColor = KnownColor.White.Vector(),
+                HoverColor = KnownColor.Black.Vector(),
+                HoverOutlineColor = KnownColor.White.Vector(),
+                OnClick = marker.GetClickAction(),
+            });
+        } else if (marker.Icon is > 063200 and < 63900 || map.Id.RawString.StartsWith("world")) {
             UpdateIcon((marker.RowId, marker.SubRowId), () => new MappyMapIcon {
                 MarkerId = (marker.RowId, marker.SubRowId),
                 IconId = marker.Icon,
