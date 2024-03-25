@@ -49,7 +49,7 @@ public class MapIcons : ModuleBase {
     private void DrawMarker(MapMarker marker, Map map) {
         var config = GetConfig<MapIconConfig>();
         
-        if (marker.Type == 1) {
+        if (marker.Type == 1 && config.ShowSubzoneLabels) {
             // subzone labels
             UpdateText((marker.RowId, marker.SubRowId), () => new MappyMapText {
                 TextId = (marker.RowId, marker.SubRowId),
