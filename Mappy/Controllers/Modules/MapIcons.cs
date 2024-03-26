@@ -51,6 +51,13 @@ public class MapIcons : ModuleBase {
         
         if (marker.Type == 1 && config.ShowSubzoneLabels) {
             // subzone labels
+            UpdateIcon((marker.RowId, marker.SubRowId), () => new MappyMapIcon {
+                MarkerId = (marker.RowId, marker.SubRowId),
+                IconId = marker.Icon,
+                TexturePosition = marker.GetPosition(),
+                ColorManipulation = new Vector4(0.75f, 0.75f, 0.75f, 1.0f),
+            });
+
             UpdateText((marker.RowId, marker.SubRowId), () => new MappyMapText {
                 TextId = (marker.RowId, marker.SubRowId),
                 Text = GetTooltipString(marker),
