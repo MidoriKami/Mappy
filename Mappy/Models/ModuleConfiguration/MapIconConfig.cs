@@ -42,4 +42,7 @@ public class MapIconConfig : IModuleConfig, IIconConfig, ITooltipConfig, IMapIco
 
     [BoolConfig("ShowTeleportCosts")]
     public bool ShowTeleportCostTooltips { get; set; } = true;
+
+    [BoolConfig("ShowSubzoneLabels")]
+    public bool ShowSubzoneLabels { get; set; } = true;
 }

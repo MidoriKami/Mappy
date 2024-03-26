@@ -617,4 +617,7 @@ Open Map Window to populate data</value>
   <data name="UnCollapseWindow" xml:space="preserve">
     <value>Un-Collapse Window on Command</value>
   </data>
+  <data name="ShowSubzoneLabels" xml:space="preserve">
+    <value>Show Subzone Labels</value>
+  </data>
 </root>
