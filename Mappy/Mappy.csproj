@@ -6,7 +6,7 @@
         <Version>1.0.7.5</Version>
     </PropertyGroup>
 
-    <Import Project="$(appdata)\XIVLauncher\addon\Hooks\dev\targets\Dalamud.Plugin.Bootstrap.targets"/>
+    <Import Project="Dalamud.Plugin.Bootstrap.targets"/>
 
     <ItemGroup>
         <None Remove="Mappy.json" />
