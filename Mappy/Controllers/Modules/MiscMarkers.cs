@@ -12,6 +12,7 @@ using Mappy.Models.Enums;
 using Mappy.Models.ModuleConfiguration;
 using Mappy.Utility;
 using Map = Lumina.Excel.GeneratedSheets.Map;
+using TripleTriad = Lumina.Excel.GeneratedSheets.TripleTriad;
 
 namespace Mappy.System.Modules;
 
