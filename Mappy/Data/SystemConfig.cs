@@ -34,9 +34,7 @@ public class SystemConfig : CharacterConfiguration {
 
     public bool UseLinearZoom = false;
     public float ZoomSpeed = 0.05f;
-
     public float IconScale = 0.50f;
-
     public bool ShowMiscTooltips = true;
 
     // public bool KeepOpen { get; set; } = false;
