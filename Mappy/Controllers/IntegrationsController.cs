@@ -42,6 +42,9 @@ public unsafe class IntegrationsController : IDisposable {
         openMapHook?.Dispose();
         
         TryUnYeetMap();
+        
+        Service.ClientState.EnterPvP -= Disable;
+        Service.ClientState.LeavePvP -= Enable;
     }
     
     public void Enable() {
