@@ -9,9 +9,9 @@ using Mappy.Classes;
 namespace Mappy.Modules;
 
 public class FateModule : ModuleBase {
-    public override unsafe void ProcessMarker(MarkerInfo markerInfo) {
+    public override unsafe bool ProcessMarker(MarkerInfo markerInfo) {
         var markerName = markerInfo.PrimaryText?.Invoke();
-        if (markerName.IsNullOrEmpty()) return;
+        if (markerName.IsNullOrEmpty()) return false;
         
         foreach (var fate in Service.FateTable) {
             var name = new ReadOnlySeStringSpan(((FateContext*) fate.Address)->Name.AsSpan()).ExtractText();
@@ -37,8 +37,10 @@ public class FateModule : ModuleBase {
                     markerInfo.SecondaryText = () => $"Progress {fate.Progress}%";
                 }
                 
-                return;
+                return true;
             }
         }
+
+        return false;
     }
 }

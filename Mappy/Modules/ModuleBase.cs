@@ -3,5 +3,5 @@
 namespace Mappy.Modules;
 
 public abstract class ModuleBase {
-    public abstract void ProcessMarker(MarkerInfo markerInfo);
+    public abstract bool ProcessMarker(MarkerInfo markerInfo);
 }
