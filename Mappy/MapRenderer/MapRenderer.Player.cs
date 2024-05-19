@@ -26,7 +26,7 @@ public partial class MapRenderer {
     private void DrawLookLine(Vector2 position) {
         var angle = GetCameraRotation();
 
-        var lineLength = 120.0f * Scale;
+        var lineLength = 150.0f * Scale;
         var halfConeAngle = DegreesToRadians(90.0f) / 2.0f;
         
         DrawAngledLineFromCenter(position, lineLength, angle - halfConeAngle);
@@ -74,14 +74,15 @@ public partial class MapRenderer {
     
     public void DrawPlayerIcon(Vector2 position) {
         if (Service.TextureProvider.GetIcon(60443) is not {} texture) return;
+        if (Service.ClientState is not { LocalPlayer: { } player }) return;
         
-        var angle = GetCameraRotation();
-        var vectors = GetRotationVectors(angle, position, texture.Size / 2.0f);
+        var angle = -player.Rotation + MathF.PI / 2.0f;
+        var vectors = GetRotationVectors(angle, position, texture.Size / 2.0f * Scale);
     
         ImGui.GetWindowDrawList().AddImageQuad(texture.ImGuiHandle, vectors[0], vectors[1], vectors[2], vectors[3]);
     }
     
-    private Vector2[] GetRotationVectors(float angle, Vector2 center, Vector2 size) {
+    private static Vector2[] GetRotationVectors(float angle, Vector2 center, Vector2 size) {
         var cosA = MathF.Cos(angle + 0.5f * MathF.PI);
         var sinA = MathF.Sin(angle + 0.5f * MathF.PI);
     
