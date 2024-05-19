@@ -20,13 +20,15 @@ public static class System {
     public static MapRenderer MapRenderer { get; set; }
     public static IntegrationsController IntegrationsController { get; set; }
     public static CommandManager CommandManager { get; set; }
+
     public static List<ModuleBase> Modules { get; set; } = [
-        new FateModule(),
-        new TripleTriadModule(),
         new HousingModule(),
+        new TripleTriadModule(),
+        new FateModule(),
     ];
-    
+
     public static IconCache IconCache { get; set; } = new();
+
     public static TextureCache TextureCache { get; set; } = new();
     public static TooltipCache TooltipCache { get; set; } = new();
     public static CardRewardCache CardRewardCache { get; set; } = new();

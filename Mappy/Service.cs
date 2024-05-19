@@ -11,14 +11,10 @@ public sealed class Service {
     [PluginService] public static IFramework Framework { get; set; }
     [PluginService] public static IDataManager DataManager { get; set; }
     [PluginService] public static ITextureProvider TextureProvider { get; set; }
-    [PluginService] public static IChatGui Chat { get; set; }
-    [PluginService] public static IToastGui Toast { get; set; }
-    [PluginService] public static IPartyList PartyList { get; set; }
     [PluginService] public static IObjectTable ObjectTable { get; set; }
     [PluginService] public static IGameGui GameGui { get; set; }
     [PluginService] public static IAetheryteList AetheryteList { get; set; }
     [PluginService] public static IPluginLog Log { get; set; }
     [PluginService] public static IGameInteropProvider Hooker { get; set; }
-    [PluginService] public static IAddonLifecycle AddonLifecycle { get; set; }
     [PluginService] public static IFateTable FateTable { get; set; }
 }
