@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Linq;
+using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
 using ImGuiNET;
 using KamiLib.CommandManager;
@@ -15,8 +16,29 @@ public class MapWindow : Window {
     
     public MapWindow() : base("Mappy Map Window", new Vector2(410.0f, 250.0f)) {
         System.CommandManager.RegisterCommand(new CommandHandler {
-            ActivationPath = "/map",
-            Delegate = _ => System.MapWindow.Toggle(),
+            ActivationPath = "/togglemap",
+            Delegate = _ => System.MapWindow.UnCollapseOrToggle(),
+        });
+        
+        System.CommandManager.RegisterCommand(new CommandHandler {
+            ActivationPath = "/showmap",
+            Delegate = _ => System.MapWindow.UnCollapseOrShow(),
+        });
+        
+        System.CommandManager.RegisterCommand(new CommandHandler {
+            ActivationPath = "/hidemap",
+            Delegate = _ => System.MapWindow.Close(),
+        });
+        
+        // Easter Egg, don't recommend executing this command.
+        System.CommandManager.RegisterCommand(new CommandHandler {
+            ActivationPath = "/pyon",
+            Hidden = true,
+            Delegate = _ => {
+                foreach (var index in Enumerable.Range(0, 20)) {
+                    Service.Framework.RunOnTick(Toggle, delayTicks: 20 * index);
+                }
+            }
         });
     }
 
