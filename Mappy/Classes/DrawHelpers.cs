@@ -48,7 +48,9 @@ public static class DrawHelpers {
         // Only process modules for Dynamic Markers
         if (markerInfo.IsDynamicMarker) {
             foreach (var module in System.Modules) {
-                module.ProcessMarker(markerInfo);
+                if (module.ProcessMarker(markerInfo)) {
+                    break;
+                }
             }
         }
         
