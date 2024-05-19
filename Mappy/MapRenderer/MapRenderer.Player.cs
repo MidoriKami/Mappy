@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Numerics;
-using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -21,11 +20,10 @@ public partial class MapRenderer {
             
             DrawLookLine(position);
             DrawPlayerIcon(position);
-            //DrawUtilities.DrawIconRotated(60443, player, config.IconScale);
         }
     }
     
-    private unsafe void DrawLookLine(Vector2 position) {
+    private void DrawLookLine(Vector2 position) {
         var angle = GetCameraRotation();
 
         var lineLength = 120.0f * Scale;
