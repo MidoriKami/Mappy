@@ -12,7 +12,7 @@ public static class TempMapMarkerExtensions {
             // Divide by 16, as it seems they use a fixed scalar
             // Add 1024 * scale, to offset from top-left, to center-based coordinate
             // Add offset for drawing relative to map when its moved around
-            Position = (new Vector2(marker.MapMarker.X, marker.MapMarker.Y) / 16.0f + new Vector2(1024.0f, 1024.0f)) * scale,
+            Position = (new Vector2(marker.MapMarker.X, marker.MapMarker.Y) / 16.0f * DrawHelpers.GetMapScaleFactor() + DrawHelpers.GetCombinedOffsetVector()) * scale,
             Offset = offset,
             Scale = scale,
             IconId = marker.MapMarker.IconId,
