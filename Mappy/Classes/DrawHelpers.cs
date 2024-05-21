@@ -4,15 +4,16 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using KamiLib.Components;
-using Mappy.Controllers;
+using Mappy.Data;
 
 namespace Mappy.Classes;
 
 public class MarkerInfo {
-    public required Vector2 Position { get; init; }
-    public required Vector2 Offset { get; init; }
+    public required Vector2 Position { get; set; }
+    public required Vector2 Offset { get; set; }
     public required float Scale { get; init; }
     public uint? ObjectiveId { get; init; }
     public uint? LevelId { get; set; }
@@ -26,6 +27,18 @@ public class MarkerInfo {
 }
 
 public static class DrawHelpers {
+    public static unsafe Vector2 GetMapOffsetVector() 
+        => new Vector2(AgentMap.Instance()->SelectedOffsetX, AgentMap.Instance()->SelectedOffsetY) * GetMapScaleFactor();
+
+    public static unsafe float GetMapScaleFactor()
+        => AgentMap.Instance()->SelectedMapSizeFactorFloat;
+
+    public static Vector2 GetMapCenterOffsetVector() 
+        => new(1024.0f, 1024.0f);
+
+    public static Vector2 GetCombinedOffsetVector()
+        => -GetMapOffsetVector() + GetMapCenterOffsetVector();
+
     public static void DrawMapMarker(MarkerInfo markerInfo) {
         // Don't draw markers that are positioned off the map texture
         if (markerInfo.Position.X < 0.0f || markerInfo.Position.X > 2048.0f * markerInfo.Scale || markerInfo.Position.Y < 0.0f || markerInfo.Position.Y > 2048.0f * markerInfo.Scale) return;
@@ -84,7 +97,7 @@ public static class DrawHelpers {
     }
     
     private static void ProcessInteractions(MarkerInfo markerInfo) {
-        if (markerInfo is { Clicked: { } clickAction } && ImGui.IsItemClicked()) {
+        if (markerInfo is { Clicked: { } clickAction } && ImGui.IsItemClicked(ImGuiMouseButton.Right)) {
             clickAction.Invoke();
         }
     }
