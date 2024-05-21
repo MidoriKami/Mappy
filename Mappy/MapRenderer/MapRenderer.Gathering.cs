@@ -1,7 +1,7 @@
 ﻿using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Mappy.Extensions;
 
-namespace Mappy.Classes;
+namespace Mappy.MapRenderer;
 
 public partial class MapRenderer {
     private unsafe void DrawGatheringMarkers() {

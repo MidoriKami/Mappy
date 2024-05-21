@@ -1,9 +1,11 @@
 ﻿using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using KamiLib.CommandManager;
 using KamiLib.Window;
+using Mappy.Classes;
 
 namespace Mappy.Windows;
 
@@ -65,19 +67,60 @@ public class MapWindow : Window {
             }
         }
 
-        IsMapHovered = ImGui.IsItemHovered();
-        
-        if (IsMapHovered) {
-            ProcessMouseScroll();
-            ProcessMapDragStart();
-            Flags |= ImGuiWindowFlags.NoMove;
+        if (ImGui.IsItemClicked(ImGuiMouseButton.Right)) {
+            ImGui.OpenPopup("Mappy_Context_Menu");
         }
         else {
-            Flags &= ~ImGuiWindowFlags.NoMove;
+            IsMapHovered = ImGui.IsItemHovered();
+
+            if (IsMapHovered) {
+                ProcessMouseScroll();
+                ProcessMapDragStart();
+                Flags |= ImGuiWindowFlags.NoMove;
+            }
+            else {
+                Flags &= ~ImGuiWindowFlags.NoMove;
+            }
+            
+            ProcessMapDragDragging();
+            ProcessMapDragEnd();
         }
+
+        DrawContextMenu();
+    }
+    
+    private unsafe void DrawContextMenu() {
+        using var contentMenu = ImRaii.ContextPopup("Mappy_Context_Menu");
+        if (!contentMenu) return;
         
-        ProcessMapDragDragging();
-        ProcessMapDragEnd();
+        if (AgentMap.Instance()->IsFlagMarkerSet is not 0) {
+            if (ImGui.MenuItem("Remove Flag")) {
+                AgentMap.Instance()->IsFlagMarkerSet = 0;
+            }
+        }
+        else {
+            if (ImGui.MenuItem("Place Flag") && Service.ClientState is { TerritoryType: var territoryType, MapId: var mapId}) {
+                var cursorPosition = ImGui.GetMousePosOnOpeningCurrentPopup();
+                Service.Log.Debug($"{cursorPosition} - CursorPosition");
+
+                var mapChildOffset = MapDrawOffset;
+                Service.Log.Debug($"{MapDrawOffset} - MapChildOffset");
+
+                var mapDrawOffset = System.MapRenderer.DrawPosition;
+                Service.Log.Debug($"{mapDrawOffset} - MapDrawPosition");
+
+                var textureClickLocation = (cursorPosition - mapChildOffset - mapDrawOffset) / System.MapRenderer.Scale;
+                Service.Log.Debug($"{textureClickLocation} - textureClickLocation");
+
+                var result = textureClickLocation - new Vector2(1024.0f, 1024.0f);
+                Service.Log.Debug($"{result} - Result");
+
+                var scaledResult = result / DrawHelpers.GetMapScaleFactor() + DrawHelpers.GetMapOffsetVector();
+                Service.Log.Debug($"{scaledResult} - scaledResult");
+                
+                AgentMap.Instance()->SetFlagMapMarker(territoryType, mapId, scaledResult.X, scaledResult.Y);
+            }
+        }
     }
 
     public override void OnClose() {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using KamiLib.Configuration;
 
-namespace Mappy.Controllers;
+namespace Mappy.Data;
 
 public class IconSetting {
     public bool Hide { get; set; }

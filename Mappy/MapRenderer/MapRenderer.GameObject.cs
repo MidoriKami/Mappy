@@ -1,34 +1,31 @@
 ﻿using System.Drawing;
-using System.Numerics;
+using System.Linq;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
+using Mappy.Classes;
+using Mappy.Extensions;
 
-namespace Mappy.Classes;
+namespace Mappy.MapRenderer;
 
 public partial class MapRenderer {
     private unsafe void DrawGameObjects() {
-        if (Service.ClientState is { LocalPlayer: { } player }) {
-            var position = ImGui.GetWindowPos() +
-                           DrawPosition +
-                           (new Vector2(player.Position.X, player.Position.Z) * AgentMap.Instance()->SelectedMapSizeFactorFloat +
-                            new Vector2(AgentMap.Instance()->SelectedOffsetX, AgentMap.Instance()->SelectedOffsetY) +
-                            new Vector2(1024.0f, 1024.0f)) *
-                           Scale;
+        if (AgentMap.Instance()->SelectedMapId != AgentMap.Instance()->CurrentMapId) return;
+        
+        if (Service.ClientState is not { LocalPlayer: { } player }) return;
+        
+        DrawRadar(player);
 
-            ImGui.GetWindowDrawList().AddCircleFilled(position, 150.0f * Scale, ImGui.GetColorU32(KnownColor.Gray.Vector() with { W = 0.10f }));
-            ImGui.GetWindowDrawList().AddCircle(position, 150.0f * Scale, ImGui.GetColorU32(KnownColor.Gray.Vector() with { W = 0.30f }));
-        }
-
-        foreach (var obj in Service.ObjectTable) {
+        foreach (var obj in Service.ObjectTable.Reverse()) {
             if (!obj.IsTargetable) continue;
 
             DrawHelpers.DrawMapMarker(new MarkerInfo {
-                Position = (new Vector2(obj.Position.X, obj.Position.Z) * AgentMap.Instance()->SelectedMapSizeFactorFloat + new Vector2(AgentMap.Instance()->SelectedOffsetX, AgentMap.Instance()->SelectedOffsetY) + new Vector2(1024.0f, 1024.0f)) *
-                           Scale,
+                Position = (obj.GetMapPosition() -
+                            DrawHelpers.GetMapOffsetVector() +
+                            DrawHelpers.GetMapCenterOffsetVector()) * Scale,
                 Offset = DrawPosition,
                 Scale = Scale,
                 IconId = obj.ObjectKind switch {
@@ -45,11 +42,21 @@ public partial class MapRenderer {
             });
         }
     }
+    private void DrawRadar(GameObject gameObjectCenter) {
+        var position = ImGui.GetWindowPos() +
+                       DrawPosition +
+                       (gameObjectCenter.GetMapPosition() -
+                        DrawHelpers.GetMapOffsetVector() +
+                        DrawHelpers.GetMapCenterOffsetVector()) * Scale;
+        
+        ImGui.GetWindowDrawList().AddCircleFilled(position, 150.0f * Scale, ImGui.GetColorU32(KnownColor.Gray.Vector() with { W = 0.10f }));
+        ImGui.GetWindowDrawList().AddCircle(position, 150.0f * Scale, ImGui.GetColorU32(KnownColor.Gray.Vector() with { W = 0.30f }));
+    }
 
     private string GetTooltipForGameObject(GameObject obj)
         => obj switch {
-            BattleNpc battleNpc => $"Lv. {battleNpc.Level} {battleNpc.Name}",
-            PlayerCharacter playerCharacter => $"Lv. {playerCharacter.Level} {playerCharacter.Name}",
+            BattleNpc { Level: > 0 } battleNpc => $"Lv. {battleNpc.Level} {battleNpc.Name}",
+            PlayerCharacter { Level: > 0 } playerCharacter => $"Lv. {playerCharacter.Level} {playerCharacter.Name}",
             _ => obj.ObjectKind switch {
                 ObjectKind.GatheringPoint => System.GatheringPointNameCache.GetValue((obj.DataId, obj.Name.ToString())) ?? string.Empty,
                 ObjectKind.Treasure => obj.Name.ToString(),

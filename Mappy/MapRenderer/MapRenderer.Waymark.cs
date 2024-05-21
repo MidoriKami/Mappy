@@ -2,9 +2,11 @@
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using Mappy.Classes;
 using FieldMarker = Lumina.Excel.GeneratedSheets.FieldMarker;
+using MarkerInfo = Mappy.Classes.MarkerInfo;
 
-namespace Mappy.Classes;
+namespace Mappy.MapRenderer;
 
 public partial class MapRenderer {
     private readonly List<FieldMarker> fieldMarkers = Service.DataManager.GetExcelSheet<FieldMarker>()!.Where(marker => marker.MapIcon is not 0).ToList();

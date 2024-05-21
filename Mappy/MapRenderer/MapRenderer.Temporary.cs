@@ -3,7 +3,7 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Mappy.Extensions;
 
-namespace Mappy.Classes;
+namespace Mappy.MapRenderer;
 
 public partial class MapRenderer {
  // Note, unlike EventMarkers, Temporary Markers seem to layer the icons in reverse.

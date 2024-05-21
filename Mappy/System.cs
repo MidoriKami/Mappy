@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using KamiLib.CommandManager;
 using KamiLib.Window;
-using Mappy.Classes;
 using Mappy.Classes.Caches;
 using Mappy.Controllers;
 using Mappy.Data;
@@ -17,7 +16,7 @@ public static class System {
     public static WindowManager WindowManager { get; set; }
     public static MapWindow MapWindow { get; set; }
     public static ConfigurationWindow ConfigWindow { get; set; }
-    public static MapRenderer MapRenderer { get; set; }
+    public static MapRenderer.MapRenderer MapRenderer { get; set; }
     public static IntegrationsController IntegrationsController { get; set; }
     public static CommandManager CommandManager { get; set; }
 

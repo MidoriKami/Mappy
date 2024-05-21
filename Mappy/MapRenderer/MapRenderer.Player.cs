@@ -5,18 +5,21 @@ using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
+using Mappy.Classes;
+using Mappy.Extensions;
 
-namespace Mappy.Classes;
+namespace Mappy.MapRenderer;
 
 public partial class MapRenderer {
     private unsafe void DrawPlayer() {
+        if (AgentMap.Instance()->SelectedMapId != AgentMap.Instance()->CurrentMapId) return;
+
         if (Service.ClientState.LocalPlayer is { } localPlayer) {
-            var position = ImGui.GetWindowPos() + 
-                           DrawPosition + 
-                           (new Vector2(localPlayer.Position.X, localPlayer.Position.Z) * AgentMap.Instance()->SelectedMapSizeFactorFloat + 
-                            new Vector2(AgentMap.Instance()->SelectedOffsetX, AgentMap.Instance()->SelectedOffsetY) + 
-                            new Vector2(1024.0f, 1024.0f)) * 
-                           Scale;
+            var position = ImGui.GetWindowPos() +
+                           DrawPosition +
+                           (localPlayer.GetMapPosition() -
+                           DrawHelpers.GetMapOffsetVector() +
+                           DrawHelpers.GetMapCenterOffsetVector()) * Scale;
             
             DrawLookLine(position);
             DrawPlayerIcon(position);

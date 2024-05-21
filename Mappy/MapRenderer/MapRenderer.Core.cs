@@ -3,12 +3,12 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 
-namespace Mappy.Classes;
+namespace Mappy.MapRenderer;
 
 public partial class MapRenderer {
     public float Scale { get; set; } = 1.0f;
     public Vector2 DrawOffset { get; set; }
-    private Vector2 DrawPosition { get; set; }
+    public Vector2 DrawPosition { get; private set; }
 
     public void Draw() {
         UpdateScaleLimits();
@@ -24,7 +24,7 @@ public partial class MapRenderer {
 
     private void UpdateDrawOffset() {
         var childCenterOffset = ImGui.GetContentRegionAvail() / 2.0f;
-        var mapCenterOffset = new Vector2(1024.0f, 1024.0f) * Scale;
+        var mapCenterOffset = new Vector2(1024.0f, 1024.0f) * Scale ;
 
         DrawPosition = childCenterOffset - mapCenterOffset + DrawOffset * Scale;
     }
@@ -33,6 +33,7 @@ public partial class MapRenderer {
         if (System.TextureCache.GetValue($"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex") is { } backgroundTexture) {
             ImGui.SetCursorPos(DrawPosition);
             ImGui.Image(backgroundTexture.ImGuiHandle, backgroundTexture.Size * Scale);
+            // ImGui.GetForegroundDrawList().AddRect(ImGui.GetWindowPos() + DrawPosition, ImGui.GetWindowPos() + DrawPosition + backgroundTexture.Size * Scale, ImGui.GetColorU32(KnownColor.Red.Vector()));
         }
     }
 
@@ -44,5 +45,6 @@ public partial class MapRenderer {
         DrawGatheringMarkers();
         DrawFieldMarkers();
         DrawPlayer();
+        DrawFlag();
     }
 }
