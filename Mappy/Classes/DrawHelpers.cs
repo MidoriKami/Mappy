@@ -28,7 +28,7 @@ public class MarkerInfo {
 }
 
 public static class DrawHelpers {
-    public static unsafe Vector2 GetMapOffsetVector() 
+    public static Vector2 GetMapOffsetVector() 
         => GetRawMapOffsetVector() * GetMapScaleFactor();
 
     public static unsafe Vector2 GetRawMapOffsetVector() 

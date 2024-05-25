@@ -1,10 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Dalamud.NET.Sdk/9.0.1">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <PackageProjectUrl>https://github.com/MidoriKami/Mappy.git</PackageProjectUrl>
         <Version>1.0.7.6</Version>
     </PropertyGroup>
-
+    
+    <Import Project="Dalamud.Plugin.Bootstrap.targets"/>
+    
     <ItemGroup>
         <None Remove="Mappy.json" />
         <None Remove="README.md" />
