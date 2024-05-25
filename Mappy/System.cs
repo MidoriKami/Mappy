@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using KamiLib.CommandManager;
 using KamiLib.Window;
+using Mappy.Classes;
 using Mappy.Classes.Caches;
 using Mappy.Controllers;
 using Mappy.Data;
@@ -25,7 +26,8 @@ public static class System {
         new TripleTriadModule(),
         new FateModule(),
     ];
-
+    
+    public static Teleporter Teleporter { get; set; }
     public static IconCache IconCache { get; set; } = new();
 
     public static TextureCache TextureCache { get; set; } = new();

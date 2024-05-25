@@ -2,6 +2,8 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
+using Mappy.Classes;
+using GameObject = Dalamud.Game.ClientState.Objects.Types.GameObject;
 
 namespace Mappy.MapRenderer;
 
@@ -9,6 +11,9 @@ public partial class MapRenderer {
     public float Scale { get; set; } = 1.0f;
     public Vector2 DrawOffset { get; set; }
     public Vector2 DrawPosition { get; private set; }
+
+    public void CenterOnGameObject(GameObject obj) 
+        => DrawOffset = -new Vector2(obj.Position.X, obj.Position.Z) * DrawHelpers.GetMapScaleFactor();
 
     public void Draw() {
         UpdateScaleLimits();

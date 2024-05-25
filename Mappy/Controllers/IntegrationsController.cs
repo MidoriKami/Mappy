@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Linq;
+using System.Numerics;
 using Dalamud.Hooking;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using KamiLib.Classes;
 using KamiLib.Extensions;
+using Lumina.Excel.GeneratedSheets;
+using Mappy.Classes;
+using MapType = FFXIVClientStructs.FFXIV.Client.UI.Agent.MapType;
 
 namespace Mappy.Controllers;
 
@@ -37,6 +42,8 @@ public unsafe class IntegrationsController : IDisposable {
     }
 
     public void Dispose() {
+        Disable();
+        
         showMapHook?.Dispose();
         openMapByIdHook?.Dispose();
         openMapHook?.Dispose();
@@ -50,8 +57,6 @@ public unsafe class IntegrationsController : IDisposable {
     public void Enable() {
         Service.Log.Debug("Enabling Integrations");
         
-        // setFlagMarkerHook?.Enable();
-        // setGatheringMarkerHook?.Enable();
         showMapHook?.Enable();
         openMapByIdHook?.Enable();
         openMapHook?.Enable();
@@ -60,8 +65,6 @@ public unsafe class IntegrationsController : IDisposable {
     public void Disable() {
         Service.Log.Debug("Disabling Integrations");
         
-        // setFlagMarkerHook?.Disable();
-        // setGatheringMarkerHook?.Disable();
         showMapHook?.Disable();
         openMapByIdHook?.Disable();
         openMapHook?.Disable();
@@ -82,86 +85,76 @@ public unsafe class IntegrationsController : IDisposable {
             
             Service.Log.Debug($"Open Map By ID: {mapId}");
         }, Service.Log, "Exception during OpenMapByMapId");
-
+    
     private void OpenMap(AgentMap* agent, OpenMapInfo* mapInfo) 
         => HookSafety.ExecuteSafe(() => {
             openMapHook!.Original(agent, mapInfo);
             TryMirrorGameState(agent);
 
             switch (mapInfo->Type) {
-                case MapType.QuestLog:
+                case MapType.QuestLog: {
+                    // todo: make this function a lot more efficient, we only need the map data now, since we can get the marker data elsewhere.
+                    if (GetQuestLocation(mapInfo) is {} targetLevelData ) {
+                        agent->OpenMapByMapId(targetLevelData.Map.Row);
+                    }
+                    
+                    CenterOnMarker(agent, agent->TempMapMarkerArraySpan[0].MapMarker);
                     break;
-                
-                case MapType.GatheringLog:
+                }
+
+                case MapType.GatheringLog: {
+                    CenterOnMarker(agent, agent->TempMapMarkerArraySpan[0].MapMarker);
                     break;
+                }
+
+                case MapType.FlagMarker: {
+                    CenterOnMarker(agent, agent->FlagMapMarker.MapMarker);
+                    break;
+                }
             }
             
-            
-            Service.Log.Debug($"Open Map By ID: {mapInfo->MapId}, {mapInfo->Type}, {mapInfo->TerritoryId}, {mapInfo->TitleString}");
-
-            // if (KamiCommon.WindowManager.GetWindowOfType<MapWindow>() is { Viewport: var viewport } mapWindow) {
-            //     ImGui.SetWindowFocus(mapWindow.WindowName);
-            //     
-            //     if (MappySystem.SystemConfig.IntegrationsUnCollapse) {
-            //         mapWindow.UnCollapseOrToggle();
-            //     }
-            //     
-            //     mapWindow.IsOpen = true;
-            //     mapWindow.ProcessingCommand = true;
-            //
-            //     if (temporaryGatheringMarkerSet && TemporaryMarkers.GatheringMarker is {} tempMarker) {
-            //         tempMarker.MapID = mapInfo->MapId;
-            //         temporaryGatheringMarkerSet = false;
-            //     }
-            //
-            //     var map = LuminaCache<Map>.Instance.GetRow(mapInfo->MapId)!;
-            //
-            //     MappySystem.SystemConfig.FollowPlayer = false;
-            //
-            //     switch (mapInfo->Type) {
-            //         case MapType.FlagMarker when TemporaryMarkers.FlagMarker is { Type: MarkerType.Flag } flag:
-            //             MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
-            //             var flagPosition = Position.GetTexturePosition(flag.Position, map);
-            //             if (MappySystem.SystemConfig.FocusObjective) {
-            //                 viewport.SetViewportCenter(flagPosition);
-            //                 if (MappySystem.SystemConfig.ZoomInOnFlag) viewport.SetViewportZoom(1.0f);
-            //             }
-            //             break;
-            //     
-            //         case MapType.QuestLog when GetQuestLocation(mapInfo) is {} questLocation:
-            //             MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
-            //             if (MappySystem.SystemConfig.FocusObjective) {
-            //                 var questPosition = Position.GetTexturePosition(questLocation, map);
-            //                 viewport.SetViewportCenter(questPosition);
-            //                 viewport.SetViewportZoom(1.00f);
-            //             }
-            //             break;
-            //     
-            //         case MapType.GatheringLog when TemporaryMarkers.GatheringMarker is { Type: MarkerType.Gathering } area:
-            //             MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
-            //             if (MappySystem.SystemConfig.FocusObjective) {
-            //                 var gatherAreaPosition = Position.GetTexturePosition(area.Position, map);
-            //                 viewport.SetViewportCenter(gatherAreaPosition);
-            //                 viewport.SetViewportZoom(0.50f);
-            //             }
-            //             break;
-            //     
-            //         default:
-            //             MappySystem.MapTextureController.LoadMap(mapInfo->MapId);
-            //             break;
-            //     }
-            // }
-            
-            
+            Service.Log.Debug($"Open Map With OpenMapInfo: {mapInfo->MapId}, {mapInfo->Type}, {mapInfo->TerritoryId}, {mapInfo->TitleString}");
         }, Service.Log, "Exception during OpenMap");
+    
+    private static void CenterOnMarker(AgentMap* agent, MapMarkerBase marker) {
+        var coordinates = new Vector2(marker.X, marker.Y) / 16.0f * agent->SelectedMapSizeFactorFloat;
+        Service.Log.Debug(coordinates.ToString());
+
+        System.MapWindow.ProcessingCommand = true;
+        System.MapRenderer.DrawOffset = -coordinates;
+    }
+
+    private Level? GetQuestLocation(OpenMapInfo* mapInfo) {
+        var targetLevels = QuestHelpers.GetActiveLevelsForQuest(mapInfo->TitleString.ToString(), mapInfo->MapId);
+        var focusLevel = targetLevels?.Where(level => level.Map.Row == mapInfo->MapId && level.Map.Row != 0).FirstOrDefault();
+    
+        if (focusLevel is not null) {
+            return focusLevel;
+        }
+        
+        // This quest isn't accepted yet
+        else {
+            bool MatchQuestName(Quest quest1, OpenMapInfo* mapData) => string.Equals(quest1.Name.RawString, mapData->TitleString.ToString(), StringComparison.OrdinalIgnoreCase);
+
+            if (Service.DataManager.GetExcelSheet<Quest>()?.FirstOrDefault(quest => 
+                    MatchQuestName(quest, mapInfo) && 
+                    quest is {IssuerLocation.Row: not 0 }) is { IssuerLocation.Value: { } issuerLocation }) {
+                return issuerLocation;
+            }
+        }
+    
+        return null;
+    }
     
     private void TryMirrorGameState(AgentMap* agent) {
         if (agent->AgentInterface.AddonId is not 0) {
             System.MapWindow.Open();
             ImGui.SetWindowFocus(System.MapWindow.WindowName);
+            TryYeetMap();
         }
         else {
             System.MapWindow.Close();
+            TryUnYeetMap();
         }
     }
     

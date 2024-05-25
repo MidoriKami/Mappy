@@ -1,22 +1,31 @@
-﻿using System.Linq;
+﻿using System.Drawing;
+using System.Linq;
 using System.Numerics;
+using Dalamud.Interface;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using FFXIVClientStructs.FFXIV.Client.Game.Control;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using KamiLib.CommandManager;
+using KamiLib.Extensions;
 using KamiLib.Window;
+using Lumina.Excel.GeneratedSheets;
 using Mappy.Classes;
+using Mappy.Data;
 
 namespace Mappy.Windows;
 
 public class MapWindow : Window {
     public Vector2 MapDrawOffset { get; private set; }
     public bool IsMapHovered { get; private set; }
+    public bool ProcessingCommand { get; set; }
     
     private bool isDragStarted;
     private Vector2 lastWindowSize;
     
-    public MapWindow() : base("Mappy Map Window", new Vector2(410.0f, 250.0f)) {
+    public MapWindow() : base("Mappy Map Window", new Vector2(282.0f, 250.0f)) {
         System.CommandManager.RegisterCommand(new CommandHandler {
             ActivationPath = "/togglemap",
             Delegate = _ => System.MapWindow.UnCollapseOrToggle(),
@@ -42,37 +51,91 @@ public class MapWindow : Window {
                 }
             }
         });
+
+        IsOpen = true;
     }
 
-    public override bool DrawConditions() {
+    public override unsafe bool DrawConditions() {
         if (Service.ClientState is { IsLoggedIn: false } or { IsPvP: true }) return false;
-        
+        if (System.SystemConfig.HideInDuties && Service.Condition.IsBoundByDuty()) return false;
+        if (System.SystemConfig.HideInCombat && Service.Condition.IsInCombat()) return false;
+        if (System.SystemConfig.HideBetweenAreas && Service.Condition.IsBetweenAreas()) return false;
+        if (System.SystemConfig.HideWithGameGui && !IsNamePlateAddonVisible()) return false;
+        if (System.SystemConfig.HideWithGameGui && Control.Instance()->TargetSystem.TargetModeIndex is 1) return false;
+
+        return true;
+    }
+
+    private unsafe bool IsNamePlateAddonVisible() {
+        var addonNamePlate = (AddonNamePlate*) Service.GameGui.GetAddonByName("NamePlate");
+
+        if (addonNamePlate is null) return false;
+        if (!addonNamePlate->AtkUnitBase.IsVisible) return false;
+        if (addonNamePlate->AtkUnitBase.RootNode is null) return false;
+        if (!addonNamePlate->AtkUnitBase.RootNode->IsVisible) return false;
+
         return true;
     }
 
     public override void PreOpenCheck() {
-        // if (Service.SystemConfig.KeepOpen) IsOpen = true;
+        if (System.SystemConfig.KeepOpen) IsOpen = true;
         if (Service.ClientState is { IsLoggedIn: false } or { IsPvP: true }) IsOpen = false;
     }
     
     public override void OnOpen() {
         System.IntegrationsController.TryYeetMap();
+
+        if (ProcessingCommand) {
+            ProcessingCommand = false;
+            System.SystemConfig.FollowPlayer = false;
+            return;
+        }
+        
+        if (System.SystemConfig.FollowOnOpen) {
+            System.SystemConfig.FollowPlayer = true;
+        }
+
+        switch (System.SystemConfig.CenterOnOpen) {
+            case CenterTarget.Player when Service.ClientState.LocalPlayer is {} localPlayer:
+                System.MapRenderer.CenterOnGameObject(localPlayer);
+                break;
+
+            case CenterTarget.Map:
+                System.SystemConfig.FollowPlayer = false;
+                System.MapRenderer.DrawOffset = Vector2.Zero;
+                break;
+
+            case CenterTarget.Disabled:
+            default:
+                break;
+        }
     }
 
     protected override void DrawContents() {
+        UpdateStyle();
+        UpdateSizePosition();
+        
         MapDrawOffset = ImGui.GetCursorScreenPos();
         using (var renderChild = ImRaii.Child("render_child", ImGui.GetContentRegionAvail(), false, ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoScrollbar)) {
             if (renderChild) {
                 System.MapRenderer.Draw();
+
+                ImGui.SetCursorPos(new Vector2(0.0f, 0.0f));
+                DrawToolbar();
             }
         }
 
+        // Process Inputs
+        ProcessInputs();
+    }
+    
+    private void ProcessInputs() {
+        IsMapHovered = ImGui.IsItemHovered();
+        
         if (ImGui.IsItemClicked(ImGuiMouseButton.Right)) {
             ImGui.OpenPopup("Mappy_Context_Menu");
         }
         else {
-            IsMapHovered = ImGui.IsItemHovered();
-
             if (IsMapHovered) {
                 ProcessMouseScroll();
                 ProcessMapDragStart();
@@ -86,39 +149,192 @@ public class MapWindow : Window {
             ProcessMapDragEnd();
         }
 
-        DrawContextMenu();
+        // Draw Context Menu
+        DrawGeneralContextMenu();
     }
     
-    private unsafe void DrawContextMenu() {
-        using var contentMenu = ImRaii.ContextPopup("Mappy_Context_Menu");
-        if (!contentMenu) return;
+    private void UpdateStyle() {
+        using var fade = ImRaii.PushStyle(ImGuiStyleVar.Alpha, System.SystemConfig.FadePercent,  ShouldFade());
+        if (System.SystemConfig.HideWindowFrame) {
+            Flags |= ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoBackground;
+        }
+        else {
+            Flags &= ~(ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoBackground);
+        }
+
+        if (System.SystemConfig.LockWindow) {
+            Flags |= ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove;
+        }
+        else {
+            Flags &= ~(ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove);
+        }
+
+        RespectCloseHotkey = !System.SystemConfig.IgnoreEscapeKey;
+        
+        if (System.SystemConfig.FollowPlayer && Service.ClientState is { LocalPlayer: {} localPlayer}) {
+            System.MapRenderer.CenterOnGameObject(localPlayer);
+        }
+    }
+
+    private unsafe void DrawToolbar() {
+        if ((!System.SystemConfig.ShowToolbarOnHover || !IsMapHovered) && !System.SystemConfig.AlwaysShowToolbar) return;
+
+        ImGui.GetWindowDrawList().AddRectFilled(ImGui.GetCursorScreenPos(), ImGui.GetCursorScreenPos() + new Vector2(ImGui.GetContentRegionMax().X, 35.0f * ImGuiHelpers.GlobalScale), ImGui.GetColorU32(KnownColor.Black.Vector() with { W = 0.33f }));
+        
+        ImGui.SetCursorPos(ImGui.GetCursorPos() + ImGuiHelpers.ScaledVector2(5.0f, 5.0f));
+
+        if (MappyGuiTweaks.IconButton(FontAwesomeIcon.ArrowUp, "up", "Open Parent Map")) {
+            if (GetParentMap() is { } parentMap) {
+                AgentMap.Instance()->OpenMap(parentMap.RowId);
+            }
+        }
+        
+        ImGui.SameLine();
+        
+        if (MappyGuiTweaks.IconButton(FontAwesomeIcon.LayerGroup, "layers", "Show Map Layers")) {
+            ImGui.OpenPopup("Mappy_Show_Layers");
+        }
+
+        DrawLayersContextMenu();
+        
+        ImGui.SameLine();
+
+        using (var _ = ImRaii.PushColor(ImGuiCol.Button, ImGui.GetStyle().Colors[(int) ImGuiCol.ButtonActive], System.SystemConfig.FollowPlayer)) {
+            if (MappyGuiTweaks.IconButton(FontAwesomeIcon.LocationArrow, "follow", "Toggle Follow Player")) {
+                System.SystemConfig.FollowPlayer = !System.SystemConfig.FollowPlayer;
+
+                if (System.SystemConfig.FollowPlayer) {
+                    AgentMap.Instance()->OpenMap(AgentMap.Instance()->CurrentMapId);
+                }
+            }
+        }
+        
+        ImGui.SameLine();
+
+        if (MappyGuiTweaks.IconButton(FontAwesomeIcon.ArrowsToCircle, "centerPlayer", "Center on Player") && Service.ClientState.LocalPlayer is not null) {
+            // Don't center on player if we are already following the player.
+            if (!System.SystemConfig.FollowPlayer) {
+                AgentMap.Instance()->OpenMap(AgentMap.Instance()->CurrentMapId);
+                System.MapRenderer.CenterOnGameObject(Service.ClientState.LocalPlayer);
+            }
+        }
+        
+        ImGui.SameLine();
+
+        if (MappyGuiTweaks.IconButton(FontAwesomeIcon.MapMarked, "centerMap", "Center on Map")) {
+            System.SystemConfig.FollowPlayer = false;
+            System.MapRenderer.DrawOffset = Vector2.Zero;
+        }
+        
+        ImGui.SameLine();
+
+        if (MappyGuiTweaks.IconButton(FontAwesomeIcon.Search, "search", "Search for Map")) {
+            System.WindowManager.AddWindow(new MapSelectionWindow {
+                SingleSelectionCallback = selection => {
+                    if (selection is not null) {
+                        AgentMap.Instance()->OpenMap(selection.RowId);
+                        System.MapRenderer.DrawOffset = Vector2.Zero;
+                    }
+                }
+            }, WindowFlags.OpenImmediately | WindowFlags.RequireLoggedIn);
+        }
+        
+        ImGui.SameLine();
+        ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - 25.0f * ImGuiHelpers.GlobalScale * 2.0f - ImGui.GetStyle().ItemSpacing.X - 5.0f * ImGuiHelpers.GlobalScale);
+
+        if (MappyGuiTweaks.IconButton(System.SystemConfig.HideWindowFrame ? FontAwesomeIcon.Lock : FontAwesomeIcon.Unlock, "pin", "Show/Hide Window Frame")) {
+            System.SystemConfig.HideWindowFrame = !System.SystemConfig.HideWindowFrame;
+        }
+        
+        ImGui.SameLine();
+        
+        if (MappyGuiTweaks.IconButton(FontAwesomeIcon.Cog, "settings", "Open Settings")) {
+            System.ConfigWindow.UnCollapseOrShow();
+            ImGui.SetWindowFocus(System.ConfigWindow.WindowName);
+        }
+    }
+    
+    private static unsafe Map? GetParentMap() {
+        if (AgentMap.Instance()->SelectedMapPath.ToString().Split('/') is [_, _] idSplit) {
+            var index = int.Parse(idSplit[1]);
+            
+            return Service.DataManager.GetExcelSheet<Map>()!.FirstOrDefault(map => map.Id.RawString == $"{idSplit[0]}/{index - 1:D2}");
+        }
+
+        return null;
+    }
+
+    private void UpdateSizePosition() {
+        var systemConfig = System.SystemConfig;
+        var windowPosition = ImGui.GetWindowPos();
+        var windowSize = ImGui.GetWindowSize();
+
+        if (!IsFocused) {
+            if (windowPosition != systemConfig.WindowPosition) {
+                ImGui.SetWindowPos(systemConfig.WindowPosition);
+            }
+
+            if (windowSize != systemConfig.WindowSize) {
+                ImGui.SetWindowSize(systemConfig.WindowSize);
+            }
+        }
+        else { // If focused
+            if (systemConfig.WindowPosition != windowPosition) {
+                systemConfig.WindowPosition = windowPosition;
+                systemConfig.Save();
+            }
+
+            if (systemConfig.WindowSize != windowSize) {
+                systemConfig.WindowSize = windowSize;
+                systemConfig.Save();
+            }
+        }
+    }
+
+    private unsafe void DrawGeneralContextMenu() {
+        using var contextMenu = ImRaii.ContextPopup("Mappy_Context_Menu");
+        if (!contextMenu) return;
+        
+        if (ImGui.MenuItem("Place Flag")) {
+            var cursorPosition = ImGui.GetMousePosOnOpeningCurrentPopup(); // Get initial cursor position (screen relative)
+            var mapChildOffset = MapDrawOffset; // Get the screen position we started drawing the map at
+            var mapDrawOffset = System.MapRenderer.DrawPosition; // Get the map texture top left offset vector
+            var textureClickLocation = (cursorPosition - mapChildOffset - mapDrawOffset) / System.MapRenderer.Scale; // Math
+            var result = textureClickLocation - new Vector2(1024.0f, 1024.0f); // One of our vectors made the map centered, undo it.
+            var scaledResult = result / DrawHelpers.GetMapScaleFactor() + DrawHelpers.GetRawMapOffsetVector(); // Apply offset x/y and scalefactor
+                
+            AgentMap.Instance()->IsFlagMarkerSet = 0;
+            AgentMap.Instance()->SetFlagMapMarker(AgentMap.Instance()->SelectedTerritoryId, AgentMap.Instance()->SelectedMapId, scaledResult.X, scaledResult.Y);
+        }
         
         if (AgentMap.Instance()->IsFlagMarkerSet is not 0) {
             if (ImGui.MenuItem("Remove Flag")) {
                 AgentMap.Instance()->IsFlagMarkerSet = 0;
             }
         }
-        else {
-            if (ImGui.MenuItem("Place Flag") && Service.ClientState is { TerritoryType: var territoryType, MapId: var mapId}) {
-                var cursorPosition = ImGui.GetMousePosOnOpeningCurrentPopup();
-                Service.Log.Debug($"{cursorPosition} - CursorPosition");
+    }
+        
+    private unsafe void DrawLayersContextMenu() {
+        using var contextMenu = ImRaii.Popup("Mappy_Show_Layers");
+        if (!contextMenu) return;
+        
+        var currentMap = Service.DataManager.GetExcelSheet<Map>()!.GetRow(AgentMap.Instance()->SelectedMapId);
+        
+        var layers = Service.DataManager.GetExcelSheet<Map>()!
+            .Where(eachMap => eachMap.PlaceName.Row == currentMap!.PlaceName.Row)
+            .Where(eachMap => eachMap.MapIndex != 0)
+            .OrderBy(eachMap => eachMap.MapIndex)
+            .ToList();
 
-                var mapChildOffset = MapDrawOffset;
-                Service.Log.Debug($"{MapDrawOffset} - MapChildOffset");
-
-                var mapDrawOffset = System.MapRenderer.DrawPosition;
-                Service.Log.Debug($"{mapDrawOffset} - MapDrawPosition");
-
-                var textureClickLocation = (cursorPosition - mapChildOffset - mapDrawOffset) / System.MapRenderer.Scale;
-                Service.Log.Debug($"{textureClickLocation} - textureClickLocation");
-
-                var result = textureClickLocation - new Vector2(1024.0f, 1024.0f);
-                Service.Log.Debug($"{result} - Result");
-
-                var scaledResult = result / DrawHelpers.GetMapScaleFactor() + DrawHelpers.GetMapOffsetVector();
-                Service.Log.Debug($"{scaledResult} - scaledResult");
-                
-                AgentMap.Instance()->SetFlagMapMarker(territoryType, mapId, scaledResult.X, scaledResult.Y);
+        if (layers.Count is 0) {
+            ImGui.Text("No layers for this map");
+        }
+        
+        foreach (var layer in layers) {
+            if (ImGui.MenuItem(layer.PlaceNameSub.Value?.Name ?? "Unable to Parse Name", "", AgentMap.Instance()->SelectedMapId == layer.RowId)) {
+                AgentMap.Instance()->OpenMap(layer.RowId);
+                System.SystemConfig.FollowPlayer = false;
+                System.MapRenderer.DrawOffset = Vector2.Zero;
             }
         }
     }
@@ -156,10 +372,17 @@ public class MapWindow : Window {
         if (ImGui.GetWindowSize() == lastWindowSize) {
             if (ImGui.IsItemClicked(ImGuiMouseButton.Left) && !isDragStarted) {
                 isDragStarted = true;
+                System.SystemConfig.FollowPlayer = false;
             }
         } else {
             lastWindowSize = ImGui.GetWindowSize();
             isDragStarted = false;
         }
     }
+    
+    private unsafe bool ShouldFade() 
+        => System.SystemConfig.FadeMode is FadeMode.Always ||
+           System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenFocused) && IsFocused ||
+           System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenMoving) && AgentMap.Instance()->IsPlayerMoving is not 0 ||
+           System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenUnFocused) && !IsFocused;
 }

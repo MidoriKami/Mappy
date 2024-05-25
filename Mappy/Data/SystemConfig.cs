@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Numerics;
 using KamiLib.Configuration;
 
 namespace Mappy.Data;
@@ -32,37 +33,31 @@ public enum FadeMode {
 
 public class SystemConfig : CharacterConfiguration {
 
+    // Implemented Options
     public bool UseLinearZoom = false;
     public float ZoomSpeed = 0.05f;
     public float IconScale = 0.50f;
     public bool ShowMiscTooltips = true;
+    public bool HideWithGameGui = true;
+    public bool HideBetweenAreas = false;
+    public bool HideInDuties = false;
+    public bool HideInCombat = false;
+    public bool KeepOpen = false;
+    public bool FollowOnOpen = false;
+    public bool FollowPlayer = true;
+    public CenterTarget CenterOnOpen = CenterTarget.Disabled;
+    public bool ShowRadar = true;
+    public bool HideWindowFrame = false;
+    public bool IgnoreEscapeKey = false;
+    public bool LockWindow = false;
+    public float FadePercent = 0.60f;
+    public FadeMode FadeMode = FadeMode.WhenUnFocused | FadeMode.WhenMoving;
 
-    // public bool KeepOpen { get; set; } = false;
-    // public bool IgnoreEscapeKey { get; set; } = false;
-    // public bool FollowPlayer { get; set; } = true;
-    // public bool FollowOnOpen { get; set; } = false;
-    // public bool ShowMapName { get; set; } = true;
-    // public CenterTarget CenterOnOpen { get; set; } = CenterTarget.Disabled;
-    // public Vector2 WindowPosition { get; set; } = new(1024.0f, 700.0f);
-    // public Vector2 WindowSize { get; set; } = new(500.0f, 500.0f);
-    // public bool LockWindow { get; set; } = false;
-    // public bool HideWindowFrame { get; set; } = false;
-    // public FadeMode FadeMode { get; set; } = FadeMode.WhenUnFocused | FadeMode.WhenMoving;
-    // public bool AlwaysShowToolbar { get; set; } = false;
-    // public bool ShowToolbarOnHover { get; set; } = true;
-    // public float FadePercent { get; set; } = 0.60f;
-    // public float ZoomSpeed { get; set; } = 0.15f;
-    // public bool ZoomInOnFlag { get; set; } = true;
-    // public bool FocusObjective { get; set; } = true;
-    // public bool EnableIntegrations  { get; set; } = true;
-    // public bool IntegrationsUnCollapse { get; set; } = true;
-    // public bool HideWithGameGui { get; set; } = true;
-    // public bool HideBetweenAreas { get; set; } = false;
-    // public bool HideInDuties { get; set; } = false;
-    // public bool HideInCombat { get; set; } = false;
-    //
-    // public HashSet<uint> DisallowedIcons { get; set; } = [];
-    // public HashSet<uint> SeenIcons { get; set; } = [];
+    // Not yet implemented
+    public Vector2 WindowPosition = new(1024.0f, 700.0f);
+    public Vector2 WindowSize = new(500.0f, 500.0f);
+    public bool AlwaysShowToolbar = false;
+    public bool ShowToolbarOnHover = true;
 
     public static SystemConfig Load() 
         => Service.PluginInterface.LoadConfigFile("System.config.json", () => new SystemConfig());

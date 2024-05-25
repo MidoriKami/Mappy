@@ -22,14 +22,18 @@ public class MarkerInfo {
     public Func<string?>? SecondaryText { get; set; }
     public float? Radius { get; set; }
     public Vector4 RadiusColor { get; set; } = KnownColor.CornflowerBlue.Vector();
-    public Action? Clicked { get; set; }
+    public Action? OnRightClicked { get; set; }
+    public Action? OnLeftClicked { get; set; }
     public bool IsDynamicMarker { get; init; }
 }
 
 public static class DrawHelpers {
     public static unsafe Vector2 GetMapOffsetVector() 
-        => new Vector2(AgentMap.Instance()->SelectedOffsetX, AgentMap.Instance()->SelectedOffsetY) * GetMapScaleFactor();
+        => GetRawMapOffsetVector() * GetMapScaleFactor();
 
+    public static unsafe Vector2 GetRawMapOffsetVector() 
+        => new(AgentMap.Instance()->SelectedOffsetX, AgentMap.Instance()->SelectedOffsetY);
+    
     public static unsafe float GetMapScaleFactor()
         => AgentMap.Instance()->SelectedMapSizeFactorFloat;
 
@@ -40,6 +44,8 @@ public static class DrawHelpers {
         => -GetMapOffsetVector() + GetMapCenterOffsetVector();
 
     public static void DrawMapMarker(MarkerInfo markerInfo) {
+        if (markerInfo.IconId is 0) return;
+        
         // Don't draw markers that are positioned off the map texture
         if (markerInfo.Position.X < 0.0f || markerInfo.Position.X > 2048.0f * markerInfo.Scale || markerInfo.Position.Y < 0.0f || markerInfo.Position.Y > 2048.0f * markerInfo.Scale) return;
 
@@ -49,7 +55,9 @@ public static class DrawHelpers {
         }
 
         // If this is the first time we have seen this iconId, save it
-        if (System.IconConfig.IconSettingMap.TryAdd(markerInfo.IconId, new IconSetting())) {
+        if (System.IconConfig.IconSettingMap.TryAdd(markerInfo.IconId, new IconSetting {
+                IconId = markerInfo.IconId,
+            })) {
             System.IconConfig.Save();
         }
 
@@ -92,13 +100,19 @@ public static class DrawHelpers {
             return;
         }
         
-        ImGui.SetCursorPos(markerInfo.Position + markerInfo.Offset - iconSize * System.SystemConfig.IconScale / 2.0f * markerInfo.Scale);
+        ImGui.SetCursorPos(markerInfo.Position + markerInfo.Offset - iconSize * System.SystemConfig.IconScale / 2.0f * markerInfo.Scale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale);
         ImGui.Image(iconTexture, iconSize * markerInfo.Scale * System.SystemConfig.IconScale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale);
     }
     
     private static void ProcessInteractions(MarkerInfo markerInfo) {
-        if (markerInfo is { Clicked: { } clickAction } && ImGui.IsItemClicked(ImGuiMouseButton.Right)) {
-            clickAction.Invoke();
+        if (System.IconConfig.IconSettingMap[markerInfo.IconId] is not { AllowClick: true }) return;
+        
+        if (markerInfo is { OnRightClicked: { } rightClickAction } && ImGui.IsItemClicked(ImGuiMouseButton.Right)) {
+            rightClickAction.Invoke();
+        }
+
+        if (markerInfo is { OnLeftClicked: { } leftClickAction } && ImGui.IsItemClicked(ImGuiMouseButton.Left)) {
+            leftClickAction.Invoke();
         }
     }
     

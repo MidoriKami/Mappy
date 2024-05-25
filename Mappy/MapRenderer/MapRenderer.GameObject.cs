@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.SubKinds;
@@ -16,8 +17,10 @@ public partial class MapRenderer {
         if (AgentMap.Instance()->SelectedMapId != AgentMap.Instance()->CurrentMapId) return;
         
         if (Service.ClientState is not { LocalPlayer: { } player }) return;
-        
-        DrawRadar(player);
+
+        if (System.SystemConfig.ShowRadar) {
+            DrawRadar(player);
+        }
 
         foreach (var obj in Service.ObjectTable.Reverse()) {
             if (!obj.IsTargetable) continue;
@@ -53,8 +56,14 @@ public partial class MapRenderer {
         ImGui.GetWindowDrawList().AddCircle(position, 150.0f * Scale, ImGui.GetColorU32(KnownColor.Gray.Vector() with { W = 0.30f }));
     }
 
-    private string GetTooltipForGameObject(GameObject obj)
-        => obj switch {
+    private string GetTooltipForGameObject(GameObject obj) {
+        if (Service.PluginInterface.TryGetData<Dictionary<uint, string>>("PetRenamer.GameObjectRenameDict", out var dictionary)) {
+            if (dictionary.TryGetValue(obj.ObjectId, out var newName)) {
+                return newName;
+            }
+        }
+        
+        return obj switch {
             BattleNpc { Level: > 0 } battleNpc => $"Lv. {battleNpc.Level} {battleNpc.Name}",
             PlayerCharacter { Level: > 0 } playerCharacter => $"Lv. {playerCharacter.Level} {playerCharacter.Name}",
             _ => obj.ObjectKind switch {
@@ -63,4 +72,5 @@ public partial class MapRenderer {
                 _ => string.Empty,
             }
         };
+    }
 }

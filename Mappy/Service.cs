@@ -17,4 +17,7 @@ public sealed class Service {
     [PluginService] public static IPluginLog Log { get; set; }
     [PluginService] public static IGameInteropProvider Hooker { get; set; }
     [PluginService] public static IFateTable FateTable { get; set; }
+    [PluginService] public static ICondition Condition { get; set; }
+    [PluginService] public static IChatGui ChatGui { get; set; }
+    [PluginService] public static IToastGui ToastGui { get; set; }
 }

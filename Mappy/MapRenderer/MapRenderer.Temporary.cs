@@ -6,7 +6,7 @@ using Mappy.Extensions;
 namespace Mappy.MapRenderer;
 
 public partial class MapRenderer {
- // Note, unlike EventMarkers, Temporary Markers seem to layer the icons in reverse.
+    // Note, unlike EventMarkers, Temporary Markers seem to layer the icons in reverse.
     private unsafe void DrawTemporaryMarkers() {
         var correctlySizedSpan = new Span<TempMapMarkerExtensions.TempMapMarker>(AgentMap.Instance()->TempMapMarkerArray, AgentMap.Instance()->TempMapMarkerCount);
         

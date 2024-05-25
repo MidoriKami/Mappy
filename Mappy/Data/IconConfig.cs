@@ -4,9 +4,11 @@ using KamiLib.Configuration;
 namespace Mappy.Data;
 
 public class IconSetting {
-    public bool Hide { get; set; }
-    public bool AllowTooltip { get; set; } = true;
-    public float Scale { get; set; } = 1.0f;
+    public required uint IconId { get; set; }
+    public bool Hide;
+    public bool AllowTooltip = true;
+    public float Scale = 1.0f;
+    public bool AllowClick = true;
 }
 
 public class IconConfig {
