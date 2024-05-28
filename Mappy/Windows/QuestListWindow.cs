@@ -29,6 +29,10 @@ public unsafe class QuestListWindow : Window {
 
         tabBar.Draw();
     }
+
+    public override void OnClose() {
+        System.WindowManager.RemoveWindow(this);
+    }
 }
 
 public unsafe class UnacceptedQuestsTabItem : ITabItem {

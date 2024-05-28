@@ -65,4 +65,8 @@ public class FateListWindow : Window {
             ImGui.TextColored(KnownColor.Orange.Vector(), text);
         }
     }
+    
+    public override void OnClose() {
+        System.WindowManager.RemoveWindow(this);
+    }
 }
