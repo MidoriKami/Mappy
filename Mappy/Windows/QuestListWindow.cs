@@ -44,7 +44,7 @@ public unsafe class UnacceptedQuestsTabItem : ITabItem {
                 foreach (var marker in quest.MarkerData.Span) {
                     var cursorStart = ImGui.GetCursorScreenPos();
                     if (ImGui.Selectable($"##{quest.ObjectiveId}_Selectable_{marker.LevelId}", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, ElementHeight * ImGuiHelpers.GlobalScale))) {
-                        AgentMap.Instance()->OpenMap(AgentMap.Instance()->CurrentMapId);
+                        AgentMap.Instance()->OpenMap(marker.MapId);
                         System.SystemConfig.FollowPlayer = false;
                         System.MapRenderer.DrawOffset = -new Vector2(marker.X, marker.Z);
                     }
@@ -91,7 +91,7 @@ public unsafe class AcceptedQuestsTabItem : ITabItem {
 
                     var cursorStart = ImGui.GetCursorScreenPos();
                     if (ImGui.Selectable($"##{quest.ObjectiveId}_Selectable_{marker.LevelId}_{index++}", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, ElementHeight * ImGuiHelpers.GlobalScale))) {
-                        AgentMap.Instance()->OpenMap(AgentMap.Instance()->CurrentMapId);
+                        AgentMap.Instance()->OpenMap(marker.MapId);
                         System.SystemConfig.FollowPlayer = false;
                         System.MapRenderer.DrawOffset = -new Vector2(marker.X, marker.Z);
                     }
