@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using System.Threading.Tasks;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using Mappy.Classes;
@@ -68,11 +69,12 @@ public partial class MapRenderer {
         var backgroundBytes = backgroundFile.GetRgbaImageData();
         var foregroundBytes = foregroundFile.GetRgbaImageData();
 
-        for (var index = 0; index < 2048 * 2048 * 4; index += 4) {
+        Parallel.For(0, 2048 * 2048, i => {
+            var index = i * 4;
             backgroundBytes[index + 0] = (byte)(backgroundBytes[index + 0] * foregroundBytes[index + 0] / 255);
             backgroundBytes[index + 1] = (byte)(backgroundBytes[index + 1] * foregroundBytes[index + 1] / 255);
             backgroundBytes[index + 2] = (byte)(backgroundBytes[index + 2] * foregroundBytes[index + 2] / 255);
-        }
+        });
 
         return Service.PluginInterface.UiBuilder.LoadImageRaw(backgroundBytes, 2048, 2048, 4);
     }
