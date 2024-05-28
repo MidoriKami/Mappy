@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using Mappy.Classes;
 using GameObject = Dalamud.Game.ClientState.Objects.Types.GameObject;
-using System.Linq;
-using System.Threading.Tasks;
 using Dalamud.Interface.Internal;
 using Dalamud.Utility;
 using Lumina.Data.Files;
@@ -18,12 +15,9 @@ public partial class MapRenderer {
     public Vector2 DrawOffset { get; set; }
     public Vector2 DrawPosition { get; private set; }
 
-    private IDalamudTextureWrap? blendedMapTexture;
-    private Task? blendTextureTask;
-    private readonly Queue<BlendedTexture> textures = new(10);
+    private IDalamudTextureWrap? blendedTexture;
+    private string blendedPath = string.Empty;
 
-    private record BlendedTexture(string TexturePath, IDalamudTextureWrap Texture);
-    
     public void CenterOnGameObject(GameObject obj) 
         => DrawOffset = -new Vector2(obj.Position.X, obj.Position.Z) * DrawHelpers.GetMapScaleFactor();
 
@@ -51,50 +45,36 @@ public partial class MapRenderer {
             if (System.TextureCache.GetValue($"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex") is { } backgroundTexture) {
                 ImGui.SetCursorPos(DrawPosition);
                 ImGui.Image(backgroundTexture.ImGuiHandle, backgroundTexture.Size * Scale);
-                // ImGui.GetForegroundDrawList().AddRect(ImGui.GetWindowPos() + DrawPosition, ImGui.GetWindowPos() + DrawPosition + backgroundTexture.Size * Scale, ImGui.GetColorU32(KnownColor.Red.Vector()));
             }
         }
         else {
-            // If we already have a blended texture for this path
-            if (textures.FirstOrDefault(tex => tex.TexturePath == AgentMap.Instance()->SelectedMapPath.ToString()) is { Texture: var texture }) {
-                blendedMapTexture = texture;
+            if (blendedPath != AgentMap.Instance()->SelectedMapBgPath.ToString()) {
+                blendedTexture = LoadTexture();
+                blendedPath = AgentMap.Instance()->SelectedMapBgPath.ToString();
             }
-            // If not, we need to generate one
-            else {
-                if (blendTextureTask is null) {
-                    Task.Run(GenerateBlendedTexture);
-                }
-            }
-            
-            if (blendedMapTexture is not null) {
+
+            if (blendedTexture is not null) {
                 ImGui.SetCursorPos(DrawPosition);
-                ImGui.Image(blendedMapTexture.ImGuiHandle, blendedMapTexture.Size * Scale);
+                ImGui.Image(blendedTexture.ImGuiHandle, blendedTexture.Size * Scale);
             }
         }
     }
 
-    private unsafe void GenerateBlendedTexture() {
+    private unsafe IDalamudTextureWrap? LoadTexture() {
         var backgroundFile = Service.DataManager.GetFile<TexFile>($"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex");
         var foregroundFile = Service.DataManager.GetFile<TexFile>($"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex");
-            
-        if (backgroundFile is null || foregroundFile is null) return;
-            
+        if (backgroundFile is null || foregroundFile is null) return null;
+
         var backgroundBytes = backgroundFile.GetRgbaImageData();
         var foregroundBytes = foregroundFile.GetRgbaImageData();
-        var blendedBytes = new byte[backgroundBytes.Length];
-            
-        foreach (var index in Enumerable.Range(0, backgroundBytes.Length)) {
-            blendedBytes[index] = (byte)((backgroundBytes[index] * foregroundBytes[index]) / 255);
-        }
-                
-        var generatedTexture = Service.PluginInterface.UiBuilder.LoadImageRaw(blendedBytes, 2048, 2048, 4);
 
-        if (textures.Count == 10) {
-            textures.Dequeue();
+        for (var index = 0; index < 2048 * 2048 * 4; ++index) {
+            if (index % 4 == 3) continue;
+            
+            backgroundBytes[index] = (byte)(backgroundBytes[index] * foregroundBytes[index] / 255);
         }
-        
-        textures.Enqueue(new BlendedTexture(AgentMap.Instance()->SelectedMapPath.ToString(), generatedTexture));
-        blendTextureTask = null;
+
+        return Service.PluginInterface.UiBuilder.LoadImageRaw(backgroundBytes, 2048, 2048, 4);
     }
 
     private void DrawMapMarkers() {
