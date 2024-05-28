@@ -11,7 +11,7 @@ namespace Mappy.Extensions;
 // Represents standard non-dynamic map markers, things that don't change, and may reference datasheet data with their key data
 public static class MapMarkerBaseExtensions {
     public static unsafe void Draw(this MapMarkerBase marker, Vector2 offset, float scale) {
-        var tooltipText = MemoryHelper.ReadStringNullTerminated((nint) marker.Subtext);
+        var tooltipText = MemoryHelper.ReadSeStringNullTerminated((nint) marker.Subtext);
         
         DrawHelpers.DrawMapMarker(new MarkerInfo {
             // Divide by 16, as it seems they use a fixed scalar
@@ -23,7 +23,7 @@ public static class MapMarkerBaseExtensions {
             Radius = marker.Scale,
             RadiusColor = KnownColor.MediumPurple.Vector(),
             IconId = marker.IconId,
-            PrimaryText = () => tooltipText.IsNullOrEmpty() && System.SystemConfig.ShowMiscTooltips ? System.TooltipCache.GetValue(marker.IconId) : tooltipText,
+            PrimaryText = () => tooltipText.TextValue.IsNullOrEmpty() && System.SystemConfig.ShowMiscTooltips ? System.TooltipCache.GetValue(marker.IconId) : tooltipText.ToString(),
         });
     }
 }

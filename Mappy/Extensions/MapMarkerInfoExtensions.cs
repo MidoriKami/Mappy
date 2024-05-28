@@ -13,7 +13,7 @@ namespace Mappy.Extensions;
 
 public static class MapMarkerInfoExtensions {
     public  static unsafe void Draw(this MapMarkerInfo marker, Vector2 offset, float scale) {
-        var tooltipText = MemoryHelper.ReadStringNullTerminated((nint) marker.MapMarker.Subtext);
+        var tooltipText = MemoryHelper.ReadSeStringNullTerminated((nint) marker.MapMarker.Subtext);
         
         DrawHelpers.DrawMapMarker(new MarkerInfo {
             // Divide by 16, as it seems they use a fixed scalar
@@ -25,7 +25,7 @@ public static class MapMarkerInfoExtensions {
             Radius = marker.MapMarker.Scale,
             RadiusColor = KnownColor.MediumPurple.Vector(),
             IconId = marker.MapMarker.IconId,
-            PrimaryText = () => tooltipText.IsNullOrEmpty() && System.SystemConfig.ShowMiscTooltips ? System.TooltipCache.GetValue(marker.MapMarker.IconId) : tooltipText,
+            PrimaryText = () => tooltipText.TextValue.IsNullOrEmpty() && System.SystemConfig.ShowMiscTooltips ? System.TooltipCache.GetValue(marker.MapMarker.IconId) : tooltipText.ToString(),
             OnLeftClicked = marker.DataType switch {
                 1 => () => AgentMap.Instance()->OpenMapByMapId(marker.DataKey),
                 3 => () => System.Teleporter.Teleport(Service.DataManager.GetExcelSheet<Aetheryte>()!.GetRow(marker.DataKey)!), // Gonna assume that can't be null, because it's a row index that comes from the active gamestate.
