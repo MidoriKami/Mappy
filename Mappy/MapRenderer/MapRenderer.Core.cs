@@ -71,26 +71,11 @@ public partial class MapRenderer {
         var backgroundBytes = backgroundFile.GetRgbaImageData();
         var foregroundBytes = foregroundFile.GetRgbaImageData();
 
-        var length = backgroundBytes.Length;
-        var vectorSize = Vector256<byte>.Count;
-
-        Parallel.For(0, length / vectorSize, i => {
-            var start = i * vectorSize;
-            fixed (byte* fgPtr = foregroundBytes, bgPtr = backgroundBytes) {
-                // Load vectors from background and foreground bytes
-                var bgVector = Avx.LoadVector256(bgPtr + start);
-                var fgVector = Avx.LoadVector256(fgPtr + start);
-
-                // Convert to float vectors for better precision
-                var backgroundFloat = bgVector.AsSingle() / 255f;
-                var foregroundFloat = fgVector.AsSingle() / 255f;
-            
-                // Multiply and convert back to byte vectors
-                var resultVector = (backgroundFloat * foregroundFloat * 255f).AsByte();
-
-                // Store the result back to the background bytes
-                Avx.Store(bgPtr + start, resultVector);
-            }
+        Parallel.For(0, 2048 * 2048, i => {
+            var index = i * 4;
+            backgroundBytes[index + 0] = (byte)(backgroundBytes[index + 0] * foregroundBytes[index + 0] / 255);
+            backgroundBytes[index + 1] = (byte)(backgroundBytes[index + 1] * foregroundBytes[index + 1] / 255);
+            backgroundBytes[index + 2] = (byte)(backgroundBytes[index + 2] * foregroundBytes[index + 2] / 255);
         });
 
         return Service.PluginInterface.UiBuilder.LoadImageRaw(backgroundBytes, 2048, 2048, 4);
