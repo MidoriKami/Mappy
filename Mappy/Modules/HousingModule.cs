@@ -10,6 +10,6 @@ public unsafe class HousingModule : ModuleBase {
         }
         
         // Todo: somehow draw text for housing number
-        return true;
+        return false;
     }
 }
