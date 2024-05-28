@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
@@ -168,21 +169,21 @@ public class IconConfigurationTab : ITabItem {
     private IconSetting? currentSetting;
 
     public void Draw() {
-        using (var _ = ImRaii.Child("left_child", new Vector2(64.0f * ImGuiHelpers.GlobalScale + ImGui.GetStyle().ItemSpacing.X , ImGui.GetContentRegionAvail().Y))) {
+        using (var _ = ImRaii.Child("left_child", new Vector2(32.0f * ImGuiHelpers.GlobalScale + ImGui.GetStyle().ItemSpacing.X , ImGui.GetContentRegionAvail().Y))) {
             using var scrollbarStyle = ImRaii.PushStyle(ImGuiStyleVar.ScrollbarSize, 0.0f);
             using var selectionList = ImRaii.ListBox("iconSelection", ImGui.GetContentRegionAvail());
             
-            foreach (var (iconId, settings) in System.IconConfig.IconSettingMap) {
+            foreach (var (iconId, settings) in System.IconConfig.IconSettingMap.OrderBy(pairData =>  pairData.Key)) {
                 if (iconId is 0) continue;
                 
                 if (Service.TextureProvider.GetIcon(iconId) is { } texture) {
                     var cursorStart = ImGui.GetCursorScreenPos();
-                    if (ImGui.Selectable($"##iconSelect{iconId}", currentSetting == settings, ImGuiSelectableFlags.None, ImGuiHelpers.ScaledVector2(64.0f, 64.0f))) {
+                    if (ImGui.Selectable($"##iconSelect{iconId}", currentSetting == settings, ImGuiSelectableFlags.None, ImGuiHelpers.ScaledVector2(32.0f, 32.0f))) {
                         currentSetting = currentSetting == settings ? null : settings;
                     }  
                     
                     ImGui.SetCursorScreenPos(cursorStart);
-                    ImGui.Image(texture.ImGuiHandle, texture.Size);
+                    ImGui.Image(texture.ImGuiHandle, texture.Size / 2.0f);
                 }
             }
         }
@@ -192,10 +193,23 @@ public class IconConfigurationTab : ITabItem {
         using (var _ = ImRaii.Child("right_child", ImGui.GetContentRegionAvail(), false, ImGuiWindowFlags.NoScrollbar)) {
             if (currentSetting is null) {
                 using var textColor = ImRaii.PushColor(ImGuiCol.Text, KnownColor.Orange.Vector());
+
                 ImGui.SetCursorPosY(ImGui.GetContentRegionAvail().Y / 2.0f);
                 ImGuiHelpers.CenteredText("Select an Icon to Edit Settings");
             }
             else {
+                if (Service.TextureProvider.GetIcon(currentSetting.IconId) is { } texture) {
+                    var smallestAxis = MathF.Min(ImGui.GetContentRegionAvail().X, ImGui.GetContentRegionAvail().Y);
+
+                    if (ImGui.GetContentRegionAvail().X > ImGui.GetContentRegionAvail().Y) {
+                        var remainingSpace = ImGui.GetContentRegionAvail().X - smallestAxis;
+                        ImGui.SetCursorPosX(remainingSpace / 2.0f);
+                    }
+                    
+                    ImGui.Image(texture.ImGuiHandle, new Vector2(smallestAxis, smallestAxis), Vector2.Zero, Vector2.One, new Vector4(1.0f, 1.0f, 1.0f, 0.20f));
+                    ImGui.SetCursorPos(Vector2.Zero);
+                }
+                
                 ImGuiHelpers.ScaledDummy(5.0f);
 
                 var settingsChanged = ImGui.Checkbox("Hide Icon", ref currentSetting.Hide);
