@@ -1,12 +1,16 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
+using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using KamiLib.Window;
+using Mappy.Extensions;
 
 namespace Mappy.Windows;
 
@@ -31,13 +35,24 @@ public class FateListWindow : Window {
 
                 ImGui.SetCursorScreenPos(cursorStart);
                 if (Service.TextureProvider.GetIcon(fate->IconId) is { } icon) {
-                    ImGui.Image(icon.ImGuiHandle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
-                        
+                    using (var imageChild = ImRaii.Child($"image_child_{fate->FateId}", new Vector2(ElementHeight, ElementHeight), false, ImGuiWindowFlags.NoInputs)) {
+                        ImGui.Image(icon.ImGuiHandle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
+                    }
+                    
                     ImGui.SameLine();
-                    var text = $"Lv. {fate->Level} {fate->Name}";
-                        
-                    ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ElementHeight * ImGuiHelpers.GlobalScale / 2.0f - ImGui.CalcTextSize(text).Y / 2.0f);
-                    ImGui.Text(text);
+                    
+                    using (var textChild = ImRaii.Child($"text_child_{fate->FateId}", new Vector2(ImGui.GetContentRegionAvail().X, ElementHeight), false, ImGuiWindowFlags.NoInputs)) {
+                        ImGui.TextColored(FateContextExtensions.GetColor(fate, 1.0f), $"Lv. {fate->Level} {fate->Name}");
+                        ImGui.TextUnformatted($"Progress: {fate->Progress}%");
+
+                        var timeRemaining = FateContextExtensions.GetTimeRemaining(fate);
+                        if (timeRemaining != TimeSpan.Zero) {
+                            var timeString = $"{SeIconChar.Clock.ToIconString()} {FateContextExtensions.GetTimeRemaining(fate):mm\\:ss}";
+                            ImGui.SameLine(ImGui.GetContentRegionMax().X - ImGui.CalcTextSize(timeString).X);
+                            ImGui.Text(timeString);
+                        }
+                    }
+                    
                 }
                 
             }
