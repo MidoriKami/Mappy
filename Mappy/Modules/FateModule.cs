@@ -5,6 +5,7 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using Lumina.Text.ReadOnly;
 using Mappy.Classes;
+using Mappy.Extensions;
 
 namespace Mappy.Modules;
 
@@ -25,10 +26,7 @@ public class FateModule : ModuleBase {
                     markerInfo.SecondaryText = () => $"Time Remaining {timeRemaining:mm\\:ss}\nProgress {fate.Progress}%";
 
                     if (timeRemaining.TotalSeconds <= 300) {
-                        var hue = (float)(timeRemaining.TotalSeconds / 300.0f * 25.0f);
-
-                        var hsvColor = new ColorHelpers.HsvaColor(hue / 100.0f, 1.0f, 1.0f, 0.33f);
-                        markerInfo.RadiusColor = ColorHelpers.HsvToRgb(hsvColor);
+                        markerInfo.RadiusColor = FateContextExtensions.GetColor((FateContext*) fate.Address);
                     }
                 }
                 else {
