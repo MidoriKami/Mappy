@@ -24,14 +24,12 @@ public class FateModule : ModuleBase {
                 if (timeRemaining >= TimeSpan.Zero) {
                     markerInfo.SecondaryText = () => $"Time Remaining {timeRemaining:mm\\:ss}\nProgress {fate.Progress}%";
 
-                    markerInfo.RadiusColor = timeRemaining.TotalSeconds switch {
-                        < 60 => KnownColor.Red.Vector(),
-                        < 120 => KnownColor.OrangeRed.Vector(),
-                        < 180 => KnownColor.Orange.Vector(),
-                        < 240 => KnownColor.Yellow.Vector(),
-                        < 300 => KnownColor.YellowGreen.Vector(),
-                        _ => markerInfo.RadiusColor
-                    };
+                    if (timeRemaining.TotalSeconds <= 300) {
+                        var hue = (float)(timeRemaining.TotalSeconds / 300.0f * 25.0f);
+
+                        var hsvColor = new ColorHelpers.HsvaColor(hue / 100.0f, 1.0f, 1.0f, 0.33f);
+                        markerInfo.RadiusColor = ColorHelpers.HsvToRgb(hsvColor);
+                    }
                 }
                 else {
                     markerInfo.SecondaryText = () => $"Progress {fate.Progress}%";
