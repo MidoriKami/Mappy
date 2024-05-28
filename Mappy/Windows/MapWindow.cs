@@ -51,8 +51,6 @@ public class MapWindow : Window {
                 }
             }
         });
-
-        IsOpen = true;
     }
 
     public override unsafe bool DrawConditions() {
@@ -307,10 +305,30 @@ public class MapWindow : Window {
             AgentMap.Instance()->SetFlagMapMarker(AgentMap.Instance()->SelectedTerritoryId, AgentMap.Instance()->SelectedMapId, scaledResult.X, scaledResult.Y);
         }
         
-        if (AgentMap.Instance()->IsFlagMarkerSet is not 0) {
-            if (ImGui.MenuItem("Remove Flag")) {
-                AgentMap.Instance()->IsFlagMarkerSet = 0;
-            }
+        if (ImGui.MenuItem("Remove Flag", AgentMap.Instance()->IsFlagMarkerSet is not 0)) {
+            AgentMap.Instance()->IsFlagMarkerSet = 0;
+        }
+
+        ImGuiHelpers.ScaledDummy(5.0f);
+
+        if (ImGui.MenuItem("Center on Player", Service.ClientState.LocalPlayer is not null) && Service.ClientState.LocalPlayer is not null) {
+            AgentMap.Instance()->OpenMapByMapId(AgentMap.Instance()->CurrentMapId);
+            System.MapRenderer.CenterOnGameObject(Service.ClientState.LocalPlayer);
+        }
+        
+        if (ImGui.MenuItem("Center on Map")) {
+            System.SystemConfig.FollowPlayer = false;
+            System.MapRenderer.DrawOffset = Vector2.Zero;
+        }
+        
+        ImGuiHelpers.ScaledDummy(5.0f);
+        
+        if (ImGui.MenuItem("Open Quest List", System.WindowManager.GetWindow<QuestListWindow>() is null))  {
+            System.WindowManager.AddWindow(new QuestListWindow(), WindowFlags.OpenImmediately | WindowFlags.RequireLoggedIn);
+        }
+
+        if (ImGui.MenuItem("Open Fate List", System.WindowManager.GetWindow<FateListWindow>() is null)) {
+            System.WindowManager.AddWindow(new FateListWindow(), WindowFlags.OpenImmediately | WindowFlags.RequireLoggedIn);
         }
     }
         
