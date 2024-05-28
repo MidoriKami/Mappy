@@ -13,8 +13,8 @@ using Quest = Lumina.Excel.GeneratedSheets.Quest;
 
 namespace Mappy.Windows;
 
-public unsafe class QuestListWindow : Window {
-    private TabBar tabBar = new("questListTabBar", [
+public class QuestListWindow : Window {
+    private readonly TabBar tabBar = new("questListTabBar", [
         new AcceptedQuestsTabItem(),
         new UnacceptedQuestsTabItem(),
     ]);

@@ -35,13 +35,13 @@ public class FateListWindow : Window {
 
                 ImGui.SetCursorScreenPos(cursorStart);
                 if (Service.TextureProvider.GetIcon(fate->IconId) is { } icon) {
-                    using (var imageChild = ImRaii.Child($"image_child_{fate->FateId}", new Vector2(ElementHeight, ElementHeight), false, ImGuiWindowFlags.NoInputs)) {
+                    using (ImRaii.Child($"image_child_{fate->FateId}", new Vector2(ElementHeight, ElementHeight), false, ImGuiWindowFlags.NoInputs)) {
                         ImGui.Image(icon.ImGuiHandle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
                     }
                     
                     ImGui.SameLine();
                     
-                    using (var textChild = ImRaii.Child($"text_child_{fate->FateId}", new Vector2(ImGui.GetContentRegionAvail().X, ElementHeight), false, ImGuiWindowFlags.NoInputs)) {
+                    using (ImRaii.Child($"text_child_{fate->FateId}", new Vector2(ImGui.GetContentRegionAvail().X, ElementHeight), false, ImGuiWindowFlags.NoInputs)) {
                         ImGui.TextColored(FateContextExtensions.GetColor(fate, 1.0f), $"Lv. {fate->Level} {fate->Name}");
                         ImGui.TextUnformatted($"Progress: {fate->Progress}%");
 
