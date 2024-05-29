@@ -1,13 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <PackageProjectUrl>https://github.com/MidoriKami/Mappy.git</PackageProjectUrl>
-        <Version>1.0.7.6</Version>
+        <Version>2.0.0.2</Version>
     </PropertyGroup>
-
+    
     <Import Project="Dalamud.Plugin.Bootstrap.targets"/>
-
+    
     <ItemGroup>
         <None Remove="Mappy.json" />
         <None Remove="README.md" />
@@ -16,20 +15,5 @@
 
     <ItemGroup>
         <ProjectReference Include="..\KamiLib\KamiLib.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <EmbeddedResource Update="Controllers\Localization\Strings.resx">
-        <Generator>ResXFileCodeGenerator</Generator>
-        <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-      </EmbeddedResource>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Update="Controllers\Localization\Strings.Designer.cs">
-        <DesignTime>True</DesignTime>
-        <AutoGen>True</AutoGen>
-        <DependentUpon>Strings.resx</DependentUpon>
-      </Compile>
     </ItemGroup>
 </Project>
