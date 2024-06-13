@@ -1,6 +1,4 @@
 ﻿using System.Numerics;
-using System.Runtime.InteropServices;
-using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Mappy.Classes;
 
@@ -19,14 +17,5 @@ public static class TempMapMarkerExtensions {
             Radius = marker.MapMarker.Scale,
             PrimaryText = () => marker.TooltipText.ToString(),
         });
-    }
-    
-    [StructLayout(LayoutKind.Explicit, Size = 0x110)]
-    public struct TempMapMarker {
-        [FieldOffset(0x00)] public Utf8String TooltipText;
-        [FieldOffset(0x68)] public MapMarkerBase MapMarker;
-
-        [FieldOffset(0xA8)] public uint StyleFlags;
-        [FieldOffset(0xAC)] public uint Type;
     }
 }

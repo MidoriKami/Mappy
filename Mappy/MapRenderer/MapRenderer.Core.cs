@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Numerics;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
 using System.Threading.Tasks;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using Mappy.Classes;
 using GameObject = Dalamud.Game.ClientState.Objects.Types.GameObject;
 using Dalamud.Interface.Internal;
+using Dalamud.Interface.Textures;
 using Dalamud.Utility;
 using Lumina.Data.Files;
 
@@ -45,13 +44,14 @@ public partial class MapRenderer {
 
     private unsafe void DrawBackgroundTexture() {
         if (AgentMap.Instance()->SelectedMapBgPath.Length is 0) {
-            if (System.TextureCache.GetValue($"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex") is { } backgroundTexture) {
-                ImGui.SetCursorPos(DrawPosition);
-                ImGui.Image(backgroundTexture.ImGuiHandle, backgroundTexture.Size * Scale);
-            }
+            var texture = Service.TextureProvider.GetFromGame($"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex").GetWrapOrEmpty();
+            
+            ImGui.SetCursorPos(DrawPosition);
+            ImGui.Image(texture.ImGuiHandle, texture.Size * Scale);
         }
         else {
             if (blendedPath != AgentMap.Instance()->SelectedMapBgPath.ToString()) {
+                blendedTexture?.Dispose();
                 blendedTexture = LoadTexture();
                 blendedPath = AgentMap.Instance()->SelectedMapBgPath.ToString();
             }
@@ -78,7 +78,7 @@ public partial class MapRenderer {
             backgroundBytes[index + 2] = (byte)(backgroundBytes[index + 2] * foregroundBytes[index + 2] / 255);
         });
 
-        return Service.PluginInterface.UiBuilder.LoadImageRaw(backgroundBytes, 2048, 2048, 4);
+        return Service.TextureProvider.CreateFromRaw(RawImageSpecification.Rgba32(2048, 2048), backgroundBytes);
     }
 
     private void DrawMapMarkers() {

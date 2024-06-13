@@ -19,7 +19,7 @@ public static unsafe class QuestHelpers {
     private static IEnumerable<QuestWork> GetAcceptedQuests() {
         var list = new List<QuestWork>();
         
-        foreach (var quest in QuestManager.Instance()->NormalQuestsSpan) {
+        foreach (var quest in QuestManager.Instance()->NormalQuests) {
             if (quest is { IsHidden: false, QuestId: > 0 }) {
                 list.Add(quest);
             }

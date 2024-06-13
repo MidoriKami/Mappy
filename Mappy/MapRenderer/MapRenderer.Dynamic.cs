@@ -6,13 +6,13 @@ namespace Mappy.MapRenderer;
 
 public partial class MapRenderer {
     private unsafe void DrawDynamicMarkers() {
-        for (var index = 0; index < AgentMap.Instance()->EventMarkers.Span.Length; ++index) {
-            var marker = AgentMap.Instance()->EventMarkers.Span[index];
+        for (var index = 0; index < AgentMap.Instance()->EventMarkers.Count; ++index) {
+            var marker = AgentMap.Instance()->EventMarkers[index];
             if (marker.IconId is 0) continue;
 
             // If there's at least one more marker after this
-            if (index < AgentMap.Instance()->EventMarkers.Span.Length - 1) {
-                var nextMarker = AgentMap.Instance()->EventMarkers.Span[index + 1];
+            if (index < AgentMap.Instance()->EventMarkers.Count - 1) {
+                var nextMarker = AgentMap.Instance()->EventMarkers[index + 1];
                 var currentPosition = new Vector3(marker.X, marker.Y, marker.Z);
                 var nextPosition = new Vector3(nextMarker.X, nextMarker.Y, nextMarker.Z);
                 

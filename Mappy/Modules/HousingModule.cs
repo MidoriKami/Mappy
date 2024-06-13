@@ -1,4 +1,4 @@
-﻿using FFXIVClientStructs.FFXIV.Client.Game.Housing;
+﻿using FFXIVClientStructs.FFXIV.Client.Game;
 using Mappy.Classes;
 
 namespace Mappy.Modules;

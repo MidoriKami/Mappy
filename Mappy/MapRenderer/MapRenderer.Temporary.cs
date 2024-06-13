@@ -1,5 +1,4 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Mappy.Extensions;
 
@@ -8,7 +7,7 @@ namespace Mappy.MapRenderer;
 public partial class MapRenderer {
     // Note, unlike EventMarkers, Temporary Markers seem to layer the icons in reverse.
     private unsafe void DrawTemporaryMarkers() {
-        var correctlySizedSpan = new Span<TempMapMarkerExtensions.TempMapMarker>(AgentMap.Instance()->TempMapMarkerArray, AgentMap.Instance()->TempMapMarkerCount);
+        var correctlySizedSpan = AgentMap.Instance()->TempMapMarkers;
         
         for (var index = 0; index < AgentMap.Instance()->TempMapMarkerCount; ++index) {
             var marker = correctlySizedSpan[index];

@@ -12,7 +12,7 @@ public partial class MapRenderer {
     private readonly List<FieldMarker> fieldMarkers = Service.DataManager.GetExcelSheet<FieldMarker>()!.Where(marker => marker.MapIcon is not 0).ToList();
 
     private unsafe void DrawFieldMarkers() {
-        var markerSpan = MarkingController.Instance()->FieldMarkerArraySpan;
+        var markerSpan = MarkingController.Instance()->FieldMarkers;
         
         foreach (var index in Enumerable.Range(0, 8)) {
             if (markerSpan[index] is { Active: true } marker) {

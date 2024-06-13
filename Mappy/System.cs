@@ -28,9 +28,6 @@ public static class System {
     ];
     
     public static Teleporter Teleporter { get; set; }
-    public static IconCache IconCache { get; set; } = new();
-
-    public static TextureCache TextureCache { get; set; } = new();
     public static TooltipCache TooltipCache { get; set; } = new();
     public static CardRewardCache CardRewardCache { get; set; } = new();
     public static GatheringPointNameCache GatheringPointNameCache { get; set; } = new();

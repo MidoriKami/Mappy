@@ -13,7 +13,7 @@ using Lumina.Excel.GeneratedSheets2;
 using Map = Lumina.Excel.GeneratedSheets.Map;
 using TerritoryType = Lumina.Excel.GeneratedSheets.TerritoryType;
 
-namespace Mappy.Classes;
+namespace Mappy.Windows;
 
 public class MapSelectionWindow : SelectionWindowBase<Map> {
     
@@ -94,7 +94,7 @@ public class MapSelectionWindow : SelectionWindowBase<Map> {
         if (!imageFrame) return;
         
         if (dataManager.GetExcelSheet<LoadingImage>()!.GetRow(option.LoadingImage) is { } loadingImageInfo) {
-            if (textureProvider.GetTextureFromGame($"ui/loadingimage/{loadingImageInfo.Unknown0}_hr1.tex") is {  } texture) {
+            if (textureProvider.GetFromGame($"ui/loadingimage/{loadingImageInfo.Unknown0}_hr1.tex").GetWrapOrDefault() is {  } texture) {
                 ImGui.Image(texture.ImGuiHandle, ImGuiHelpers.ScaledVector2(Width, Height), new Vector2(0.15f, 0.15f), new Vector2(0.85f, 0.85f));
             }
             else {

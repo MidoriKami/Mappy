@@ -24,7 +24,7 @@ public class FateListWindow : Window {
     protected override unsafe void DrawContents() {
         if (Service.FateTable.Length > 0) {
             foreach (var index in Enumerable.Range(0, Service.FateTable.Length)) {
-                var fate = FateManager.Instance()->Fates.Span[index].Value;
+                var fate = FateManager.Instance()->Fates[index].Value;
                 
                 var cursorStart = ImGui.GetCursorScreenPos();
                 if (ImGui.Selectable($"##{fate->FateId}_Selectable", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, ElementHeight * ImGuiHelpers.GlobalScale))) {
@@ -34,7 +34,7 @@ public class FateListWindow : Window {
                 }
 
                 ImGui.SetCursorScreenPos(cursorStart);
-                if (Service.TextureProvider.GetIcon(fate->IconId) is { } icon) {
+                if (Service.TextureProvider.GetFromGameIcon(fate->IconId).GetWrapOrDefault() is { } icon) {
                     using (ImRaii.Child($"image_child_{fate->FateId}", new Vector2(ElementHeight, ElementHeight), false, ImGuiWindowFlags.NoInputs)) {
                         ImGui.Image(icon.ImGuiHandle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
                     }

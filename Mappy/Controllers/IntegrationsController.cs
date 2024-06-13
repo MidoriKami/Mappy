@@ -6,7 +6,6 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using KamiLib.Classes;
-using KamiLib.Extensions;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Classes;
 using MapType = FFXIVClientStructs.FFXIV.Client.UI.Agent.MapType;
@@ -15,21 +14,17 @@ namespace Mappy.Controllers;
 
 public unsafe class IntegrationsController : IDisposable {
 
-    private delegate void ShowMapDelegate(AgentMap* agentMap, bool a1, bool a2);
-    private delegate void OpenMapByIdDelegate(AgentMap* agent, uint mapID);
-    private delegate void OpenMapDelegate(AgentMap* agent, OpenMapInfo* data);
-    
-    private readonly Hook<ShowMapDelegate>? showMapHook;
-    private readonly Hook<OpenMapByIdDelegate>? openMapByIdHook;
-    private readonly Hook<OpenMapDelegate>? openMapHook;
+    private readonly Hook<AgentMap.Delegates.ShowMap>? showMapHook;
+    private readonly Hook<AgentMap.Delegates.OpenMapByMapId>? openMapByIdHook;
+    private readonly Hook<AgentMap.Delegates.OpenMap>? openMapHook;
     
     public IntegrationsController() {
-        showMapHook ??= Service.Hooker.HookFromAddress<ShowMapDelegate>(AgentMap.Addresses.ShowMap.Value, OnShowHook);
-        openMapByIdHook ??= Service.Hooker.HookFromAddress<OpenMapByIdDelegate>((nint)AgentMap.Addresses.OpenMapByMapId.Value, OpenMapById);
-        openMapHook ??= Service.Hooker.HookFromAddress<OpenMapDelegate>((nint)AgentMap.Addresses.OpenMap.Value, OpenMap);
+        showMapHook ??= Service.Hooker.HookFromAddress<AgentMap.Delegates.ShowMap>(AgentMap.MemberFunctionPointers.ShowMap, OnShowHook);
+        openMapByIdHook ??= Service.Hooker.HookFromAddress<AgentMap.Delegates.OpenMapByMapId>(AgentMap.MemberFunctionPointers.OpenMapByMapId, OpenMapById);
+        openMapHook ??= Service.Hooker.HookFromAddress<AgentMap.Delegates.OpenMap>(AgentMap.MemberFunctionPointers.OpenMap, OpenMap);
         
         if (Service.ClientState is { IsPvP: false }) {
-            Enable();
+            EnableIntegrations();
             
             if (AgentMap.Instance()->AgentInterface.AddonId is not 0) {
                 TryYeetMap();
@@ -37,12 +32,12 @@ public unsafe class IntegrationsController : IDisposable {
             }
         }
         
-        Service.ClientState.EnterPvP += Disable;
-        Service.ClientState.LeavePvP += Enable;
+        Service.ClientState.EnterPvP += DisableIntegrations;
+        Service.ClientState.LeavePvP += EnableIntegrations;
     }
 
     public void Dispose() {
-        Disable();
+        DisableIntegrations();
         
         showMapHook?.Dispose();
         openMapByIdHook?.Dispose();
@@ -50,11 +45,11 @@ public unsafe class IntegrationsController : IDisposable {
         
         TryUnYeetMap();
         
-        Service.ClientState.EnterPvP -= Disable;
-        Service.ClientState.LeavePvP -= Enable;
+        Service.ClientState.EnterPvP -= DisableIntegrations;
+        Service.ClientState.LeavePvP -= EnableIntegrations;
     }
-    
-    public void Enable() {
+
+    private void EnableIntegrations() {
         Service.Log.Debug("Enabling Integrations");
         
         showMapHook?.Enable();
@@ -62,7 +57,7 @@ public unsafe class IntegrationsController : IDisposable {
         openMapHook?.Enable();
     }
 
-    public void Disable() {
+    private void DisableIntegrations() {
         Service.Log.Debug("Disabling Integrations");
         
         showMapHook?.Disable();
@@ -98,12 +93,12 @@ public unsafe class IntegrationsController : IDisposable {
                         agent->OpenMapByMapId(targetLevelData.Map.Row);
                     }
                     
-                    CenterOnMarker(agent, agent->TempMapMarkerArraySpan[0].MapMarker);
+                    CenterOnMarker(agent, agent->TempMapMarkers[0].MapMarker);
                     break;
                 }
 
                 case MapType.GatheringLog: {
-                    CenterOnMarker(agent, agent->TempMapMarkerArraySpan[0].MapMarker);
+                    CenterOnMarker(agent, agent->TempMapMarkers[0].MapMarker);
                     break;
                 }
 
@@ -171,7 +166,7 @@ public unsafe class IntegrationsController : IDisposable {
             areaMap->Close(true);
             
             // Little hacky, but we need to wait just a little bit before setting the position, or else we'll see the vanilla map flash closed really quick.
-            Service.Framework.RunOnTick(() => areaMap->RootNode->SetPositionFloat(areaMap->X, areaMap->Y), delayTicks: 6);
+            Service.Framework.RunOnTick(() => areaMap->RootNode->SetPositionFloat(areaMap->X, areaMap->Y), delayTicks: 10);
         }
     }
 }

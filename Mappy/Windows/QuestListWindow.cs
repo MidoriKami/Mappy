@@ -7,7 +7,6 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using KamiLib.Components;
 using KamiLib.Window;
-using Mappy.Extensions;
 using Map = FFXIVClientStructs.FFXIV.Client.Game.UI.Map;
 using Quest = Lumina.Excel.GeneratedSheets.Quest;
 
@@ -41,11 +40,11 @@ public unsafe class UnacceptedQuestsTabItem : ITabItem {
     public string Name => "Unaccepted Quests";
     public bool Disabled => false;
     public void Draw() {
-        if (Map.Instance()->UnacceptedQuests.Size > 0) {
-            foreach (var quest in Map.Instance()->UnacceptedQuests.GetEnumerator()) {
+        if (Map.Instance()->UnacceptedQuestMarkers.Count > 0) {
+            foreach (var quest in Map.Instance()->UnacceptedQuestMarkers) {
                 var questData = Service.DataManager.GetExcelSheet<Quest>()!.GetRow(quest.ObjectiveId + 65536u);
                 
-                foreach (var marker in quest.MarkerData.Span) {
+                foreach (var marker in quest.MarkerData) {
                     var cursorStart = ImGui.GetCursorScreenPos();
                     if (ImGui.Selectable($"##{quest.ObjectiveId}_Selectable_{marker.LevelId}", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, ElementHeight * ImGuiHelpers.GlobalScale))) {
                         AgentMap.Instance()->OpenMap(marker.MapId);
@@ -54,7 +53,7 @@ public unsafe class UnacceptedQuestsTabItem : ITabItem {
                     }
 
                     ImGui.SetCursorScreenPos(cursorStart);
-                    if (Service.TextureProvider.GetIcon(marker.IconId) is { } icon) {
+                    if (Service.TextureProvider.GetFromGameIcon(marker.IconId).GetWrapOrDefault() is { } icon) {
                         ImGui.Image(icon.ImGuiHandle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
                         
                         ImGui.SameLine();
@@ -82,15 +81,15 @@ public unsafe class AcceptedQuestsTabItem : ITabItem {
     public string Name => "Accepted Quests";
     public bool Disabled => false;
     public void Draw() {
-        if (Map.Instance()->QuestDataSpan.Length > 0) {
-            foreach (var quest in Map.Instance()->QuestDataSpan) {
+        if (Map.Instance()->QuestMarkers.Length > 0) {
+            foreach (var quest in Map.Instance()->QuestMarkers) {
                 if (quest.ObjectiveId is 0) continue;
                 
                 var questData = Service.DataManager.GetExcelSheet<Quest>()!.GetRow(quest.ObjectiveId + 65536u);
                 ImGui.Text($"Lv. {questData?.ClassJobLevel0} {quest.Label}");
                 
                 var index = 0;
-                foreach (var marker in quest.MarkerData.Span) {
+                foreach (var marker in quest.MarkerData) {
                     using var indent = ImRaii.PushIndent();
 
                     var cursorStart = ImGui.GetCursorScreenPos();
@@ -106,7 +105,7 @@ public unsafe class AcceptedQuestsTabItem : ITabItem {
                     };
                     
                     ImGui.SetCursorScreenPos(cursorStart);
-                    if (Service.TextureProvider.GetIcon(iconId) is { } icon) {
+                    if (Service.TextureProvider.GetFromGameIcon(iconId).GetWrapOrDefault() is { } icon) {
                         ImGui.Image(icon.ImGuiHandle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
                         
                         ImGui.SameLine();

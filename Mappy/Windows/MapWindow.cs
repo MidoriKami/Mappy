@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Linq;
+﻿using System.Linq;
 using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
@@ -173,14 +172,20 @@ public class MapWindow : Window {
             System.MapRenderer.CenterOnGameObject(localPlayer);
         }
     }
+    
+    // todo: figure out why the fuck this doesn't work anymore
+    // todo: maybe put in a child anyways, but make the background faded? Would make item interaction better
 
     private unsafe void DrawToolbar() {
         if ((!System.SystemConfig.ShowToolbarOnHover || !IsMapHovered) && !System.SystemConfig.AlwaysShowToolbar) return;
 
-        ImGui.GetWindowDrawList().AddRectFilled(ImGui.GetCursorScreenPos(), ImGui.GetCursorScreenPos() + new Vector2(ImGui.GetContentRegionMax().X, 35.0f * ImGuiHelpers.GlobalScale), ImGui.GetColorU32(KnownColor.Black.Vector() with { W = 0.33f }));
+        using var childBackgroundStyle = ImRaii.PushColor(ImGuiCol.ChildBg, Vector4.Zero with { W = 0.33f });
         
-        ImGui.SetCursorPos(ImGui.GetCursorPos() + ImGuiHelpers.ScaledVector2(5.0f, 5.0f));
-
+        using var toolbarChild = ImRaii.Child("toolbar_child",new Vector2(ImGui.GetContentRegionMax().X, 35.0f * ImGuiHelpers.GlobalScale));
+        if (!toolbarChild) return;
+        
+        ImGui.SetCursorPos(new Vector2(5.0f, 5.0f));
+        
         if (MappyGuiTweaks.IconButton(FontAwesomeIcon.ArrowUp, "up", "Open Parent Map")) {
             if (GetParentMap() is { } parentMap) {
                 AgentMap.Instance()->OpenMap(parentMap.RowId);
@@ -190,17 +195,18 @@ public class MapWindow : Window {
         ImGui.SameLine();
         
         if (MappyGuiTweaks.IconButton(FontAwesomeIcon.LayerGroup, "layers", "Show Map Layers")) {
+            Service.Log.Debug("Test");
             ImGui.OpenPopup("Mappy_Show_Layers");
         }
 
         DrawLayersContextMenu();
         
         ImGui.SameLine();
-
+        
         using (var _ = ImRaii.PushColor(ImGuiCol.Button, ImGui.GetStyle().Colors[(int) ImGuiCol.ButtonActive], System.SystemConfig.FollowPlayer)) {
             if (MappyGuiTweaks.IconButton(FontAwesomeIcon.LocationArrow, "follow", "Toggle Follow Player")) {
                 System.SystemConfig.FollowPlayer = !System.SystemConfig.FollowPlayer;
-
+        
                 if (System.SystemConfig.FollowPlayer) {
                     AgentMap.Instance()->OpenMap(AgentMap.Instance()->CurrentMapId);
                 }
@@ -208,7 +214,7 @@ public class MapWindow : Window {
         }
         
         ImGui.SameLine();
-
+        
         if (MappyGuiTweaks.IconButton(FontAwesomeIcon.ArrowsToCircle, "centerPlayer", "Center on Player") && Service.ClientState.LocalPlayer is not null) {
             // Don't center on player if we are already following the player.
             if (!System.SystemConfig.FollowPlayer) {
@@ -218,14 +224,14 @@ public class MapWindow : Window {
         }
         
         ImGui.SameLine();
-
+        
         if (MappyGuiTweaks.IconButton(FontAwesomeIcon.MapMarked, "centerMap", "Center on Map")) {
             System.SystemConfig.FollowPlayer = false;
             System.MapRenderer.DrawOffset = Vector2.Zero;
         }
         
         ImGui.SameLine();
-
+        
         if (MappyGuiTweaks.IconButton(FontAwesomeIcon.Search, "search", "Search for Map")) {
             System.WindowManager.AddWindow(new MapSelectionWindow {
                 SingleSelectionCallback = selection => {
@@ -239,7 +245,7 @@ public class MapWindow : Window {
         
         ImGui.SameLine();
         ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - 25.0f * ImGuiHelpers.GlobalScale * 2.0f - ImGui.GetStyle().ItemSpacing.X - 5.0f * ImGuiHelpers.GlobalScale);
-
+        
         if (MappyGuiTweaks.IconButton(System.SystemConfig.HideWindowFrame ? FontAwesomeIcon.Lock : FontAwesomeIcon.Unlock, "pin", "Show/Hide Window Frame")) {
             System.SystemConfig.HideWindowFrame = !System.SystemConfig.HideWindowFrame;
         }

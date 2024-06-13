@@ -70,13 +70,13 @@ public partial class MapRenderer {
     
     // NumberArrayData[24] is specifically for the Map, subIndex 3 contains the current rotation, but square rotated it 90 degrees for some reason.
     private unsafe float GetCameraRotation() 
-        => -DegreesToRadians(AtkStage.GetSingleton()->GetNumberArrayData()[24]->IntArray[3]) - 0.5f * MathF.PI;
+        => -DegreesToRadians(AtkStage.Instance()->GetNumberArrayData()[24]->IntArray[3]) - 0.5f * MathF.PI;
 
     private float DegreesToRadians(float degrees) 
         => MathF.PI / 180.0f * degrees;
     
     public void DrawPlayerIcon(Vector2 position) {
-        if (Service.TextureProvider.GetIcon(60443) is not {} texture) return;
+        if (Service.TextureProvider.GetFromGameIcon(60443).GetWrapOrDefault() is not {} texture) return;
         if (Service.ClientState is not { LocalPlayer: { } player }) return;
         
         var angle = -player.Rotation + MathF.PI / 2.0f;

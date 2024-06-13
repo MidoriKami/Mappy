@@ -58,7 +58,7 @@ public partial class MapRenderer {
 
     private string GetTooltipForGameObject(GameObject obj) {
         if (Service.PluginInterface.TryGetData<Dictionary<uint, string>>("PetRenamer.GameObjectRenameDict", out var dictionary)) {
-            if (dictionary.TryGetValue(obj.ObjectId, out var newName)) {
+            if (dictionary.TryGetValue(obj.EntityId, out var newName)) {
                 return newName;
             }
         }

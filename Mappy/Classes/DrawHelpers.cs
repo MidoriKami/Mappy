@@ -94,14 +94,10 @@ public static class DrawHelpers {
     }
     
     private static void DrawIcon(MarkerInfo markerInfo) {
-        if (System.IconCache.GetValue(markerInfo.IconId) is not { ImGuiHandle: var iconTexture, Size: var iconSize }) {
-            ImGui.SetCursorPos(markerInfo.Position + markerInfo.Offset  - new Vector2(64.0f) * System.SystemConfig.IconScale / 2.0f * markerInfo.Scale);
-            ImGuiHelpers.ScaledDummy(64.0f * System.SystemConfig.IconScale);
-            return;
-        }
+        var texture = Service.TextureProvider.GetFromGameIcon(markerInfo.IconId).GetWrapOrEmpty();
         
-        ImGui.SetCursorPos(markerInfo.Position + markerInfo.Offset - iconSize * System.SystemConfig.IconScale / 2.0f * markerInfo.Scale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale);
-        ImGui.Image(iconTexture, iconSize * markerInfo.Scale * System.SystemConfig.IconScale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale);
+        ImGui.SetCursorPos(markerInfo.Position + markerInfo.Offset - texture.Size * System.SystemConfig.IconScale / 2.0f * markerInfo.Scale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale);
+        ImGui.Image(texture.ImGuiHandle, texture.Size * markerInfo.Scale * System.SystemConfig.IconScale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale);
     }
     
     private static void ProcessInteractions(MarkerInfo markerInfo) {
@@ -135,13 +131,8 @@ public static class DrawHelpers {
         if (isActivatedViaRadius || ImGui.IsItemHovered()) {
             if (markerInfo.PrimaryText?.Invoke() is { Length: > 0 } primaryText) {
                 using var tooltip = ImRaii.Tooltip();
-
-                if (System.IconCache.GetValue(markerInfo.IconId) is { ImGuiHandle: var iconTexture }) {
-                    ImGui.Image(iconTexture, ImGuiHelpers.ScaledVector2(32.0f, 32.0f));
-                }
-                else {
-                    ImGuiHelpers.ScaledDummy(32.0f);
-                }
+                
+                ImGui.Image(Service.TextureProvider.GetFromGameIcon(markerInfo.IconId).GetWrapOrEmpty().ImGuiHandle, ImGuiHelpers.ScaledVector2(32.0f, 32.0f));
                     
                 ImGui.SameLine();
                 ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 7.5f * ImGuiHelpers.GlobalScale);
