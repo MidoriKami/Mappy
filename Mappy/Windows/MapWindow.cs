@@ -79,7 +79,12 @@ public class MapWindow : Window {
         if (Service.ClientState is { IsLoggedIn: false } or { IsPvP: true }) IsOpen = false;
     }
     
-    public override void OnOpen() {
+    public override unsafe void OnOpen() {
+        if (System.SystemConfig.LastMapId is not 0) {
+            if (System.SystemConfig.RememberLastMap) {
+                AgentMap.Instance()->OpenMap(System.SystemConfig.LastMapId);
+            }
+        }
         System.IntegrationsController.TryYeetMap();
 
         if (ProcessingCommand) {
@@ -172,9 +177,6 @@ public class MapWindow : Window {
             System.MapRenderer.CenterOnGameObject(localPlayer);
         }
     }
-    
-    // todo: figure out why the fuck this doesn't work anymore
-    // todo: maybe put in a child anyways, but make the background faded? Would make item interaction better
 
     private unsafe void DrawToolbar() {
         if ((!System.SystemConfig.ShowToolbarOnHover || !IsMapHovered) && !System.SystemConfig.AlwaysShowToolbar) return;
@@ -363,7 +365,11 @@ public class MapWindow : Window {
         }
     }
 
-    public override void OnClose() {
+    public override unsafe void OnClose() {
+        Service.Log.Verbose($"Logging last map as: {AgentMap.Instance()->SelectedMapId}");
+        System.SystemConfig.LastMapId = AgentMap.Instance()->SelectedMapId;
+        System.SystemConfig.Save();
+        
         System.IntegrationsController.TryUnYeetMap();
     }
 

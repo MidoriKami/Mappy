@@ -42,6 +42,7 @@ public class WindowOptionsTab : ITabItem {
         var configChanged = ImGui.Checkbox("Keep Open", ref System.SystemConfig.KeepOpen);
         configChanged |= ImGui.Checkbox("Ignore Escape Key", ref System.SystemConfig.IgnoreEscapeKey);
         configChanged |= ImGui.Checkbox("Follow On Open", ref System.SystemConfig.FollowOnOpen);        
+        configChanged |= ImGui.Checkbox("Remember Last Map", ref System.SystemConfig.RememberLastMap);        
         
         ImGuiHelpers.ScaledDummy(5.0f);
 

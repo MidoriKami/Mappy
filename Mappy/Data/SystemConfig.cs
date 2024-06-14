@@ -32,8 +32,6 @@ public enum FadeMode {
 }
 
 public class SystemConfig : CharacterConfiguration {
-
-    // Implemented Options
     public bool UseLinearZoom = false;
     public float ZoomSpeed = 0.05f;
     public float IconScale = 0.50f;
@@ -45,6 +43,8 @@ public class SystemConfig : CharacterConfiguration {
     public bool KeepOpen = false;
     public bool FollowOnOpen = false;
     public bool FollowPlayer = true;
+    public bool RememberLastMap = true;
+    public uint LastMapId = 0;
     public CenterTarget CenterOnOpen = CenterTarget.Disabled;
     public bool ShowRadar = true;
     public bool HideWindowFrame = false;
@@ -52,8 +52,6 @@ public class SystemConfig : CharacterConfiguration {
     public bool LockWindow = false;
     public float FadePercent = 0.60f;
     public FadeMode FadeMode = FadeMode.WhenUnFocused | FadeMode.WhenMoving;
-
-    // Not yet implemented
     public Vector2 WindowPosition = new(1024.0f, 700.0f);
     public Vector2 WindowSize = new(500.0f, 500.0f);
     public bool AlwaysShowToolbar = false;
