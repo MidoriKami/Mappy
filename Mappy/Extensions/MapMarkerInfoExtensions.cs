@@ -27,7 +27,7 @@ public static class MapMarkerInfoExtensions {
             IconId = marker.MapMarker.IconId,
             PrimaryText = () => tooltipText.TextValue.IsNullOrEmpty() && System.SystemConfig.ShowMiscTooltips ? System.TooltipCache.GetValue(marker.MapMarker.IconId) : tooltipText.ToString(),
             OnLeftClicked = marker.DataType switch {
-                1 => () => AgentMap.Instance()->OpenMapByMapId(marker.DataKey),
+                1 => () => System.IntegrationsController.OpenMap(marker.DataKey),
                 3 => () => System.Teleporter.Teleport(Service.DataManager.GetExcelSheet<Aetheryte>()!.GetRow(marker.DataKey)!), // Gonna assume that can't be null, because it's a row index that comes from the active gamestate.
                 4 when GetAetheryteForAethernet(marker.DataKey) is not null => () => System.Teleporter.Teleport(GetAetheryteForAethernet(marker.DataKey)!),
                 _ => null,

@@ -79,10 +79,10 @@ public class MapWindow : Window {
         if (Service.ClientState is { IsLoggedIn: false } or { IsPvP: true }) IsOpen = false;
     }
     
-    public override unsafe void OnOpen() {
+    public override void OnOpen() {
         if (System.SystemConfig.LastMapId is not 0) {
             if (System.SystemConfig.RememberLastMap) {
-                AgentMap.Instance()->OpenMap(System.SystemConfig.LastMapId);
+                System.IntegrationsController.OpenMap(System.SystemConfig.LastMapId);
             }
         }
         System.IntegrationsController.TryYeetMap();
@@ -190,7 +190,7 @@ public class MapWindow : Window {
         
         if (MappyGuiTweaks.IconButton(FontAwesomeIcon.ArrowUp, "up", "Open Parent Map")) {
             if (GetParentMap() is { } parentMap) {
-                AgentMap.Instance()->OpenMap(parentMap.RowId);
+                System.IntegrationsController.OpenMap(parentMap.RowId);
             }
         }
         
@@ -210,7 +210,7 @@ public class MapWindow : Window {
                 System.SystemConfig.FollowPlayer = !System.SystemConfig.FollowPlayer;
         
                 if (System.SystemConfig.FollowPlayer) {
-                    AgentMap.Instance()->OpenMap(AgentMap.Instance()->CurrentMapId);
+                    System.IntegrationsController.OpenMap(AgentMap.Instance()->CurrentMapId);
                 }
             }
         }
@@ -220,7 +220,7 @@ public class MapWindow : Window {
         if (MappyGuiTweaks.IconButton(FontAwesomeIcon.ArrowsToCircle, "centerPlayer", "Center on Player") && Service.ClientState.LocalPlayer is not null) {
             // Don't center on player if we are already following the player.
             if (!System.SystemConfig.FollowPlayer) {
-                AgentMap.Instance()->OpenMap(AgentMap.Instance()->CurrentMapId);
+                System.IntegrationsController.OpenMap(AgentMap.Instance()->CurrentMapId);
                 System.MapRenderer.CenterOnGameObject(Service.ClientState.LocalPlayer);
             }
         }
@@ -238,7 +238,7 @@ public class MapWindow : Window {
             System.WindowManager.AddWindow(new MapSelectionWindow {
                 SingleSelectionCallback = selection => {
                     if (selection is not null) {
-                        AgentMap.Instance()->OpenMap(selection.RowId);
+                        System.IntegrationsController.OpenMap(selection.RowId);
                         System.MapRenderer.DrawOffset = Vector2.Zero;
                     }
                 }
@@ -320,7 +320,7 @@ public class MapWindow : Window {
         ImGuiHelpers.ScaledDummy(5.0f);
 
         if (ImGui.MenuItem("Center on Player", Service.ClientState.LocalPlayer is not null) && Service.ClientState.LocalPlayer is not null) {
-            AgentMap.Instance()->OpenMapByMapId(AgentMap.Instance()->CurrentMapId);
+            System.IntegrationsController.OpenMap(AgentMap.Instance()->CurrentMapId);
             System.MapRenderer.CenterOnGameObject(Service.ClientState.LocalPlayer);
         }
         
@@ -358,7 +358,7 @@ public class MapWindow : Window {
         
         foreach (var layer in layers) {
             if (ImGui.MenuItem(layer.PlaceNameSub.Value?.Name ?? "Unable to Parse Name", "", AgentMap.Instance()->SelectedMapId == layer.RowId)) {
-                AgentMap.Instance()->OpenMap(layer.RowId);
+                System.IntegrationsController.OpenMap(layer.RowId);
                 System.SystemConfig.FollowPlayer = false;
                 System.MapRenderer.DrawOffset = Vector2.Zero;
             }

@@ -28,7 +28,7 @@ public class FateListWindow : Window {
                 
                 var cursorStart = ImGui.GetCursorScreenPos();
                 if (ImGui.Selectable($"##{fate->FateId}_Selectable", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, ElementHeight * ImGuiHelpers.GlobalScale))) {
-                    AgentMap.Instance()->OpenMap(AgentMap.Instance()->CurrentMapId);
+                    System.IntegrationsController.OpenMap(AgentMap.Instance()->CurrentMapId);
                     System.SystemConfig.FollowPlayer = false;
                     System.MapRenderer.DrawOffset = -new Vector2(fate->Location.X, fate->Location.Z);
                 }
