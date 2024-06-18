@@ -21,7 +21,7 @@ public partial class MapRenderer {
     private string blendedPath = string.Empty;
 
     public void CenterOnGameObject(GameObject obj) 
-        => DrawOffset = -new Vector2(obj.Position.X, obj.Position.Z) * DrawHelpers.GetMapScaleFactor();
+        => DrawOffset = -new Vector2(obj.Position.X, obj.Position.Z) * DrawHelpers.GetMapScaleFactor() + DrawHelpers.GetMapOffsetVector();
 
     public void Draw() {
         UpdateScaleLimits();
