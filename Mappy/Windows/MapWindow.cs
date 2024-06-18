@@ -67,9 +67,7 @@ public class MapWindow : Window {
         var addonNamePlate = (AddonNamePlate*) Service.GameGui.GetAddonByName("NamePlate");
 
         if (addonNamePlate is null) return false;
-        if (!addonNamePlate->AtkUnitBase.IsVisible) return false;
-        if (addonNamePlate->AtkUnitBase.RootNode is null) return false;
-        if (!addonNamePlate->AtkUnitBase.RootNode->IsVisible) return false;
+        if (!addonNamePlate->IsReady) return false;
 
         return true;
     }
