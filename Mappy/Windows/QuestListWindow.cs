@@ -37,7 +37,9 @@ public unsafe class UnacceptedQuestsTabItem : ITabItem {
     private const float ElementHeight = 48.0f;
 
     public string Name => "Unaccepted Quests";
+    
     public bool Disabled => false;
+    
     public void Draw() {
         if (Map.Instance()->UnacceptedQuestMarkers.Count > 0) {
             foreach (var quest in Map.Instance()->UnacceptedQuestMarkers) {
@@ -52,15 +54,13 @@ public unsafe class UnacceptedQuestsTabItem : ITabItem {
                     }
 
                     ImGui.SetCursorScreenPos(cursorStart);
-                    if (Service.TextureProvider.GetFromGameIcon(marker.IconId).GetWrapOrDefault() is { } icon) {
-                        ImGui.Image(icon.ImGuiHandle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
-                        
-                        ImGui.SameLine();
-                        var text = $"Lv. {questData?.ClassJobLevel0} {quest.Label}";
-                        
-                        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ElementHeight * ImGuiHelpers.GlobalScale / 2.0f - ImGui.CalcTextSize(text).Y / 2.0f);
-                        ImGui.Text(text);
-                    }
+                    ImGui.Image(Service.TextureProvider.GetFromGameIcon(marker.IconId).GetWrapOrEmpty().ImGuiHandle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
+                    
+                    ImGui.SameLine();
+                    var text = $"Lv. {questData?.ClassJobLevel0} {quest.Label}";
+                    
+                    ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ElementHeight * ImGuiHelpers.GlobalScale / 2.0f - ImGui.CalcTextSize(text).Y / 2.0f);
+                    ImGui.Text(text);
                 }
             }
         }
@@ -78,7 +78,9 @@ public unsafe class AcceptedQuestsTabItem : ITabItem {
     private const float ElementHeight = 48.0f;
 
     public string Name => "Accepted Quests";
+    
     public bool Disabled => false;
+    
     public void Draw() {
         if (Map.Instance()->QuestMarkers.Length > 0) {
             foreach (var quest in Map.Instance()->QuestMarkers) {
@@ -104,15 +106,13 @@ public unsafe class AcceptedQuestsTabItem : ITabItem {
                     };
                     
                     ImGui.SetCursorScreenPos(cursorStart);
-                    if (Service.TextureProvider.GetFromGameIcon(iconId).GetWrapOrDefault() is { } icon) {
-                        ImGui.Image(icon.ImGuiHandle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
-                        
-                        ImGui.SameLine();
-                        var text = $"Lv. {questData?.ClassJobLevel0} {quest.Label}";
-                        
-                        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ElementHeight * ImGuiHelpers.GlobalScale / 2.0f - ImGui.CalcTextSize(text).Y / 2.0f);
-                        ImGui.Text(text);
-                    }
+                    ImGui.Image(Service.TextureProvider.GetFromGameIcon(iconId).GetWrapOrEmpty().ImGuiHandle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
+                    
+                    ImGui.SameLine();
+                    var text = $"Lv. {questData?.ClassJobLevel0} {quest.Label}";
+                    
+                    ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ElementHeight * ImGuiHelpers.GlobalScale / 2.0f - ImGui.CalcTextSize(text).Y / 2.0f);
+                    ImGui.Text(text);
                 }
             }
         }

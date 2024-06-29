@@ -176,16 +176,15 @@ public class IconConfigurationTab : ITabItem {
             
             foreach (var (iconId, settings) in System.IconConfig.IconSettingMap.OrderBy(pairData =>  pairData.Key)) {
                 if (iconId is 0) continue;
+
+                var texture = Service.TextureProvider.GetFromGameIcon(iconId).GetWrapOrEmpty();
+                var cursorStart = ImGui.GetCursorScreenPos();
+                if (ImGui.Selectable($"##iconSelect{iconId}", currentSetting == settings, ImGuiSelectableFlags.None, ImGuiHelpers.ScaledVector2(32.0f, 32.0f))) {
+                    currentSetting = currentSetting == settings ? null : settings;
+                }  
                 
-                if (Service.TextureProvider.GetFromGameIcon(iconId).GetWrapOrDefault() is { } texture) {
-                    var cursorStart = ImGui.GetCursorScreenPos();
-                    if (ImGui.Selectable($"##iconSelect{iconId}", currentSetting == settings, ImGuiSelectableFlags.None, ImGuiHelpers.ScaledVector2(32.0f, 32.0f))) {
-                        currentSetting = currentSetting == settings ? null : settings;
-                    }  
-                    
-                    ImGui.SetCursorScreenPos(cursorStart);
-                    ImGui.Image(texture.ImGuiHandle, texture.Size / 2.0f);
-                }
+                ImGui.SetCursorScreenPos(cursorStart);
+                ImGui.Image(texture.ImGuiHandle, texture.Size / 2.0f);
             }
         }
         
@@ -199,17 +198,16 @@ public class IconConfigurationTab : ITabItem {
                 ImGuiHelpers.CenteredText("Select an Icon to Edit Settings");
             }
             else {
-                if (Service.TextureProvider.GetFromGameIcon(currentSetting.IconId).GetWrapOrDefault() is { } texture) {
-                    var smallestAxis = MathF.Min(ImGui.GetContentRegionAvail().X, ImGui.GetContentRegionAvail().Y);
+                var texture = Service.TextureProvider.GetFromGameIcon(currentSetting.IconId).GetWrapOrEmpty();
+                var smallestAxis = MathF.Min(ImGui.GetContentRegionAvail().X, ImGui.GetContentRegionAvail().Y);
 
-                    if (ImGui.GetContentRegionAvail().X > ImGui.GetContentRegionAvail().Y) {
-                        var remainingSpace = ImGui.GetContentRegionAvail().X - smallestAxis;
-                        ImGui.SetCursorPosX(remainingSpace / 2.0f);
-                    }
-                    
-                    ImGui.Image(texture.ImGuiHandle, new Vector2(smallestAxis, smallestAxis), Vector2.Zero, Vector2.One, new Vector4(1.0f, 1.0f, 1.0f, 0.20f));
-                    ImGui.SetCursorPos(Vector2.Zero);
+                if (ImGui.GetContentRegionAvail().X > ImGui.GetContentRegionAvail().Y) {
+                    var remainingSpace = ImGui.GetContentRegionAvail().X - smallestAxis;
+                    ImGui.SetCursorPosX(remainingSpace / 2.0f);
                 }
+                
+                ImGui.Image(texture.ImGuiHandle, new Vector2(smallestAxis, smallestAxis), Vector2.Zero, Vector2.One, new Vector4(1.0f, 1.0f, 1.0f, 0.20f));
+                ImGui.SetCursorPos(Vector2.Zero);
                 
                 ImGuiHelpers.ScaledDummy(5.0f);
 

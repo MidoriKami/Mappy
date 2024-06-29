@@ -34,9 +34,8 @@ public class FateListWindow : Window {
                 }
 
                 ImGui.SetCursorScreenPos(cursorStart);
-                if (Service.TextureProvider.GetFromGameIcon(fate->IconId).GetWrapOrDefault() is { } icon) {
                     using (ImRaii.Child($"image_child_{fate->FateId}", new Vector2(ElementHeight, ElementHeight), false, ImGuiWindowFlags.NoInputs)) {
-                        ImGui.Image(icon.ImGuiHandle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
+                        ImGui.Image(Service.TextureProvider.GetFromGameIcon(fate->IconId).GetWrapOrEmpty().ImGuiHandle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
                     }
                     
                     ImGui.SameLine();
@@ -52,9 +51,6 @@ public class FateListWindow : Window {
                             ImGui.Text(timeString);
                         }
                     }
-                    
-                }
-                
             }
         }
         else {

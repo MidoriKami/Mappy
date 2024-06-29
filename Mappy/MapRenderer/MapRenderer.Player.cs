@@ -74,11 +74,11 @@ public partial class MapRenderer {
 
     private float DegreesToRadians(float degrees) 
         => MathF.PI / 180.0f * degrees;
-    
-    public void DrawPlayerIcon(Vector2 position) {
-        if (Service.TextureProvider.GetFromGameIcon(60443).GetWrapOrDefault() is not {} texture) return;
+
+    private void DrawPlayerIcon(Vector2 position) {
         if (Service.ClientState is not { LocalPlayer: { } player }) return;
         
+        var texture = Service.TextureProvider.GetFromGameIcon(60443).GetWrapOrEmpty();
         var angle = -player.Rotation + MathF.PI / 2.0f;
         var vectors = GetRotationVectors(angle, position, texture.Size / 2.0f * Scale);
     
