@@ -6,7 +6,7 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
-using KamiLib.Components;
+using KamiLib.Classes;
 using Mappy.Data;
 
 namespace Mappy.Classes;
