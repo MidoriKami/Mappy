@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
@@ -24,6 +25,7 @@ public partial class MapRenderer {
 
         foreach (var obj in Service.ObjectTable.Reverse()) {
             if (!obj.IsTargetable) continue;
+            if (Vector3.Distance(obj.Position, player.Position) >= 50.0f) continue;
 
             DrawHelpers.DrawMapMarker(new MarkerInfo {
                 Position = (obj.GetMapPosition() -
@@ -45,7 +47,7 @@ public partial class MapRenderer {
             });
         }
     }
-    private void DrawRadar(GameObject gameObjectCenter) {
+    private void DrawRadar(IPlayerCharacter gameObjectCenter) {
         var position = ImGui.GetWindowPos() +
                        DrawPosition +
                        (gameObjectCenter.GetMapPosition() -
@@ -56,7 +58,7 @@ public partial class MapRenderer {
         ImGui.GetWindowDrawList().AddCircle(position, 150.0f * Scale, ImGui.GetColorU32(KnownColor.Gray.Vector() with { W = 0.30f }));
     }
 
-    private string GetTooltipForGameObject(GameObject obj) {
+    private string GetTooltipForGameObject(IGameObject obj) {
         if (Service.PluginInterface.TryGetData<Dictionary<uint, string>>("PetRenamer.GameObjectRenameDict", out var dictionary)) {
             if (dictionary.TryGetValue(obj.EntityId, out var newName)) {
                 return newName;
@@ -64,8 +66,8 @@ public partial class MapRenderer {
         }
         
         return obj switch {
-            BattleNpc { Level: > 0 } battleNpc => $"Lv. {battleNpc.Level} {battleNpc.Name}",
-            PlayerCharacter { Level: > 0 } playerCharacter => $"Lv. {playerCharacter.Level} {playerCharacter.Name}",
+            IBattleNpc { Level: > 0 } battleNpc => $"Lv. {battleNpc.Level} {battleNpc.Name}",
+            IPlayerCharacter { Level: > 0 } playerCharacter => $"Lv. {playerCharacter.Level} {playerCharacter.Name}",
             _ => obj.ObjectKind switch {
                 ObjectKind.GatheringPoint => System.GatheringPointNameCache.GetValue((obj.DataId, obj.Name.ToString())) ?? string.Empty,
                 ObjectKind.Treasure => obj.Name.ToString(),

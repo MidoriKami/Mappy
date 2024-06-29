@@ -5,6 +5,6 @@ using Mappy.Classes;
 namespace Mappy.Extensions;
 
 public static class GameObjectExtensions {
-    public static Vector2 GetMapPosition(this GameObject obj) 
+    public static Vector2 GetMapPosition(this IGameObject obj) 
         => new Vector2(obj.Position.X, obj.Position.Z) * DrawHelpers.GetMapScaleFactor();
 }

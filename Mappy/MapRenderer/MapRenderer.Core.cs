@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Numerics;
 using System.Threading.Tasks;
+using Dalamud.Game.ClientState.Objects.Types;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using Mappy.Classes;
-using GameObject = Dalamud.Game.ClientState.Objects.Types.GameObject;
-using Dalamud.Interface.Internal;
 using Dalamud.Interface.Textures;
+using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Utility;
 using Lumina.Data.Files;
 
@@ -20,7 +20,7 @@ public partial class MapRenderer {
     private IDalamudTextureWrap? blendedTexture;
     private string blendedPath = string.Empty;
 
-    public void CenterOnGameObject(GameObject obj) 
+    public void CenterOnGameObject(IGameObject obj) 
         => DrawOffset = -new Vector2(obj.Position.X, obj.Position.Z) * DrawHelpers.GetMapScaleFactor() + DrawHelpers.GetMapOffsetVector();
 
     public void Draw() {
