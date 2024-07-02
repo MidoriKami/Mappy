@@ -9,7 +9,7 @@ using Mappy.Windows;
 namespace Mappy;
 
 public sealed class MappyPlugin : IDalamudPlugin {
-    public MappyPlugin(DalamudPluginInterface pluginInterface) {
+    public MappyPlugin(IDalamudPluginInterface pluginInterface) {
         pluginInterface.Create<Service>();
         
         System.SystemConfig = SystemConfig.Load();
