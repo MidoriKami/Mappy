@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Drawing;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
@@ -7,6 +8,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
+using KamiLib.Classes;
 using KamiLib.CommandManager;
 using KamiLib.Extensions;
 using KamiLib.Window;
@@ -24,7 +26,7 @@ public class MapWindow : Window {
     private bool isDragStarted;
     private Vector2 lastWindowSize;
     
-    public MapWindow() : base("Mappy Map Window", new Vector2(282.0f, 250.0f)) {
+    public MapWindow() : base("Mappy Map Window", new Vector2(450.0f, 250.0f)) {
         System.CommandManager.RegisterCommand(new CommandHandler {
             ActivationPath = "/togglemap",
             Delegate = _ => System.MapWindow.UnCollapseOrToggle(),
@@ -48,7 +50,7 @@ public class MapWindow : Window {
                 foreach (var index in Enumerable.Range(0, 20)) {
                     Service.Framework.RunOnTick(Toggle, delayTicks: 20 * index);
                 }
-            }
+            },
         });
     }
 
@@ -117,6 +119,34 @@ public class MapWindow : Window {
         
         MapDrawOffset = ImGui.GetCursorScreenPos();
         using (var renderChild = ImRaii.Child("render_child", ImGui.GetContentRegionAvail(), false, ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoScrollbar)) {
+            if (!System.SystemConfig.AcceptedSpoilerWarning) {
+                using (ImRaii.PushColor(ImGuiCol.Text, KnownColor.Orange.Vector())) {
+                    var warningLine1 = "Warning, Mappy does not protect you from spoilers and will show everything.";
+                    var warningLine2 = "Do not use Mappy if you are not comfortable with this.";
+
+                    ImGui.SetCursorPos(ImGui.GetContentRegionAvail() / 2.0f - (ImGui.CalcTextSize(warningLine1) * 2.0f) with { X = 0.0f });
+                    ImGuiHelpers.CenteredText(warningLine1);
+                    ImGuiHelpers.CenteredText(warningLine2);
+                }
+                
+                ImGuiHelpers.ScaledDummy(30.0f);
+                ImGui.SetCursorPosX(ImGui.GetContentRegionAvail().X / 3.0f);
+                using (ImRaii.Disabled(!(ImGui.GetIO().KeyShift && ImGui.GetIO().KeyCtrl))) {
+                    if (ImGui.Button("I understand", new Vector2(ImGui.GetContentRegionAvail().X / 2.0f, 23.0f * ImGuiHelpers.GlobalScale))) {
+                        System.SystemConfig.AcceptedSpoilerWarning = true;
+                        System.SystemConfig.Save();
+                    }
+                    
+                    using (ImRaii.PushStyle(ImGuiStyleVar.Alpha, 1.0f)) {
+                        if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
+                            ImGui.SetTooltip("Hold Shift + Control while clicking activate button");
+                        }
+                    }
+                }
+
+                return;
+            }
+            
             if (renderChild) {
                 System.MapRenderer.Draw();
 
@@ -177,11 +207,15 @@ public class MapWindow : Window {
     }
 
     private unsafe void DrawToolbar() {
-        if ((!System.SystemConfig.ShowToolbarOnHover || !IsMapHovered) && !System.SystemConfig.AlwaysShowToolbar) return;
+        var toolbarSize = new Vector2(ImGui.GetContentRegionMax().X, 35.0f * ImGuiHelpers.GlobalScale) + ImGui.GetStyle().FramePadding;
+        var cursorStart = ImGui.GetCursorScreenPos();
 
-        using var childBackgroundStyle = ImRaii.PushColor(ImGuiCol.ChildBg, Vector4.Zero with { W = 0.33f });
+        IsMapHovered |= WindowBounds.IsBoundedBy(ImGui.GetMousePos(), cursorStart, cursorStart + toolbarSize);
+        var shouldShow = (System.SystemConfig.ShowToolbarOnHover && IsMapHovered || System.SystemConfig.AlwaysShowToolbar) && !isDragStarted;
+        if (!shouldShow) return;
         
-        using var toolbarChild = ImRaii.Child("toolbar_child",new Vector2(ImGui.GetContentRegionMax().X, 35.0f * ImGuiHelpers.GlobalScale));
+        using var childBackgroundStyle = ImRaii.PushColor(ImGuiCol.ChildBg, Vector4.Zero with { W = 0.33f });
+        using var toolbarChild = ImRaii.Child("toolbar_child", toolbarSize);
         if (!toolbarChild) return;
         
         ImGui.SetCursorPos(new Vector2(5.0f, 5.0f));
@@ -195,7 +229,6 @@ public class MapWindow : Window {
         ImGui.SameLine();
         
         if (MappyGuiTweaks.IconButton(FontAwesomeIcon.LayerGroup, "layers", "Show Map Layers")) {
-            Service.Log.Debug("Test");
             ImGui.OpenPopup("Mappy_Show_Layers");
         }
 

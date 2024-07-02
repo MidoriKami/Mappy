@@ -33,7 +33,7 @@ public enum FadeMode {
 
 public class SystemConfig : CharacterConfiguration {
     public bool UseLinearZoom = false;
-    public float ZoomSpeed = 0.05f;
+    public float ZoomSpeed = 0.25f;
     public float IconScale = 0.50f;
     public bool ShowMiscTooltips = true;
     public bool HideWithGameGui = true;
@@ -56,6 +56,8 @@ public class SystemConfig : CharacterConfiguration {
     public Vector2 WindowSize = new(500.0f, 500.0f);
     public bool AlwaysShowToolbar = false;
     public bool ShowToolbarOnHover = true;
+
+    public bool AcceptedSpoilerWarning = false;
 
     public static SystemConfig Load() 
         => Service.PluginInterface.LoadConfigFile("System.config.json", () => new SystemConfig());
