@@ -1,4 +1,6 @@
-﻿using Dalamud.Plugin.Ipc;
+﻿using Dalamud.Game.Text;
+using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Plugin.Ipc;
 using Dalamud.Plugin.Ipc.Exceptions;
 using Lumina.Excel.GeneratedSheets;
 
@@ -17,7 +19,14 @@ public class Teleporter {
                 UserError("Cannot teleport in this situation.");
             }
             else if (showMessage) {
-                Service.ChatGui.Print($"Teleporting to {aetheryte.PlaceName.Value?.Name ?? "Unable to read name"}.", "Teleport");
+                Service.ChatGui.Print(new XivChatEntry {
+                    Message = new SeStringBuilder()
+                        .AddUiForeground("[Mappy] ", 45)
+                        .AddUiForeground($"[Teleport] ", 62)
+                        .AddText($"Teleporting to ")
+                        .AddUiForeground(aetheryte.PlaceName.Value?.Name ?? "Unable to read name", 576)
+                        .Build(),
+                });
             }
         } catch (IpcNotReadyError) {
             Service.Log.Error("Teleport IPC not found");
