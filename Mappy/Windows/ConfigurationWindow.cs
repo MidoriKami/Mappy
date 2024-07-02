@@ -218,7 +218,14 @@ public class IconConfigurationTab : ITabItem {
                 ImGuiHelpers.ScaledDummy(5.0f);
 
                 settingsChanged |= ImGui.DragFloat("Icon Scale", ref currentSetting.Scale, 0.01f, 0.05f, 20.0f);
+                
+                ImGuiHelpers.ScaledDummy(10.0f);
 
+                if (ImGui.Button("Reset to Default")) {
+                    currentSetting.Reset();
+                    System.IconConfig.Save();
+                }
+                
                 if (settingsChanged) {
                     System.IconConfig.Save();
                 }

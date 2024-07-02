@@ -9,6 +9,13 @@ public class IconSetting {
     public bool AllowTooltip = true;
     public float Scale = 1.0f;
     public bool AllowClick = true;
+
+    public void Reset() {
+        Hide = false;
+        AllowTooltip = true;
+        Scale = 1.0f;
+        AllowClick = true;
+    }
 }
 
 public class IconConfig {
