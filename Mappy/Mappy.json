@@ -1,17 +1,9 @@
 {
   "Author": "MidoriKami",
   "Name": "Mappy",
-  "Punchline": "A more versatile ingame map",
-  "Description": "Replaces the ingame map with an ImGui implementation with several additional features.",
-  "Tags": [
-    "utility"
-  ],
-  "CategoryTags": [
-    "Utility",
-    "Other"
-  ],
+  "Punchline": "A more versatile in-game map",
+  "Description": "Replaces the in-game map with an ImGui implementation with several additional features.",
   "InternalName": "mappy",
   "RepoUrl": "https://github.com/MidoriKami/Mappy",
-  "AcceptsFeedback": false,
-  "DalamudApiLevel": 9
+  "AcceptsFeedback": false
 }
