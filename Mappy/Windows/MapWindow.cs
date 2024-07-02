@@ -94,6 +94,7 @@ public class MapWindow : Window {
         }
         
         if (System.SystemConfig.FollowOnOpen) {
+            System.IntegrationsController.OpenOccupiedMap();
             System.SystemConfig.FollowPlayer = true;
         }
 
@@ -206,7 +207,7 @@ public class MapWindow : Window {
         }
     }
 
-    private unsafe void DrawToolbar() {
+    private void DrawToolbar() {
         var toolbarSize = new Vector2(ImGui.GetContentRegionMax().X, 35.0f * ImGuiHelpers.GlobalScale) + ImGui.GetStyle().FramePadding;
         var cursorStart = ImGui.GetCursorScreenPos();
 
@@ -241,7 +242,7 @@ public class MapWindow : Window {
                 System.SystemConfig.FollowPlayer = !System.SystemConfig.FollowPlayer;
         
                 if (System.SystemConfig.FollowPlayer) {
-                    System.IntegrationsController.OpenMap(AgentMap.Instance()->CurrentMapId);
+                    System.IntegrationsController.OpenOccupiedMap();
                 }
             }
         }
@@ -251,7 +252,7 @@ public class MapWindow : Window {
         if (MappyGuiTweaks.IconButton(FontAwesomeIcon.ArrowsToCircle, "centerPlayer", "Center on Player") && Service.ClientState.LocalPlayer is not null) {
             // Don't center on player if we are already following the player.
             if (!System.SystemConfig.FollowPlayer) {
-                System.IntegrationsController.OpenMap(AgentMap.Instance()->CurrentMapId);
+                System.IntegrationsController.OpenOccupiedMap();
                 System.MapRenderer.CenterOnGameObject(Service.ClientState.LocalPlayer);
             }
         }
@@ -351,7 +352,7 @@ public class MapWindow : Window {
         ImGuiHelpers.ScaledDummy(5.0f);
 
         if (ImGui.MenuItem("Center on Player", Service.ClientState.LocalPlayer is not null) && Service.ClientState.LocalPlayer is not null) {
-            System.IntegrationsController.OpenMap(AgentMap.Instance()->CurrentMapId);
+            System.IntegrationsController.OpenOccupiedMap();
             System.MapRenderer.CenterOnGameObject(Service.ClientState.LocalPlayer);
         }
         

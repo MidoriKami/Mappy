@@ -7,7 +7,6 @@ using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using KamiLib.Window;
 using Mappy.Extensions;
@@ -28,7 +27,7 @@ public class FateListWindow : Window {
                 
                 var cursorStart = ImGui.GetCursorScreenPos();
                 if (ImGui.Selectable($"##{fate->FateId}_Selectable", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, ElementHeight * ImGuiHelpers.GlobalScale))) {
-                    System.IntegrationsController.OpenMap(AgentMap.Instance()->CurrentMapId);
+                    System.IntegrationsController.OpenOccupiedMap();
                     System.SystemConfig.FollowPlayer = false;
                     System.MapRenderer.DrawOffset = -new Vector2(fate->Location.X, fate->Location.Z);
                 }

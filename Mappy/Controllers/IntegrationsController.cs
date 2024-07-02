@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using Dalamud.Hooking;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -120,10 +119,12 @@ public unsafe class IntegrationsController : IDisposable {
 			Service.Log.Debug($"Open Map With OpenMapInfo: {mapInfo->MapId}, {mapInfo->Type}, {mapInfo->TerritoryId}, {mapInfo->TitleString}");
 		}, Service.Log, "Exception during OpenMap");
 
-	public void OpenMap(uint mapId) {
-		Marshal.GetDelegateForFunctionPointer<OpenMapByMapIdDelegate>((nint)AgentMap.MemberFunctionPointers.OpenMapByMapId).Invoke(AgentMap.Instance(), mapId, 0, true);
-	}
-    
+	public void OpenMap(uint mapId)
+		=> AgentMap.Instance()->OpenMapByMapId(mapId, 0, true);
+
+	public void OpenOccupiedMap()
+		=> OpenMap(AgentMap.Instance()->CurrentMapId);
+
 	private static void CenterOnMarker(AgentMap* agent, MapMarkerBase marker) {
 		var coordinates = new Vector2(marker.X, marker.Y) / 16.0f * agent->SelectedMapSizeFactorFloat;
 
