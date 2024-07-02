@@ -119,7 +119,9 @@ public class MapWindow : Window {
         UpdateSizePosition();
         
         MapDrawOffset = ImGui.GetCursorScreenPos();
+        using var fade = ImRaii.PushStyle(ImGuiStyleVar.Alpha, System.SystemConfig.FadePercent,  ShouldFade());
         using (var renderChild = ImRaii.Child("render_child", ImGui.GetContentRegionAvail(), false, ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoScrollbar)) {
+            if (!renderChild) return;
             if (!System.SystemConfig.AcceptedSpoilerWarning) {
                 using (ImRaii.PushColor(ImGuiCol.Text, KnownColor.Orange.Vector())) {
                     var warningLine1 = "Warning, Mappy does not protect you from spoilers and will show everything.";
@@ -185,7 +187,6 @@ public class MapWindow : Window {
     }
     
     private void UpdateStyle() {
-        using var fade = ImRaii.PushStyle(ImGuiStyleVar.Alpha, System.SystemConfig.FadePercent,  ShouldFade());
         if (System.SystemConfig.HideWindowFrame) {
             Flags |= ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoBackground;
         }
