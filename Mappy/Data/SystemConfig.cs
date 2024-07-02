@@ -56,7 +56,7 @@ public class SystemConfig : CharacterConfiguration {
     public Vector2 WindowSize = new(500.0f, 500.0f);
     public bool AlwaysShowToolbar = false;
     public bool ShowToolbarOnHover = true;
-
+    public bool ScaleWithZoom = true;
     public bool AcceptedSpoilerWarning = false;
 
     public static SystemConfig Load() 

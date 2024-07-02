@@ -60,6 +60,7 @@ public class WindowOptionsTab : ITabItem {
         
         configChanged |= ImGui.Checkbox("Use Linear Zoom", ref System.SystemConfig.UseLinearZoom);
         configChanged |= ImGui.Checkbox("Show Misc Tooltips", ref System.SystemConfig.ShowMiscTooltips);
+        configChanged |= ImGui.Checkbox("Scale icons with zoom", ref System.SystemConfig.ScaleWithZoom);
 
         ImGuiHelpers.ScaledDummy(5.0f);
 

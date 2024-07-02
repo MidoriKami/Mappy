@@ -95,9 +95,10 @@ public static class DrawHelpers {
     
     private static void DrawIcon(MarkerInfo markerInfo) {
         var texture = Service.TextureProvider.GetFromGameIcon(markerInfo.IconId).GetWrapOrEmpty();
+        var scale = System.SystemConfig.ScaleWithZoom ? markerInfo.Scale : 1.0f;
         
-        ImGui.SetCursorPos(markerInfo.Position + markerInfo.Offset - texture.Size * System.SystemConfig.IconScale / 2.0f * markerInfo.Scale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale);
-        ImGui.Image(texture.ImGuiHandle, texture.Size * markerInfo.Scale * System.SystemConfig.IconScale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale);
+        ImGui.SetCursorPos(markerInfo.Position + markerInfo.Offset - texture.Size * System.SystemConfig.IconScale / 2.0f * scale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale);
+        ImGui.Image(texture.ImGuiHandle, texture.Size * scale * System.SystemConfig.IconScale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale);
     }
     
     private static void ProcessInteractions(MarkerInfo markerInfo) {
