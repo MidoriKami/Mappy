@@ -150,10 +150,24 @@ public unsafe class IntegrationsController : IDisposable {
 			// Is this the quest we are looking for?
 			var questData = Service.DataManager.GetExcelSheet<CustomQuestSheet>()?.GetRow(quest.QuestId + 65536u)!;
 			if (!IsNameMatch(questData.Name, mapInfo)) continue;
+
+			var todoPrimaryIndex = 0;
+			if (quest.Sequence is 0xFF) {
+				// For each of the possible steps check if out sequence matches that index
+				foreach(var index in Enumerable.Range(0, 24)) {
+					if (questData.ToDoCompleteSeq[index] == quest.Sequence) {
+						todoPrimaryIndex = index;
+						break;
+					}
+				}
+			}
+			else {
+				todoPrimaryIndex = quest.Sequence;
+			}
 			
 			// Iterate the level data for markers for the current sequence number
 			foreach (var index in Enumerable.Range(0, 8)) {
-				var levelData = questData.ToDoLocation[quest.Sequence, index];
+				var levelData = questData.ToDoLocation[todoPrimaryIndex, index];
 				if (levelData.Row is 0) continue;
 				if (levelData.Value is null) continue;
 
@@ -169,7 +183,7 @@ public unsafe class IntegrationsController : IDisposable {
 
 	private bool IsNameMatch(SeString name, OpenMapInfo* mapInfo) 
 		=> string.Equals(name.ToString(), mapInfo->TitleString.ToString(), StringComparison.OrdinalIgnoreCase);
-
+	
 	private void TryMirrorGameState(AgentMap* agent) {
 		if (agent->AddonId is not 0) {
 			System.MapWindow.Open();
