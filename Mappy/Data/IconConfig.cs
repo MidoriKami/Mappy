@@ -24,6 +24,10 @@ public class IconConfig {
     public static IconConfig Load() 
         => Service.PluginInterface.LoadConfigFile("Icons.config.json", () => new IconConfig());
 
-    public void Save() 
-        => Service.PluginInterface.SaveConfigFile("Icons.config.json", System.IconConfig);
+    public void Save() {
+        // Purge icon that should now be filtered
+        IconSettingMap.Remove(60091);
+        
+        Service.PluginInterface.SaveConfigFile("Icons.config.json", System.IconConfig);
+    } 
 }

@@ -49,10 +49,16 @@ public static class DrawHelpers {
         // Don't draw markers that are positioned off the map texture
         if (markerInfo.Position.X < 0.0f || markerInfo.Position.X > 2048.0f * markerInfo.Scale || markerInfo.Position.Y < 0.0f || markerInfo.Position.Y > 2048.0f * markerInfo.Scale) return;
 
-        // Translate circle markers that don't have icons, into [?] icon
-        if (markerInfo.IconId is >= 60483 and <= 60494) {
-            markerInfo.IconId = 60071;
-        }
+        markerInfo.IconId = markerInfo.IconId switch {
+            // Translate circle markers that don't have icons, into [?] icon
+            >= 60483 and <= 60494 => 60071,
+            
+            // Translate Gemstone Trader Icon into smaller version... why square, why.
+            60091 => 61731,
+            
+            // Leave all other icons as they were
+            _ => markerInfo.IconId,
+        };
 
         // If this is the first time we have seen this iconId, save it
         if (System.IconConfig.IconSettingMap.TryAdd(markerInfo.IconId, new IconSetting {
