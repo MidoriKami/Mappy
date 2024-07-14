@@ -19,7 +19,7 @@ public class IconSetting {
 }
 
 public class IconConfig {
-    public readonly Dictionary<uint, IconSetting> IconSettingMap = [];
+    public Dictionary<uint, IconSetting> IconSettingMap = [];
     
     public static IconConfig Load() 
         => Service.PluginInterface.LoadConfigFile("Icons.config.json", () => new IconConfig());
