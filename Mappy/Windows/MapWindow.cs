@@ -344,6 +344,7 @@ public class MapWindow : Window {
                 
             AgentMap.Instance()->IsFlagMarkerSet = 0;
             AgentMap.Instance()->SetFlagMapMarker(AgentMap.Instance()->SelectedTerritoryId, AgentMap.Instance()->SelectedMapId, scaledResult.X, scaledResult.Y);
+            AgentChatLog.Instance()->InsertTextCommandParam(1048, false);
         }
         
         if (ImGui.MenuItem("Remove Flag", AgentMap.Instance()->IsFlagMarkerSet is not 0)) {
