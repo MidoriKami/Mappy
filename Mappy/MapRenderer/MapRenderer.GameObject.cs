@@ -6,6 +6,7 @@ using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface;
+using FFXIVClientStructs.FFXIV.Client.Game.Group;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using Mappy.Classes;
@@ -25,6 +26,8 @@ public partial class MapRenderer {
 
         foreach (var obj in Service.ObjectTable.Reverse()) {
             if (!obj.IsTargetable) continue;
+            if (GroupManager.Instance()->MainGroup.IsEntityIdInParty(obj.EntityId)) continue;
+            if (GroupManager.Instance()->MainGroup.IsEntityIdInAlliance(obj.EntityId)) continue;
             if (Vector3.Distance(obj.Position, player.Position) >= 150.0f) continue;
 
             DrawHelpers.DrawMapMarker(new MarkerInfo {
@@ -72,7 +75,7 @@ public partial class MapRenderer {
                 ObjectKind.GatheringPoint => System.GatheringPointNameCache.GetValue((obj.DataId, obj.Name.ToString())) ?? string.Empty,
                 ObjectKind.Treasure => obj.Name.ToString(),
                 _ => string.Empty,
-            }
+            },
         };
     }
 }

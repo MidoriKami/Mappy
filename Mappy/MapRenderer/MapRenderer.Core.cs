@@ -85,6 +85,7 @@ public partial class MapRenderer {
         DrawStaticMapMarkers();
         DrawDynamicMarkers();
         DrawGameObjects();
+        DrawGroupMembers();
         DrawTemporaryMarkers();
         DrawGatheringMarkers();
         DrawFieldMarkers();
