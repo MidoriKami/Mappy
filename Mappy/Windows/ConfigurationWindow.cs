@@ -70,6 +70,11 @@ public class WindowOptionsTab : ITabItem {
         configChanged |= ImGui.SliderFloat("Icon Scale", ref System.SystemConfig.IconScale, 0.10f, 3.0f);
 
         if (configChanged) {
+            if (System.MapWindow.SizeConstraints is { } constraints) {
+                System.SystemConfig.WindowSize.X = MathF.Max(System.SystemConfig.WindowSize.X, constraints.MinimumSize.X);
+                System.SystemConfig.WindowSize.Y = MathF.Max(System.SystemConfig.WindowSize.Y, constraints.MinimumSize.Y);
+            }
+            
             System.SystemConfig.Save();
         }
     }
