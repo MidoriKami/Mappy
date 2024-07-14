@@ -31,20 +31,15 @@ public sealed class MappyPlugin : IDalamudPlugin {
         System.IntegrationsController = new IntegrationsController();
 
         Service.PluginInterface.UiBuilder.OpenMainUi += OpenMapWindow;
-        Service.PluginInterface.UiBuilder.OpenConfigUi += OpenConfigWindow;
     }
 
     private void OpenMapWindow() 
         => System.MapWindow.UnCollapseOrToggle();
-
-    private void OpenConfigWindow()
-        => System.ConfigWindow.Toggle();
 
     public void Dispose() {
         System.WindowManager.Dispose();
         System.IntegrationsController.Dispose();
         
         Service.PluginInterface.UiBuilder.OpenMainUi -= OpenMapWindow;
-        Service.PluginInterface.UiBuilder.OpenConfigUi -= OpenConfigWindow;
     }
 }
