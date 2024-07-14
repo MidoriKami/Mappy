@@ -444,7 +444,7 @@ public class MapWindow : Window {
     }
     
     private unsafe bool ShouldFade() 
-        => System.SystemConfig.FadeMode is FadeMode.Always ||
+        => System.SystemConfig.FadeMode.HasFlag(FadeMode.Always) ||
            System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenFocused) && IsFocused ||
            System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenMoving) && AgentMap.Instance()->IsPlayerMoving is not 0 ||
            System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenUnFocused) && !IsFocused;
