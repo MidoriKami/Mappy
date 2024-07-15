@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
-using ImGuiNET;
 using KamiLib.Configuration;
 
 namespace Mappy.Data;
