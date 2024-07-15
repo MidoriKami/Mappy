@@ -20,4 +20,5 @@ public sealed class Service {
     [PluginService] public static ICondition Condition { get; set; }
     [PluginService] public static IChatGui ChatGui { get; set; }
     [PluginService] public static IToastGui ToastGui { get; set; }
+    [PluginService] public static IKeyState KeyState { get; set; }
 }

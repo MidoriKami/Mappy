@@ -1,4 +1,5 @@
 ﻿using Dalamud.Plugin;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiLib.CommandManager;
 using KamiLib.Window;
 using Mappy.Classes;
@@ -33,8 +34,8 @@ public sealed class MappyPlugin : IDalamudPlugin {
         Service.PluginInterface.UiBuilder.OpenMainUi += OpenMapWindow;
     }
 
-    private void OpenMapWindow() 
-        => System.MapWindow.UnCollapseOrToggle();
+    private unsafe void OpenMapWindow()
+        => AgentMap.Instance()->Show();
 
     public void Dispose() {
         System.WindowManager.Dispose();

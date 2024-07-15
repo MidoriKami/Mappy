@@ -1,12 +1,14 @@
 ﻿using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Game.ClientState.Keys;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using KamiLib.Classes;
 using KamiLib.CommandManager;
@@ -25,7 +27,7 @@ public class MapWindow : Window {
     
     private bool isDragStarted;
     private Vector2 lastWindowSize;
-    
+
     public MapWindow() : base("Mappy Map Window", new Vector2(450.0f, 250.0f)) {
         System.CommandManager.RegisterCommand(new CommandHandler {
             ActivationPath = "/togglemap",
@@ -74,18 +76,25 @@ public class MapWindow : Window {
         return true;
     }
 
-    public override void PreOpenCheck() {
+    public override unsafe void PreOpenCheck() {
+        IsOpen = AgentMap.Instance()->IsAgentActive();
+
         if (System.SystemConfig.KeepOpen) IsOpen = true;
         if (Service.ClientState is { IsLoggedIn: false } or { IsPvP: true }) IsOpen = false;
     }
     
-    public override void OnOpen() {
+    public override unsafe void OnOpen() {
+        if (!AgentMap.Instance()->IsAgentActive()) {
+            AgentMap.Instance()->Show();
+        }
+        
+        YeetVanillaMap();
+
         if (System.SystemConfig.LastMapId is not 0) {
             if (System.SystemConfig.RememberLastMap) {
                 System.IntegrationsController.OpenMap(System.SystemConfig.LastMapId);
             }
         }
-        System.IntegrationsController.TryYeetMap();
 
         if (ProcessingCommand) {
             ProcessingCommand = false;
@@ -186,7 +195,7 @@ public class MapWindow : Window {
         DrawGeneralContextMenu();
     }
     
-    private void UpdateStyle() {
+    private unsafe void UpdateStyle() {
         if (System.SystemConfig.HideWindowFrame) {
             Flags |= ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoBackground;
         }
@@ -202,6 +211,10 @@ public class MapWindow : Window {
         }
 
         RespectCloseHotkey = !System.SystemConfig.IgnoreEscapeKey;
+
+        if (RespectCloseHotkey && Service.KeyState[VirtualKey.ESCAPE] && IsFocused) {
+            AgentMap.Instance()->Hide();
+        }
         
         if (System.SystemConfig.FollowPlayer && Service.ClientState is { LocalPlayer: {} localPlayer}) {
             System.MapRenderer.CenterOnGameObject(localPlayer);
@@ -398,13 +411,13 @@ public class MapWindow : Window {
             }
         }
     }
-
+    
     public override unsafe void OnClose() {
         Service.Log.Verbose($"Logging last map as: {AgentMap.Instance()->SelectedMapId}");
         System.SystemConfig.LastMapId = AgentMap.Instance()->SelectedMapId;
         System.SystemConfig.Save();
         
-        System.IntegrationsController.TryUnYeetMap();
+        YeetVanillaMap(true);
     }
 
     private static void ProcessMouseScroll() {
@@ -449,4 +462,16 @@ public class MapWindow : Window {
            System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenFocused) && IsFocused ||
            System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenMoving) && AgentMap.Instance()->IsPlayerMoving is not 0 ||
            System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenUnFocused) && !IsFocused;
+
+    private unsafe void YeetVanillaMap(bool unYeet = false) {
+        var addon = (AtkUnitBase*)Service.GameGui.GetAddonByName("AreaMap");
+        if (addon is null || addon->RootNode is null) return;
+
+        if (unYeet) {
+            Service.Framework.RunOnTick(() => addon->RootNode->SetPositionFloat(addon->X, addon->Y), delayTicks: 10);
+        }
+        else {
+            addon->RootNode->SetPositionFloat(-9001.0f, -9001.0f);
+        }
+    }
 }

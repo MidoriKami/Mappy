@@ -4,8 +4,6 @@ using System.Numerics;
 using Dalamud.Hooking;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using FFXIVClientStructs.FFXIV.Component.GUI;
-using ImGuiNET;
 using KamiLib.Classes;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Classes;
@@ -28,11 +26,6 @@ public unsafe class IntegrationsController : IDisposable {
         
 		if (Service.ClientState is { IsPvP: false }) {
 			EnableIntegrations();
-            
-			if (AgentMap.Instance()->AgentInterface.AddonId is not 0) {
-				TryYeetMap();
-				System.MapWindow.Open();
-			}
 		}
         
 		Service.ClientState.EnterPvP += DisableIntegrations;
@@ -45,8 +38,6 @@ public unsafe class IntegrationsController : IDisposable {
 		showMapHook?.Dispose();
 		openMapByIdHook?.Dispose();
 		openMapHook?.Dispose();
-        
-		TryUnYeetMap();
         
 		Service.ClientState.EnterPvP -= DisableIntegrations;
 		Service.ClientState.LeavePvP -= EnableIntegrations;
@@ -71,13 +62,11 @@ public unsafe class IntegrationsController : IDisposable {
 	private void OnShowHook(AgentMap* agent, bool a1, bool a2)
 		=> HookSafety.ExecuteSafe(() => {
 			if (AgentMap.Instance()->AddonId is not 0 && AgentMap.Instance()->EventMarkers.Count is 0) {
-				System.MapWindow.Close();
-				TryUnYeetMap();
+				AgentMap.Instance()->Hide();
 				return;
 			}
-            
+
 			showMapHook!.Original(agent, a1, a2);
-			TryMirrorGameState(agent);
 
 			Service.Log.Debug($"Show Map: {a1}, {a2}");
 		}, Service.Log, "Exception during OnShowHook");
@@ -85,7 +74,6 @@ public unsafe class IntegrationsController : IDisposable {
 	private void OpenMapById(AgentMap* agent, uint mapId, uint a3, bool a4) 
 		=> HookSafety.ExecuteSafe(() => {
 			openMapByIdHook!.Original(agent, mapId, a3, a4);
-			TryMirrorGameState(agent);
             
 			Service.Log.Debug($"Open Map By ID: {mapId}, {a3}, {a4}");
 		}, Service.Log, "Exception during OpenMapByMapId");
@@ -93,7 +81,6 @@ public unsafe class IntegrationsController : IDisposable {
 	private void OpenMap(AgentMap* agent, OpenMapInfo* mapInfo) 
 		=> HookSafety.ExecuteSafe(() => {
 			openMapHook!.Original(agent, mapInfo);
-			TryMirrorGameState(agent);
 
 			switch (mapInfo->Type) {
 				case MapType.QuestLog: {
@@ -143,8 +130,6 @@ public unsafe class IntegrationsController : IDisposable {
 		}
 		
 		foreach (var quest in QuestManager.Instance()->NormalQuests) {
-			
-			// If quest is hidden, or id is invalid, skip. todo: consider if IsHidden is a good idea
 			if (quest.IsHidden || quest.QuestId is 0) continue;
 			
 			// Is this the quest we are looking for?
@@ -183,33 +168,4 @@ public unsafe class IntegrationsController : IDisposable {
 
 	private bool IsNameMatch(SeString name, OpenMapInfo* mapInfo) 
 		=> string.Equals(name.ToString(), mapInfo->TitleString.ToString(), StringComparison.OrdinalIgnoreCase);
-	
-	private void TryMirrorGameState(AgentMap* agent) {
-		if (agent->AddonId is not 0) {
-			System.MapWindow.Open();
-			ImGui.SetWindowFocus(System.MapWindow.WindowName);
-			TryYeetMap();
-		}
-		else {
-			System.MapWindow.Close();
-			TryUnYeetMap();
-		}
-	}
-    
-	public void TryYeetMap() {
-		var areaMap = (AtkUnitBase*)Service.GameGui.GetAddonByName("AreaMap");
-		if (areaMap is not null && areaMap->RootNode is not null) {
-			areaMap->RootNode->SetPositionFloat(-9000.1f, -9000.1f);
-		}
-	}
-
-	public void TryUnYeetMap() {
-		var areaMap = (AtkUnitBase*)Service.GameGui.GetAddonByName("AreaMap");
-		if (areaMap is not null && areaMap->RootNode is not null) {
-			areaMap->Close(true);
-            
-			// Little hacky, but we need to wait just a little bit before setting the position, or else we'll see the vanilla map flash closed really quick.
-			Service.Framework.RunOnTick(() => areaMap->RootNode->SetPositionFloat(areaMap->X, areaMap->Y), delayTicks: 10);
-		}
-	}
 }
