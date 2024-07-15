@@ -104,7 +104,7 @@ public static class DrawHelpers {
         var scale = System.SystemConfig.ScaleWithZoom ? markerInfo.Scale : 1.0f;
         
         ImGui.SetCursorPos(markerInfo.Position + markerInfo.Offset - texture.Size * System.SystemConfig.IconScale / 2.0f * scale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale);
-        ImGui.Image(texture.ImGuiHandle, texture.Size * scale * System.SystemConfig.IconScale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale);
+        ImGui.Image(texture.ImGuiHandle, texture.Size * scale * System.SystemConfig.IconScale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale, Vector2.Zero, Vector2.One, System.IconConfig.IconSettingMap[markerInfo.IconId].Color);
     }
     
     private static void ProcessInteractions(MarkerInfo markerInfo) {

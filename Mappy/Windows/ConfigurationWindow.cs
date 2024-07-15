@@ -24,7 +24,7 @@ public class ConfigurationWindow : Window {
         new ToolbarOptionsTab(),
     ]);
     
-    public ConfigurationWindow() : base("Mappy Configuration Window", new Vector2(500.0f, 575.0f)) {
+    public ConfigurationWindow() : base("Mappy Configuration Window", new Vector2(500.0f, 580.0f)) {
         System.CommandManager.RegisterCommand(new CommandHandler {
             Delegate = _ => System.ConfigWindow.Toggle(),
             ActivationPath = "/",
@@ -263,9 +263,9 @@ public class IconConfigurationTab : ITabItem {
     private IconSetting? currentSetting;
 
     public void Draw() {
-        using (var leftChild = ImRaii.Child("left_child", new Vector2(32.0f * ImGuiHelpers.GlobalScale + ImGui.GetStyle().ItemSpacing.X , ImGui.GetContentRegionAvail().Y))) {
+        using (var leftChild = ImRaii.Child("left_child", new Vector2(48.0f * ImGuiHelpers.GlobalScale + ImGui.GetStyle().ItemSpacing.X , ImGui.GetContentRegionAvail().Y))) {
             if (leftChild) {
-                using var scrollbarStyle = ImRaii.PushStyle(ImGuiStyleVar.ScrollbarSize, 0.0f);
+                // using var scrollbarStyle = ImRaii.PushStyle(ImGuiStyleVar.ScrollbarSize, 0.0f);
                 using var selectionList = ImRaii.ListBox("iconSelection", ImGui.GetContentRegionAvail());
             
                 foreach (var (iconId, settings) in System.IconConfig.IconSettingMap.OrderBy(pairData =>  pairData.Key)) {
@@ -294,6 +294,8 @@ public class IconConfigurationTab : ITabItem {
                     ImGuiHelpers.CenteredText("Select an Icon to Edit Settings");
                 }
                 else {
+                    // Draw background texture
+                    var settingsChanged = false;
                     var texture = Service.TextureProvider.GetFromGameIcon(currentSetting.IconId).GetWrapOrEmpty();
                     var smallestAxis = MathF.Min(ImGui.GetContentRegionAvail().X, ImGui.GetContentRegionAvail().Y);
 
@@ -304,20 +306,26 @@ public class IconConfigurationTab : ITabItem {
                 
                     ImGui.Image(texture.ImGuiHandle, new Vector2(smallestAxis, smallestAxis), Vector2.Zero, Vector2.One, new Vector4(1.0f, 1.0f, 1.0f, 0.20f));
                     ImGui.SetCursorPos(Vector2.Zero);
-                
+                    
+                    // Draw settings
                     ImGuiHelpers.ScaledDummy(5.0f);
-
-                    var settingsChanged = ImGui.Checkbox("Hide Icon", ref currentSetting.Hide);
-                    settingsChanged |= ImGui.Checkbox("Allow Tooltip", ref currentSetting.AllowTooltip);
-                    settingsChanged |= ImGui.Checkbox("Allow Click Interaction", ref currentSetting.AllowClick);
-                
-                    ImGuiHelpers.ScaledDummy(5.0f);
-
-                    settingsChanged |= ImGui.DragFloat("Icon Scale", ref currentSetting.Scale, 0.01f, 0.05f, 20.0f);
-                
+                    ImGui.Text($"Configure Marker #{currentSetting.IconId}");
+                    ImGui.Separator();
                     ImGuiHelpers.ScaledDummy(10.0f);
+                    using (ImRaii.PushIndent()) {
+                        settingsChanged |= ImGui.Checkbox("Hide Icon", ref currentSetting.Hide);
+                        settingsChanged |= ImGui.Checkbox("Allow Tooltip", ref currentSetting.AllowTooltip);
+                        settingsChanged |= ImGui.Checkbox("Allow Click Interaction", ref currentSetting.AllowClick);
+                
+                        ImGuiHelpers.ScaledDummy(5.0f);
+                        settingsChanged |= ImGuiTweaks.ColorEditWithDefault("Color", ref currentSetting.Color, KnownColor.White.Vector());
 
-                    if (ImGui.Button("Reset to Default")) {
+                        ImGuiHelpers.ScaledDummy(5.0f);
+                        settingsChanged |= ImGui.DragFloat("Icon Scale", ref currentSetting.Scale, 0.01f, 0.05f, 20.0f);
+                    }
+
+                    ImGui.SetCursorPosY(ImGui.GetContentRegionMax().Y - 25.0f * ImGuiHelpers.GlobalScale);
+                    if (ImGui.Button("Reset to Default", new Vector2(ImGui.GetContentRegionAvail().X, 25.0f * ImGuiHelpers.GlobalScale))) {
                         currentSetting.Reset();
                         System.IconConfig.Save();
                     }
