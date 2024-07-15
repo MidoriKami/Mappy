@@ -61,7 +61,7 @@ public unsafe class IntegrationsController : IDisposable {
 
 	private void OnShowHook(AgentMap* agent, bool a1, bool a2)
 		=> HookSafety.ExecuteSafe(() => {
-			if (AgentMap.Instance()->AddonId is not 0 && AgentMap.Instance()->EventMarkers.Count is 0) {
+			if (AgentMap.Instance()->AddonId is not 0 && AgentMap.Instance()->CurrentMapId != AgentMap.Instance()->SelectedMapId) {
 				AgentMap.Instance()->Hide();
 				return;
 			}
