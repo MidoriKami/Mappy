@@ -20,7 +20,10 @@ public class QuestListWindow : Window {
     public QuestListWindow() : base("Mappy Quest List Window", new Vector2(300.0f, 500.0f)) {
         AdditionalInfoTooltip = "Shows Quests for the zone you are currently in";
     }
-    
+
+    public override bool DrawConditions()
+        => System.MapWindow.IsOpen;
+
     protected override void DrawContents() {
         using var child = ImRaii.Child("quest_list_scrollable", ImGui.GetContentRegionAvail());
         if (!child) return;
