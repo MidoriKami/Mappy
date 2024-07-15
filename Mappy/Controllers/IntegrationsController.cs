@@ -87,18 +87,24 @@ public unsafe class IntegrationsController : IDisposable {
 					if (GetMapIdForQuest(mapInfo) is {} targetMapId ) {
 						OpenMap(targetMapId);
 					}
-                    
-					CenterOnMarker(agent, agent->TempMapMarkers[0].MapMarker);
+
+					if (System.SystemConfig.CenterOnQuest) {
+						CenterOnMarker(agent, agent->TempMapMarkers[0].MapMarker);
+					}
 					break;
 				}
 
 				case MapType.GatheringLog: {
-					CenterOnMarker(agent, agent->TempMapMarkers[0].MapMarker);
+					if (System.SystemConfig.CenterOnGathering) {
+						CenterOnMarker(agent, agent->TempMapMarkers[0].MapMarker);
+					}
 					break;
 				}
 
 				case MapType.FlagMarker: {
-					CenterOnMarker(agent, agent->FlagMapMarker.MapMarker);
+					if (System.SystemConfig.CenterOnFlag) {
+						CenterOnMarker(agent, agent->FlagMapMarker.MapMarker);
+					}
 					break;
 				}
 			}

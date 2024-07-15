@@ -216,6 +216,8 @@ public class MapWindow : Window {
             AgentMap.Instance()->Hide();
         }
         
+        YeetVanillaMap();
+        
         if (System.SystemConfig.FollowPlayer && Service.ClientState is { LocalPlayer: {} localPlayer}) {
             System.MapRenderer.CenterOnGameObject(localPlayer);
         }
@@ -417,7 +419,7 @@ public class MapWindow : Window {
         System.SystemConfig.LastMapId = AgentMap.Instance()->SelectedMapId;
         System.SystemConfig.Save();
         
-        YeetVanillaMap(true);
+        UnYeetVanillaMap();
     }
 
     private static void ProcessMouseScroll() {
@@ -463,15 +465,17 @@ public class MapWindow : Window {
            System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenMoving) && AgentMap.Instance()->IsPlayerMoving is not 0 ||
            System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenUnFocused) && !IsFocused;
 
-    private unsafe void YeetVanillaMap(bool unYeet = false) {
+    private unsafe void YeetVanillaMap() {
+        var addon = (AtkUnitBase*)Service.GameGui.GetAddonByName("AreaMap");
+        if (addon is null || addon->RootNode is null) return;
+        
+        addon->RootNode->SetPositionFloat(-9001.0f, -9001.0f);
+    }
+    
+    private unsafe void UnYeetVanillaMap() {
         var addon = (AtkUnitBase*)Service.GameGui.GetAddonByName("AreaMap");
         if (addon is null || addon->RootNode is null) return;
 
-        if (unYeet) {
-            Service.Framework.RunOnTick(() => addon->RootNode->SetPositionFloat(addon->X, addon->Y), delayTicks: 10);
-        }
-        else {
-            addon->RootNode->SetPositionFloat(-9001.0f, -9001.0f);
-        }
+        Service.Framework.RunOnTick(() => addon->RootNode->SetPositionFloat(addon->X, addon->Y), delayTicks: 10);
     }
 }

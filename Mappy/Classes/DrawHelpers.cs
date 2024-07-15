@@ -92,7 +92,7 @@ public static class DrawHelpers {
         
         var center = markerInfo.Position + markerInfo.Offset + ImGui.GetWindowPos();
         var radius = markerRadius * markerInfo.Scale;
-        var fillColor = ImGui.GetColorU32(markerInfo.RadiusColor with { W = 0.33f });
+        var fillColor = ImGui.GetColorU32(markerInfo.RadiusColor with { W = System.SystemConfig.AreaTransparency });
         var radiusColor =  ImGui.GetColorU32(markerInfo.RadiusColor);
             
         ImGui.GetWindowDrawList().AddCircleFilled(center, radius, fillColor);

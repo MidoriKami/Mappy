@@ -29,7 +29,7 @@ public partial class MapRenderer {
     private void DrawLookLine(Vector2 position) {
         var angle = GetCameraRotation();
 
-        var lineLength = 150.0f * Scale;
+        var lineLength = System.SystemConfig.ConeSize * (System.SystemConfig.ScalePlayerCone ? 1.0f : Scale);
         var halfConeAngle = DegreesToRadians(90.0f) / 2.0f;
         
         DrawAngledLineFromCenter(position, lineLength, angle - halfConeAngle);

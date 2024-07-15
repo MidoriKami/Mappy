@@ -1,6 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Numerics;
+using Dalamud.Interface;
+using ImGuiNET;
 using KamiLib.Configuration;
 
 namespace Mappy.Data;
@@ -46,7 +49,11 @@ public class SystemConfig : CharacterConfiguration {
     public bool RememberLastMap = true;
     public uint LastMapId = 0;
     public CenterTarget CenterOnOpen = CenterTarget.Disabled;
+    public bool ScalePlayerCone = false;
+    public float ConeSize = 150.0f;
     public bool ShowRadar = true;
+    public Vector4 RadarColor = KnownColor.Gray.Vector() with { W = 0.10f };
+    public Vector4 RadarOutlineColor = KnownColor.Gray.Vector() with { W = 0.30f };
     public bool HideWindowFrame = false;
     public bool IgnoreEscapeKey = false;
     public bool LockWindow = false;
@@ -58,6 +65,11 @@ public class SystemConfig : CharacterConfiguration {
     public bool ShowToolbarOnHover = true;
     public bool ScaleWithZoom = true;
     public bool AcceptedSpoilerWarning = false;
+    public Vector4 AreaColor = KnownColor.CornflowerBlue.Vector();
+    public float AreaTransparency = 0.33f;
+    public bool CenterOnFlag = true;
+    public bool CenterOnGathering = true;
+    public bool CenterOnQuest = true;
 
     public static SystemConfig Load() 
         => Service.PluginInterface.LoadConfigFile("System.config.json", () => new SystemConfig());

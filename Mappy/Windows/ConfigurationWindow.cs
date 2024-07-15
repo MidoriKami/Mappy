@@ -18,13 +18,13 @@ namespace Mappy.Windows;
 public class ConfigurationWindow : Window {
     private readonly TabBar tabBar = new("mappy_tab_bar", [
         new IconConfigurationTab(),
-        new WindowOptionsTab(),
-        new FadeOptionsTab(),
+        new MapFunctionsTab(),
+        new StyleOptionsTab(),
         new PlayerOptionsTab(),
         new ToolbarOptionsTab(),
     ]);
     
-    public ConfigurationWindow() : base("Mappy Configuration Window", new Vector2(400.0f, 300.0f)) {
+    public ConfigurationWindow() : base("Mappy Configuration Window", new Vector2(500.0f, 575.0f)) {
         System.CommandManager.RegisterCommand(new CommandHandler {
             Delegate = _ => System.ConfigWindow.Toggle(),
             ActivationPath = "/",
@@ -35,105 +35,63 @@ public class ConfigurationWindow : Window {
         => tabBar.Draw();
 }
 
-public class WindowOptionsTab : ITabItem {
-    public string Name => "Map Window";
+public class MapFunctionsTab : ITabItem {
+    public string Name => "Map Functions";
     public bool Disabled => false;
     public void Draw() {
-        var configChanged = ImGui.Checkbox("Keep Open", ref System.SystemConfig.KeepOpen);
-        configChanged |= ImGui.Checkbox("Ignore Escape Key", ref System.SystemConfig.IgnoreEscapeKey);
-        configChanged |= ImGui.Checkbox("Follow On Open", ref System.SystemConfig.FollowOnOpen);        
-        configChanged |= ImGui.Checkbox("Remember Last Map [Experimental]", ref System.SystemConfig.RememberLastMap);        
+        var configChanged = false;
         
         ImGuiHelpers.ScaledDummy(5.0f);
-
-        configChanged |= ImGui.Checkbox("Lock Window Position", ref System.SystemConfig.LockWindow);
-        configChanged |= ImGui.Checkbox("Hide Window Frame", ref System.SystemConfig.HideWindowFrame);
+        ImGui.Text("Key Input");
+        ImGui.Separator();
+        ImGuiHelpers.ScaledDummy(10.0f);
+        using (ImRaii.PushIndent()) {
+            configChanged |= ImGui.Checkbox("Ignore Escape Key", ref System.SystemConfig.IgnoreEscapeKey);
+        }
         
         ImGuiHelpers.ScaledDummy(5.0f);
-        
-        configChanged |= ImGui.Checkbox("Hide With Game GUI", ref System.SystemConfig.HideWithGameGui);
-        configChanged |= ImGui.Checkbox("Hide Between Areas", ref System.SystemConfig.HideBetweenAreas);
-        configChanged |= ImGui.Checkbox("Hide in Duties", ref System.SystemConfig.HideInDuties);
-        configChanged |= ImGui.Checkbox("Hide in Combat", ref System.SystemConfig.HideInCombat);
-        
-        ImGuiHelpers.ScaledDummy(5.0f);
-        
-        configChanged |= ImGui.Checkbox("Use Linear Zoom", ref System.SystemConfig.UseLinearZoom);
-        configChanged |= ImGui.Checkbox("Show Misc Tooltips", ref System.SystemConfig.ShowMiscTooltips);
-        configChanged |= ImGui.Checkbox("Scale icons with zoom", ref System.SystemConfig.ScaleWithZoom);
-
-        ImGuiHelpers.ScaledDummy(5.0f);
-
-        configChanged |= ImGui.DragFloat2("Window Position", ref System.SystemConfig.WindowPosition);
-        configChanged |= ImGui.DragFloat2("Window Size", ref System.SystemConfig.WindowSize);
-        configChanged |= ImGui.SliderFloat("Zoom Speed", ref System.SystemConfig.ZoomSpeed, 0.001f, 0.500f);
-        configChanged |= ImGui.SliderFloat("Icon Scale", ref System.SystemConfig.IconScale, 0.10f, 3.0f);
-
-        if (configChanged) {
-            if (System.MapWindow.SizeConstraints is { } constraints) {
-                System.SystemConfig.WindowSize.X = MathF.Max(System.SystemConfig.WindowSize.X, constraints.MinimumSize.X);
-                System.SystemConfig.WindowSize.Y = MathF.Max(System.SystemConfig.WindowSize.Y, constraints.MinimumSize.Y);
-            }
+        ImGui.Text("Zoom Options");
+        ImGui.Separator();
+        ImGuiHelpers.ScaledDummy(10.0f);
+        using (ImRaii.PushIndent()) {
+            configChanged |= ImGui.Checkbox("Use Linear Zoom", ref System.SystemConfig.UseLinearZoom);
+            configChanged |= ImGui.Checkbox("Scale icons with zoom", ref System.SystemConfig.ScaleWithZoom);
             
-            System.SystemConfig.Save();
+            ImGuiHelpers.ScaledDummy(5.0f);
+            
+            configChanged |= ImGui.SliderFloat("Zoom Speed", ref System.SystemConfig.ZoomSpeed, 0.001f, 0.500f);
+            configChanged |= ImGui.SliderFloat("Icon Scale", ref System.SystemConfig.IconScale, 0.10f, 3.0f);
         }
-    }
-}
-
-public class FadeOptionsTab : ITabItem {
-    public string Name => "Window Fade";
-    public bool Disabled => false;
-    public void Draw() {
-        using (var columns = ImRaii.Table("fade_options_toggles", 2)) {
-            if (!columns) return;
-
-            var value = System.SystemConfig.FadeMode;
-            ImGui.TableNextColumn();
-
-            foreach (Enum enumValue in Enum.GetValues(value.GetType())) {
-                var isFlagSet = value.HasFlag(enumValue);
-                if (ImGuiComponents.ToggleButton(enumValue.ToString(), ref isFlagSet)) {
-                    var sourceValue = Convert.ToInt32(value);
-                    var targetValue = Convert.ToInt32(enumValue);
-
-                    if (value.HasFlag(enumValue)) {
-                        System.SystemConfig.FadeMode = (FadeMode) Enum.ToObject(value.GetType(), sourceValue & ~targetValue);
-                    }
-                    else {
-                        System.SystemConfig.FadeMode = (FadeMode) Enum.ToObject(value.GetType(), sourceValue | targetValue);
-                    }
-
-                    System.SystemConfig.Save();
-                }
-                ImGui.SameLine();
-                ImGui.TextUnformatted(enumValue.GetDescription());
-
-                ImGui.TableNextColumn();
-            } 
-        }
-
-        if (ImGui.DragFloat("Fade Opacity", ref System.SystemConfig.FadePercent, 0.01f, 0.05f, 1.0f)) {
-            System.SystemConfig.Save();
-        }
-    }
-}
-
-public class PlayerOptionsTab : ITabItem {
-    public string Name => "Player";
-    public bool Disabled => false;
-    public void Draw() {
-        var configChanged = ImGui.Checkbox("Follow Player", ref System.SystemConfig.FollowPlayer);
-        configChanged |= ImGui.Checkbox("Show Radar Radius", ref System.SystemConfig.ShowRadar);
         
         ImGuiHelpers.ScaledDummy(5.0f);
+        ImGui.Text("When Opening Map");
+        ImGui.Separator();
+        ImGuiHelpers.ScaledDummy(10.0f);
+        using (ImRaii.PushIndent()) {
+            configChanged |= ImGui.Checkbox("Follow On Open", ref System.SystemConfig.FollowOnOpen);   
+            
+            ImGuiHelpers.ScaledDummy(5.0f);
+
+            DrawCenterModeRadio();
+        }
         
-        DrawCenterModeRadio();
+        ImGuiHelpers.ScaledDummy(5.0f);
+        ImGui.Text("Misc Options");
+        ImGui.Separator();
+        ImGuiHelpers.ScaledDummy(10.0f);
+        using (ImRaii.PushIndent()) {
+            configChanged |= ImGui.Checkbox("Show Misc Tooltips", ref System.SystemConfig.ShowMiscTooltips);
+            configChanged |= ImGui.Checkbox("Remember Last Map [Experimental]", ref System.SystemConfig.RememberLastMap);
+            configChanged |= ImGui.Checkbox("Center on Flags", ref System.SystemConfig.CenterOnFlag);
+            configChanged |= ImGui.Checkbox("Center on Gathering Areas", ref System.SystemConfig.CenterOnGathering);
+            configChanged |= ImGui.Checkbox("Center on Quest", ref System.SystemConfig.CenterOnQuest);
+        }
 
         if (configChanged) {
             System.SystemConfig.Save();
         }
     }
-
+    
     private void DrawCenterModeRadio() {
         var enumObject = System.SystemConfig.CenterOnOpen;
         var firstLine = true;
@@ -156,13 +114,142 @@ public class PlayerOptionsTab : ITabItem {
     }
 }
 
+public class StyleOptionsTab : ITabItem {
+    public string Name => "Style";
+    public bool Disabled => false;
+    public void Draw() {
+        var configChanged = false;
+        
+        ImGuiHelpers.ScaledDummy(5.0f);
+        ImGui.Text("Window Options");
+        ImGui.Separator();
+        ImGuiHelpers.ScaledDummy(10.0f);
+        using (ImRaii.PushIndent()) {
+            configChanged |= ImGui.Checkbox("Keep Open", ref System.SystemConfig.KeepOpen);
+            configChanged |= ImGui.Checkbox("Lock Window Position", ref System.SystemConfig.LockWindow);
+            configChanged |= ImGui.Checkbox("Hide Window Frame", ref System.SystemConfig.HideWindowFrame);
+        }
+        
+        ImGuiHelpers.ScaledDummy(5.0f);
+        ImGui.Text("Window Hiding");
+        ImGui.Separator();
+        ImGuiHelpers.ScaledDummy(10.0f);
+        using (ImRaii.PushIndent()) {
+            configChanged |= ImGui.Checkbox("Hide With Game GUI", ref System.SystemConfig.HideWithGameGui);
+            configChanged |= ImGui.Checkbox("Hide Between Areas", ref System.SystemConfig.HideBetweenAreas);
+            configChanged |= ImGui.Checkbox("Hide in Duties", ref System.SystemConfig.HideInDuties);
+            configChanged |= ImGui.Checkbox("Hide in Combat", ref System.SystemConfig.HideInCombat);
+        }
+        
+        ImGuiHelpers.ScaledDummy(5.0f);
+        ImGui.Text("Window Location");
+        ImGui.Separator();
+        ImGuiHelpers.ScaledDummy(10.0f);
+        using (ImRaii.PushIndent()) {
+            configChanged |= ImGui.DragFloat2("Window Position", ref System.SystemConfig.WindowPosition);
+            configChanged |= ImGui.DragFloat2("Window Size", ref System.SystemConfig.WindowSize);
+        }
+        
+        ImGuiHelpers.ScaledDummy(5.0f);
+        ImGui.Text("Fade Options");
+        ImGui.Separator();
+        ImGuiHelpers.ScaledDummy(10.0f);
+        using (ImRaii.PushIndent()) {
+            using (var columns = ImRaii.Table("fade_options_toggles", 2)) {
+                if (!columns) return;
+
+                var value = System.SystemConfig.FadeMode;
+                ImGui.TableNextColumn();
+
+                foreach (Enum enumValue in Enum.GetValues(value.GetType())) {
+                    var isFlagSet = value.HasFlag(enumValue);
+                    if (ImGuiComponents.ToggleButton(enumValue.ToString(), ref isFlagSet)) {
+                        var sourceValue = Convert.ToInt32(value);
+                        var targetValue = Convert.ToInt32(enumValue);
+
+                        if (value.HasFlag(enumValue)) {
+                            System.SystemConfig.FadeMode = (FadeMode) Enum.ToObject(value.GetType(), sourceValue & ~targetValue);
+                        }
+                        else {
+                            System.SystemConfig.FadeMode = (FadeMode) Enum.ToObject(value.GetType(), sourceValue | targetValue);
+                        }
+
+                        configChanged = true;
+                    }
+                    ImGui.SameLine();
+                    ImGui.TextUnformatted(enumValue.GetDescription());
+
+                    ImGui.TableNextColumn();
+                } 
+            }
+
+            configChanged |= ImGui.DragFloat("Fade Opacity", ref System.SystemConfig.FadePercent, 0.01f, 0.05f, 1.0f);
+        }
+        
+        ImGuiHelpers.ScaledDummy(5.0f);
+        ImGui.Text("Area Style");
+        ImGui.Separator();
+        ImGuiHelpers.ScaledDummy(10.0f);
+        using (ImRaii.PushIndent()) {
+            configChanged |= ImGuiTweaks.ColorEditWithDefault("Area Color", ref System.SystemConfig.AreaColor, KnownColor.CornflowerBlue.Vector());
+            configChanged |= ImGui.DragFloat("Area Transparency", ref System.SystemConfig.AreaTransparency, 0.001f, 0.0f, 1.0f);
+        }
+
+        if (configChanged) {
+            if (System.MapWindow.SizeConstraints is { } constraints) {
+                System.SystemConfig.WindowSize.X = MathF.Max(System.SystemConfig.WindowSize.X, constraints.MinimumSize.X);
+                System.SystemConfig.WindowSize.Y = MathF.Max(System.SystemConfig.WindowSize.Y, constraints.MinimumSize.Y);
+            }
+            
+            System.SystemConfig.Save();
+        }
+    }
+}
+
+public class PlayerOptionsTab : ITabItem {
+    public string Name => "Player";
+    public bool Disabled => false;
+    public void Draw() {
+        var configChanged = false;
+        
+        ImGuiHelpers.ScaledDummy(5.0f);
+        ImGui.Text("Draw Options");
+        ImGui.Separator();
+        ImGuiHelpers.ScaledDummy(10.0f);
+        using (ImRaii.PushIndent()) {
+            configChanged |= ImGui.Checkbox("Show Radar Radius", ref System.SystemConfig.ShowRadar);
+            configChanged |= ImGui.Checkbox("Scale Player Cone", ref System.SystemConfig.ScalePlayerCone);
+            
+            ImGuiHelpers.ScaledDummy(5.0f);
+            configChanged |= ImGui.DragFloat("Cone Size", ref System.SystemConfig.ConeSize, 0.25f);
+            
+            ImGuiHelpers.ScaledDummy(5.0f);
+            
+            configChanged |= ImGuiTweaks.ColorEditWithDefault("Radar Area Color", ref System.SystemConfig.RadarColor, KnownColor.Gray.Vector() with { W = 0.10f });
+            configChanged |= ImGuiTweaks.ColorEditWithDefault("Radar Outline Color", ref System.SystemConfig.RadarOutlineColor, KnownColor.Gray.Vector() with { W = 0.30f });
+        }
+        
+        if (configChanged) {
+            System.SystemConfig.Save();
+        }
+    }
+}
+
 public class ToolbarOptionsTab : ITabItem {
     public string Name => "Toolbar";
     public bool Disabled => false;
     public void Draw() {
-        var configChanged = ImGui.Checkbox("Always Show", ref System.SystemConfig.AlwaysShowToolbar);
-        configChanged |= ImGui.Checkbox("Show On Hover", ref System.SystemConfig.ShowToolbarOnHover);
+        var configChanged = false;
         
+        ImGuiHelpers.ScaledDummy(5.0f);
+        ImGui.Text("Draw Options");
+        ImGui.Separator();
+        ImGuiHelpers.ScaledDummy(10.0f);
+        using (ImRaii.PushIndent()) {
+            configChanged |= ImGui.Checkbox("Always Show", ref System.SystemConfig.AlwaysShowToolbar);
+            configChanged |= ImGui.Checkbox("Show On Hover", ref System.SystemConfig.ShowToolbarOnHover);
+        }
+
         if (configChanged) {
             System.SystemConfig.Save();
         }
