@@ -38,6 +38,7 @@ public sealed class MappyPlugin : IDalamudPlugin {
         => AgentMap.Instance()->Show();
 
     public void Dispose() {
+        System.MapWindow.OnClose();
         System.WindowManager.Dispose();
         System.IntegrationsController.Dispose();
         
