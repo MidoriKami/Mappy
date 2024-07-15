@@ -69,6 +69,7 @@ public class SystemConfig : CharacterConfiguration {
     public bool CenterOnFlag = true;
     public bool CenterOnGathering = true;
     public bool CenterOnQuest = true;
+    public bool LockCenterOnMap = false;
 
     public static SystemConfig Load() 
         => Service.PluginInterface.LoadConfigFile("System.config.json", () => new SystemConfig());

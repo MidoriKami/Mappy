@@ -85,6 +85,10 @@ public class MapFunctionsTab : ITabItem {
             configChanged |= ImGui.Checkbox("Center on Flags", ref System.SystemConfig.CenterOnFlag);
             configChanged |= ImGui.Checkbox("Center on Gathering Areas", ref System.SystemConfig.CenterOnGathering);
             configChanged |= ImGui.Checkbox("Center on Quest", ref System.SystemConfig.CenterOnQuest);
+            
+            ImGuiHelpers.ScaledDummy(5.0f);
+
+            configChanged |= ImGui.Checkbox("Lock Map on Center", ref System.SystemConfig.LockCenterOnMap);
         }
 
         if (configChanged) {

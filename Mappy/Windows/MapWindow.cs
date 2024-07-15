@@ -221,6 +221,11 @@ public class MapWindow : Window {
         if (System.SystemConfig.FollowPlayer && Service.ClientState is { LocalPlayer: {} localPlayer}) {
             System.MapRenderer.CenterOnGameObject(localPlayer);
         }
+        
+        if (System.SystemConfig.LockCenterOnMap) {
+            System.SystemConfig.FollowPlayer = false;
+            System.MapRenderer.DrawOffset = Vector2.Zero;
+        }
     }
 
     private void DrawToolbar() {
@@ -294,14 +299,7 @@ public class MapWindow : Window {
         }
         
         ImGui.SameLine();
-        ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - 25.0f * ImGuiHelpers.GlobalScale * 2.0f - ImGui.GetStyle().ItemSpacing.X - 5.0f * ImGuiHelpers.GlobalScale);
-        
-        if (MappyGuiTweaks.IconButton(System.SystemConfig.HideWindowFrame ? FontAwesomeIcon.Lock : FontAwesomeIcon.Unlock, "pin", "Show/Hide Window Frame")) {
-            System.SystemConfig.HideWindowFrame = !System.SystemConfig.HideWindowFrame;
-        }
-        
-        ImGui.SameLine();
-        
+        ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - 25.0f * ImGuiHelpers.GlobalScale - ImGui.GetStyle().ItemSpacing.X);
         if (MappyGuiTweaks.IconButton(FontAwesomeIcon.Cog, "settings", "Open Settings")) {
             System.ConfigWindow.UnCollapseOrShow();
             ImGui.SetWindowFocus(System.ConfigWindow.WindowName);
