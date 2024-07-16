@@ -126,15 +126,16 @@ public class MapWindow : Window {
     protected override void DrawContents() {
         UpdateStyle();
         UpdateSizePosition();
-        
+        IsMapHovered = WindowBounds.IsBoundedBy(ImGui.GetMousePos(), ImGui.GetCursorScreenPos(), ImGui.GetCursorScreenPos() + ImGui.GetContentRegionMax());
+
         MapDrawOffset = ImGui.GetCursorScreenPos();
         using var fade = ImRaii.PushStyle(ImGuiStyleVar.Alpha, System.SystemConfig.FadePercent,  ShouldFade());
         using (var renderChild = ImRaii.Child("render_child", ImGui.GetContentRegionAvail(), false, ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoScrollbar)) {
             if (!renderChild) return;
             if (!System.SystemConfig.AcceptedSpoilerWarning) {
                 using (ImRaii.PushColor(ImGuiCol.Text, KnownColor.Orange.Vector())) {
-                    var warningLine1 = "Warning, Mappy does not protect you from spoilers and will show everything.";
-                    var warningLine2 = "Do not use Mappy if you are not comfortable with this.";
+                    const string warningLine1 = "Warning, Mappy does not protect you from spoilers and will show everything.";
+                    const string warningLine2 = "Do not use Mappy if you are not comfortable with this.";
 
                     ImGui.SetCursorPos(ImGui.GetContentRegionAvail() / 2.0f - (ImGui.CalcTextSize(warningLine1) * 2.0f) with { X = 0.0f });
                     ImGuiHelpers.CenteredText(warningLine1);
@@ -161,8 +162,7 @@ public class MapWindow : Window {
             
             if (renderChild) {
                 System.MapRenderer.Draw();
-
-                ImGui.SetCursorPos(new Vector2(0.0f, 0.0f));
+                ImGui.SetCursorPos(Vector2.Zero);
                 DrawToolbar();
             }
         }
@@ -172,7 +172,6 @@ public class MapWindow : Window {
     }
     
     private void ProcessInputs() {
-        IsMapHovered = ImGui.IsItemHovered();
         
         if (ImGui.IsItemClicked(ImGuiMouseButton.Right)) {
             ImGui.OpenPopup("Mappy_Context_Menu");
@@ -228,14 +227,18 @@ public class MapWindow : Window {
         }
     }
 
-    private unsafe void DrawToolbar() {
-        var toolbarSize = new Vector2(ImGui.GetContentRegionMax().X, 35.0f * ImGuiHelpers.GlobalScale) + ImGui.GetStyle().FramePadding;
-        var cursorStart = ImGui.GetCursorScreenPos();
+    private bool ShouldShowToolbar() {
+        if (isDragStarted) return false;
+        if (System.SystemConfig.ShowToolbarOnHover && IsMapHovered) return true;
+        if (System.SystemConfig.AlwaysShowToolbar) return true;
 
-        IsMapHovered |= WindowBounds.IsBoundedBy(ImGui.GetMousePos(), cursorStart, cursorStart + toolbarSize);
-        var shouldShow = (System.SystemConfig.ShowToolbarOnHover && IsMapHovered || System.SystemConfig.AlwaysShowToolbar) && !isDragStarted;
-        if (!shouldShow) return;
+        return false;
+    }
+    
+    private unsafe void DrawToolbar() {
+        var toolbarSize = new Vector2(ImGui.GetContentRegionMax().X, 30.0f * ImGuiHelpers.GlobalScale);
         
+        if (!ShouldShowToolbar()) return;
         using var childBackgroundStyle = ImRaii.PushColor(ImGuiCol.ChildBg, Vector4.Zero with { W = 0.33f });
         using var toolbarChild = ImRaii.Child("toolbar_child", toolbarSize);
         if (!toolbarChild) return;
@@ -383,7 +386,7 @@ public class MapWindow : Window {
     private unsafe void DrawLayersContextMenu() {
         using var contextMenu = ImRaii.Popup("Mappy_Show_Layers");
         if (!contextMenu) return;
-        
+
         var currentMap = Service.DataManager.GetExcelSheet<Map>()!.GetRow(AgentMap.Instance()->SelectedMapId);
         
         var layers = Service.DataManager.GetExcelSheet<Map>()!
