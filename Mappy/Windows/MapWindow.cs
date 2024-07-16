@@ -314,7 +314,6 @@ public class MapWindow : Window {
         }
     }
     
-    
     private unsafe void DrawCoordinateBar() {
         if (!System.SystemConfig.ShowCoordinateBar) return;
         
