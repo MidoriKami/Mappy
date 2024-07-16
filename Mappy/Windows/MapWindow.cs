@@ -330,7 +330,7 @@ public class MapWindow : Window {
         var scale = AgentMap.Instance()->SelectedMapSizeFactor;
 
         var characterMapPosition = MapUtil.WorldToMap(Service.ClientState.LocalPlayer?.Position ?? Vector3.Zero, offsetX, offsetY, 0, (uint)scale);
-        var characterPosition = $"Character: {characterMapPosition.X:00.0} {characterMapPosition.Y:00.0}";
+        var characterPosition = $"Character: {characterMapPosition.X:F1} {characterMapPosition.Y:F1}";
         
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 2.0f * ImGuiHelpers.GlobalScale);
 
@@ -345,7 +345,7 @@ public class MapWindow : Window {
             cursorPosition -= new Vector2(1024.0f, 1024.0f);
             
             var cursorMapPosition = MapUtil.WorldToMap(new Vector3(cursorPosition.X, 0.0f, cursorPosition.Y), offsetX, offsetY, 0, (uint)scale);
-            var cursorPositionString = $"Cursor: {cursorMapPosition.X:00.0} {cursorMapPosition.Y:00.0}";
+            var cursorPositionString = $"Cursor: {cursorMapPosition.X:F1} {cursorMapPosition.Y:F1}";
             var cursorStringSize = ImGui.CalcTextSize(characterPosition);
             ImGui.SameLine(ImGui.GetContentRegionMax().X * 2.0f / 3.0f - cursorStringSize.X / 2.0f);
             ImGui.TextColored(System.SystemConfig.CoordinateTextColor, cursorPositionString);
