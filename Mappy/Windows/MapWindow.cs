@@ -228,7 +228,7 @@ public class MapWindow : Window {
         }
     }
 
-    private void DrawToolbar() {
+    private unsafe void DrawToolbar() {
         var toolbarSize = new Vector2(ImGui.GetContentRegionMax().X, 35.0f * ImGuiHelpers.GlobalScale) + ImGui.GetStyle().FramePadding;
         var cursorStart = ImGui.GetCursorScreenPos();
 
@@ -243,9 +243,12 @@ public class MapWindow : Window {
         ImGui.SetCursorPos(new Vector2(5.0f, 5.0f));
         
         if (MappyGuiTweaks.IconButton(FontAwesomeIcon.ArrowUp, "up", "Open Parent Map")) {
-            if (GetParentMap() is { } parentMap) {
-                System.IntegrationsController.OpenMap(parentMap.RowId);
-            }
+            var valueArgs = new AtkValue();
+            valueArgs.ChangeType(ValueType.Int);
+            valueArgs.SetInt(5);
+
+            var returnValue = new AtkValue();
+            AgentMap.Instance()->ReceiveEvent(&returnValue, &valueArgs, 1, 0);
         }
         
         ImGui.SameLine();
@@ -304,16 +307,6 @@ public class MapWindow : Window {
             System.ConfigWindow.UnCollapseOrShow();
             ImGui.SetWindowFocus(System.ConfigWindow.WindowName);
         }
-    }
-    
-    private static unsafe Map? GetParentMap() {
-        if (AgentMap.Instance()->SelectedMapPath.ToString().Split('/') is [_, _] idSplit) {
-            var index = int.Parse(idSplit[1]);
-            
-            return Service.DataManager.GetExcelSheet<Map>()!.FirstOrDefault(map => map.Id.RawString == $"{idSplit[0]}/{index - 1:D2}");
-        }
-
-        return null;
     }
 
     private void UpdateSizePosition() {
