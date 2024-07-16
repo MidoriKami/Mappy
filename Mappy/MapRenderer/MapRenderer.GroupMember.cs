@@ -6,7 +6,7 @@ namespace Mappy.MapRenderer;
 
 public unsafe partial class MapRenderer {
     private void DrawGroupMembers() {
-        foreach (var partyMember in GroupManager.Instance()->MainGroup.PartyMembers) {
+        foreach (var partyMember in GroupManager.Instance()->MainGroup.PartyMembers[..GroupManager.Instance()->MainGroup.MemberCount]) {
             if (partyMember.EntityId is 0xE0000000) continue;
             
             DrawHelpers.DrawMapMarker(new MarkerInfo {
