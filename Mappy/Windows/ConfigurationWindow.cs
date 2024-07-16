@@ -21,7 +21,6 @@ public class ConfigurationWindow : Window {
         new MapFunctionsTab(),
         new StyleOptionsTab(),
         new PlayerOptionsTab(),
-        new ToolbarOptionsTab(),
     ]);
     
     public ConfigurationWindow() : base("Mappy Configuration Window", new Vector2(500.0f, 580.0f)) {
@@ -37,7 +36,9 @@ public class ConfigurationWindow : Window {
 
 public class MapFunctionsTab : ITabItem {
     public string Name => "Map Functions";
+    
     public bool Disabled => false;
+    
     public void Draw() {
         var configChanged = false;
         
@@ -76,21 +77,51 @@ public class MapFunctionsTab : ITabItem {
         }
         
         ImGuiHelpers.ScaledDummy(5.0f);
+        ImGui.Text("Link Behaviors");
+        ImGui.Separator();
+        ImGuiHelpers.ScaledDummy(10.0f);
+        using (ImRaii.PushIndent()) {
+            configChanged |= ImGui.Checkbox("Center on Flags", ref System.SystemConfig.CenterOnFlag);
+            configChanged |= ImGui.Checkbox("Center on Gathering Areas", ref System.SystemConfig.CenterOnGathering);
+            configChanged |= ImGui.Checkbox("Center on Quest", ref System.SystemConfig.CenterOnQuest);
+        }
+        
+        ImGuiHelpers.ScaledDummy(5.0f);
         ImGui.Text("Misc Options");
         ImGui.Separator();
         ImGuiHelpers.ScaledDummy(10.0f);
         using (ImRaii.PushIndent()) {
             configChanged |= ImGui.Checkbox("Show Misc Tooltips", ref System.SystemConfig.ShowMiscTooltips);
             configChanged |= ImGui.Checkbox("Remember Last Map [Experimental]", ref System.SystemConfig.RememberLastMap);
-            configChanged |= ImGui.Checkbox("Center on Flags", ref System.SystemConfig.CenterOnFlag);
-            configChanged |= ImGui.Checkbox("Center on Gathering Areas", ref System.SystemConfig.CenterOnGathering);
-            configChanged |= ImGui.Checkbox("Center on Quest", ref System.SystemConfig.CenterOnQuest);
-            
-            ImGuiHelpers.ScaledDummy(5.0f);
-
             configChanged |= ImGui.Checkbox("Lock Map on Center", ref System.SystemConfig.LockCenterOnMap);
         }
+        
+        ImGuiHelpers.ScaledDummy(5.0f);
+        ImGui.Text("Toolbar");
+        ImGui.Separator();
+        ImGuiHelpers.ScaledDummy(10.0f);
+        using (ImRaii.PushIndent()) {
+            configChanged |= ImGui.Checkbox("Always Show", ref System.SystemConfig.AlwaysShowToolbar);
+            configChanged |= ImGui.Checkbox("Show On Hover", ref System.SystemConfig.ShowToolbarOnHover);
+            
+            ImGuiHelpers.ScaledDummy(5.0f);
+            configChanged |= ImGui.DragFloat("Opacity##toolbar", ref System.SystemConfig.ToolbarFade, 0.01f, 0.0f, 1.0f);
+        }
+        
+        ImGuiHelpers.ScaledDummy(5.0f);
+        ImGui.Text("Coordinates");
+        ImGui.Separator();
+        ImGuiHelpers.ScaledDummy(10.0f);
+        using (ImRaii.PushIndent()) {
+            configChanged |= ImGui.Checkbox("Show Coordinate Bar", ref System.SystemConfig.ShowCoordinateBar);
+            
+            ImGuiHelpers.ScaledDummy(5.0f);
+            configChanged |= ImGuiTweaks.ColorEditWithDefault("Text Color", ref System.SystemConfig.CoordinateTextColor, KnownColor.White.Vector());
 
+            ImGuiHelpers.ScaledDummy(5.0f);
+            configChanged |= ImGui.DragFloat("Opacity##coordinatebar", ref System.SystemConfig.CoordinateBarFade, 0.01f, 0.0f, 1.0f);
+        }
+        
         if (configChanged) {
             System.SystemConfig.Save();
         }
@@ -120,7 +151,9 @@ public class MapFunctionsTab : ITabItem {
 
 public class StyleOptionsTab : ITabItem {
     public string Name => "Style";
+    
     public bool Disabled => false;
+    
     public void Draw() {
         var configChanged = false;
         
@@ -212,7 +245,9 @@ public class StyleOptionsTab : ITabItem {
 
 public class PlayerOptionsTab : ITabItem {
     public string Name => "Player";
+    
     public bool Disabled => false;
+    
     public void Draw() {
         var configChanged = false;
         
@@ -239,29 +274,9 @@ public class PlayerOptionsTab : ITabItem {
     }
 }
 
-public class ToolbarOptionsTab : ITabItem {
-    public string Name => "Toolbar";
-    public bool Disabled => false;
-    public void Draw() {
-        var configChanged = false;
-        
-        ImGuiHelpers.ScaledDummy(5.0f);
-        ImGui.Text("Draw Options");
-        ImGui.Separator();
-        ImGuiHelpers.ScaledDummy(10.0f);
-        using (ImRaii.PushIndent()) {
-            configChanged |= ImGui.Checkbox("Always Show", ref System.SystemConfig.AlwaysShowToolbar);
-            configChanged |= ImGui.Checkbox("Show On Hover", ref System.SystemConfig.ShowToolbarOnHover);
-        }
-
-        if (configChanged) {
-            System.SystemConfig.Save();
-        }
-    }
-}
-
 public class IconConfigurationTab : ITabItem {
     public string Name => "Icon Settings";
+    
     public bool Disabled => false;
 
     private IconSetting? currentSetting;

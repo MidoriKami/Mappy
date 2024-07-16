@@ -5,6 +5,7 @@ using Dalamud.Game.ClientState.Keys;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -164,13 +165,14 @@ public class MapWindow : Window {
                 System.MapRenderer.Draw();
                 ImGui.SetCursorPos(Vector2.Zero);
                 DrawToolbar();
+                DrawCoordinateBar();
             }
         }
 
         // Process Inputs
         ProcessInputs();
     }
-    
+
     private void ProcessInputs() {
         
         if (ImGui.IsItemClicked(ImGuiMouseButton.Right)) {
@@ -236,10 +238,10 @@ public class MapWindow : Window {
     }
     
     private unsafe void DrawToolbar() {
-        var toolbarSize = new Vector2(ImGui.GetContentRegionMax().X, 30.0f * ImGuiHelpers.GlobalScale);
+        var toolbarSize = new Vector2(ImGui.GetContentRegionMax().X, 33.0f * ImGuiHelpers.GlobalScale);
         
         if (!ShouldShowToolbar()) return;
-        using var childBackgroundStyle = ImRaii.PushColor(ImGuiCol.ChildBg, Vector4.Zero with { W = 0.33f });
+        using var childBackgroundStyle = ImRaii.PushColor(ImGuiCol.ChildBg, Vector4.Zero with { W = System.SystemConfig.ToolbarFade });
         using var toolbarChild = ImRaii.Child("toolbar_child", toolbarSize);
         if (!toolbarChild) return;
         
@@ -309,6 +311,44 @@ public class MapWindow : Window {
         if (MappyGuiTweaks.IconButton(FontAwesomeIcon.Cog, "settings", "Open Settings")) {
             System.ConfigWindow.UnCollapseOrShow();
             ImGui.SetWindowFocus(System.ConfigWindow.WindowName);
+        }
+    }
+    
+    
+    private unsafe void DrawCoordinateBar() {
+        if (!System.SystemConfig.ShowCoordinateBar) return;
+        
+        var coordinateBarSize = new Vector2(ImGui.GetContentRegionMax().X, 20.0f * ImGuiHelpers.GlobalScale);
+        ImGui.SetCursorPos(ImGui.GetContentRegionMax() - coordinateBarSize);
+        
+        using var childBackgroundStyle = ImRaii.PushColor(ImGuiCol.ChildBg, Vector4.Zero with { W = System.SystemConfig.CoordinateBarFade });
+        using var coordinateChild = ImRaii.Child("coordinate_child", coordinateBarSize);
+        if (!coordinateChild) return;
+
+        var offsetX = AgentMap.Instance()->SelectedOffsetX;
+        var offsetY = AgentMap.Instance()->SelectedOffsetY;
+        var scale = AgentMap.Instance()->SelectedMapSizeFactor;
+
+        var characterMapPosition = MapUtil.WorldToMap(Service.ClientState.LocalPlayer?.Position ?? Vector3.Zero, offsetX, offsetY, 0, (uint)scale);
+        var characterPosition = $"Character: {characterMapPosition.X:00.0} {characterMapPosition.Y:00.0}";
+        
+        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 2.0f * ImGuiHelpers.GlobalScale);
+
+        var characterStringSize = ImGui.CalcTextSize(characterPosition);
+        ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X / 3.0f - characterStringSize.X / 2.0f);
+        ImGui.TextColored(System.SystemConfig.CoordinateTextColor, characterPosition);
+
+        if (IsMapHovered) {
+            var cursorPosition = ImGui.GetMousePos() - MapDrawOffset;
+            cursorPosition -= System.MapRenderer.DrawPosition;
+            cursorPosition /= System.MapRenderer.Scale;
+            cursorPosition -= new Vector2(1024.0f, 1024.0f);
+            
+            var cursorMapPosition = MapUtil.WorldToMap(new Vector3(cursorPosition.X, 0.0f, cursorPosition.Y), offsetX, offsetY, 0, (uint)scale);
+            var cursorPositionString = $"Cursor: {cursorMapPosition.X:00.0} {cursorMapPosition.Y:00.0}";
+            var cursorStringSize = ImGui.CalcTextSize(characterPosition);
+            ImGui.SameLine(ImGui.GetContentRegionMax().X * 2.0f / 3.0f - cursorStringSize.X / 2.0f);
+            ImGui.TextColored(System.SystemConfig.CoordinateTextColor, cursorPositionString);
         }
     }
 
