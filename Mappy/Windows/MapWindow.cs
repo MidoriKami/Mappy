@@ -324,8 +324,8 @@ public class MapWindow : Window {
         using var coordinateChild = ImRaii.Child("coordinate_child", coordinateBarSize);
         if (!coordinateChild) return;
 
-        var offsetX = AgentMap.Instance()->SelectedOffsetX;
-        var offsetY = AgentMap.Instance()->SelectedOffsetY;
+        var offsetX = -AgentMap.Instance()->SelectedOffsetX;
+        var offsetY = -AgentMap.Instance()->SelectedOffsetY;
         var scale = AgentMap.Instance()->SelectedMapSizeFactor;
 
         var characterMapPosition = MapUtil.WorldToMap(Service.ClientState.LocalPlayer?.Position ?? Vector3.Zero, offsetX, offsetY, 0, (uint)scale);
