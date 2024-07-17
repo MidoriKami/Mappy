@@ -515,6 +515,8 @@ public class MapWindow : Window {
         if (addon is null || addon->RootNode is null) return;
         
         AgentMap.Instance()->Hide();
-        Service.Framework.RunOnTick(() => addon->RootNode->SetPositionFloat(addon->X, addon->Y), delayTicks: 10);
+        addon->RootNode->SetPositionFloat(addon->X, addon->Y);
+        addon->RootNode->ToggleVisibility(false);
+        Service.Framework.RunOnTick(() => addon->RootNode->ToggleVisibility(true), delayTicks: 10);
     }
 }
