@@ -85,7 +85,9 @@ public unsafe class IntegrationsController : IDisposable {
 			switch (mapInfo->Type) {
 				case MapType.QuestLog: {
 					if (GetMapIdForQuest(mapInfo) is {} targetMapId ) {
-						OpenMap(targetMapId);
+						if (agent->CurrentMapId != targetMapId) {
+							OpenMap(targetMapId);
+						}
 					}
 
 					if (System.SystemConfig.CenterOnQuest) {
