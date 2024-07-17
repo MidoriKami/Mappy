@@ -174,7 +174,6 @@ public class MapWindow : Window {
     }
 
     private void ProcessInputs() {
-        
         if (ImGui.IsItemClicked(ImGuiMouseButton.Right)) {
             ImGui.OpenPopup("Mappy_Context_Menu");
         }
@@ -342,6 +341,9 @@ public class MapWindow : Window {
             cursorPosition -= System.MapRenderer.DrawPosition;
             cursorPosition /= System.MapRenderer.Scale;
             cursorPosition -= new Vector2(1024.0f, 1024.0f);
+            cursorPosition -= new Vector2(offsetX, offsetY);
+ 
+            ImGui.SetTooltip(cursorPosition.ToString());
             
             var cursorMapPosition = MapUtil.WorldToMap(new Vector3(cursorPosition.X, 0.0f, cursorPosition.Y), offsetX, offsetY, 0, (uint)scale);
             var cursorPositionString = $"Cursor: {cursorMapPosition.X:F1} {cursorMapPosition.Y:F1}";
@@ -508,7 +510,8 @@ public class MapWindow : Window {
     private unsafe void UnYeetVanillaMap() {
         var addon = (AtkUnitBase*)Service.GameGui.GetAddonByName("AreaMap");
         if (addon is null || addon->RootNode is null) return;
-
+        
+        AgentMap.Instance()->Hide();
         Service.Framework.RunOnTick(() => addon->RootNode->SetPositionFloat(addon->X, addon->Y), delayTicks: 10);
     }
 }
