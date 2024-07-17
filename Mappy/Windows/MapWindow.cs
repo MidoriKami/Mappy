@@ -334,7 +334,10 @@ public class MapWindow : Window {
 
         var characterStringSize = ImGui.CalcTextSize(characterPosition);
         ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X / 3.0f - characterStringSize.X / 2.0f);
-        ImGui.TextColored(System.SystemConfig.CoordinateTextColor, characterPosition);
+
+        if (AgentMap.Instance()->SelectedMapId == AgentMap.Instance()->CurrentMapId) {
+            ImGui.TextColored(System.SystemConfig.CoordinateTextColor, characterPosition);
+        }
 
         if (IsMapHovered) {
             var cursorPosition = ImGui.GetMousePos() - MapDrawOffset;
@@ -343,8 +346,6 @@ public class MapWindow : Window {
             cursorPosition -= new Vector2(1024.0f, 1024.0f);
             cursorPosition -= new Vector2(offsetX, offsetY);
  
-            ImGui.SetTooltip(cursorPosition.ToString());
-            
             var cursorMapPosition = MapUtil.WorldToMap(new Vector3(cursorPosition.X, 0.0f, cursorPosition.Y), offsetX, offsetY, 0, (uint)scale);
             var cursorPositionString = $"Cursor: {cursorMapPosition.X:F1} {cursorMapPosition.Y:F1}";
             var cursorStringSize = ImGui.CalcTextSize(characterPosition);
@@ -450,9 +451,11 @@ public class MapWindow : Window {
     }
     
     public override unsafe void OnClose() {
-        Service.Log.Verbose($"Logging last map as: {AgentMap.Instance()->SelectedMapId}");
-        System.SystemConfig.LastMapId = AgentMap.Instance()->SelectedMapId;
-        System.SystemConfig.Save();
+        if (AgentMap.Instance()->SelectedMapId is not 0) {
+            Service.Log.Verbose($"Logging last map as: {AgentMap.Instance()->SelectedMapId}");
+            System.SystemConfig.LastMapId = AgentMap.Instance()->SelectedMapId;
+            System.SystemConfig.Save();
+        }
         
         UnYeetVanillaMap();
     }
