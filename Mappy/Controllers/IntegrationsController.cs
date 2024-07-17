@@ -114,8 +114,11 @@ public unsafe class IntegrationsController : IDisposable {
 			Service.Log.Debug($"Open Map With OpenMapInfo: {mapInfo->MapId}, {mapInfo->Type}, {mapInfo->TerritoryId}, {mapInfo->TitleString}");
 		}, Service.Log, "Exception during OpenMap");
 
-	public void OpenMap(uint mapId)
-		=> AgentMap.Instance()->OpenMapByMapId(mapId, 0, true);
+	public void OpenMap(uint mapId) {
+		if (AgentMap.Instance()->SelectedMapId != mapId) {
+			AgentMap.Instance()->OpenMapByMapId(mapId, 0, true);
+		}
+	}
 
 	public void OpenOccupiedMap()
 		=> OpenMap(AgentMap.Instance()->CurrentMapId);
