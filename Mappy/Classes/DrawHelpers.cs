@@ -157,4 +157,12 @@ public static class DrawHelpers {
             }
         }
     }
+
+    public static bool IsDisallowedIcon(uint iconId) 
+        => iconId switch {
+            >= 63200 and < 63900 => true,
+            >= 62620 and < 62800 => true,
+            60091 => true,
+            _ => false,
+        };
 }
