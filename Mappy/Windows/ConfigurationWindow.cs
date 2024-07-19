@@ -11,6 +11,7 @@ using KamiLib.Classes;
 using KamiLib.CommandManager;
 using KamiLib.Extensions;
 using KamiLib.Window;
+using Mappy.Classes;
 using Mappy.Data;
 
 namespace Mappy.Windows;
@@ -288,6 +289,7 @@ public class IconConfigurationTab : ITabItem {
             
                 foreach (var (iconId, settings) in System.IconConfig.IconSettingMap.OrderBy(pairData =>  pairData.Key)) {
                     if (iconId is 0) continue;
+                    if (DrawHelpers.IsDisallowedIcon(iconId)) continue;
 
                     var texture = Service.TextureProvider.GetFromGameIcon(iconId).GetWrapOrEmpty();
                     var cursorStart = ImGui.GetCursorScreenPos();
