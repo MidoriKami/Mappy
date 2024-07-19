@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Interface;
 using KamiLib.Configuration;
+using Mappy.Classes;
 
 namespace Mappy.Data;
 
@@ -30,8 +32,12 @@ public class IconConfig {
         => Service.PluginInterface.LoadConfigFile("Icons.config.json", () => new IconConfig());
 
     public void Save() {
-        // Purge icon that should now be filtered
-        IconSettingMap.Remove(60091);
+        // Purge icons that should now be filtered
+        foreach (var icon in IconSettingMap.Keys.ToArray()) {
+            if (DrawHelpers.IsDisallowedIcon(icon)) {
+                IconSettingMap.Remove(icon);
+            }
+        }
         
         Service.PluginInterface.SaveConfigFile("Icons.config.json", System.IconConfig);
     } 
