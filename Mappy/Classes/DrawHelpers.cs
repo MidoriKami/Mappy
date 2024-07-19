@@ -103,8 +103,9 @@ public static class DrawHelpers {
         var texture = Service.TextureProvider.GetFromGameIcon(markerInfo.IconId).GetWrapOrEmpty();
         var scale = System.SystemConfig.ScaleWithZoom ? markerInfo.Scale : 1.0f;
 
-        if (markerInfo.IconId is (>= 63200 and < 63900)) {
-            scale = markerInfo.Scale; // Fixed scale not supported for map region markers
+        // Fixed scale not supported for map region markers
+        if (markerInfo.IconId is >= 63200 and < 63900) {
+            scale = markerInfo.Scale;
         }
         
         ImGui.SetCursorPos(markerInfo.Position + markerInfo.Offset - texture.Size * System.SystemConfig.IconScale / 2.0f * scale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale);
