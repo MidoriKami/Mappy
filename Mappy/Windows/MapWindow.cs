@@ -29,7 +29,7 @@ public class MapWindow : Window {
     private bool isDragStarted;
     private Vector2 lastWindowSize;
 
-    public MapWindow() : base("Mappy Map Window", new Vector2(450.0f, 250.0f)) {
+    public MapWindow() : base("Mappy Map Window", new Vector2(400.0f, 250.0f)) {
         System.CommandManager.RegisterCommand(new CommandHandler {
             ActivationPath = "/togglemap",
             Delegate = _ => System.MapWindow.UnCollapseOrToggle(),
