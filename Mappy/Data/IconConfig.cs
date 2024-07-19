@@ -31,14 +31,6 @@ public class IconConfig {
     public static IconConfig Load() 
         => Service.PluginInterface.LoadConfigFile("Icons.config.json", () => new IconConfig());
 
-    public void Save() {
-        // Purge icons that should now be filtered
-        foreach (var icon in IconSettingMap.Keys.ToArray()) {
-            if (DrawHelpers.IsDisallowedIcon(icon)) {
-                IconSettingMap.Remove(icon);
-            }
-        }
-        
-        Service.PluginInterface.SaveConfigFile("Icons.config.json", System.IconConfig);
-    } 
+    public void Save()
+        => Service.PluginInterface.SaveConfigFile("Icons.config.json", System.IconConfig);
 }
