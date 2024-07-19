@@ -37,7 +37,8 @@ public partial class MapRenderer {
                 Offset = DrawPosition,
                 Scale = Scale,
                 IconId = obj.ObjectKind switch {
-                    ObjectKind.Player => 60421,
+                    ObjectKind.Player when GroupManager.Instance()->MainGroup.MemberCount is 0 => 60421,
+                    ObjectKind.Player => 60444,
                     ObjectKind.BattleNpc when obj is { SubKind: (int) BattleNpcSubKind.Enemy, TargetObject: not null } => 60422,
                     ObjectKind.BattleNpc when obj is { SubKind: (int) BattleNpcSubKind.Enemy, TargetObject: null } => 60424,
                     ObjectKind.BattleNpc when obj.SubKind == (int) BattleNpcSubKind.Pet => 60961,
