@@ -413,6 +413,12 @@ public class MapWindow : Window {
             System.SystemConfig.FollowPlayer = false;
             System.MapRenderer.DrawOffset = Vector2.Zero;
         }
+
+        ImGuiHelpers.ScaledDummy(5.0f);
+        
+        if (ImGui.MenuItem("Lock Zoom", "", ref System.SystemConfig.ZoomLocked)) {
+            System.SystemConfig.Save();
+        }
         
         ImGuiHelpers.ScaledDummy(5.0f);
         
@@ -461,6 +467,7 @@ public class MapWindow : Window {
     }
 
     private static void ProcessMouseScroll() {
+        if (System.SystemConfig.ZoomLocked) return;
         if (ImGui.GetIO().MouseWheel is 0) return;
         
         if (System.SystemConfig.UseLinearZoom) {
