@@ -61,9 +61,7 @@ public static class DrawHelpers {
         };
 
         // If this is the first time we have seen this iconId, save it
-        if (System.IconConfig.IconSettingMap.TryAdd(markerInfo.IconId, new IconSetting {
-                IconId = markerInfo.IconId,
-            })) {
+        if (System.IconConfig.IconSettingMap.TryAdd(markerInfo.IconId, new IconSetting { IconId = markerInfo.IconId, })) {
             System.IconConfig.Save();
         }
 
