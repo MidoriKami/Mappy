@@ -284,7 +284,6 @@ public class IconConfigurationTab : ITabItem {
     public void Draw() {
         using (var leftChild = ImRaii.Child("left_child", new Vector2(48.0f * ImGuiHelpers.GlobalScale + ImGui.GetStyle().ItemSpacing.X , ImGui.GetContentRegionAvail().Y))) {
             if (leftChild) {
-                // using var scrollbarStyle = ImRaii.PushStyle(ImGuiStyleVar.ScrollbarSize, 0.0f);
                 using var selectionList = ImRaii.ListBox("iconSelection", ImGui.GetContentRegionAvail());
             
                 foreach (var (iconId, settings) in System.IconConfig.IconSettingMap.OrderBy(pairData =>  pairData.Key)) {
@@ -297,7 +296,7 @@ public class IconConfigurationTab : ITabItem {
                     }  
                 
                     ImGui.SetCursorScreenPos(cursorStart);
-                    ImGui.Image(texture.ImGuiHandle, texture.Size / 2.0f);
+                    ImGui.Image(texture.ImGuiHandle, texture.Size / 2.0f * ImGuiHelpers.GlobalScale);
                 } 
             }
         }
