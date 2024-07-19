@@ -29,13 +29,13 @@ public static class MapMarkerInfoExtensions {
             IconId = marker.MapMarker.IconId,
             PrimaryText = GetMarkerPrimaryTooltip(marker, tooltipText),
             OnLeftClicked = marker.DataType switch {
-                1 => () => System.IntegrationsController.OpenMap(marker.DataKey),
+                1 when marker.MapMarker.IconId is not ( >=63200 and < 63900 ) => () => System.IntegrationsController.OpenMap(marker.DataKey),
                 3 => () => System.Teleporter.Teleport(Service.DataManager.GetExcelSheet<Aetheryte>()!.GetRow(marker.DataKey)!), // Gonna assume that can't be null, because it's a row index that comes from the active gamestate.
                 4 when GetAetheryteForAethernet(marker.DataKey) is not null => () => System.Teleporter.Teleport(GetAetheryteForAethernet(marker.DataKey)!),
                 _ => null,
             },
             SecondaryText = marker.DataType switch {
-                1 => () => $"Open Map {Service.DataManager.GetExcelSheet<Map>()!.GetRow(marker.DataKey)?.PlaceName.Value?.Name ?? "Unable to read target map name."}",
+                1 when marker.MapMarker.IconId is not ( >=63200 and < 63900 ) => () => $"Open Map {Service.DataManager.GetExcelSheet<Map>()!.GetRow(marker.DataKey)?.PlaceName.Value?.Name ?? "Unable to read target map name."}",
                 2 => () => $"Instance Link? {marker.DataKey}",
                 3 => () => $"Teleport to {Service.DataManager.GetExcelSheet<Aetheryte>()!.GetRow(marker.DataKey)?.PlaceName.Value?.Name ?? "Unable to read aetheryte name"} {GetAetheryteTeleportCost(marker.DataKey)}",
                 4 when GetAetheryteForAethernet(marker.DataKey) is not null => () => $"Teleport to {GetAetheryteForAethernet(marker.DataKey)?.PlaceName.Value?.Name ?? "Unable to read aetheryte name"} {GetAetheryteTeleportCost(GetAetheryteForAethernet(marker.DataKey)!.RowId)}",
