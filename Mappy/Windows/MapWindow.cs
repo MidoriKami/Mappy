@@ -55,6 +55,9 @@ public class MapWindow : Window {
                 }
             },
         });
+
+        // Mirroring behavior doesn't let the close button work, so, remove it.
+        ShowCloseButton = false;
     }
 
     public override unsafe bool DrawConditions() {
