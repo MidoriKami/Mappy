@@ -29,13 +29,13 @@ public static class MapMarkerInfoExtensions {
             IconId = marker.MapMarker.IconId,
             PrimaryText = GetMarkerPrimaryTooltip(marker, tooltipText),
             OnLeftClicked = marker.DataType switch {
-                1 when !IsMarkerRegionIcon(marker.MapMarker.IconId) => () => System.IntegrationsController.OpenMap(marker.DataKey),
+                1 when !DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId) => () => System.IntegrationsController.OpenMap(marker.DataKey),
                 3 => () => System.Teleporter.Teleport(Service.DataManager.GetExcelSheet<Aetheryte>()!.GetRow(marker.DataKey)!), // Gonna assume that can't be null, because it's a row index that comes from the active gamestate.
                 4 when GetAetheryteForAethernet(marker.DataKey) is not null => () => System.Teleporter.Teleport(GetAetheryteForAethernet(marker.DataKey)!),
                 _ => null,
             },
             SecondaryText = marker.DataType switch {
-                1 when !IsMarkerRegionIcon(marker.MapMarker.IconId) => () => $"Open Map {Service.DataManager.GetExcelSheet<Map>()!.GetRow(marker.DataKey)?.PlaceName.Value?.Name ?? "Unable to read target map name."}",
+                1 when !DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId) => () => $"Open Map {Service.DataManager.GetExcelSheet<Map>()!.GetRow(marker.DataKey)?.PlaceName.Value?.Name ?? "Unable to read target map name."}",
                 2 => () => $"Instance Link? {marker.DataKey}",
                 3 => () => $"Teleport to {Service.DataManager.GetExcelSheet<Aetheryte>()!.GetRow(marker.DataKey)?.PlaceName.Value?.Name ?? "Unable to read aetheryte name"} {GetAetheryteTeleportCost(marker.DataKey)}",
                 4 when GetAetheryteForAethernet(marker.DataKey) is not null => () => $"Teleport to {GetAetheryteForAethernet(marker.DataKey)?.PlaceName.Value?.Name ?? "Unable to read aetheryte name"} {GetAetheryteTeleportCost(GetAetheryteForAethernet(marker.DataKey)!.RowId)}",
@@ -57,7 +57,7 @@ public static class MapMarkerInfoExtensions {
         => $"({Service.AetheryteList.FirstOrDefault(entry => entry.AetheryteId == targetDataKey)?.GilCost ?? 0:n0} {SeIconChar.Gil.ToIconChar()})";
 
     private static Func<string> GetMarkerPrimaryTooltip(MapMarkerInfo marker, SeString tooltipText) {
-        if (IsMarkerRegionIcon(marker.MapMarker.IconId)) return () => string.Empty;
+        if (DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId)) return () => string.Empty;
         if (!System.SystemConfig.ShowMiscTooltips) return () => string.Empty;
         if (!tooltipText.TextValue.IsNullOrEmpty()) return tooltipText.ToString;
         
@@ -66,9 +66,4 @@ public static class MapMarkerInfoExtensions {
             _ => () => System.TooltipCache.GetValue(marker.MapMarker.IconId) ?? string.Empty,
         };
     }
-
-    private static bool IsMarkerRegionIcon(uint icon) => icon switch {
-        >=63200 and < 63900 => true,
-        _ => false,
-    };
 }
