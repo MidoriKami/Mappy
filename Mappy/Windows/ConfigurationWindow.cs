@@ -93,7 +93,6 @@ public class MapFunctionsTab : ITabItem {
         ImGuiHelpers.ScaledDummy(10.0f);
         using (ImRaii.PushIndent()) {
             configChanged |= ImGui.Checkbox("Show Misc Tooltips", ref System.SystemConfig.ShowMiscTooltips);
-            configChanged |= ImGui.Checkbox("Remember Last Map [Experimental]", ref System.SystemConfig.RememberLastMap);
             configChanged |= ImGui.Checkbox("Lock Map on Center", ref System.SystemConfig.LockCenterOnMap);
         }
         

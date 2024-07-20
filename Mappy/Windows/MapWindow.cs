@@ -95,12 +95,6 @@ public class MapWindow : Window {
         
         YeetVanillaMap();
 
-        if (System.SystemConfig.LastMapId is not 0) {
-            if (System.SystemConfig.RememberLastMap) {
-                System.IntegrationsController.OpenMap(System.SystemConfig.LastMapId);
-            }
-        }
-
         if (ProcessingCommand) {
             ProcessingCommand = false;
             System.SystemConfig.FollowPlayer = false;
