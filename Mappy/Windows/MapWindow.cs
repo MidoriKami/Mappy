@@ -519,6 +519,7 @@ public class MapWindow : Window {
         if (addon is null || addon->RootNode is null) return;
         
         addon->RootNode->SetPositionFloat(-9001.0f, -9001.0f);
+        addon->RootNode->ToggleVisibility(false);
     }
     
     private unsafe void UnYeetVanillaMap() {
