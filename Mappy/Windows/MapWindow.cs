@@ -135,6 +135,7 @@ public class MapWindow : Window {
         isMapItemHovered = false;
         
         MapDrawOffset = ImGui.GetCursorScreenPos();
+        using var fade = ImRaii.PushStyle(ImGuiStyleVar.Alpha, System.SystemConfig.FadePercent,  ShouldFade());
         using (var renderChild = ImRaii.Child("render_child", ImGui.GetContentRegionAvail(), false, ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoScrollbar)) {
             if (!renderChild) return;
             if (!System.SystemConfig.AcceptedSpoilerWarning) {
