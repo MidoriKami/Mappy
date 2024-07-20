@@ -25,7 +25,8 @@ public class MapWindow : Window {
     public Vector2 MapDrawOffset { get; private set; }
     public bool IsMapHovered { get; private set; }
     public bool ProcessingCommand { get; set; }
-    
+
+    private bool isMapItemHovered;
     private bool isDragStarted;
     private Vector2 lastWindowSize;
 
@@ -131,9 +132,9 @@ public class MapWindow : Window {
         UpdateStyle();
         UpdateSizePosition();
         IsMapHovered = WindowBounds.IsBoundedBy(ImGui.GetMousePos(), ImGui.GetCursorScreenPos(), ImGui.GetCursorScreenPos() + ImGui.GetContentRegionMax());
-
+        isMapItemHovered = false;
+        
         MapDrawOffset = ImGui.GetCursorScreenPos();
-        using var fade = ImRaii.PushStyle(ImGuiStyleVar.Alpha, System.SystemConfig.FadePercent,  ShouldFade());
         using (var renderChild = ImRaii.Child("render_child", ImGui.GetContentRegionAvail(), false, ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoScrollbar)) {
             if (!renderChild) return;
             if (!System.SystemConfig.AcceptedSpoilerWarning) {
@@ -167,11 +168,16 @@ public class MapWindow : Window {
             if (renderChild) {
                 System.MapRenderer.Draw();
                 ImGui.SetCursorPos(Vector2.Zero);
+                
                 DrawToolbar();
+                isMapItemHovered |= ImGui.IsItemHovered();
+                
                 DrawCoordinateBar();
+                isMapItemHovered |= ImGui.IsItemHovered();
             }
         }
-
+        isMapItemHovered |= ImGui.IsItemHovered();
+        
         // Process Inputs
         ProcessInputs();
     }
@@ -181,7 +187,7 @@ public class MapWindow : Window {
             ImGui.OpenPopup("Mappy_Context_Menu");
         }
         else {
-            if (IsMapHovered) {
+            if (isMapItemHovered) {
                 ProcessMouseScroll();
                 ProcessMapDragStart();
                 Flags |= ImGuiWindowFlags.NoMove;
