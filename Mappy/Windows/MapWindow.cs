@@ -349,6 +349,7 @@ public class MapWindow : Window {
             cursorPosition /= System.MapRenderer.Scale;
             cursorPosition -= new Vector2(1024.0f, 1024.0f);
             cursorPosition -= new Vector2(offsetX, offsetY);
+            cursorPosition /= AgentMap.Instance()->SelectedMapSizeFactorFloat;
  
             var cursorMapPosition = MapUtil.WorldToMap(new Vector3(cursorPosition.X, 0.0f, cursorPosition.Y), offsetX, offsetY, 0, (uint)scale);
             var cursorPositionString = $"Cursor  {cursorMapPosition.X:F1}  {cursorMapPosition.Y:F1}";
