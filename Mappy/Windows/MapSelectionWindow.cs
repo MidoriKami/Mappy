@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Dalamud.Interface;
@@ -25,7 +25,7 @@ public class MapSelectionWindow : SelectionWindowBase<Map> {
     
     protected override float SelectionHeight => 75.0f * ImGuiHelpers.GlobalScale;
 
-    public MapSelectionWindow() :base(new Vector2(500.0f, 600.0f)) {
+    public MapSelectionWindow() : base(new Vector2(500.0f, 600.0f)) {
         SelectionOptions = Service.DataManager.GetExcelSheet<Map>()!
             .Where(map => map is { PlaceName.Row: not 0, TerritoryType.Value.LoadingImage: not 0 })
             .Where(map => map is not { PriorityUI: 0, PriorityCategoryUI: 0 } )
@@ -78,16 +78,15 @@ public class MapSelectionWindow : SelectionWindowBase<Map> {
         ImGui.TableNextColumn();
         ImGui.TextUnformatted($"{option.Id}");
     }
-    
-    protected override bool FilterResults(Map option, string filter) {
-        if (option.PlaceNameRegion.Value?.Name.ToString().Contains(filter, StringComparison.OrdinalIgnoreCase) ?? false) return true;
-        if (option.PlaceName.Value?.Name.ToString().Contains(filter, StringComparison.OrdinalIgnoreCase) ?? false) return true;
-        if (option.PlaceNameSub.Value?.Name.ToString().Contains(filter, StringComparison.OrdinalIgnoreCase) ?? false) return true;
-        if (option.TerritoryType.Value?.Name.ToString().Contains(filter, StringComparison.OrdinalIgnoreCase) ?? false) return true;
-        if (option.Id.ToString().Contains(filter, StringComparison.OrdinalIgnoreCase)) return true;
 
-        return false;
-    }
+    protected override IEnumerable<string> GetFilterStrings(Map option)
+        => [
+            option.PlaceNameRegion.Value?.Name.ToString() ?? string.Empty,
+            option.PlaceName.Value?.Name.ToString() ?? string.Empty,
+            option.PlaceNameSub.Value?.Name.ToString() ?? string.Empty,
+            option.TerritoryType.Value?.Name.ToString() ?? string.Empty,
+            option.Id.ToString(),
+        ];
     
     private static void DrawTerritoryImage(TerritoryType option, IDataManager dataManager, ITextureProvider textureProvider) {
         using var imageFrame = ImRaii.Child($"image_frame{option}", ImGuiHelpers.ScaledVector2(Width * ImGuiHelpers.GlobalScale, Height), false, ImGuiWindowFlags.NoInputs);
