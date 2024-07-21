@@ -460,13 +460,7 @@ public class MapWindow : Window {
         }
     }
     
-    public override unsafe void OnClose() {
-        if (AgentMap.Instance()->SelectedMapId is not 0) {
-            Service.Log.Verbose($"Logging last map as: {AgentMap.Instance()->SelectedMapId}");
-            System.SystemConfig.LastMapId = AgentMap.Instance()->SelectedMapId;
-            System.SystemConfig.Save();
-        }
-        
+    public override void OnClose() {
         UnYeetVanillaMap();
     }
 

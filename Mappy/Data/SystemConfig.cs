@@ -45,7 +45,6 @@ public class SystemConfig : CharacterConfiguration {
     public bool KeepOpen = false;
     public bool FollowOnOpen = false;
     public bool FollowPlayer = true;
-    public uint LastMapId = 0;
     public CenterTarget CenterOnOpen = CenterTarget.Disabled;
     public bool ScalePlayerCone = false;
     public float ConeSize = 150.0f;
