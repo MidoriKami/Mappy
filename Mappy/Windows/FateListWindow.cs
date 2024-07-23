@@ -20,8 +20,9 @@ public class FateListWindow : Window {
 		AdditionalInfoTooltip = "Shows Fates for the zone you are currently in";
 	}
 
-	public override bool DrawConditions()
-		=> System.MapWindow.IsOpen;
+	public override void PreOpenCheck() {
+		if (!System.MapWindow.IsOpen) IsOpen = false;
+	}
 	
 	protected override unsafe void DrawContents() {
 		if (Service.FateTable.Length > 0) {

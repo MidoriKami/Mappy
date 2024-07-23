@@ -21,8 +21,9 @@ public class QuestListWindow : Window {
         AdditionalInfoTooltip = "Shows Quests for the zone you are currently in";
     }
 
-    public override bool DrawConditions()
-        => System.MapWindow.IsOpen;
+    public override void PreOpenCheck() {
+        if (!System.MapWindow.IsOpen) IsOpen = false;
+    }
 
     protected override void DrawContents() {
         using var child = ImRaii.Child("quest_list_scrollable", ImGui.GetContentRegionAvail());
