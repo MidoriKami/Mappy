@@ -189,9 +189,6 @@ public class MapWindow : Window {
                 ProcessMapDragStart();
                 Flags |= ImGuiWindowFlags.NoMove;
             }
-            else {
-                Flags &= ~ImGuiWindowFlags.NoMove;
-            }
             
             ProcessMapDragDragging();
             ProcessMapDragEnd();
