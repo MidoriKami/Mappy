@@ -91,12 +91,9 @@ public unsafe class AcceptedQuestsTabItem : ITabItem {
                 if (quest.ObjectiveId is 0) continue;
                 
                 var questData = Service.DataManager.GetExcelSheet<Quest>()!.GetRow(quest.ObjectiveId + 65536u);
-                ImGui.Text($"Lv. {questData?.ClassJobLevel0} {quest.Label}");
                 
                 var index = 0;
                 foreach (var marker in quest.MarkerData) {
-                    using var indent = ImRaii.PushIndent();
-
                     var cursorStart = ImGui.GetCursorScreenPos();
                     if (ImGui.Selectable($"##{quest.ObjectiveId}_Selectable_{marker.LevelId}_{index++}", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, ElementHeight * ImGuiHelpers.GlobalScale))) {
                         System.IntegrationsController.OpenMap(marker.MapId);
