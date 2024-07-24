@@ -101,13 +101,16 @@ public static class DrawHelpers {
         var texture = Service.TextureProvider.GetFromGameIcon(markerInfo.IconId).GetWrapOrEmpty();
         var scale = System.SystemConfig.ScaleWithZoom ? markerInfo.Scale : 1.0f;
 
+        var iconScale = System.SystemConfig.IconScale;
+
         // Fixed scale not supported for map region markers
         if (markerInfo.IconId is >= 63200 and < 63900) {
             scale = markerInfo.Scale;
+            iconScale = 0.42f;
         }
         
-        ImGui.SetCursorPos(markerInfo.Position + markerInfo.Offset - texture.Size * System.SystemConfig.IconScale / 2.0f * scale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale);
-        ImGui.Image(texture.ImGuiHandle, texture.Size * scale * System.SystemConfig.IconScale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale, Vector2.Zero, Vector2.One, System.IconConfig.IconSettingMap[markerInfo.IconId].Color);
+        ImGui.SetCursorPos(markerInfo.Position + markerInfo.Offset - texture.Size * iconScale / 2.0f * scale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale);
+        ImGui.Image(texture.ImGuiHandle, texture.Size * scale * iconScale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale, Vector2.Zero, Vector2.One, System.IconConfig.IconSettingMap[markerInfo.IconId].Color);
     }
     
     private static void ProcessInteractions(MarkerInfo markerInfo) {
