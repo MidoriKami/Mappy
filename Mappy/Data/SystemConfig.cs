@@ -74,6 +74,7 @@ public class SystemConfig : CharacterConfiguration {
     public Vector4 CoordinateTextColor = KnownColor.White.Vector();
     public bool ZoomLocked = false;
     public bool ShowPlayers = true;
+    public bool SetFlagOnFateClick = false;
 
     public static SystemConfig Load() 
         => Service.PluginInterface.LoadConfigFile("System.config.json", () => new SystemConfig());

@@ -7,7 +7,9 @@ using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
+using KamiLib.Classes;
 using KamiLib.Window;
 using Mappy.Extensions;
 
@@ -26,6 +28,16 @@ public class FateListWindow : Window {
 	
 	protected override unsafe void DrawContents() {
 		if (Service.FateTable.Length > 0) {
+			using (var toolbarChild = ImRaii.Child("fatelist_toolbar", new Vector2(ImGui.GetContentRegionAvail().X, 32.0f))) {
+				if (toolbarChild) {
+					using var color = ImRaii.PushColor(ImGuiCol.Button, ImGui.GetStyle().Colors[(int) ImGuiCol.ButtonActive], System.SystemConfig.SetFlagOnFateClick);
+					if (ImGuiTweaks.IconButtonWithSize(Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle, FontAwesomeIcon.Flag, "flag_on_click", ImGuiHelpers.ScaledVector2(23.0f), "Set Flag On Click")) {
+						System.SystemConfig.SetFlagOnFateClick = !System.SystemConfig.SetFlagOnFateClick;
+						System.SystemConfig.Save();
+					}
+				}
+			}
+			
 			foreach (var index in Enumerable.Range(0, Service.FateTable.Length)) {
 				var fate = FateManager.Instance()->Fates[index].Value;
                 
@@ -34,6 +46,12 @@ public class FateListWindow : Window {
 					System.IntegrationsController.OpenOccupiedMap();
 					System.SystemConfig.FollowPlayer = false;
 					System.MapRenderer.DrawOffset = -new Vector2(fate->Location.X, fate->Location.Z);
+
+					if (System.SystemConfig.SetFlagOnFateClick) {
+						AgentMap.Instance()->IsFlagMarkerSet = 0;
+						AgentMap.Instance()->SetFlagMapMarker(AgentMap.Instance()->CurrentTerritoryId, AgentMap.Instance()->CurrentMapId, fate->Location.X, fate->Location.Z);
+						AgentChatLog.Instance()->InsertTextCommandParam(1048, false);
+					}
 				}
 
 				ImGui.SetCursorScreenPos(cursorStart);
