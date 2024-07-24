@@ -31,6 +31,8 @@ public class MapWindow : Window {
     private Vector2 lastWindowSize;
 
     public MapWindow() : base("Mappy Map Window", new Vector2(400.0f, 250.0f)) {
+        DisableWindowSounds = true;
+        
         System.CommandManager.RegisterCommand(new CommandHandler {
             ActivationPath = "/togglemap",
             Delegate = _ => System.MapWindow.UnCollapseOrToggle(),
