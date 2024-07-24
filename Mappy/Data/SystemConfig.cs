@@ -73,6 +73,7 @@ public class SystemConfig : CharacterConfiguration {
     public float CoordinateBarFade = 0.66f;
     public Vector4 CoordinateTextColor = KnownColor.White.Vector();
     public bool ZoomLocked = false;
+    public bool ShowPlayers = true;
 
     public static SystemConfig Load() 
         => Service.PluginInterface.LoadConfigFile("System.config.json", () => new SystemConfig());
