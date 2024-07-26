@@ -87,7 +87,7 @@ public unsafe class AcceptedQuestsTabItem : ITabItem {
     public bool Disabled => false;
     
     public void Draw() {
-        if (Map.Instance()->QuestMarkers.Length > 0) {
+        if (AnyActiveQuests()) {
             foreach (var quest in Map.Instance()->QuestMarkers) {
                 if (quest.ObjectiveId is 0) continue;
                 
@@ -125,6 +125,14 @@ public unsafe class AcceptedQuestsTabItem : ITabItem {
             ImGui.SetCursorPosY(ImGui.GetContentRegionAvail().Y / 2.0f - textSize.Y / 2.0f);
             ImGui.TextColored(KnownColor.Orange.Vector(), text);
         }
+    }
+
+    private bool AnyActiveQuests() {
+        foreach (var questMarker in Map.Instance()->QuestMarkers) {
+            if (questMarker.ObjectiveId is not 0) return true;
+        }
+
+        return false;
     }
 }
 
