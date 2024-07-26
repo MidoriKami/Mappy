@@ -250,9 +250,10 @@ public class MapWindow : Window {
         ImGui.SetCursorPos(new Vector2(5.0f, 5.0f));
         
         if (MappyGuiTweaks.IconButton(FontAwesomeIcon.ArrowUp, "up", "Open Parent Map")) {
-            var valueArgs = new AtkValue();
-            valueArgs.ChangeType(ValueType.Int);
-            valueArgs.SetInt(5);
+            var valueArgs = new AtkValue {
+                Type = ValueType.Int, 
+                Int = 5,
+            };
 
             var returnValue = new AtkValue();
             AgentMap.Instance()->ReceiveEvent(&returnValue, &valueArgs, 1, 0);
