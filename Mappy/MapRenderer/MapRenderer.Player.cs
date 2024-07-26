@@ -80,7 +80,8 @@ public partial class MapRenderer {
         
         var texture = Service.TextureProvider.GetFromGameIcon(60443).GetWrapOrEmpty();
         var angle = -player.Rotation + MathF.PI / 2.0f;
-        var vectors = GetRotationVectors(angle, position, texture.Size / 2.0f * Scale);
+        var scale = System.SystemConfig.ScaleWithZoom ? Scale : 1.0f;
+        var vectors = GetRotationVectors(angle, position, texture.Size / 2.0f * scale);
     
         ImGui.GetWindowDrawList().AddImageQuad(texture.ImGuiHandle, vectors[0], vectors[1], vectors[2], vectors[3]);
     }
