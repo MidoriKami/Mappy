@@ -24,6 +24,7 @@ public unsafe partial class MapRenderer {
 
         foreach (var allianceMember in GroupManager.Instance()->MainGroup.AllianceMembers) {
             if (allianceMember.EntityId is 0xE0000000) continue;
+            if (AgentMap.Instance()->SelectedMapId != AgentMap.Instance()->CurrentMapId) continue;
 
             DrawHelpers.DrawMapMarker(new MarkerInfo {
                 Position = (new Vector2(allianceMember.X, allianceMember.Z) * DrawHelpers.GetMapScaleFactor() -
