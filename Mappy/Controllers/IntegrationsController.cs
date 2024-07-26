@@ -61,64 +61,93 @@ public unsafe class IntegrationsController : IDisposable {
 
 	private void OnShowHook(AgentMap* agent, bool a1, bool a2)
 		=> HookSafety.ExecuteSafe(() => {
+			Service.Log.Debug("[OnShowHook] Hook Start");
+			
 			if (AgentMap.Instance()->AddonId is not 0 && AgentMap.Instance()->CurrentMapId != AgentMap.Instance()->SelectedMapId) {
 				AgentMap.Instance()->Hide();
+				Service.Log.Debug("[OnShowHook] Vanilla tried to return to current map, aborted.");
 				return;
 			}
 
 			showMapHook!.Original(agent, a1, a2);
-
-			Service.Log.Debug($"Show Map: {a1}, {a2}");
+			Service.Log.Verbose($"[OnShowHook] Called Original with A1 = {a1}, A2 = {a2}");
 		}, Service.Log, "Exception during OnShowHook");
 
 	private void OpenMapById(AgentMap* agent, uint mapId, uint a3, bool a4) 
 		=> HookSafety.ExecuteSafe(() => {
 			openMapByIdHook!.Original(agent, mapId, a3, a4);
-            
-			Service.Log.Debug($"Open Map By ID: {mapId}, {a3}, {a4}");
+			Service.Log.Debug($"[OpenMapByIdHook] Called Original with MapId = {mapId}, A3 = {a3}, A4 = {a4}");
 		}, Service.Log, "Exception during OpenMapByMapId");
     
 	private void OpenMap(AgentMap* agent, OpenMapInfo* mapInfo) 
 		=> HookSafety.ExecuteSafe(() => {
 			openMapHook!.Original(agent, mapInfo);
+			Service.Log.Debug($"[OpenMapHook] Called Original with MapInfo [ " +
+			                    $"MapId: {mapInfo->MapId}, " +
+			                    $"MapType: {mapInfo->Type}, " +
+			                    $"Title: {mapInfo->TitleString.ToString()}, " +
+			                    $"PlaceNameId: {mapInfo->PlaceNameId}, " +
+			                    $"AetheryteId: {mapInfo->AetheryteId}, " +
+			                    $"FateId: {mapInfo->FateId}, " +
+			                    $"Unknown 1C: {mapInfo->Unk1C}, " +
+			                    $"Unknown 88: {mapInfo->Unk88}, " +
+			                    $"Unknown 8C: {mapInfo->Unk8C}, " +
+			                    $"Unknown 8D: {mapInfo->Unk8D} ]");
 
 			switch (mapInfo->Type) {
 				case MapType.QuestLog: {
+					Service.Log.Debug($"[OpenMapHook] Processing QuestLog Event");
+
 					if (GetMapIdForQuest(mapInfo) is {} targetMapId ) {
-						if (agent->CurrentMapId != targetMapId) {
+						
+						Service.Log.Debug($"[OpenMapHook] Identified Quest Target Map as MapId: {targetMapId}");
+
+						if (agent->SelectedMapId != targetMapId) {
 							OpenMap(targetMapId);
+							Service.Log.Debug($"[OpenMapHook] Opening MapId: {targetMapId}");
+						}
+						else {
+							Service.Log.Debug($"[OpenMapHook] Already in MapId: {targetMapId}, aborting.");
 						}
 					}
 
 					if (System.SystemConfig.CenterOnQuest) {
-						CenterOnMarker(agent, agent->TempMapMarkers[0].MapMarker);
+						ref var targetMarker = ref agent->TempMapMarkers[0].MapMarker;
+						
+						CenterOnMarker(targetMarker);
+						Service.Log.Debug($"[OpenMapHook] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
 					}
 					break;
 				}
 
 				case MapType.GatheringLog: {
+					Service.Log.Debug($"[OpenMapHook] Processing GatheringLog Event");
+					
 					if (System.SystemConfig.CenterOnGathering) {
-						CenterOnMarker(agent, agent->TempMapMarkers[0].MapMarker);
+						ref var targetMarker = ref agent->TempMapMarkers[0].MapMarker;
+						
+						CenterOnMarker(targetMarker);
+						Service.Log.Debug($"[OpenMapHook] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
 					}
 					break;
 				}
 
 				case MapType.FlagMarker: {
+					Service.Log.Debug($"[OpenMapHook] Processing FlagMarker Event");
+					
 					if (System.SystemConfig.CenterOnFlag) {
-						CenterOnMarker(agent, agent->FlagMapMarker.MapMarker);
+						ref var targetMarker = ref agent->TempMapMarkers[0].MapMarker;
+						
+						CenterOnMarker(targetMarker);
+						Service.Log.Debug($"[OpenMapHook] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
 					}
 					break;
 				}
 			}
-            
-			Service.Log.Debug($"Open Map With OpenMapInfo: {mapInfo->MapId}, {mapInfo->Type}, {mapInfo->TerritoryId}, {mapInfo->TitleString}");
 		}, Service.Log, "Exception during OpenMap");
 
-	public void OpenMap(uint mapId) {
-		if (AgentMap.Instance()->SelectedMapId != mapId) {
-			AgentMap.Instance()->OpenMapByMapId(mapId, 0, true);
-		}
-	}
+	public void OpenMap(uint mapId)
+		=> AgentMap.Instance()->OpenMapByMapId(mapId, 0, true);
 
 	public void OpenOccupiedMap()
 		=> OpenMap(AgentMap.Instance()->CurrentMapId);
