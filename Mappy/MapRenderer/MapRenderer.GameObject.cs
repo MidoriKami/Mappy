@@ -58,8 +58,8 @@ public partial class MapRenderer {
                         DrawHelpers.GetMapOffsetVector() +
                         DrawHelpers.GetMapCenterOffsetVector()) * Scale;
         
-        ImGui.GetWindowDrawList().AddCircleFilled(position, 150.0f * Scale, ImGui.GetColorU32(KnownColor.Gray.Vector() with { W = 0.10f }));
-        ImGui.GetWindowDrawList().AddCircle(position, 150.0f * Scale, ImGui.GetColorU32(KnownColor.Gray.Vector() with { W = 0.30f }));
+        ImGui.GetWindowDrawList().AddCircleFilled(position, 150.0f * Scale, ImGui.GetColorU32(System.SystemConfig.RadarColor));
+        ImGui.GetWindowDrawList().AddCircle(position, 150.0f * Scale, ImGui.GetColorU32(System.SystemConfig.RadarOutlineColor));
     }
 
     private string GetTooltipForGameObject(IGameObject obj) {
