@@ -96,7 +96,7 @@ public unsafe class IntegrationsController : IDisposable {
 
 			switch (mapInfo->Type) {
 				case MapType.QuestLog: {
-					Service.Log.Debug($"[OpenMapHook] Processing QuestLog Event");
+					Service.Log.Debug("[OpenMapHook] Processing QuestLog Event");
 
 					if (GetMapIdForQuest(mapInfo) is {} targetMapId ) {
 						
@@ -121,7 +121,7 @@ public unsafe class IntegrationsController : IDisposable {
 				}
 
 				case MapType.GatheringLog: {
-					Service.Log.Debug($"[OpenMapHook] Processing GatheringLog Event");
+					Service.Log.Debug("[OpenMapHook] Processing GatheringLog Event");
 					
 					if (System.SystemConfig.CenterOnGathering) {
 						ref var targetMarker = ref agent->TempMapMarkers[0].MapMarker;
@@ -133,7 +133,7 @@ public unsafe class IntegrationsController : IDisposable {
 				}
 
 				case MapType.FlagMarker: {
-					Service.Log.Debug($"[OpenMapHook] Processing FlagMarker Event");
+					Service.Log.Debug("[OpenMapHook] Processing FlagMarker Event");
 					
 					if (System.SystemConfig.CenterOnFlag) {
 						ref var targetMarker = ref agent->FlagMapMarker.MapMarker;
