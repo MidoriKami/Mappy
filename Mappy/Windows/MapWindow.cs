@@ -32,32 +32,7 @@ public class MapWindow : Window {
 
     public MapWindow() : base("Mappy Map Window", new Vector2(400.0f, 250.0f)) {
         DisableWindowSounds = true;
-        
-        System.CommandManager.RegisterCommand(new CommandHandler {
-            ActivationPath = "/togglemap",
-            Delegate = _ => System.MapWindow.UnCollapseOrToggle(),
-        });
-        
-        System.CommandManager.RegisterCommand(new CommandHandler {
-            ActivationPath = "/showmap",
-            Delegate = _ => System.MapWindow.UnCollapseOrShow(),
-        });
-        
-        System.CommandManager.RegisterCommand(new CommandHandler {
-            ActivationPath = "/hidemap",
-            Delegate = _ => System.MapWindow.Close(),
-        });
-        
-        // Easter Egg, don't recommend executing this command.
-        System.CommandManager.RegisterCommand(new CommandHandler {
-            ActivationPath = "/pyon",
-            Hidden = true,
-            Delegate = _ => {
-                foreach (var index in Enumerable.Range(0, 20)) {
-                    Service.Framework.RunOnTick(Toggle, delayTicks: 20 * index);
-                }
-            },
-        });
+        RegisterCommands();
 
         // Mirroring behavior doesn't let the close button work, so, remove it.
         ShowCloseButton = false;
@@ -525,5 +500,92 @@ public class MapWindow : Window {
         addon->RootNode->SetPositionFloat(addon->X, addon->Y);
         addon->RootNode->ToggleVisibility(false);
         Service.Framework.RunOnTick(() => addon->RootNode->ToggleVisibility(true), delayTicks: 10);
+    }
+    
+    
+    private void RegisterCommands() {
+        System.CommandManager.RegisterCommand(new ToggleCommandHandler {
+            UseShowHideText = true,
+            BaseActivationPath = "/map",
+            EnableDelegate = _ => System.MapWindow.UnCollapseOrShow(),
+            DisableDelegate = _ => System.MapWindow.Close(),
+            ToggleDelegate = _ => System.MapWindow.UnCollapseOrToggle(),
+        });
+        
+        System.CommandManager.RegisterCommand(new CommandHandler {
+            ActivationPath = "/map/follow",
+            Delegate = _ => {
+                System.SystemConfig.FollowPlayer = true;
+                System.SystemConfig.Save();
+            },
+        });
+        
+        System.CommandManager.RegisterCommand(new CommandHandler {
+            ActivationPath = "/map/unfollow",
+            Delegate = _ => {
+                System.SystemConfig.FollowPlayer = false;
+                System.SystemConfig.Save();
+            },
+        });
+        
+        System.CommandManager.RegisterCommand(new ToggleCommandHandler {
+            BaseActivationPath = "/autofollow",
+            EnableDelegate = _ => {
+                System.SystemConfig.FollowOnOpen = true;
+                System.SystemConfig.Save();
+            },
+            DisableDelegate = _ => {
+                System.SystemConfig.FollowOnOpen = false;
+                System.SystemConfig.Save();
+            },
+            ToggleDelegate = _ => {
+                System.SystemConfig.FollowOnOpen = !System.SystemConfig.FollowOnOpen;
+                System.SystemConfig.Save();
+            },
+        });
+        
+        System.CommandManager.RegisterCommand(new ToggleCommandHandler {
+            BaseActivationPath = "/keepopen",
+            EnableDelegate = _ => {
+                System.SystemConfig.KeepOpen = true;
+                System.SystemConfig.Save();
+            },
+            DisableDelegate = _ => {
+                System.SystemConfig.KeepOpen = false;
+                System.SystemConfig.Save();
+            },
+            ToggleDelegate = _ => {
+                System.SystemConfig.KeepOpen = !System.SystemConfig.KeepOpen;
+                System.SystemConfig.Save();
+            },
+        });
+        
+        System.CommandManager.RegisterCommand(new CommandHandler {
+            ActivationPath = "/center/player",
+            Delegate = _ => {
+                if (Service.ClientState.LocalPlayer is { } localPlayer) {
+                    System.MapRenderer.CenterOnGameObject(localPlayer);
+                }
+            },
+        });
+        
+        System.CommandManager.RegisterCommand(new CommandHandler {
+            ActivationPath = "/center/map",
+            Delegate = _ => {
+                System.SystemConfig.FollowPlayer = false;
+                System.MapRenderer.DrawOffset = Vector2.Zero;
+            },
+        });
+        
+        // Easter Egg, don't recommend executing this command.
+        System.CommandManager.RegisterCommand(new CommandHandler {
+            ActivationPath = "/pyon",
+            Hidden = true,
+            Delegate = _ => {
+                foreach (var index in Enumerable.Range(0, 20)) {
+                    Service.Framework.RunOnTick(Toggle, delayTicks: 20 * index);
+                }
+            },
+        });
     }
 }
