@@ -85,11 +85,11 @@ public static class DrawHelpers {
         DrawTooltip(markerInfo);
     }
 
-    private static void DrawRadiusUnderlay(MarkerInfo markerInfo) {
+    private static unsafe void DrawRadiusUnderlay(MarkerInfo markerInfo) {
         if (markerInfo is not { Radius: { } markerRadius and > 1.0f }) return;
         
         var center = markerInfo.Position + markerInfo.Offset + ImGui.GetWindowPos();
-        var radius = markerRadius * markerInfo.Scale;
+        var radius = markerRadius * markerInfo.Scale * AgentMap.Instance()->CurrentMapSizeFactorFloat;
         var fillColor = ImGui.GetColorU32(markerInfo.RadiusColor with { W = System.SystemConfig.AreaTransparency });
         var radiusColor =  ImGui.GetColorU32(markerInfo.RadiusColor);
             
