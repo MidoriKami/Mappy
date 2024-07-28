@@ -6,12 +6,15 @@ using Dalamud.Game;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
+using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.Group;
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Classes;
 using Mappy.Extensions;
+using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
 
 namespace Mappy.MapRenderer;
 
@@ -83,12 +86,13 @@ public partial class MapRenderer {
         };
     }
 
-    private bool IsAetherCurrent(IGameObject gameObject) {
+    private unsafe bool IsAetherCurrent(IGameObject gameObject) {
         if (gameObject.ObjectKind is not ObjectKind.EventObj) return false;
 
-        var nameString = Service.DataManager.GetExcelSheet<EObjName>(ClientLanguage.English)!.GetRow(gameObject.DataId)?.Singular;
-        if (nameString is null) return false;
+        var csEventObject = (GameObject*) gameObject.Address;
+        if (csEventObject is null) return false;
 
-        return string.Equals(nameString, "aether current", StringComparison.OrdinalIgnoreCase);
+        if (csEventObject->EventHandler is null) return false;
+        return csEventObject->EventHandler->Info.EventId.ContentId == EventHandlerType.AetherCurrent;
     }
 }
