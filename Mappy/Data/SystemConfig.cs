@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Numerics;
+using System.Text.Json.Serialization;
 using Dalamud.Interface;
 using KamiLib.Configuration;
 
@@ -77,6 +78,9 @@ public class SystemConfig : CharacterConfiguration {
     public bool SetFlagOnFateClick = false;
     public bool ShowPlayerIcon = true;
     public float PlayerIconScale = 1.0f;
+
+    // Do not persist this setting
+    [JsonIgnore] public bool DebugMode = false;
 
     public static SystemConfig Load() 
         => Service.PluginInterface.LoadConfigFile("System.config.json", () => new SystemConfig());

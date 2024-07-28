@@ -28,6 +28,8 @@ public class MarkerInfo {
 }
 
 public static class DrawHelpers {
+    private static bool DebugMode => System.SystemConfig.DebugMode;
+    
     public static Vector2 GetMapOffsetVector() 
         => GetRawMapOffsetVector() * GetMapScaleFactor();
 
@@ -59,6 +61,11 @@ public static class DrawHelpers {
             // Leave all other icons as they were
             _ => markerInfo.IconId,
         };
+
+        if (DebugMode) {
+            markerInfo.SecondaryText = markerInfo.PrimaryText;
+            markerInfo.PrimaryText = () => $"[Debug] IconId: {markerInfo.IconId}";
+        }
 
         // If this is the first time we have seen this iconId, save it
         if (System.IconConfig.IconSettingMap.TryAdd(markerInfo.IconId, new IconSetting { IconId = markerInfo.IconId, })) {
@@ -104,13 +111,28 @@ public static class DrawHelpers {
         var iconScale = System.SystemConfig.IconScale;
 
         // Fixed scale not supported for map region markers
-        if (markerInfo.IconId is >= 63200 and < 63900) {
+        if (IsRegionIcon(markerInfo.IconId)) {
             scale = markerInfo.Scale;
             iconScale = 0.42f;
         }
         
         ImGui.SetCursorPos(markerInfo.Position + markerInfo.Offset - texture.Size * iconScale / 2.0f * scale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale);
-        ImGui.Image(texture.ImGuiHandle, texture.Size * scale * iconScale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale, Vector2.Zero, Vector2.One, System.IconConfig.IconSettingMap[markerInfo.IconId].Color);
+        var cursorScreenPos = ImGui.GetCursorScreenPos();
+        var iconSize = texture.Size * scale * iconScale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale;
+        
+        ImGui.Image(texture.ImGuiHandle, iconSize, Vector2.Zero, Vector2.One, System.IconConfig.IconSettingMap[markerInfo.IconId].Color);
+
+        if (DebugMode) {
+            ImGui.GetWindowDrawList().AddRect(cursorScreenPos + new Vector2(1.0f, 0.0f), cursorScreenPos + iconSize, ImGui.GetColorU32(KnownColor.White.Vector()), 3.0f);
+            ImGui.GetWindowDrawList().AddRect(cursorScreenPos + new Vector2(-1.0f, 0.0f), cursorScreenPos + iconSize, ImGui.GetColorU32(KnownColor.White.Vector()), 3.0f);
+            ImGui.GetWindowDrawList().AddRect(cursorScreenPos + new Vector2(0.0f, 1.0f), cursorScreenPos + iconSize, ImGui.GetColorU32(KnownColor.White.Vector()), 3.0f);
+            ImGui.GetWindowDrawList().AddRect(cursorScreenPos + new Vector2(0.0f, -1.0f), cursorScreenPos + iconSize, ImGui.GetColorU32(KnownColor.White.Vector()), 3.0f);
+            ImGui.GetWindowDrawList().AddRect(cursorScreenPos + new Vector2(1.0f, 0.0f), cursorScreenPos + iconSize + new Vector2(1.0f, 0.0f), ImGui.GetColorU32(KnownColor.White.Vector()), 3.0f);
+            ImGui.GetWindowDrawList().AddRect(cursorScreenPos + new Vector2(-1.0f, 0.0f), cursorScreenPos + iconSize + new Vector2(-1.0f, 0.0f), ImGui.GetColorU32(KnownColor.White.Vector()), 3.0f);
+            ImGui.GetWindowDrawList().AddRect(cursorScreenPos + new Vector2(0.0f, 1.0f), cursorScreenPos + iconSize + new Vector2(0.0f, 1.0f), ImGui.GetColorU32(KnownColor.White.Vector()), 3.0f);
+            ImGui.GetWindowDrawList().AddRect(cursorScreenPos + new Vector2(0.0f, -1.0f), cursorScreenPos + iconSize + new Vector2(0.0f, -1.0f), ImGui.GetColorU32(KnownColor.White.Vector()), 3.0f);
+            ImGui.GetWindowDrawList().AddRect(cursorScreenPos, cursorScreenPos + iconSize, ImGui.GetColorU32(KnownColor.Red.Vector()), 3.0f);
+        }
     }
     
     private static void ProcessInteractions(MarkerInfo markerInfo) {
@@ -126,7 +148,7 @@ public static class DrawHelpers {
     }
     
     private static void DrawTooltip(MarkerInfo markerInfo) {
-        if (System.IconConfig.IconSettingMap[markerInfo.IconId] is { AllowTooltip: false }) {
+        if (System.IconConfig.IconSettingMap[markerInfo.IconId] is { AllowTooltip: false } && !DebugMode) {
             return;
         }
         
@@ -163,9 +185,15 @@ public static class DrawHelpers {
 
     public static bool IsDisallowedIcon(uint iconId) 
         => iconId switch {
+            60091 => true,
+            _ when IsRegionIcon(iconId) => true,
+            _ => false,
+        };
+
+    public static bool IsRegionIcon(uint iconId)        
+        => iconId switch {
             >= 63200 and < 63900 => true,
             >= 62620 and < 62800 => true,
-            60091 => true,
             _ => false,
         };
 }
