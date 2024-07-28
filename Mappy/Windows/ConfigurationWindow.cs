@@ -253,22 +253,40 @@ public class PlayerOptionsTab : ITabItem {
         var configChanged = false;
         
         ImGuiHelpers.ScaledDummy(5.0f);
-        ImGui.Text("Draw Options");
+        ImGui.Text("Cone Options");
         ImGui.Separator();
         ImGuiHelpers.ScaledDummy(10.0f);
         using (ImRaii.PushIndent()) {
-            configChanged |= ImGui.Checkbox("Show Radar Radius", ref System.SystemConfig.ShowRadar);
             configChanged |= ImGui.Checkbox("Scale Player Cone", ref System.SystemConfig.ScalePlayerCone);
             
             ImGuiHelpers.ScaledDummy(5.0f);
             configChanged |= ImGui.DragFloat("Cone Size", ref System.SystemConfig.ConeSize, 0.25f);
-            
+        }
+        
+        ImGuiHelpers.ScaledDummy(5.0f);
+        ImGui.Text("Radar Options");
+        ImGui.Separator();
+        ImGuiHelpers.ScaledDummy(10.0f);
+        using (ImRaii.PushIndent()) {
+            configChanged |= ImGui.Checkbox("Show Radar Radius", ref System.SystemConfig.ShowRadar);
+
             ImGuiHelpers.ScaledDummy(5.0f);
             
             configChanged |= ImGuiTweaks.ColorEditWithDefault("Radar Area Color", ref System.SystemConfig.RadarColor, KnownColor.Gray.Vector() with { W = 0.10f });
             configChanged |= ImGuiTweaks.ColorEditWithDefault("Radar Outline Color", ref System.SystemConfig.RadarOutlineColor, KnownColor.Gray.Vector() with { W = 0.30f });
         }
         
+        ImGuiHelpers.ScaledDummy(5.0f);
+        ImGui.Text("Player Icon Options");
+        ImGui.Separator();
+        ImGuiHelpers.ScaledDummy(10.0f);
+        using (ImRaii.PushIndent()) {
+            configChanged |= ImGui.Checkbox("Show Player Icon", ref System.SystemConfig.ShowPlayerIcon);
+            
+            ImGuiHelpers.ScaledDummy(5.0f);
+            configChanged |= ImGui.DragFloat("Player Icon Size", ref System.SystemConfig.PlayerIconScale, 0.05f);
+        }
+
         if (configChanged) {
             System.SystemConfig.Save();
         }

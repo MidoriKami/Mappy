@@ -75,6 +75,8 @@ public class SystemConfig : CharacterConfiguration {
     public bool ZoomLocked = false;
     public bool ShowPlayers = true;
     public bool SetFlagOnFateClick = false;
+    public bool ShowPlayerIcon = true;
+    public float PlayerIconScale = 1.0f;
 
     public static SystemConfig Load() 
         => Service.PluginInterface.LoadConfigFile("System.config.json", () => new SystemConfig());

@@ -76,11 +76,15 @@ public partial class MapRenderer {
         => MathF.PI / 180.0f * degrees;
 
     private void DrawPlayerIcon(Vector2 position) {
+        if (!System.SystemConfig.ShowPlayerIcon) return;
         if (Service.ClientState is not { LocalPlayer: { } player }) return;
         
         var texture = Service.TextureProvider.GetFromGameIcon(60443).GetWrapOrEmpty();
         var angle = -player.Rotation + MathF.PI / 2.0f;
+
         var scale = System.SystemConfig.ScaleWithZoom ? Scale : 1.0f;
+        scale *= System.SystemConfig.PlayerIconScale;
+
         var vectors = GetRotationVectors(angle, position, texture.Size / 2.0f * scale);
     
         ImGui.GetWindowDrawList().AddImageQuad(texture.ImGuiHandle, vectors[0], vectors[1], vectors[2], vectors[3]);
