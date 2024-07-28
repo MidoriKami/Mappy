@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Game;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using FFXIVClientStructs.FFXIV.Client.Game.Group;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
+using Lumina.Excel.GeneratedSheets;
 using Mappy.Classes;
 using Mappy.Extensions;
 
@@ -42,6 +45,7 @@ public partial class MapRenderer {
                     ObjectKind.BattleNpc when obj.SubKind == (int) BattleNpcSubKind.Pet => 60961,
                     ObjectKind.Treasure when Vector3.Distance(obj.Position, player.Position) <= 50.0f => 60003,
                     ObjectKind.GatheringPoint => System.GatheringPointIconCache.GetValue(obj.DataId),
+                    ObjectKind.EventObj when IsAetherCurrent(obj) => 60653,
                     _ => 0,
                 },
 
@@ -73,8 +77,18 @@ public partial class MapRenderer {
             _ => obj.ObjectKind switch {
                 ObjectKind.GatheringPoint => System.GatheringPointNameCache.GetValue((obj.DataId, obj.Name.ToString())) ?? string.Empty,
                 ObjectKind.Treasure => obj.Name.ToString(),
+                ObjectKind.EventObj when IsAetherCurrent(obj) => obj.Name.ToString(),
                 _ => string.Empty,
             },
         };
+    }
+
+    private bool IsAetherCurrent(IGameObject gameObject) {
+        if (gameObject.ObjectKind is not ObjectKind.EventObj) return false;
+
+        var nameString = Service.DataManager.GetExcelSheet<EObjName>(ClientLanguage.English)!.GetRow(gameObject.DataId)?.Singular;
+        if (nameString is null) return false;
+
+        return string.Equals(nameString, "aether current", StringComparison.OrdinalIgnoreCase);
     }
 }
