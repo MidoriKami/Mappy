@@ -30,18 +30,33 @@ public class MarkerInfo {
 public static class DrawHelpers {
     private static bool DebugMode => System.SystemConfig.DebugMode;
     
+    /// <summary>
+    /// Offset Vector of SelectedX, SelectedY, scaled with SelectedSizeFactor
+    /// </summary>
     public static Vector2 GetMapOffsetVector() 
         => GetRawMapOffsetVector() * GetMapScaleFactor();
 
+    /// <summary>
+    /// Unscaled Vector of SelectedX, SelectedY
+    /// </summary>
     public static unsafe Vector2 GetRawMapOffsetVector() 
         => new(AgentMap.Instance()->SelectedOffsetX, AgentMap.Instance()->SelectedOffsetY);
     
+    /// <summary>
+    /// Selected Scale Factor
+    /// </summary>
     public static unsafe float GetMapScaleFactor()
         => AgentMap.Instance()->SelectedMapSizeFactorFloat;
 
+    /// <summary>
+    /// 1024 vector, center offset vector
+    /// </summary>
     public static Vector2 GetMapCenterOffsetVector() 
         => new(1024.0f, 1024.0f);
 
+    /// <summary>
+    /// Offset for the top left corner of the drawn map
+    /// </summary>
     public static Vector2 GetCombinedOffsetVector()
         => -GetMapOffsetVector() + GetMapCenterOffsetVector();
 
