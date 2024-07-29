@@ -67,7 +67,7 @@ public class FateListWindow : Window {
 
 					var timeRemaining = FateContextExtensions.GetTimeRemaining(fate);
 					if (timeRemaining != TimeSpan.Zero) {
-						var timeString = $"{SeIconChar.Clock.ToIconString()} {FateContextExtensions.GetTimeRemaining(fate):mm\\:ss}";
+						var timeString = $"{(fate->IsBonus ? "Exp Bonus!\t" : string.Empty)}{SeIconChar.Clock.ToIconString()} {FateContextExtensions.GetTimeRemaining(fate):mm\\:ss}";
 						ImGui.SameLine(ImGui.GetContentRegionMax().X - ImGui.CalcTextSize(timeString).X);
 						ImGui.Text(timeString);
 					}
