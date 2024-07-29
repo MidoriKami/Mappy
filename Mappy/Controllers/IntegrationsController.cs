@@ -153,8 +153,7 @@ public unsafe class IntegrationsController : IDisposable {
 		=> OpenMap(AgentMap.Instance()->CurrentMapId);
 
 	private static void CenterOnMarker(MapMarkerBase marker) {
-		var offsetVector = new Vector2(AgentMap.Instance()->SelectedOffsetX, AgentMap.Instance()->SelectedOffsetY) * AgentMap.Instance()->SelectedMapSizeFactorFloat;
-		var coordinates = new Vector2(marker.X, marker.Y) / 16.0f * AgentMap.Instance()->SelectedMapSizeFactorFloat - offsetVector;
+		var coordinates = new Vector2(marker.X, marker.Y) / 16.0f * DrawHelpers.GetMapScaleFactor() - DrawHelpers.GetMapOffsetVector();
 
 		System.MapWindow.ProcessingCommand = true;
 		System.MapRenderer.DrawOffset = -coordinates;

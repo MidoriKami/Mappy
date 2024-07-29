@@ -7,6 +7,7 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using KamiLib.Classes;
 using KamiLib.Window;
+using Mappy.Classes;
 using Map = FFXIVClientStructs.FFXIV.Client.Game.UI.Map;
 using Quest = Lumina.Excel.GeneratedSheets.Quest;
 
@@ -56,7 +57,7 @@ public unsafe class UnacceptedQuestsTabItem : ITabItem {
                         System.IntegrationsController.OpenMap(marker.MapId);
                         System.SystemConfig.FollowPlayer = false;
 
-                        var mapOffsetVector = new Vector2(AgentMap.Instance()->SelectedOffsetX, AgentMap.Instance()->SelectedOffsetY) * AgentMap.Instance()->SelectedMapSizeFactorFloat;
+                        var mapOffsetVector = DrawHelpers.GetMapOffsetVector();
                         System.MapRenderer.DrawOffset = -new Vector2(marker.X, marker.Z) * AgentMap.Instance()->SelectedMapSizeFactorFloat + mapOffsetVector;
                     }
 
