@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Game;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
@@ -11,7 +9,6 @@ using FFXIVClientStructs.FFXIV.Client.Game.Group;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
 using Mappy.Classes;
 using Mappy.Extensions;
 using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
