@@ -55,7 +55,9 @@ public unsafe class UnacceptedQuestsTabItem : ITabItem {
                     if (ImGui.Selectable($"##{quest.ObjectiveId}_Selectable_{marker.LevelId}", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, ElementHeight * ImGuiHelpers.GlobalScale))) {
                         System.IntegrationsController.OpenMap(marker.MapId);
                         System.SystemConfig.FollowPlayer = false;
-                        System.MapRenderer.DrawOffset = -new Vector2(marker.X, marker.Z) * AgentMap.Instance()->SelectedMapSizeFactorFloat;
+
+                        var mapOffsetVector = new Vector2(AgentMap.Instance()->SelectedOffsetX, AgentMap.Instance()->SelectedOffsetY) * AgentMap.Instance()->SelectedMapSizeFactorFloat;
+                        System.MapRenderer.DrawOffset = -new Vector2(marker.X, marker.Z) * AgentMap.Instance()->SelectedMapSizeFactorFloat + mapOffsetVector;
                     }
 
                     ImGui.SetCursorScreenPos(cursorStart);
