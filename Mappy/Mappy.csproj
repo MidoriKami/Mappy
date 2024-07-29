@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Dalamud.NET.Sdk/9.0.2">
     <PropertyGroup>
         <PackageProjectUrl>https://github.com/MidoriKami/Mappy.git</PackageProjectUrl>
-        <Version>3.0.1.2</Version>
+        <Version>3.0.1.3</Version>
     </PropertyGroup>
 
     <ItemGroup>
