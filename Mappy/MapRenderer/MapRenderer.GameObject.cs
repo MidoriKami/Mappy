@@ -65,12 +65,6 @@ public partial class MapRenderer {
     }
 
     private string GetTooltipForGameObject(IGameObject obj) {
-        if (Service.PluginInterface.TryGetData<Dictionary<ulong, string>>("PetRenamer.GameObjectRenameDict", out var dictionary)) {
-            if (dictionary.TryGetValue(obj.GameObjectId, out var newName)) {
-                return newName;
-            }
-        }
-        
         return obj switch {
             IBattleNpc { Level: > 0 } battleNpc => $"Lv. {battleNpc.Level} {battleNpc.Name}",
             IPlayerCharacter { Level: > 0 } playerCharacter => $"Lv. {playerCharacter.Level} {playerCharacter.Name}",
