@@ -3,8 +3,11 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Hooking;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.Game.Control;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiLib.Classes;
+using KamiLib.Extensions;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Classes;
 using MapType = FFXIVClientStructs.FFXIV.Client.UI.Agent.MapType;
@@ -62,6 +65,11 @@ public unsafe class IntegrationsController : IDisposable {
 	private void OnShowHook(AgentMap* agent, bool a1, bool a2)
 		=> HookSafety.ExecuteSafe(() => {
 			Service.Log.Debug("[OnShowHook] Hook Start");
+
+			if (!ShouldShowMap()) {
+				Service.Log.Debug("[OnShowHook] Condition to open map is rejected, aborting.");
+				return;
+			}
 			
 			if (AgentMap.Instance()->AddonId is not 0 && AgentMap.Instance()->CurrentMapId != AgentMap.Instance()->SelectedMapId) {
 				AgentMap.Instance()->Hide();
@@ -157,6 +165,26 @@ public unsafe class IntegrationsController : IDisposable {
 
 		System.MapWindow.ProcessingCommand = true;
 		System.MapRenderer.DrawOffset = -coordinates;
+	}
+
+	public static bool ShouldShowMap() {
+		if (Service.ClientState is { IsLoggedIn: false } or { IsPvP: true }) return false;
+		if (System.SystemConfig.HideInDuties && Service.Condition.IsBoundByDuty()) return false;
+		if (System.SystemConfig.HideInCombat && Service.Condition.IsInCombat()) return false;
+		if (System.SystemConfig.HideBetweenAreas && Service.Condition.IsBetweenAreas()) return false;
+		if (System.SystemConfig.HideWithGameGui && !IsNamePlateAddonVisible()) return false;
+		if (System.SystemConfig.HideWithGameGui && Control.Instance()->TargetSystem.TargetModeIndex is 1) return false;
+
+		return true;
+	}
+	
+	private static bool IsNamePlateAddonVisible() {
+		var addonNamePlate = (AddonNamePlate*) Service.GameGui.GetAddonByName("NamePlate");
+
+		if (addonNamePlate is null) return false;
+		if (!addonNamePlate->IsReady) return false;
+
+		return true;
 	}
 
 	private uint? GetMapIdForQuest(OpenMapInfo* mapInfo) {

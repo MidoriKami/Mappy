@@ -6,17 +6,15 @@ using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Utility;
-using FFXIVClientStructs.FFXIV.Client.Game.Control;
-using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using KamiLib.Classes;
 using KamiLib.CommandManager;
-using KamiLib.Extensions;
 using KamiLib.Window;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Classes;
+using Mappy.Controllers;
 using Mappy.Data;
 
 namespace Mappy.Windows;
@@ -38,25 +36,8 @@ public class MapWindow : Window {
         ShowCloseButton = false;
     }
 
-    public override unsafe bool DrawConditions() {
-        if (Service.ClientState is { IsLoggedIn: false } or { IsPvP: true }) return false;
-        if (System.SystemConfig.HideInDuties && Service.Condition.IsBoundByDuty()) return false;
-        if (System.SystemConfig.HideInCombat && Service.Condition.IsInCombat()) return false;
-        if (System.SystemConfig.HideBetweenAreas && Service.Condition.IsBetweenAreas()) return false;
-        if (System.SystemConfig.HideWithGameGui && !IsNamePlateAddonVisible()) return false;
-        if (System.SystemConfig.HideWithGameGui && Control.Instance()->TargetSystem.TargetModeIndex is 1) return false;
-
-        return true;
-    }
-
-    private unsafe bool IsNamePlateAddonVisible() {
-        var addonNamePlate = (AddonNamePlate*) Service.GameGui.GetAddonByName("NamePlate");
-
-        if (addonNamePlate is null) return false;
-        if (!addonNamePlate->IsReady) return false;
-
-        return true;
-    }
+    public override bool DrawConditions()
+        => IntegrationsController.ShouldShowMap();
 
     public override unsafe void PreOpenCheck() {
         IsOpen = AgentMap.Instance()->IsAgentActive();
