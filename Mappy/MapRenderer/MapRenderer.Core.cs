@@ -13,7 +13,13 @@ using Lumina.Data.Files;
 namespace Mappy.MapRenderer;
 
 public partial class MapRenderer {
-    public float Scale { get; set; } = 1.0f;
+    public float Scale {
+        get => System.SystemConfig.MapScale;
+        set {
+            System.SystemConfig.MapScale = value;
+            System.SystemConfig.Save();
+        }
+    }
     public Vector2 DrawOffset { get; set; }
     public Vector2 DrawPosition { get; private set; }
 

@@ -78,6 +78,7 @@ public class SystemConfig : CharacterConfiguration {
     public bool SetFlagOnFateClick = false;
     public bool ShowPlayerIcon = true;
     public float PlayerIconScale = 1.0f;
+    public float MapScale = 1.0f;
 
     // Do not persist this setting
     [JsonIgnore] public bool DebugMode = false;
