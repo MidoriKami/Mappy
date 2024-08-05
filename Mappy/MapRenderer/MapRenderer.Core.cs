@@ -17,7 +17,6 @@ public partial class MapRenderer {
         get => System.SystemConfig.MapScale;
         set {
             System.SystemConfig.MapScale = value;
-            System.SystemConfig.Save();
         }
     }
     public Vector2 DrawOffset { get; set; }
