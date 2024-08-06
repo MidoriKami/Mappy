@@ -15,10 +15,9 @@ namespace Mappy.MapRenderer;
 public partial class MapRenderer {
     public float Scale {
         get => System.SystemConfig.MapScale;
-        set {
-            System.SystemConfig.MapScale = value;
-        }
+        set => System.SystemConfig.MapScale = value;
     }
+
     public Vector2 DrawOffset { get; set; }
     public Vector2 DrawPosition { get; private set; }
 

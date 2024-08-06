@@ -419,6 +419,8 @@ public class MapWindow : Window {
     
     public override void OnClose() {
         UnYeetVanillaMap();
+        
+        System.SystemConfig.Save();
     }
 
     private static void ProcessMouseScroll() {
