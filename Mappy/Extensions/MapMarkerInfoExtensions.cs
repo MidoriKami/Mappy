@@ -45,12 +45,8 @@ public static class MapMarkerInfoExtensions {
     }
 
     // Might want to cache these in the future, they are kinda expensive.
-    private static Aetheryte? GetAetheryteForAethernet(uint aethernetKey) {
-        if (Service.DataManager.GetExcelSheet<Aetheryte>()!.FirstOrDefault(aetheryte => aetheryte.AethernetName.Row == aethernetKey) is not { AethernetGroup: var aethernetGroup }) return null;
-        if (Service.DataManager.GetExcelSheet<Aetheryte>()!.FirstOrDefault(aetheryte => aetheryte.IsAetheryte && aetheryte.AethernetGroup == aethernetGroup) is not { } targetAetheryte) return null;
-
-        return targetAetheryte;
-    }
+    private static Aetheryte? GetAetheryteForAethernet(uint aethernetKey)
+        => System.AetheryteAethernetCache.GetValue(aethernetKey);
 
     // Might want to cache these in the future, they are kinda expensive.
     private static string GetAetheryteTeleportCost(uint targetDataKey) 
