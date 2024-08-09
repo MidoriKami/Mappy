@@ -24,6 +24,7 @@ public class FateModule : ModuleBase {
 
                     if (timeRemaining.TotalSeconds <= 300) {
                         markerInfo.RadiusColor = fate.GetColor();
+                        markerInfo.RadiusOutlineColor = fate.GetColor();
                     }
                 }
                 else {

@@ -15,6 +15,7 @@ public static class MapMarkerDataExtensions {
             IconId = marker.IconId,
             Radius = marker.Radius,
             RadiusColor = System.SystemConfig.AreaColor,
+            RadiusOutlineColor = System.SystemConfig.AreaOutlineColor,
             PrimaryText = () => marker.RecommendedLevel is 0 ? marker.TooltipString->ToString() : $"Lv. {marker.RecommendedLevel} {marker.TooltipString->ToString()}",
             IsDynamicMarker = true,
             ObjectiveId = marker.ObjectiveId,
