@@ -22,6 +22,7 @@ public class MarkerInfo {
     public Func<string?>? SecondaryText { get; set; }
     public float? Radius { get; set; }
     public Vector4 RadiusColor { get; set; } = KnownColor.CornflowerBlue.Vector();
+    public Vector4 RadiusOutlineColor { get; set; } = KnownColor.CornflowerBlue.Vector();
     public Action? OnRightClicked { get; set; }
     public Action? OnLeftClicked { get; set; }
     public bool IsDynamicMarker { get; init; }
@@ -112,8 +113,8 @@ public static class DrawHelpers {
         
         var center = markerInfo.Position + markerInfo.Offset + ImGui.GetWindowPos();
         var radius = markerRadius * markerInfo.Scale * AgentMap.Instance()->CurrentMapSizeFactorFloat;
-        var fillColor = ImGui.GetColorU32(markerInfo.RadiusColor with { W = System.SystemConfig.AreaTransparency });
-        var radiusColor =  ImGui.GetColorU32(markerInfo.RadiusColor);
+        var fillColor = ImGui.GetColorU32(markerInfo.RadiusColor with { W = System.SystemConfig.AreaColor.W });
+        var radiusColor = ImGui.GetColorU32(markerInfo.RadiusOutlineColor with { W = System.SystemConfig.AreaOutlineColor.W });
             
         ImGui.GetWindowDrawList().AddCircleFilled(center, radius, fillColor);
         ImGui.GetWindowDrawList().AddCircle(center, radius, radiusColor, 0, 3.0f);

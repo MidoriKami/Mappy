@@ -232,9 +232,10 @@ public class StyleOptionsTab : ITabItem {
         ImGui.Text("Area Style");
         ImGui.Separator();
         ImGuiHelpers.ScaledDummy(10.0f);
-        using (ImRaii.PushIndent()) {
-            configChanged |= ImGuiTweaks.ColorEditWithDefault("Area Color", ref System.SystemConfig.AreaColor, KnownColor.CornflowerBlue.Vector());
-            configChanged |= ImGui.DragFloat("Area Transparency", ref System.SystemConfig.AreaTransparency, 0.001f, 0.0f, 1.0f);
+        using (ImRaii.PushIndent())
+        {
+            configChanged |= ImGuiTweaks.ColorEditWithDefault("Area Color", ref System.SystemConfig.AreaColor, KnownColor.CornflowerBlue.Vector() with { W = 0.33f });
+            configChanged |= ImGuiTweaks.ColorEditWithDefault("Area Outline Color", ref System.SystemConfig.AreaOutlineColor, KnownColor.CornflowerBlue.Vector() with { W = 0.30f });
         }
 
         if (configChanged) {
@@ -262,9 +263,13 @@ public class PlayerOptionsTab : ITabItem {
         ImGuiHelpers.ScaledDummy(10.0f);
         using (ImRaii.PushIndent()) {
             configChanged |= ImGui.Checkbox("Scale Player Cone", ref System.SystemConfig.ScalePlayerCone);
-            
+
             ImGuiHelpers.ScaledDummy(5.0f);
             configChanged |= ImGui.DragFloat("Cone Size", ref System.SystemConfig.ConeSize, 0.25f);
+
+            ImGuiHelpers.ScaledDummy(5.0f);
+            configChanged |= ImGuiTweaks.ColorEditWithDefault("Cone Color", ref System.SystemConfig.PlayerConeColor, KnownColor.CornflowerBlue.Vector() with { W = 0.33f });
+            configChanged |= ImGuiTweaks.ColorEditWithDefault("Cone Outline Color", ref System.SystemConfig.PlayerConeOutlineColor, KnownColor.CornflowerBlue.Vector() with { W = 1.00f });
         }
         
         ImGuiHelpers.ScaledDummy(5.0f);

@@ -63,7 +63,10 @@ public class SystemConfig : CharacterConfiguration {
     public bool ShowToolbarOnHover = true;
     public bool ScaleWithZoom = true;
     public bool AcceptedSpoilerWarning = false;
-    public Vector4 AreaColor = KnownColor.CornflowerBlue.Vector();
+    public Vector4 AreaColor = KnownColor.CornflowerBlue.Vector() with { W = 0.33f };
+    public Vector4 AreaOutlineColor = KnownColor.CornflowerBlue.Vector() with { W = 0.30f };
+    public Vector4 PlayerConeColor = KnownColor.CornflowerBlue.Vector() with { W = 0.33f };
+    public Vector4 PlayerConeOutlineColor = KnownColor.CornflowerBlue.Vector() with { W = 1.0f };
     public float AreaTransparency = 0.33f;
     public bool CenterOnFlag = true;
     public bool CenterOnGathering = true;

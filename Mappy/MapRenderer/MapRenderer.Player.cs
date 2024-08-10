@@ -41,22 +41,25 @@ public partial class MapRenderer {
 
     private void DrawAngledLineFromCenter(Vector2 center, float lineLength, float angle) {
         var lineSegment = new Vector2(lineLength * MathF.Cos(angle), lineLength * MathF.Sin(angle));
-        ImGui.GetWindowDrawList().AddLine(center, center + lineSegment, ImGui.GetColorU32(KnownColor.CornflowerBlue.Vector()), 3.0f);
+        var coneOutlineColor = ImGui.GetColorU32(System.SystemConfig.PlayerConeOutlineColor);
+        ImGui.GetWindowDrawList().AddLine(center, center + lineSegment, coneOutlineColor, 3.0f);
     }
 
     private void DrawLineArcFromCenter(Vector2 center, float distance, float rotation) {
         var halfConeAngle = DegreesToRadians(90.0f) / 2.0f;
-        
+        var coneOutlineColor = ImGui.GetColorU32(System.SystemConfig.PlayerConeOutlineColor);
+
         var start = rotation - halfConeAngle;
         var stop = rotation + halfConeAngle;
         
         ImGui.GetWindowDrawList().PathArcTo(center, distance, start, stop);
-        ImGui.GetWindowDrawList().PathStroke(ImGui.GetColorU32(KnownColor.CornflowerBlue.Vector()), ImDrawFlags.None, 3.0f);
+        ImGui.GetWindowDrawList().PathStroke(coneOutlineColor, ImDrawFlags.None, 3.0f);
     }
 
     private void DrawFilledSemiCircle(Vector2 center, float distance, float rotation) {
         var halfConeAngle = DegreesToRadians(90.0f) / 2.0f;
         
+        var coneColor = ImGui.GetColorU32(System.SystemConfig.PlayerConeColor);
         var startAngle = rotation - halfConeAngle;
         var stopAngle = rotation + halfConeAngle;
         
@@ -65,7 +68,7 @@ public partial class MapRenderer {
         ImGui.GetWindowDrawList().PathArcTo(center, distance, startAngle, stopAngle);
         ImGui.GetWindowDrawList().PathLineTo(center);
         ImGui.GetWindowDrawList().PathLineTo(center + startPosition);
-        ImGui.GetWindowDrawList().PathFillConvex(ImGui.GetColorU32(KnownColor.CornflowerBlue.Vector() with { W = 0.33f }));
+        ImGui.GetWindowDrawList().PathFillConvex(coneColor);
     }
     
     // NumberArrayData[24] is specifically for the Map, subIndex 3 contains the current rotation, but square rotated it 90 degrees for some reason.
