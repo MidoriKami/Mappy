@@ -6,11 +6,13 @@ using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using KamiLib.Classes;
 using KamiLib.CommandManager;
+using KamiLib.Extensions;
 using KamiLib.Window;
 using Lumina.Excel.GeneratedSheets;
 using Mappy.Classes;
@@ -473,7 +475,7 @@ public class MapWindow : Window {
            System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenUnFocused) && !IsFocused;
 
     private unsafe void YeetVanillaMap() {
-        var addon = (AtkUnitBase*)Service.GameGui.GetAddonByName("AreaMap");
+        var addon = Service.GameGui.GetAddonByName<AddonAreaMap>("AreaMap");
         if (addon is null || addon->RootNode is null) return;
         
         addon->RootNode->SetPositionFloat(-9001.0f, -9001.0f);
@@ -481,7 +483,7 @@ public class MapWindow : Window {
     }
     
     private unsafe void UnYeetVanillaMap() {
-        var addon = (AtkUnitBase*)Service.GameGui.GetAddonByName("AreaMap");
+        var addon = Service.GameGui.GetAddonByName<AddonAreaMap>("AreaMap");
         if (addon is null || addon->RootNode is null) return;
         
         AgentMap.Instance()->Hide();
