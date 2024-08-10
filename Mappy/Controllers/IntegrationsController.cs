@@ -106,22 +106,22 @@ public unsafe class IntegrationsController : IDisposable {
 				case MapType.QuestLog: {
 					Service.Log.Debug("[OpenMap] Processing QuestLog Event");
 
-					uint targetMapId = mapInfo->MapId;
+					var targetMapId = mapInfo->MapId;
 
-					if (GetMapIdForQuest(mapInfo) is {} foundMapId) {
-							Service.Log.Debug($"[OpenMapHook] GetMapIdForQuest identified Quest Target Map as MapId: {foundMapId}");
-							if(targetMapId == 0) {
-								Service.Log.Debug($"[OpenMapHook] targetMapId was {targetMapId} using foundMapId: {foundMapId}");
-								targetMapId = foundMapId;
-							}
-					} else {
-							Service.Log.Debug($"[OpenMapHook] Using given MapId: {targetMapId}");
+					if (GetMapIdForQuest(mapInfo) is { } foundMapId) {
+						Service.Log.Debug($"[OpenMap] GetMapIdForQuest identified Quest Target Map as MapId: {foundMapId}");
+
+						if (targetMapId is 0) {
+							Service.Log.Debug($"[OpenMap] targetMapId was {targetMapId} using foundMapId: {foundMapId}");
+							targetMapId = foundMapId;
+						}
 					}
 
 					if (agent->SelectedMapId != targetMapId) {
-						OpenMap(targetMapId);
 						Service.Log.Debug($"[OpenMap] Opening MapId: {targetMapId}");
-					} else {
+						OpenMap(targetMapId);
+					}
+					else {
 						Service.Log.Debug($"[OpenMap] Already in MapId: {targetMapId}, aborting.");
 					}
 
