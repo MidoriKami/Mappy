@@ -163,7 +163,7 @@ public static class DrawHelpers {
         }
     }
     
-    private static void DrawTooltip(MarkerInfo markerInfo) {
+    private static unsafe void DrawTooltip(MarkerInfo markerInfo) {
         if (System.IconConfig.IconSettingMap[markerInfo.IconId] is { AllowTooltip: false } && !DebugMode) {
             return;
         }
@@ -172,7 +172,7 @@ public static class DrawHelpers {
 
         if (markerInfo is { Radius: { } sameRadius and > 1.0f }) {
             var center = markerInfo.Position + markerInfo.Offset + ImGui.GetWindowPos();
-            var radius = sameRadius * markerInfo.Scale;
+            var radius = sameRadius * markerInfo.Scale * AgentMap.Instance()->CurrentMapSizeFactorFloat;;
 
             if (Vector2.Distance(ImGui.GetMousePos() - System.MapWindow.MapDrawOffset + ImGui.GetWindowPos(), center) <= radius && System.MapWindow.IsMapHovered) {
                 isActivatedViaRadius = true;
