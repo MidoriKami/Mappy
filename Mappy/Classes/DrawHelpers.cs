@@ -112,7 +112,7 @@ public static class DrawHelpers {
         if (markerInfo is not { Radius: { } markerRadius and > 1.0f }) return;
         
         var center = markerInfo.Position + markerInfo.Offset + ImGui.GetWindowPos();
-        var radius = markerRadius * markerInfo.Scale * AgentMap.Instance()->CurrentMapSizeFactorFloat;
+        var radius = markerRadius * markerInfo.Scale * AgentMap.Instance()->SelectedMapSizeFactorFloat;
         var fillColor = ImGui.GetColorU32(markerInfo.RadiusColor with { W = System.SystemConfig.AreaColor.W });
         var radiusColor = ImGui.GetColorU32(markerInfo.RadiusOutlineColor with { W = System.SystemConfig.AreaOutlineColor.W });
             
@@ -172,7 +172,7 @@ public static class DrawHelpers {
 
         if (markerInfo is { Radius: { } sameRadius and > 1.0f }) {
             var center = markerInfo.Position + markerInfo.Offset + ImGui.GetWindowPos();
-            var radius = sameRadius * markerInfo.Scale * AgentMap.Instance()->CurrentMapSizeFactorFloat;;
+            var radius = sameRadius * markerInfo.Scale * AgentMap.Instance()->SelectedMapSizeFactorFloat;
 
             if (Vector2.Distance(ImGui.GetMousePos() - System.MapWindow.MapDrawOffset + ImGui.GetWindowPos(), center) <= radius && System.MapWindow.IsMapHovered) {
                 isActivatedViaRadius = true;
