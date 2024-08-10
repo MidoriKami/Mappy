@@ -140,14 +140,12 @@ public static class DrawHelpers {
         ImGui.Image(texture.ImGuiHandle, iconSize, Vector2.Zero, Vector2.One, System.IconConfig.IconSettingMap[markerInfo.IconId].Color);
 
         if (DebugMode) {
-            ImGui.GetWindowDrawList().AddRect(cursorScreenPos + new Vector2(1.0f, 0.0f), cursorScreenPos + iconSize, ImGui.GetColorU32(KnownColor.White.Vector()), 3.0f);
-            ImGui.GetWindowDrawList().AddRect(cursorScreenPos + new Vector2(-1.0f, 0.0f), cursorScreenPos + iconSize, ImGui.GetColorU32(KnownColor.White.Vector()), 3.0f);
-            ImGui.GetWindowDrawList().AddRect(cursorScreenPos + new Vector2(0.0f, 1.0f), cursorScreenPos + iconSize, ImGui.GetColorU32(KnownColor.White.Vector()), 3.0f);
-            ImGui.GetWindowDrawList().AddRect(cursorScreenPos + new Vector2(0.0f, -1.0f), cursorScreenPos + iconSize, ImGui.GetColorU32(KnownColor.White.Vector()), 3.0f);
-            ImGui.GetWindowDrawList().AddRect(cursorScreenPos + new Vector2(1.0f, 0.0f), cursorScreenPos + iconSize + new Vector2(1.0f, 0.0f), ImGui.GetColorU32(KnownColor.White.Vector()), 3.0f);
-            ImGui.GetWindowDrawList().AddRect(cursorScreenPos + new Vector2(-1.0f, 0.0f), cursorScreenPos + iconSize + new Vector2(-1.0f, 0.0f), ImGui.GetColorU32(KnownColor.White.Vector()), 3.0f);
-            ImGui.GetWindowDrawList().AddRect(cursorScreenPos + new Vector2(0.0f, 1.0f), cursorScreenPos + iconSize + new Vector2(0.0f, 1.0f), ImGui.GetColorU32(KnownColor.White.Vector()), 3.0f);
-            ImGui.GetWindowDrawList().AddRect(cursorScreenPos + new Vector2(0.0f, -1.0f), cursorScreenPos + iconSize + new Vector2(0.0f, -1.0f), ImGui.GetColorU32(KnownColor.White.Vector()), 3.0f);
+            foreach (var x in Enumerable.Range(-1, 3)) {
+                foreach (var y in Enumerable.Range(-1, 3)) {
+                    ImGui.GetWindowDrawList().AddRect(cursorScreenPos + new Vector2(x, y), cursorScreenPos + iconSize, ImGui.GetColorU32(KnownColor.White.Vector()), 3.0f);
+                }
+            }
+
             ImGui.GetWindowDrawList().AddRect(cursorScreenPos, cursorScreenPos + iconSize, ImGui.GetColorU32(KnownColor.Red.Vector()), 3.0f);
         }
     }
