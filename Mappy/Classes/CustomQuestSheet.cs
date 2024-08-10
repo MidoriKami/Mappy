@@ -17,7 +17,7 @@ public class CustomQuestSheet : Quest {
             
         for (var i = 0; i < 24; i++) {
             for (var j = 0; j < 8; j++) {
-                ToDoLocation[i, j] = new LazyRow< Level >(gameData, parser.ReadColumn< uint >( 1221 + (j * 24) + i ), language);
+                ToDoLocation[i, j] = new LazyRow< Level >(gameData, parser.ReadColumn< uint >( 1222 + (j * 24) + i ), language);
             }
         }
     }

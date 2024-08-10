@@ -106,25 +106,31 @@ public unsafe class IntegrationsController : IDisposable {
 				case MapType.QuestLog: {
 					Service.Log.Debug("[OpenMapHook] Processing QuestLog Event");
 
-					if (GetMapIdForQuest(mapInfo) is {} targetMapId ) {
-						
-						Service.Log.Debug($"[OpenMapHook] Identified Quest Target Map as MapId: {targetMapId}");
+					uint targetMapId = mapInfo->MapId;
 
-						if (agent->SelectedMapId != targetMapId) {
-							OpenMap(targetMapId);
-							Service.Log.Debug($"[OpenMapHook] Opening MapId: {targetMapId}");
-						}
-						else {
-							Service.Log.Debug($"[OpenMapHook] Already in MapId: {targetMapId}, aborting.");
-						}
+					if (GetMapIdForQuest(mapInfo) is {} foundMapId) {
+							Service.Log.Debug($"[OpenMapHook] GetMapIdForQuest identified Quest Target Map as MapId: {foundMapId}");
+							if(targetMapId == 0) {
+								Service.Log.Debug($"[OpenMapHook] targetMapId was {targetMapId} using foundMapId: {foundMapId}");
+								targetMapId = foundMapId;
+							}
+					} else {
+							Service.Log.Debug($"[OpenMapHook] Using given MapId: {targetMapId}");
+					}
+
+					if (agent->SelectedMapId != targetMapId) {
+						OpenMap(targetMapId);
+						Service.Log.Debug($"[OpenMapHook] Opening MapId: {targetMapId}");
+					} else {
+						Service.Log.Debug($"[OpenMapHook] Already in MapId: {targetMapId}, aborting.");
 					}
 
 					if (System.SystemConfig.CenterOnQuest) {
 						ref var targetMarker = ref agent->TempMapMarkers[0].MapMarker;
-						
 						CenterOnMarker(targetMarker);
 						Service.Log.Debug($"[OpenMapHook] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
 					}
+
 					break;
 				}
 
@@ -189,7 +195,7 @@ public unsafe class IntegrationsController : IDisposable {
 
 	private uint? GetMapIdForQuest(OpenMapInfo* mapInfo) {
 		foreach (var leveQuest in QuestManager.Instance()->LeveQuests) {
-			if (leveQuest.IsHidden || leveQuest.LeveId is 0) continue;
+			if (leveQuest.LeveId is 0) continue;
 
 			var leveData = Service.DataManager.GetExcelSheet<Leve>()?.GetRow(leveQuest.LeveId)!;
 			if (!IsNameMatch(leveData.Name, mapInfo)) continue;
@@ -198,7 +204,7 @@ public unsafe class IntegrationsController : IDisposable {
 		}
 		
 		foreach (var quest in QuestManager.Instance()->NormalQuests) {
-			if (quest.IsHidden || quest.QuestId is 0) continue;
+			if (quest.QuestId is 0) continue;
 			
 			// Is this the quest we are looking for?
 			var questData = Service.DataManager.GetExcelSheet<CustomQuestSheet>()?.GetRow(quest.QuestId + 65536u)!;
