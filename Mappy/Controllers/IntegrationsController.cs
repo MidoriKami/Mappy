@@ -169,8 +169,13 @@ public unsafe class IntegrationsController : IDisposable {
 	private static void CenterOnMarker(MapMarkerBase marker) {
 		var coordinates = new Vector2(marker.X, marker.Y) / 16.0f * DrawHelpers.GetMapScaleFactor() - DrawHelpers.GetMapOffsetVector();
 
-		System.MapWindow.ProcessingCommand = true;
+		System.SystemConfig.FollowPlayer = false;
 		System.MapRenderer.DrawOffset = -coordinates;
+
+		// If the map isn't open, we want to force it to not center on whatever the user decided and center on our markers instead.
+		if (!System.MapWindow.IsOpen) {
+			System.MapWindow.ProcessingCommand = true;
+		}
 	}
 
 	public static bool ShouldShowMap() {
