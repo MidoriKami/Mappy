@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Drawing;
 using System.Numerics;
-using Dalamud.Interface;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using Mappy.Classes;
 using Mappy.Extensions;
@@ -73,7 +71,7 @@ public partial class MapRenderer {
     
     // NumberArrayData[24] is specifically for the Map, subIndex 3 contains the current rotation, but square rotated it 90 degrees for some reason.
     private unsafe float GetCameraRotation() 
-        => -DegreesToRadians(AtkStage.Instance()->GetNumberArrayData()[24]->IntArray[3]) - 0.5f * MathF.PI;
+        => -DegreesToRadians(AddonAreaMap.AddonAreaMapNumberArray.Instance()->ConeRotation) - 0.5f * MathF.PI;
 
     private float DegreesToRadians(float degrees) 
         => MathF.PI / 180.0f * degrees;
