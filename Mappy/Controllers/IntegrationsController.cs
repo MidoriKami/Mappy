@@ -189,14 +189,8 @@ public unsafe class IntegrationsController : IDisposable {
 		return true;
 	}
 	
-	private static bool IsNamePlateAddonVisible() {
-		var addonNamePlate = (AddonNamePlate*) Service.GameGui.GetAddonByName("NamePlate");
-
-		if (addonNamePlate is null) return false;
-		if (!addonNamePlate->IsReady) return false;
-
-		return true;
-	}
+	private static bool IsNamePlateAddonVisible()
+		=> !RaptureAtkUnitManager.Instance()->UiFlags.HasFlag(UIModule.UiFlags.Nameplates);
 
 	private uint? GetMapIdForQuest(OpenMapInfo* mapInfo) {
 		foreach (var leveQuest in QuestManager.Instance()->LeveQuests) {
