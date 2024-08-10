@@ -64,33 +64,33 @@ public unsafe class IntegrationsController : IDisposable {
 
 	private void OnShowHook(AgentMap* agent, bool a1, bool a2)
 		=> HookSafety.ExecuteSafe(() => {
-			Service.Log.Debug("[OnShowHook] Hook Start");
+			Service.Log.Debug("[OnShow] Beginning Show");
 
 			if (!ShouldShowMap()) {
-				Service.Log.Debug("[OnShowHook] Condition to open map is rejected, aborting.");
+				Service.Log.Debug("[OnShow] Condition to open map is rejected, aborting.");
 				return;
 			}
 			
 			if (AgentMap.Instance()->AddonId is not 0 && AgentMap.Instance()->CurrentMapId != AgentMap.Instance()->SelectedMapId) {
 				AgentMap.Instance()->Hide();
-				Service.Log.Debug("[OnShowHook] Vanilla tried to return to current map, aborted.");
+				Service.Log.Debug("[OnShow] Vanilla tried to return to current map, aborted.");
 				return;
 			}
 
 			showMapHook!.Original(agent, a1, a2);
-			Service.Log.Verbose($"[OnShowHook] Called Original with A1 = {a1}, A2 = {a2}");
+			Service.Log.Debug($"[OnShow] Called Original with A1 = {a1}, A2 = {a2}");
 		}, Service.Log, "Exception during OnShowHook");
 
 	private void OpenMapById(AgentMap* agent, uint mapId, uint a3, bool a4) 
 		=> HookSafety.ExecuteSafe(() => {
 			openMapByIdHook!.Original(agent, mapId, a3, a4);
-			Service.Log.Debug($"[OpenMapByIdHook] Called Original with MapId = {mapId}, A3 = {a3}, A4 = {a4}");
+			Service.Log.Debug($"[OpenMapById] Called Original with MapId = {mapId}, A3 = {a3}, A4 = {a4}");
 		}, Service.Log, "Exception during OpenMapByMapId");
     
 	private void OpenMap(AgentMap* agent, OpenMapInfo* mapInfo) 
 		=> HookSafety.ExecuteSafe(() => {
 			openMapHook!.Original(agent, mapInfo);
-			Service.Log.Debug($"[OpenMapHook] Called Original with MapInfo [ " +
+			Service.Log.Debug($"[OpenMap] Called Original with MapInfo [ " +
 			                    $"MapId: {mapInfo->MapId}, " +
 			                    $"MapType: {mapInfo->Type}, " +
 			                    $"Title: {mapInfo->TitleString.ToString()}, " +
@@ -104,7 +104,7 @@ public unsafe class IntegrationsController : IDisposable {
 
 			switch (mapInfo->Type) {
 				case MapType.QuestLog: {
-					Service.Log.Debug("[OpenMapHook] Processing QuestLog Event");
+					Service.Log.Debug("[OpenMap] Processing QuestLog Event");
 
 					uint targetMapId = mapInfo->MapId;
 
@@ -120,40 +120,40 @@ public unsafe class IntegrationsController : IDisposable {
 
 					if (agent->SelectedMapId != targetMapId) {
 						OpenMap(targetMapId);
-						Service.Log.Debug($"[OpenMapHook] Opening MapId: {targetMapId}");
+						Service.Log.Debug($"[OpenMap] Opening MapId: {targetMapId}");
 					} else {
-						Service.Log.Debug($"[OpenMapHook] Already in MapId: {targetMapId}, aborting.");
+						Service.Log.Debug($"[OpenMap] Already in MapId: {targetMapId}, aborting.");
 					}
 
 					if (System.SystemConfig.CenterOnQuest) {
 						ref var targetMarker = ref agent->TempMapMarkers[0].MapMarker;
 						CenterOnMarker(targetMarker);
-						Service.Log.Debug($"[OpenMapHook] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
+						Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
 					}
 
 					break;
 				}
 
 				case MapType.GatheringLog: {
-					Service.Log.Debug("[OpenMapHook] Processing GatheringLog Event");
+					Service.Log.Debug("[OpenMap] Processing GatheringLog Event");
 					
 					if (System.SystemConfig.CenterOnGathering) {
 						ref var targetMarker = ref agent->TempMapMarkers[0].MapMarker;
 						
 						CenterOnMarker(targetMarker);
-						Service.Log.Debug($"[OpenMapHook] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
+						Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
 					}
 					break;
 				}
 
 				case MapType.FlagMarker: {
-					Service.Log.Debug("[OpenMapHook] Processing FlagMarker Event");
+					Service.Log.Debug("[OpenMap] Processing FlagMarker Event");
 					
 					if (System.SystemConfig.CenterOnFlag) {
 						ref var targetMarker = ref agent->FlagMapMarker.MapMarker;
 						
 						CenterOnMarker(targetMarker);
-						Service.Log.Debug($"[OpenMapHook] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
+						Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
 					}
 					break;
 				}
