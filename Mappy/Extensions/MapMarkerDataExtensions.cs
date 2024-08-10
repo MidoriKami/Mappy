@@ -22,4 +22,20 @@ public static class MapMarkerDataExtensions {
             LevelId = marker.LevelId,
         });
     }
+
+    public static unsafe void DrawText(this MapMarkerData marker, string text, Vector2 offset, float scale) {
+        DrawHelpers.DrawText(new MarkerInfo {
+            Position = (new Vector2(marker.X, marker.Z) * DrawHelpers.GetMapScaleFactor() - DrawHelpers.GetMapOffsetVector() + DrawHelpers.GetMapCenterOffsetVector()) * scale,
+            Offset = offset,
+            Scale = scale,
+            IconId = marker.IconId,
+            Radius = marker.Radius,
+            RadiusColor = System.SystemConfig.AreaColor,
+            RadiusOutlineColor = System.SystemConfig.AreaOutlineColor,
+            PrimaryText = () => marker.RecommendedLevel is 0 ? marker.TooltipString->ToString() : $"Lv. {marker.RecommendedLevel} {marker.TooltipString->ToString()}",
+            IsDynamicMarker = true,
+            ObjectiveId = marker.ObjectiveId,
+            LevelId = marker.LevelId,
+        }, text);
+    }
 }

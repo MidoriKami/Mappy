@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Mappy.Extensions;
 
@@ -6,6 +7,9 @@ namespace Mappy.MapRenderer;
 
 public partial class MapRenderer {
     private unsafe void DrawDynamicMarkers() {
+        // Skip drawing dynamic markers if we are in a housing district, we need to process those a little different.
+        if (HousingManager.Instance()->CurrentTerritory is not null) return;
+        
         for (var index = 0; index < AgentMap.Instance()->EventMarkers.Count; ++index) {
             var marker = AgentMap.Instance()->EventMarkers[index];
             if (marker.IconId is 0) continue;

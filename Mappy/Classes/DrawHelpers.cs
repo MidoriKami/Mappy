@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
@@ -149,6 +150,25 @@ public static class DrawHelpers {
             ImGui.GetWindowDrawList().AddRect(cursorScreenPos + new Vector2(0.0f, -1.0f), cursorScreenPos + iconSize + new Vector2(0.0f, -1.0f), ImGui.GetColorU32(KnownColor.White.Vector()), 3.0f);
             ImGui.GetWindowDrawList().AddRect(cursorScreenPos, cursorScreenPos + iconSize, ImGui.GetColorU32(KnownColor.Red.Vector()), 3.0f);
         }
+    }
+    
+    public static void DrawText(MarkerInfo markerInfo, string text) {
+        // Don't draw markers that are positioned off the map texture
+        if (markerInfo.Position.X < 0.0f || markerInfo.Position.X > 2048.0f * markerInfo.Scale || markerInfo.Position.Y < 0.0f || markerInfo.Position.Y > 2048.0f * markerInfo.Scale) return;
+
+        var drawPosition = markerInfo.Position + markerInfo.Offset + new Vector2(8.0f, 8.0f) * markerInfo.Scale + ImGui.GetWindowPos();
+        var textColor = ImGui.GetColorU32(KnownColor.Black.Vector());
+        var outlineColor = ImGui.GetColorU32(KnownColor.White.Vector());
+
+        drawPosition = new Vector2(MathF.Round(drawPosition.X), MathF.Round(drawPosition.Y));
+        
+        foreach (var x in Enumerable.Range(-1, 3)) {
+            foreach (var y in Enumerable.Range(-1, 3)) {
+                ImGui.GetWindowDrawList().AddText(UiBuilder.DefaultFont, 14 * markerInfo.Scale, drawPosition + new Vector2(x, y), outlineColor, text);
+            }
+        }
+        
+        ImGui.GetWindowDrawList().AddText(UiBuilder.DefaultFont, 14 * markerInfo.Scale, drawPosition, textColor, text);
     }
     
     private static void ProcessInteractions(MarkerInfo markerInfo) {

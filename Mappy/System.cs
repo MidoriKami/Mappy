@@ -22,7 +22,6 @@ public static class System {
     public static CommandManager CommandManager { get; set; }
 
     public static List<ModuleBase> Modules { get; set; } = [
-        new HousingModule(),
         new TripleTriadModule(),
         new FateModule(),
     ];
