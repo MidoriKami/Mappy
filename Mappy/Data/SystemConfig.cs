@@ -82,6 +82,7 @@ public class SystemConfig : CharacterConfiguration {
     public bool ShowPlayerIcon = true;
     public float PlayerIconScale = 1.0f;
     public float MapScale = 1.0f;
+    public bool AutoZoom = false;
 
     // Do not persist this setting
     [JsonIgnore] public bool DebugMode = false;
