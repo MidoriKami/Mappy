@@ -53,7 +53,7 @@ public class SystemConfig : CharacterConfiguration {
     public Vector4 RadarColor = KnownColor.Gray.Vector() with { W = 0.10f };
     public Vector4 RadarOutlineColor = KnownColor.Gray.Vector() with { W = 0.30f };
     public bool HideWindowFrame = false;
-    public bool EnableShiftDragMove = true;
+    public bool EnableShiftDragMove = false;
     public bool IgnoreEscapeKey = false;
     public bool LockWindow = false;
     public float FadePercent = 0.60f;
@@ -68,7 +68,6 @@ public class SystemConfig : CharacterConfiguration {
     public Vector4 AreaOutlineColor = KnownColor.CornflowerBlue.Vector() with { W = 0.30f };
     public Vector4 PlayerConeColor = KnownColor.CornflowerBlue.Vector() with { W = 0.33f };
     public Vector4 PlayerConeOutlineColor = KnownColor.CornflowerBlue.Vector() with { W = 1.0f };
-    public float AreaTransparency = 0.33f;
     public bool CenterOnFlag = true;
     public bool CenterOnGathering = true;
     public bool CenterOnQuest = true;

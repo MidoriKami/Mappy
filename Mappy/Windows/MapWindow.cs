@@ -141,17 +141,10 @@ public class MapWindow : Window {
         }
         else {
             if (isMapItemHovered) {
-                bool canMoveWindow = System.SystemConfig.HideWindowFrame &&
-                                    !System.SystemConfig.LockWindow &&
-                                    System.SystemConfig.EnableShiftDragMove &&
-                                    ImGui.GetIO().KeyShift;
-
-                if (canMoveWindow)
-                {
+                if (System.SystemConfig.EnableShiftDragMove && ImGui.GetIO().KeyShift) {
                     Flags &= ~ImGuiWindowFlags.NoMove;
                 }
-                else
-                {
+                else {
                     ProcessMouseScroll();
                     ProcessMapDragStart();
                     Flags |= ImGuiWindowFlags.NoMove;

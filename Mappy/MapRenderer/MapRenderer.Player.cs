@@ -37,13 +37,13 @@ public partial class MapRenderer {
         DrawFilledSemiCircle(position, lineLength, angle);
     }
 
-    private void DrawAngledLineFromCenter(Vector2 center, float lineLength, float angle) {
+    private static void DrawAngledLineFromCenter(Vector2 center, float lineLength, float angle) {
         var lineSegment = new Vector2(lineLength * MathF.Cos(angle), lineLength * MathF.Sin(angle));
         var coneOutlineColor = ImGui.GetColorU32(System.SystemConfig.PlayerConeOutlineColor);
         ImGui.GetWindowDrawList().AddLine(center, center + lineSegment, coneOutlineColor, 3.0f);
     }
 
-    private void DrawLineArcFromCenter(Vector2 center, float distance, float rotation) {
+    private static void DrawLineArcFromCenter(Vector2 center, float distance, float rotation) {
         var halfConeAngle = DegreesToRadians(90.0f) / 2.0f;
         var coneOutlineColor = ImGui.GetColorU32(System.SystemConfig.PlayerConeOutlineColor);
 
@@ -54,7 +54,7 @@ public partial class MapRenderer {
         ImGui.GetWindowDrawList().PathStroke(coneOutlineColor, ImDrawFlags.None, 3.0f);
     }
 
-    private void DrawFilledSemiCircle(Vector2 center, float distance, float rotation) {
+    private static void DrawFilledSemiCircle(Vector2 center, float distance, float rotation) {
         var halfConeAngle = DegreesToRadians(90.0f) / 2.0f;
         
         var coneColor = ImGui.GetColorU32(System.SystemConfig.PlayerConeColor);
@@ -69,11 +69,10 @@ public partial class MapRenderer {
         ImGui.GetWindowDrawList().PathFillConvex(coneColor);
     }
     
-    // NumberArrayData[24] is specifically for the Map, subIndex 3 contains the current rotation, but square rotated it 90 degrees for some reason.
-    private unsafe float GetCameraRotation() 
+    private static unsafe float GetCameraRotation() 
         => -DegreesToRadians(AddonAreaMap.AddonAreaMapNumberArray.Instance()->ConeRotation) - 0.5f * MathF.PI;
 
-    private float DegreesToRadians(float degrees) 
+    private static float DegreesToRadians(float degrees) 
         => MathF.PI / 180.0f * degrees;
 
     private void DrawPlayerIcon(Vector2 position) {
