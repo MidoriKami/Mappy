@@ -141,9 +141,21 @@ public class MapWindow : Window {
         }
         else {
             if (isMapItemHovered) {
-                ProcessMouseScroll();
-                ProcessMapDragStart();
-                Flags |= ImGuiWindowFlags.NoMove;
+                bool canMoveWindow = System.SystemConfig.HideWindowFrame &&
+                                    !System.SystemConfig.LockWindow &&
+                                    System.SystemConfig.EnableShiftDragMove &&
+                                    ImGui.GetIO().KeyShift;
+
+                if (canMoveWindow)
+                {
+                    Flags &= ~ImGuiWindowFlags.NoMove;
+                }
+                else
+                {
+                    ProcessMouseScroll();
+                    ProcessMapDragStart();
+                    Flags |= ImGuiWindowFlags.NoMove;
+                }
             }
             
             ProcessMapDragDragging();
