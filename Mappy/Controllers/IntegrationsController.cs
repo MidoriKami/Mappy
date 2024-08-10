@@ -212,31 +212,13 @@ public unsafe class IntegrationsController : IDisposable {
 			if (quest.QuestId is 0) continue;
 			
 			// Is this the quest we are looking for?
-			var questData = Service.DataManager.GetExcelSheet<CustomQuestSheet>()?.GetRow(quest.QuestId + 65536u)!;
+			var questData = Service.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets2.Quest>()?.GetRow(quest.QuestId + 65536u)!;
 			if (!IsNameMatch(questData.Name, mapInfo)) continue;
 
-			var todoPrimaryIndex = 0;
-			if (quest.Sequence is 0xFF) {
-				// For each of the possible steps check if out sequence matches that index
-				foreach(var index in Enumerable.Range(0, 24)) {
-					if (questData.ToDoCompleteSeq[index] == quest.Sequence) {
-						todoPrimaryIndex = index;
-						break;
-					}
-				}
-			}
-			else {
-				todoPrimaryIndex = quest.Sequence;
-			}
-			
-			// Iterate the level data for markers for the current sequence number
-			foreach (var index in Enumerable.Range(0, 8)) {
-				var levelData = questData.ToDoLocation[todoPrimaryIndex, index];
-				if (levelData.Row is 0) continue;
-				if (levelData.Value is null) continue;
-
-				return levelData.Value.Map.Row;
-			}
+			return questData
+				.TodoParams.FirstOrDefault(param => param.ToDoCompleteSeq == quest.Sequence)
+				.ToDoLocation.FirstOrDefault(location => location is not { Row: 0, Value: null })
+				?.Value?.Map.Row;
 		}
 
 		return Service.DataManager.GetExcelSheet<Quest>()?.FirstOrDefault(quest =>
