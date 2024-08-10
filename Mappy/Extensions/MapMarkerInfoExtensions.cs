@@ -44,11 +44,9 @@ public static class MapMarkerInfoExtensions {
         });
     }
 
-    // Might want to cache these in the future, they are kinda expensive.
     private static Aetheryte? GetAetheryteForAethernet(uint aethernetKey)
         => System.AetheryteAethernetCache.GetValue(aethernetKey);
 
-    // Might want to cache these in the future, they are kinda expensive.
     private static string GetAetheryteTeleportCost(uint targetDataKey) 
         => $"({Service.AetheryteList.FirstOrDefault(entry => entry.AetheryteId == targetDataKey)?.GilCost ?? 0:n0} {SeIconChar.Gil.ToIconChar()})";
 
