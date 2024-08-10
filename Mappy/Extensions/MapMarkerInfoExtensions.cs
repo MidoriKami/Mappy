@@ -36,7 +36,7 @@ public static class MapMarkerInfoExtensions {
             },
             SecondaryText = marker.DataType switch {
                 1 when !DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId) => () => $"Open Map {Service.DataManager.GetExcelSheet<Map>()!.GetRow(marker.DataKey)?.PlaceName.Value?.Name ?? "Unable to read target map name."}",
-                2 => () => $"Instance Link? {marker.DataKey}",
+                2 => () => $"Instance Link {marker.DataKey}",
                 3 => () => $"Teleport to {Service.DataManager.GetExcelSheet<Aetheryte>()!.GetRow(marker.DataKey)?.PlaceName.Value?.Name ?? "Unable to read aetheryte name"} {GetAetheryteTeleportCost(marker.DataKey)}",
                 4 when GetAetheryteForAethernet(marker.DataKey) is not null => () => $"Teleport to {GetAetheryteForAethernet(marker.DataKey)?.PlaceName.Value?.Name ?? "Unable to read aetheryte name"} {GetAetheryteTeleportCost(GetAetheryteForAethernet(marker.DataKey)!.RowId)}",
                 _ => null,
