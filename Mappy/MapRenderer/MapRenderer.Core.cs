@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Game.ClientState.Objects.Types;
@@ -68,12 +69,25 @@ public partial class MapRenderer {
     }
 
     private unsafe IDalamudTextureWrap? LoadTexture() {
-        var backgroundFile = Service.DataManager.GetFile<TexFile>($"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex");
-        var foregroundFile = Service.DataManager.GetFile<TexFile>($"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex");
-        if (backgroundFile is null || foregroundFile is null) return null;
+        var bgPath = Service.TextureSubstitutionProvider.GetSubstitutedPath($"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex");
+        var fgPath = Service.TextureSubstitutionProvider.GetSubstitutedPath($"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex");
 
-        var backgroundBytes = backgroundFile.GetRgbaImageData();
-        var foregroundBytes = foregroundFile.GetRgbaImageData();
+        TexFile? bgFile;
+        TexFile? fgFile;
+        
+        if (Path.IsPathRooted(bgPath) || Path.IsPathRooted(fgPath)) {
+            bgFile = Service.DataManager.GameData.GetFileFromDisk<TexFile>(bgPath);
+            fgFile = Service.DataManager.GameData.GetFileFromDisk<TexFile>(fgPath);
+        }
+        else {
+            bgFile = Service.DataManager.GetFile<TexFile>($"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex");
+            fgFile = Service.DataManager.GetFile<TexFile>($"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex"); 
+        }
+
+        if (bgFile is null || fgFile is null) return null;
+
+        var backgroundBytes = bgFile.GetRgbaImageData();
+        var foregroundBytes = fgFile.GetRgbaImageData();
 
         Parallel.For(0, 2048 * 2048, i => {
             var index = i * 4;
