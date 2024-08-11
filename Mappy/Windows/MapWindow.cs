@@ -264,11 +264,17 @@ public class MapWindow : Window {
         if (MappyGuiTweaks.IconButton(FontAwesomeIcon.Search, "search", "Search for Map")) {
             System.WindowManager.AddWindow(new MapSelectionWindow {
                 SingleSelectionCallback = selection => {
-                    if (selection is not null) {
-                        System.IntegrationsController.OpenMap(selection.RowId);
-                        System.MapRenderer.DrawOffset = Vector2.Zero;
+                    if (selection?.Map != null) {
+                        if (AgentMap.Instance()->SelectedMapId != selection.Map.RowId) {
+                            System.IntegrationsController.OpenMap(selection.Map.RowId);
+                        }
+
+                        if (selection.MarkerLocation is {} location) {
+                            System.SystemConfig.FollowPlayer = false;
+                            System.MapRenderer.DrawOffset = -location + DrawHelpers.GetMapCenterOffsetVector();
+                        }
                     }
-                }
+                },
             }, WindowFlags.OpenImmediately | WindowFlags.RequireLoggedIn);
         }
         
