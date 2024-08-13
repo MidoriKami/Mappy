@@ -8,6 +8,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Group;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
+using Lumina.Excel.GeneratedSheets2;
 using Mappy.Classes;
 using Mappy.Extensions;
 using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
@@ -39,6 +40,8 @@ public partial class MapRenderer {
                 IconId = obj.ObjectKind switch {
                     ObjectKind.Player when GroupManager.Instance()->MainGroup.MemberCount is 0 && System.SystemConfig.ShowPlayers => 60421,
                     ObjectKind.Player when System.SystemConfig.ShowPlayers => 60444,
+                    ObjectKind.BattleNpc when IsBoss(obj) && obj.TargetObject is null => 60402,
+                    ObjectKind.BattleNpc when IsBoss(obj) && obj.TargetObject is not null => 60401,
                     ObjectKind.BattleNpc when obj is { SubKind: (int) BattleNpcSubKind.Enemy, TargetObject: not null } => 60422,
                     ObjectKind.BattleNpc when obj is { SubKind: (int) BattleNpcSubKind.Enemy, TargetObject: null } => 60424,
                     ObjectKind.BattleNpc when obj.SubKind == (int) BattleNpcSubKind.Pet => 60961,
@@ -52,6 +55,7 @@ public partial class MapRenderer {
             });
         }
     }
+
     private void DrawRadar(IPlayerCharacter gameObjectCenter) {
         var position = ImGui.GetWindowPos() +
                        DrawPosition +
@@ -85,4 +89,7 @@ public partial class MapRenderer {
         if (csEventObject->EventHandler is null) return false;
         return csEventObject->EventHandler->Info.EventId.ContentId == EventHandlerType.AetherCurrent;
     }
+
+    private bool IsBoss(IGameObject chara)
+        => Service.DataManager.GetExcelSheet<BNpcBase>()!.GetRow(chara.DataId)?.Rank is 1 or 2 or 6;
 }
