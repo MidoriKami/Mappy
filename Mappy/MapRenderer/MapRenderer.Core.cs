@@ -69,22 +69,38 @@ public partial class MapRenderer {
     }
 
     private unsafe IDalamudTextureWrap? LoadTexture() {
-        var bgPath = Service.TextureSubstitutionProvider.GetSubstitutedPath($"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex");
-        var fgPath = Service.TextureSubstitutionProvider.GetSubstitutedPath($"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex");
-
+        var vanillaBgPath = $"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex";
+        var vanillaFgPath = $"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex";
+        
+        var bgPath = Service.TextureSubstitutionProvider.GetSubstitutedPath(vanillaBgPath);
+        var fgPath = Service.TextureSubstitutionProvider.GetSubstitutedPath(vanillaFgPath);
+        
         TexFile? bgFile;
         TexFile? fgFile;
+
+        var isRootedPath = Path.IsPathRooted(bgPath) || Path.IsPathRooted(fgPath);
+        var isReplacedPathValid = new FileInfo(bgPath).Exists && new FileInfo(fgPath).Exists;
         
-        if (Path.IsPathRooted(bgPath) || Path.IsPathRooted(fgPath)) {
+        if (isRootedPath && isReplacedPathValid) {
             bgFile = Service.DataManager.GameData.GetFileFromDisk<TexFile>(bgPath);
             fgFile = Service.DataManager.GameData.GetFileFromDisk<TexFile>(fgPath);
         }
         else {
+            if (isRootedPath && !isReplacedPathValid) {
+                Service.Log.Warning("Tried to load substituted path(s) but file was not found");
+                Service.Log.Warning($"\t{vanillaBgPath} -> {bgPath}");
+                Service.Log.Warning($"\t{vanillaFgPath} -> {fgPath}");
+                Service.Log.Warning("Loading vanilla textures instead");
+            }
+            
             bgFile = Service.DataManager.GetFile<TexFile>($"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex");
             fgFile = Service.DataManager.GetFile<TexFile>($"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex"); 
         }
 
-        if (bgFile is null || fgFile is null) return null;
+        if (bgFile is null || fgFile is null) {
+            Service.Log.Warning("Failed to load map textures");
+            return null;
+        }
 
         var backgroundBytes = bgFile.GetRgbaImageData();
         var foregroundBytes = fgFile.GetRgbaImageData();
