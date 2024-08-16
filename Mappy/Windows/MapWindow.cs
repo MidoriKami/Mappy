@@ -5,6 +5,7 @@ using Dalamud.Game.ClientState.Keys;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Memory;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -410,22 +411,41 @@ public class MapWindow : Window {
         if (!contextMenu) return;
 
         var currentMap = Service.DataManager.GetExcelSheet<Map>()!.GetRow(AgentMap.Instance()->SelectedMapId);
+        if (currentMap is null) return;
         
-        var layers = Service.DataManager.GetExcelSheet<Map>()!
-            .Where(eachMap => eachMap.PlaceName.Row == currentMap!.PlaceName.Row)
-            .Where(eachMap => eachMap.MapIndex != 0)
-            .OrderBy(eachMap => eachMap.MapIndex)
-            .ToList();
+        // If this is a region map
+        if (currentMap.Hierarchy is 3) {
+            foreach (var marker in AgentMap.Instance()->MapMarkers) {
+                if (!DrawHelpers.IsRegionIcon(marker.MapMarker.IconId)) continue;
 
-        if (layers.Count is 0) {
-            ImGui.Text("No layers for this map");
+                var label = MemoryHelper.ReadStringNullTerminated((nint)marker.MapMarker.Subtext);
+                
+                if (ImGui.MenuItem(label)) {
+                    System.IntegrationsController.OpenMap(marker.DataKey);
+                    System.SystemConfig.FollowPlayer = false;
+                    System.MapRenderer.DrawOffset = Vector2.Zero;
+                }
+            }
         }
         
-        foreach (var layer in layers) {
-            if (ImGui.MenuItem(layer.PlaceNameSub.Value?.Name ?? "Unable to Parse Name", "", AgentMap.Instance()->SelectedMapId == layer.RowId)) {
-                System.IntegrationsController.OpenMap(layer.RowId);
-                System.SystemConfig.FollowPlayer = false;
-                System.MapRenderer.DrawOffset = Vector2.Zero;
+        // Any other map
+        else {
+            var layers = Service.DataManager.GetExcelSheet<Map>()!
+                .Where(eachMap => eachMap.PlaceName.Row == currentMap.PlaceName.Row)
+                .Where(eachMap => eachMap.MapIndex != 0)
+                .OrderBy(eachMap => eachMap.MapIndex)
+                .ToList();
+
+            if (layers.Count is 0) {
+                ImGui.Text("No layers for this map");
+            }
+        
+            foreach (var layer in layers) {
+                if (ImGui.MenuItem(layer.PlaceNameSub.Value?.Name ?? "Unable to Parse Name", "", AgentMap.Instance()->SelectedMapId == layer.RowId)) {
+                    System.IntegrationsController.OpenMap(layer.RowId);
+                    System.SystemConfig.FollowPlayer = false;
+                    System.MapRenderer.DrawOffset = Vector2.Zero;
+                }
             }
         }
     }
