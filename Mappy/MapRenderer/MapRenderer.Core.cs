@@ -72,16 +72,16 @@ public partial class MapRenderer {
         var vanillaBgPath = $"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex";
         var vanillaFgPath = $"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex";
         
-        var bgPath = Service.TextureSubstitutionProvider.GetSubstitutedPath(vanillaBgPath);
-        var fgPath = Service.TextureSubstitutionProvider.GetSubstitutedPath(vanillaFgPath);
+        var moddedBgPath = Service.TextureSubstitutionProvider.GetSubstitutedPath(vanillaBgPath);
+        var moddedFgPath = Service.TextureSubstitutionProvider.GetSubstitutedPath(vanillaFgPath);
 
-        var bgFile = Path.IsPathRooted(bgPath) ? 
-                         Service.DataManager.GameData.GetFileFromDisk<TexFile>(bgPath) : 
-                         Service.DataManager.GetFile<TexFile>($"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex");
+        var bgFile = Path.IsPathRooted(moddedBgPath) ? 
+                         Service.DataManager.GameData.GetFileFromDisk<TexFile>(moddedBgPath) : 
+                         Service.DataManager.GetFile<TexFile>(vanillaBgPath);
 
-        var fgFile = Path.IsPathRooted(fgPath) ? 
-                         Service.DataManager.GameData.GetFileFromDisk<TexFile>(fgPath) : 
-                         Service.DataManager.GetFile<TexFile>($"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex");
+        var fgFile = Path.IsPathRooted(moddedFgPath) ? 
+                         Service.DataManager.GameData.GetFileFromDisk<TexFile>(moddedFgPath) : 
+                         Service.DataManager.GetFile<TexFile>(vanillaFgPath);
 
         if (bgFile is null || fgFile is null) {
             Service.Log.Warning("Failed to load map textures");
