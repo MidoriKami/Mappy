@@ -127,10 +127,8 @@ public static class DrawHelpers {
 
         var iconScale = System.SystemConfig.IconScale;
 
-        // Make boss markers a bit chonkier because it looks better that way
         if (markerInfo.IconId is 60401 or 60402) {
-            scale *= 3.0f;
-            scale /= GetMapScaleFactor();
+            scale *= 2.0f;
         }
 
         // Fixed scale not supported for map region markers
