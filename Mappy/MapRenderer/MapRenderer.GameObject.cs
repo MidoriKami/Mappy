@@ -91,5 +91,5 @@ public partial class MapRenderer {
     }
 
     private bool IsBoss(IGameObject chara)
-        => Service.DataManager.GetExcelSheet<BNpcBase>()!.GetRow(chara.DataId)?.Rank is 1 or 2 or 6;
+        => Service.DataManager.GetExcelSheet<BNpcBase>()!.GetRow(chara.DataId)?.Rank is 2 or 6;
 }
