@@ -30,8 +30,11 @@ public class MapWindow : Window {
     private bool isMapItemHovered;
     private bool isDragStarted;
     private Vector2 lastWindowSize;
+    private uint lastMapId;
 
-    public MapWindow() : base("Mappy Map Window", new Vector2(400.0f, 250.0f)) {
+    public MapWindow() : base("###MappyMapWindow", new Vector2(400.0f, 250.0f)) {
+        WindowName = "Mappy Map Window###MappyMapWindow"; // Ghetto fix for Dalamud adding extra stuff onto the absolute ID
+
         DisableWindowSounds = true;
         RegisterCommands();
 
@@ -84,6 +87,7 @@ public class MapWindow : Window {
     }
 
     protected override void DrawContents() {
+        UpdateTitle();
         UpdateStyle();
         UpdateSizePosition();
         IsMapHovered = WindowBounds.IsBoundedBy(ImGui.GetMousePos(), ImGui.GetCursorScreenPos(), ImGui.GetCursorScreenPos() + ImGui.GetContentRegionMax());
@@ -136,6 +140,14 @@ public class MapWindow : Window {
         
         // Process Inputs
         ProcessInputs();
+    }
+
+    private unsafe void UpdateTitle() {
+        if (lastMapId != AgentMap.Instance()->SelectedMapId) {
+            var mapData = Service.DataManager.GetExcelSheet<Map>()!.GetRow(AgentMap.Instance()->SelectedMapId);
+            WindowName = $"Mappy Map Window - {mapData?.PlaceNameRegion.Value?.Name} - {mapData?.PlaceName.Value?.Name}###MappyMapWindow";
+            lastMapId = AgentMap.Instance()->SelectedMapId;
+        }
     }
 
     private void ProcessInputs() {
