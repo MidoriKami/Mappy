@@ -8,6 +8,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Group;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
+using KamiLib.Extensions;
 using Lumina.Excel.GeneratedSheets2;
 using Mappy.Classes;
 using Mappy.Extensions;
@@ -21,7 +22,7 @@ public partial class MapRenderer {
         
         if (Service.ClientState is not { LocalPlayer: { } player }) return;
 
-        if (System.SystemConfig.ShowRadar) {
+        if (System.SystemConfig.ShowRadar && !Service.Condition.IsBoundByDuty()) {
             DrawRadar(player);
         }
 
