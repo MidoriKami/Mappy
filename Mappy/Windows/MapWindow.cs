@@ -7,6 +7,7 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Memory;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -19,6 +20,7 @@ using Lumina.Excel.GeneratedSheets;
 using Mappy.Classes;
 using Mappy.Controllers;
 using Mappy.Data;
+using Map = Lumina.Excel.GeneratedSheets.Map;
 
 namespace Mappy.Windows;
 
@@ -31,9 +33,11 @@ public class MapWindow : Window {
     private bool isDragStarted;
     private Vector2 lastWindowSize;
     private uint lastMapId;
+    private uint lastAreaPlaceNameId;
+    private uint lastSubAreaPlaceNameId;
 
     public MapWindow() : base("###MappyMapWindow", new Vector2(400.0f, 250.0f)) {
-        WindowName = "Mappy Map Window###MappyMapWindow"; // Ghetto fix for Dalamud adding extra stuff onto the absolute ID
+        UpdateTitle();
 
         DisableWindowSounds = true;
         RegisterCommands();
@@ -143,11 +147,46 @@ public class MapWindow : Window {
     }
 
     private unsafe void UpdateTitle() {
-        if (lastMapId != AgentMap.Instance()->SelectedMapId) {
-            var mapData = Service.DataManager.GetExcelSheet<Map>()!.GetRow(AgentMap.Instance()->SelectedMapId);
-            WindowName = $"Mappy Map Window - {mapData?.PlaceNameRegion.Value?.Name} - {mapData?.PlaceName.Value?.Name}###MappyMapWindow";
-            lastMapId = AgentMap.Instance()->SelectedMapId;
+        var mapChanged = lastMapId != AgentMap.Instance()->SelectedMapId;
+        var areaChanged = lastAreaPlaceNameId != TerritoryInfo.Instance()->AreaPlaceNameId;
+        var subAreaChanged = lastSubAreaPlaceNameId != TerritoryInfo.Instance()->SubAreaPlaceNameId;
+        var locationChanged = mapChanged || areaChanged || subAreaChanged;
+
+        if (!locationChanged) return;
+        var subLocationString = string.Empty;
+        var mapData = Service.DataManager.GetExcelSheet<Map>()!.GetRow(AgentMap.Instance()->SelectedMapId);
+
+        if (System.SystemConfig.ShowRegionLabel) {
+            var mapRegionName = mapData?.PlaceNameRegion.Value?.Name ?? string.Empty;
+            subLocationString += $" - {mapRegionName}";
         }
+
+        if (System.SystemConfig.ShowMapLabel) {
+            var mapName = mapData?.PlaceName.Value?.Name ?? string.Empty;
+            subLocationString += $" - {mapName}";
+        }
+
+        if (TerritoryInfo.Instance()->AreaPlaceNameId is not 0 && System.SystemConfig.ShowAreaLabel) {
+            var areaLabel = Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(TerritoryInfo.Instance()->AreaPlaceNameId)!;
+            subLocationString += $" - {areaLabel.Name}";
+        }
+
+        if (TerritoryInfo.Instance()->SubAreaPlaceNameId is not 0 && System.SystemConfig.ShowSubAreaLabel) {
+            var subAreaLabel = Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(TerritoryInfo.Instance()->SubAreaPlaceNameId)!;
+            subLocationString += $" - {subAreaLabel.Name}";
+        }
+
+        WindowName = $"Mappy Map Window{subLocationString}###MappyMapWindow";
+        
+        lastMapId = AgentMap.Instance()->SelectedMapId;
+        lastAreaPlaceNameId = TerritoryInfo.Instance()->AreaPlaceNameId;
+        lastSubAreaPlaceNameId = TerritoryInfo.Instance()->SubAreaPlaceNameId;
+    }
+
+    public void RefreshTitle() {
+        lastMapId = 0;
+        lastAreaPlaceNameId = 0;
+        lastSubAreaPlaceNameId = 0;
     }
 
     private void ProcessInputs() {

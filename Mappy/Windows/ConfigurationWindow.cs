@@ -156,6 +156,14 @@ public class StyleOptionsTab : ITabItem {
             configChanged |= ImGui.Checkbox("Hide in Combat", ref System.SystemConfig.HideInCombat);
         }
         
+        ImGuiTweaks.Header("Window Title");
+        using (ImRaii.PushIndent()) {
+            configChanged |= ImGui.Checkbox("Show Region Text", ref System.SystemConfig.ShowRegionLabel);
+            configChanged |= ImGui.Checkbox("Show Map Text", ref System.SystemConfig.ShowMapLabel);
+            configChanged |= ImGui.Checkbox("Show Area Text", ref System.SystemConfig.ShowAreaLabel);
+            configChanged |= ImGui.Checkbox("Show Sub-Area Text", ref System.SystemConfig.ShowSubAreaLabel);
+        }
+        
         ImGuiTweaks.Header("Window Location");
         using (ImRaii.PushIndent()) {
             configChanged |= ImGui.DragFloat2("Window Position", ref System.SystemConfig.WindowPosition);
@@ -207,6 +215,7 @@ public class StyleOptionsTab : ITabItem {
                 System.SystemConfig.WindowSize.Y = MathF.Max(System.SystemConfig.WindowSize.Y, constraints.MinimumSize.Y);
             }
             
+            System.MapWindow.RefreshTitle();
             System.SystemConfig.Save();
         }
     }

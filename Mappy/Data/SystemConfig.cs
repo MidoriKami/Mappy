@@ -83,6 +83,10 @@ public class SystemConfig : CharacterConfiguration {
     public float PlayerIconScale = 1.0f;
     public float MapScale = 1.0f;
     public bool AutoZoom = false;
+    public bool ShowRegionLabel = true;
+    public bool ShowMapLabel = true;
+    public bool ShowAreaLabel = true;
+    public bool ShowSubAreaLabel = true;
 
     // Do not persist this setting
     [JsonIgnore] public bool DebugMode = false;
