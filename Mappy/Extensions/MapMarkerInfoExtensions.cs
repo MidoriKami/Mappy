@@ -44,6 +44,20 @@ public static class MapMarkerInfoExtensions {
         });
     }
 
+    public static unsafe void DrawText(this MapMarkerInfo marker, Vector2 offset, float scale) {
+        var tooltipText = MemoryHelper.ReadSeStringNullTerminated((nint)marker.MapMarker.Subtext);
+        var textFunc = GetMarkerPrimaryTooltip(marker, tooltipText);
+
+        DrawHelpers.DrawStaticMarkerText(new MarkerInfo {
+            Position = new Vector2(marker.MapMarker.X, marker.MapMarker.Y) / 16.0f * scale + DrawHelpers.GetMapCenterOffsetVector() * scale,
+            Offset = offset,
+            Scale = scale,
+            IconId = marker.MapMarker.IconId,
+            Radius = marker.MapMarker.Scale,
+            PrimaryText = textFunc
+        }, textFunc(), marker.MapMarker.SubtextOrientation);
+    }
+
     private static Aetheryte? GetAetheryteForAethernet(uint aethernetKey)
         => System.AetheryteAethernetCache.GetValue(aethernetKey);
 

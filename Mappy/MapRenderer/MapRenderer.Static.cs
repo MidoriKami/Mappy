@@ -11,6 +11,8 @@ public partial class MapRenderer {
             if (marker.MapMarker.IconId is 0) continue;
             
             marker.Draw(DrawPosition, Scale);
+            if (!System.SystemConfig.ShowSubzoneLabels || marker.MapMarker.IconFlags != 0) continue;
+            marker.DrawText(DrawPosition, Scale);
         }
     }
 }

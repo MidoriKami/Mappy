@@ -5,6 +5,7 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Utility.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using KamiLib.Classes;
@@ -172,7 +173,38 @@ public static class DrawHelpers {
         
         ImGui.GetWindowDrawList().AddText(UiBuilder.DefaultFont, 14 * markerInfo.Scale, drawPosition, textColor, text);
     }
-    
+
+    public static void DrawStaticMarkerText(MarkerInfo markerInfo, string text, byte orientation) {
+        var scale = System.SystemConfig.ScaleWithZoom ? markerInfo.Scale : 1.0f;
+
+        var textSize = ImGui.CalcTextSize(text);
+        // orientation goes:
+        //   4
+        // 1 x 2
+        //   3
+        var drawPosition = markerInfo.Position + markerInfo.Offset + new Vector2(8.0f, 8.0f) * scale + ImGui.GetWindowPos() + (
+            orientation switch {
+                1 => -textSize,
+                2 => new Vector2(0, -textSize.Y),
+                3 => new Vector2(-textSize.X / 2, 0),
+                4 => new Vector2(-textSize.X / 2, -textSize.Y - 14),
+                _ => Vector2.Zero
+            } * scale
+        );
+        var textColor = ImGui.GetColorU32(KnownColor.Black.Vector());
+        var outlineColor = ImGui.GetColorU32(KnownColor.White.Vector()) & 0x7FFFFFFF;
+
+        drawPosition = new Vector2(MathF.Round(drawPosition.X), MathF.Round(drawPosition.Y));
+
+        foreach (var x in Enumerable.Range(-1, 3)) {
+            foreach (var y in Enumerable.Range(-1, 3)) {
+                ImGui.GetWindowDrawList().AddText(UiBuilder.DefaultFont, 14 * scale, drawPosition + new Vector2(x, y), outlineColor, text);
+            }
+        }
+
+        ImGui.GetWindowDrawList().AddText(UiBuilder.DefaultFont, 14 * scale, drawPosition, textColor, text);
+    }
+
     private static void ProcessInteractions(MarkerInfo markerInfo) {
         if (System.IconConfig.IconSettingMap[markerInfo.IconId] is not { AllowClick: true }) return;
         

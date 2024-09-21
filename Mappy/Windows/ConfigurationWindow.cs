@@ -81,7 +81,8 @@ public class MapFunctionsTab : ITabItem {
             configChanged |= ImGui.Checkbox("Show Misc Tooltips", ref System.SystemConfig.ShowMiscTooltips);
             configChanged |= ImGui.Checkbox("Lock Map on Center", ref System.SystemConfig.LockCenterOnMap);
             configChanged |= ImGui.Checkbox("Show Other Players", ref System.SystemConfig.ShowPlayers);
-            
+            configChanged |= ImGui.Checkbox("Show Subzone Labels", ref System.SystemConfig.ShowSubzoneLabels);
+
             ImGuiHelpers.ScaledDummy(5.0f);
             
             configChanged |= ImGui.Checkbox("Debug Mode", ref System.SystemConfig.DebugMode);
