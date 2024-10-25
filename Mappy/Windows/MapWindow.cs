@@ -166,14 +166,17 @@ public class MapWindow : Window {
             subLocationString += $" - {mapName}";
         }
 
-        if (TerritoryInfo.Instance()->AreaPlaceNameId is not 0 && System.SystemConfig.ShowAreaLabel) {
-            var areaLabel = Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(TerritoryInfo.Instance()->AreaPlaceNameId)!;
-            subLocationString += $" - {areaLabel.Name}";
-        }
+        // Don't show specific locations if we aren't there.
+        if (AgentMap.Instance()->SelectedMapId == AgentMap.Instance()->CurrentMapId) {
+            if (TerritoryInfo.Instance()->AreaPlaceNameId is not 0 && System.SystemConfig.ShowAreaLabel) {
+                var areaLabel = Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(TerritoryInfo.Instance()->AreaPlaceNameId)!;
+                subLocationString += $" - {areaLabel.Name}";
+            }
 
-        if (TerritoryInfo.Instance()->SubAreaPlaceNameId is not 0 && System.SystemConfig.ShowSubAreaLabel) {
-            var subAreaLabel = Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(TerritoryInfo.Instance()->SubAreaPlaceNameId)!;
-            subLocationString += $" - {subAreaLabel.Name}";
+            if (TerritoryInfo.Instance()->SubAreaPlaceNameId is not 0 && System.SystemConfig.ShowSubAreaLabel) {
+                var subAreaLabel = Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(TerritoryInfo.Instance()->SubAreaPlaceNameId)!;
+                subLocationString += $" - {subAreaLabel.Name}";
+            }
         }
 
         WindowName = $"Mappy Map Window{subLocationString}###MappyMapWindow";
