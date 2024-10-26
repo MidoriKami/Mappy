@@ -116,7 +116,7 @@ public class MapWindow : Window {
                 using (ImRaii.Disabled(!(ImGui.GetIO().KeyShift && ImGui.GetIO().KeyCtrl))) {
                     if (ImGui.Button("I understand", new Vector2(ImGui.GetContentRegionAvail().X / 2.0f, 23.0f * ImGuiHelpers.GlobalScale))) {
                         System.SystemConfig.AcceptedSpoilerWarning = true;
-                        System.SystemConfig.Save();
+                        SystemConfig.Save();
                     }
                     
                     using (ImRaii.PushStyle(ImGuiStyleVar.Alpha, 1.0f)) {
@@ -400,12 +400,12 @@ public class MapWindow : Window {
         else { // If focused
             if (systemConfig.WindowPosition != windowPosition) {
                 systemConfig.WindowPosition = windowPosition;
-                systemConfig.Save();
+                SystemConfig.Save();
             }
 
             if (systemConfig.WindowSize != windowSize) {
                 systemConfig.WindowSize = windowSize;
-                systemConfig.Save();
+                SystemConfig.Save();
             }
         }
     }
@@ -446,7 +446,7 @@ public class MapWindow : Window {
         ImGuiHelpers.ScaledDummy(5.0f);
         
         if (ImGui.MenuItem("Lock Zoom", "", ref System.SystemConfig.ZoomLocked)) {
-            System.SystemConfig.Save();
+            SystemConfig.Save();
         }
         
         ImGuiHelpers.ScaledDummy(5.0f);
@@ -507,7 +507,7 @@ public class MapWindow : Window {
     public override void OnClose() {
         UnYeetVanillaMap();
         
-        System.SystemConfig.Save();
+        SystemConfig.Save();
     }
 
     private static void ProcessMouseScroll() {
@@ -586,7 +586,7 @@ public class MapWindow : Window {
             ActivationPath = "/map/follow",
             Delegate = _ => {
                 System.SystemConfig.FollowPlayer = true;
-                System.SystemConfig.Save();
+                SystemConfig.Save();
             },
         });
         
@@ -594,7 +594,7 @@ public class MapWindow : Window {
             ActivationPath = "/map/unfollow",
             Delegate = _ => {
                 System.SystemConfig.FollowPlayer = false;
-                System.SystemConfig.Save();
+                SystemConfig.Save();
             },
         });
         
@@ -602,15 +602,15 @@ public class MapWindow : Window {
             BaseActivationPath = "/autofollow",
             EnableDelegate = _ => {
                 System.SystemConfig.FollowOnOpen = true;
-                System.SystemConfig.Save();
+                SystemConfig.Save();
             },
             DisableDelegate = _ => {
                 System.SystemConfig.FollowOnOpen = false;
-                System.SystemConfig.Save();
+                SystemConfig.Save();
             },
             ToggleDelegate = _ => {
                 System.SystemConfig.FollowOnOpen = !System.SystemConfig.FollowOnOpen;
-                System.SystemConfig.Save();
+                SystemConfig.Save();
             },
         });
         
@@ -618,15 +618,15 @@ public class MapWindow : Window {
             BaseActivationPath = "/keepopen",
             EnableDelegate = _ => {
                 System.SystemConfig.KeepOpen = true;
-                System.SystemConfig.Save();
+                SystemConfig.Save();
             },
             DisableDelegate = _ => {
                 System.SystemConfig.KeepOpen = false;
-                System.SystemConfig.Save();
+                SystemConfig.Save();
             },
             ToggleDelegate = _ => {
                 System.SystemConfig.KeepOpen = !System.SystemConfig.KeepOpen;
-                System.SystemConfig.Save();
+                SystemConfig.Save();
             },
         });
         
@@ -644,17 +644,6 @@ public class MapWindow : Window {
             Delegate = _ => {
                 System.SystemConfig.FollowPlayer = false;
                 System.MapRenderer.DrawOffset = Vector2.Zero;
-            },
-        });
-        
-        // Easter Egg, don't recommend executing this command.
-        System.CommandManager.RegisterCommand(new CommandHandler {
-            ActivationPath = "/pyon",
-            Hidden = true,
-            Delegate = _ => {
-                foreach (var index in Enumerable.Range(0, 20)) {
-                    Service.Framework.RunOnTick(Toggle, delayTicks: 20 * index);
-                }
             },
         });
     }

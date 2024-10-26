@@ -32,6 +32,6 @@ public class PoiDrawableOption : DrawableOption {
     }
 
     protected override string[] GetAdditionalFilterStrings() => [
-        MapMarker.PlaceNameSubtext.Value?.Name.ToString() ?? string.Empty
+        MapMarker.PlaceNameSubtext.Value?.Name.ToString() ?? string.Empty,
     ];
 }

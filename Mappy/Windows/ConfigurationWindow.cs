@@ -108,7 +108,7 @@ public class MapFunctionsTab : ITabItem {
         }
         
         if (configChanged) {
-            System.SystemConfig.Save();
+            SystemConfig.Save();
         }
     }
     
@@ -121,7 +121,7 @@ public class MapFunctionsTab : ITabItem {
 
             if (ImGui.RadioButton(enumValue.GetDescription(), enumValue.Equals(enumObject))) {
                 System.SystemConfig.CenterOnOpen = (CenterTarget) enumValue;
-                System.SystemConfig.Save();
+                SystemConfig.Save();
             }
 
             firstLine = false;
@@ -216,7 +216,7 @@ public class StyleOptionsTab : ITabItem {
             }
             
             System.MapWindow.RefreshTitle();
-            System.SystemConfig.Save();
+            SystemConfig.Save();
         }
     }
 }
@@ -260,7 +260,7 @@ public class PlayerOptionsTab : ITabItem {
         }
 
         if (configChanged) {
-            System.SystemConfig.Save();
+            SystemConfig.Save();
         }
     }
 }

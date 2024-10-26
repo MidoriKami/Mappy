@@ -130,7 +130,7 @@ public unsafe class AcceptedQuestsTabItem : ITabItem {
         }
     }
 
-    private bool AnyActiveQuests() {
+    private static bool AnyActiveQuests() {
         foreach (var questMarker in Map.Instance()->QuestMarkers) {
             if (questMarker.ObjectiveId is not 0) return true;
         }

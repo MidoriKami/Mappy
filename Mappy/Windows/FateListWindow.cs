@@ -11,6 +11,7 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using KamiLib.Classes;
 using KamiLib.Window;
+using Mappy.Data;
 using Mappy.Extensions;
 
 namespace Mappy.Windows;
@@ -33,7 +34,7 @@ public class FateListWindow : Window {
 					using var color = ImRaii.PushColor(ImGuiCol.Button, ImGui.GetStyle().Colors[(int) ImGuiCol.ButtonActive], System.SystemConfig.SetFlagOnFateClick);
 					if (ImGuiTweaks.IconButtonWithSize(Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle, FontAwesomeIcon.Flag, "flag_on_click", ImGuiHelpers.ScaledVector2(23.0f), "Set Flag On Click")) {
 						System.SystemConfig.SetFlagOnFateClick = !System.SystemConfig.SetFlagOnFateClick;
-						System.SystemConfig.Save();
+						SystemConfig.Save();
 					}
 				}
 			}

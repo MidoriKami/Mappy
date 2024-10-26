@@ -225,6 +225,6 @@ public unsafe class IntegrationsController : IDisposable {
 			?.IssuerLocation.Value?.Map.Row;
 	}
 
-	private bool IsNameMatch(SeString name, OpenMapInfo* mapInfo) 
+	private static bool IsNameMatch(SeString name, OpenMapInfo* mapInfo) 
 		=> string.Equals(name.ToString(), mapInfo->TitleString.ToString(), StringComparison.OrdinalIgnoreCase);
 }

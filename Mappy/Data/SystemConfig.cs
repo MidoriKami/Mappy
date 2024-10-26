@@ -16,7 +16,7 @@ public enum CenterTarget {
     Player = 1,
 
     [Description("Map")]
-    Map = 2
+    Map = 2,
 }
 
 [Flags]
@@ -94,6 +94,6 @@ public class SystemConfig : CharacterConfiguration {
     public static SystemConfig Load() 
         => Service.PluginInterface.LoadConfigFile("System.config.json", () => new SystemConfig());
 
-    public void Save() 
+    public static void Save() 
         => Service.PluginInterface.SaveConfigFile("System.config.json", System.SystemConfig);
 }

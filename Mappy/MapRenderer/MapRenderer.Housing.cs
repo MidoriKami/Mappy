@@ -22,7 +22,7 @@ public unsafe partial class MapRenderer {
         }
     }
 
-    private bool IsNotHouseMarker(uint iconId) => iconId switch {
+    private static bool IsNotHouseMarker(uint iconId) => iconId switch {
         >= 60789 and < 60800 => true,
         _ => false,
     };

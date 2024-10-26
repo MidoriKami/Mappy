@@ -15,7 +15,7 @@ public class GatheringPointIconCache : Cache<uint, uint> {
             2 => 60433,
             3 => 60432,
             5 => 60445,
-            _ => throw new Exception($"Unknown Gathering Type: {gatheringPointBase.GatheringType.Row}")
+            _ => throw new Exception($"Unknown Gathering Type: {gatheringPointBase.GatheringType.Row}"),
         };
     }
 }
