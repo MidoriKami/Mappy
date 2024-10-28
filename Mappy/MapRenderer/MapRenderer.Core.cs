@@ -14,7 +14,7 @@ using Lumina.Data.Files;
 namespace Mappy.MapRenderer;
 
 public partial class MapRenderer {
-    public float Scale {
+    public static float Scale {
         get => System.SystemConfig.MapScale;
         set => System.SystemConfig.MapScale = value;
     }
@@ -91,8 +91,11 @@ public partial class MapRenderer {
         var backgroundBytes = bgFile.GetRgbaImageData();
         var foregroundBytes = fgFile.GetRgbaImageData();
 
+        // Blend textures together
         Parallel.For(0, 2048 * 2048, i => {
             var index = i * 4;
+            
+            // Blend, R, G, B, skip A.
             backgroundBytes[index + 0] = (byte)(backgroundBytes[index + 0] * foregroundBytes[index + 0] / 255);
             backgroundBytes[index + 1] = (byte)(backgroundBytes[index + 1] * foregroundBytes[index + 1] / 255);
             backgroundBytes[index + 2] = (byte)(backgroundBytes[index + 2] * foregroundBytes[index + 2] / 255);

@@ -370,7 +370,7 @@ public class MapWindow : Window {
         if (IsMapHovered) {
             var cursorPosition = ImGui.GetMousePos() - MapDrawOffset;
             cursorPosition -= System.MapRenderer.DrawPosition;
-            cursorPosition /= System.MapRenderer.Scale;
+            cursorPosition /= MapRenderer.MapRenderer.Scale;
             cursorPosition -= new Vector2(1024.0f, 1024.0f);
             cursorPosition -= new Vector2(offsetX, offsetY);
             cursorPosition /= AgentMap.Instance()->SelectedMapSizeFactorFloat;
@@ -418,7 +418,7 @@ public class MapWindow : Window {
             var cursorPosition = ImGui.GetMousePosOnOpeningCurrentPopup(); // Get initial cursor position (screen relative)
             var mapChildOffset = MapDrawOffset; // Get the screen position we started drawing the map at
             var mapDrawOffset = System.MapRenderer.DrawPosition; // Get the map texture top left offset vector
-            var textureClickLocation = (cursorPosition - mapChildOffset - mapDrawOffset) / System.MapRenderer.Scale; // Math
+            var textureClickLocation = (cursorPosition - mapChildOffset - mapDrawOffset) / MapRenderer.MapRenderer.Scale; // Math
             var result = textureClickLocation - new Vector2(1024.0f, 1024.0f); // One of our vectors made the map centered, undo it.
             var scaledResult = result / DrawHelpers.GetMapScaleFactor() + DrawHelpers.GetRawMapOffsetVector(); // Apply offset x/y and scalefactor
                 
@@ -515,16 +515,16 @@ public class MapWindow : Window {
         if (ImGui.GetIO().MouseWheel is 0) return;
         
         if (System.SystemConfig.UseLinearZoom) {
-            System.MapRenderer.Scale += System.SystemConfig.ZoomSpeed * ImGui.GetIO().MouseWheel;
+            MapRenderer.MapRenderer.Scale += System.SystemConfig.ZoomSpeed * ImGui.GetIO().MouseWheel;
         }
         else {
-            System.MapRenderer.Scale *= 1.0f + System.SystemConfig.ZoomSpeed * ImGui.GetIO().MouseWheel;
+            MapRenderer.MapRenderer.Scale *= 1.0f + System.SystemConfig.ZoomSpeed * ImGui.GetIO().MouseWheel;
         }
     }
     
     private void ProcessMapDragDragging() {
         if (ImGui.IsMouseDragging(ImGuiMouseButton.Left) && isDragStarted) {
-            System.MapRenderer.DrawOffset += ImGui.GetMouseDragDelta() / System.MapRenderer.Scale;
+            System.MapRenderer.DrawOffset += ImGui.GetMouseDragDelta() / MapRenderer.MapRenderer.Scale;
             ImGui.ResetMouseDragDelta();
         }
     }
