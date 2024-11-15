@@ -6,14 +6,14 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Utility;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 
 namespace Mappy.Classes.SelectionWindowComponents;
 
 public abstract class DrawableOption {
     protected virtual string[] GetAdditionalFilterStrings() => [];
 
-    public virtual Map? Map { get; set; }
+    public virtual Map Map { get; set; }
     
     protected static float Width => 133.5f * ImGuiHelpers.GlobalScale;
     
@@ -29,18 +29,18 @@ public abstract class DrawableOption {
     
     public string[] GetFilterStrings() {
         var baseStrings = new[] { 
-            Map?.PlaceNameRegion.Value?.Name.ToString() ?? string.Empty,
-            Map?.PlaceName.Value?.Name.ToString() ?? string.Empty,
-            Map?.PlaceNameSub.Value?.Name.ToString() ?? string.Empty,
-            Map?.TerritoryType.Value?.Name.ToString() ?? string.Empty,
-            Map?.Id.ToString() ?? string.Empty,
+            Map.PlaceNameRegion.Value.Name.ToString(),
+            Map.PlaceName.Value.Name.ToString(),
+            Map.PlaceNameSub.Value.Name.ToString(),
+            Map.TerritoryType.Value.Name.ToString(),
+            Map.Id.ExtractText(),
         };
 
         return baseStrings.Concat(GetAdditionalFilterStrings()).ToArray();
     }
 
     public void Draw() {
-        if (Map is null) return;
+        if (Map.RowId is 0) return;
         
         using var id = ImRaii.PushId(Map.RowId.ToString());
         
@@ -58,9 +58,9 @@ public abstract class DrawableOption {
         ImGui.TableSetupColumn("##column1", ImGuiTableColumnFlags.None, 2.0f);
         ImGui.TableSetupColumn("##column2", ImGuiTableColumnFlags.None, 1.0f);
 
-        var placeName = Map.PlaceName.Value?.Name ?? "Unknown PlaceName";
-        var zoneName = Map.PlaceNameSub.Value?.Name;
-        var regionName = Map.PlaceNameRegion.Value?.Name;
+        var placeName = Map.PlaceName.Value.Name.ExtractText();
+        var zoneName = Map.PlaceNameSub.Value.Name.ExtractText();
+        var regionName = Map.PlaceNameRegion.Value.Name.ExtractText();
         
         ImGui.TableNextColumn();
         ImGui.TextUnformatted(placeName);
@@ -72,13 +72,13 @@ public abstract class DrawableOption {
         ImGui.TableNextColumn();
 
         using var grayColor = ImRaii.PushColor(ImGuiCol.Text, KnownColor.DarkGray.Vector());
-        if (zoneName is not null && !zoneName.ToString().IsNullOrEmpty() && regionName is not null && !regionName.ToString().IsNullOrEmpty()) {
+        if (!zoneName.IsNullOrEmpty() && !regionName.IsNullOrEmpty()) {
             ImGui.TextUnformatted($"{regionName}, {zoneName}");
         }
-        else if (zoneName is not null && !zoneName.ToString().IsNullOrEmpty()) {
+        else if (!zoneName.IsNullOrEmpty()) {
             ImGui.TextUnformatted($"{zoneName}");
         }
-        else if (regionName is not null && !regionName.ToString().IsNullOrEmpty()) {
+        else if (!regionName.IsNullOrEmpty()) {
             ImGui.TextUnformatted($"{regionName}");
         }
 

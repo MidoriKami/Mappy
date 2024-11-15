@@ -9,7 +9,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using KamiLib.Extensions;
-using Lumina.Excel.GeneratedSheets2;
+using Lumina.Excel.Sheets;
 using Mappy.Classes;
 using Mappy.Extensions;
 using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
@@ -92,5 +92,5 @@ public partial class MapRenderer {
     }
 
     private bool IsBoss(IGameObject chara)
-        => Service.DataManager.GetExcelSheet<BNpcBase>()!.GetRow(chara.DataId)?.Rank is 2 or 6;
+        => Service.DataManager.GetExcelSheet<BNpcBase>().GetRow(chara.DataId).Rank is 2 or 6;
 }

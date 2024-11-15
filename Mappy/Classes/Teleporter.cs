@@ -2,7 +2,7 @@
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Ipc;
 using Dalamud.Plugin.Ipc.Exceptions;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 
 namespace Mappy.Classes;
 
@@ -12,7 +12,7 @@ public class Teleporter {
 
     public void Teleport(Aetheryte aetheryte) {
         try {
-            var didTeleport = teleportIpc.InvokeFunc(aetheryte.RowId, (byte) aetheryte.SubRowId);
+            var didTeleport = teleportIpc.InvokeFunc(aetheryte.RowId, 0);
             var showMessage = showChatMessageIpc.InvokeFunc();
 
             if (!didTeleport) {
@@ -22,9 +22,9 @@ public class Teleporter {
                 Service.ChatGui.Print(new XivChatEntry {
                     Message = new SeStringBuilder()
                         .AddUiForeground("[Mappy] ", 45)
-                        .AddUiForeground($"[Teleport] ", 62)
-                        .AddText($"Teleporting to ")
-                        .AddUiForeground(aetheryte.PlaceName.Value?.Name ?? "Unable to read name", 576)
+                        .AddUiForeground("[Teleport] ", 62)
+                        .AddText("Teleporting to ")
+                        .AddUiForeground(aetheryte.PlaceName.Value.Name.ExtractText(), 576)
                         .Build(),
                 });
             }

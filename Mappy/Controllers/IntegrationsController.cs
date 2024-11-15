@@ -8,10 +8,9 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiLib.Classes;
 using KamiLib.Extensions;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using Mappy.Classes;
 using MapType = FFXIVClientStructs.FFXIV.Client.UI.Agent.MapType;
-using SeString = Lumina.Text.SeString;
 
 namespace Mappy.Controllers;
 
@@ -200,31 +199,31 @@ public unsafe class IntegrationsController : IDisposable {
 		foreach (var leveQuest in QuestManager.Instance()->LeveQuests) {
 			if (leveQuest.LeveId is 0) continue;
 
-			var leveData = Service.DataManager.GetExcelSheet<Leve>()?.GetRow(leveQuest.LeveId)!;
-			if (!IsNameMatch(leveData.Name, mapInfo)) continue;
+			var leveData = Service.DataManager.GetExcelSheet<Leve>().GetRow(leveQuest.LeveId);
+			if (!IsNameMatch(leveData.Name.ExtractText(), mapInfo)) continue;
 
-			return leveData.LevelStart.Value?.Map.Row;
+			return leveData.LevelStart.Value.Map.RowId;
 		}
 		
 		foreach (var quest in QuestManager.Instance()->NormalQuests) {
 			if (quest.QuestId is 0) continue;
 			
 			// Is this the quest we are looking for?
-			var questData = Service.DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets2.Quest>()?.GetRow(quest.QuestId + 65536u)!;
-			if (!IsNameMatch(questData.Name, mapInfo)) continue;
+			var questData = Service.DataManager.GetExcelSheet<Quest>().GetRow(quest.QuestId + 65536u);
+			if (!IsNameMatch(questData.Name.ExtractText(), mapInfo)) continue;
 
 			return questData
 				.TodoParams.FirstOrDefault(param => param.ToDoCompleteSeq == quest.Sequence)
-				.ToDoLocation.FirstOrDefault(location => location is not { Row: 0, Value: null })
-				?.Value?.Map.Row;
+				.ToDoLocation.FirstOrDefault(location => location is not { RowId: 0, ValueNullable: null })
+				.Value.Map.RowId;
 		}
 
-		return Service.DataManager.GetExcelSheet<Quest>()?.FirstOrDefault(quest =>
-			IsNameMatch(quest.Name, mapInfo) &&
-			quest is { IssuerLocation.Row: not 0 })
-			?.IssuerLocation.Value?.Map.Row;
+		return Service.DataManager.GetExcelSheet<Quest>().FirstOrDefault(quest =>
+			IsNameMatch(quest.Name.ExtractText(), mapInfo) &&
+			quest is { IssuerLocation.RowId: not 0 })
+			.IssuerLocation.Value.Map.RowId;
 	}
 
-	private static bool IsNameMatch(SeString name, OpenMapInfo* mapInfo) 
-		=> string.Equals(name.ToString(), mapInfo->TitleString.ToString(), StringComparison.OrdinalIgnoreCase);
+	private static bool IsNameMatch(string name, OpenMapInfo* mapInfo) 
+		=> string.Equals(name, mapInfo->TitleString.ToString(), StringComparison.OrdinalIgnoreCase);
 }

@@ -8,7 +8,7 @@ using Dalamud.Interface;
 using Dalamud.Memory;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using Mappy.Classes;
 
 namespace Mappy.Extensions;
@@ -30,15 +30,15 @@ public static class MapMarkerInfoExtensions {
             PrimaryText = GetMarkerPrimaryTooltip(marker, tooltipText),
             OnLeftClicked = marker.DataType switch {
                 1 when !DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId) => () => System.IntegrationsController.OpenMap(marker.DataKey),
-                3 => () => System.Teleporter.Teleport(Service.DataManager.GetExcelSheet<Aetheryte>()!.GetRow(marker.DataKey)!), // Gonna assume that can't be null, because it's a row index that comes from the active gamestate.
-                4 when GetAetheryteForAethernet(marker.DataKey) is not null => () => System.Teleporter.Teleport(GetAetheryteForAethernet(marker.DataKey)!),
+                3 => () => System.Teleporter.Teleport(Service.DataManager.GetExcelSheet<Aetheryte>().GetRow(marker.DataKey)), // Gonna assume that can't be null, because it's a row index that comes from the active gamestate.
+                4 when GetAetheryteForAethernet(marker.DataKey) is not null => () => System.Teleporter.Teleport(GetAetheryteForAethernet(marker.DataKey)!.Value),
                 _ => null,
             },
             SecondaryText = marker.DataType switch {
-                1 when !DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId) => () => $"Open Map {Service.DataManager.GetExcelSheet<Map>()!.GetRow(marker.DataKey)?.PlaceName.Value?.Name ?? "Unable to read target map name."}",
+                1 when !DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId) => () => $"Open Map {Service.DataManager.GetExcelSheet<Map>().GetRow(marker.DataKey).PlaceName.Value.Name.ExtractText()}",
                 2 => () => $"Instance Link {marker.DataKey}",
-                3 => () => $"Teleport to {Service.DataManager.GetExcelSheet<Aetheryte>()!.GetRow(marker.DataKey)?.PlaceName.Value?.Name ?? "Unable to read aetheryte name"} {GetAetheryteTeleportCost(marker.DataKey)}",
-                4 when GetAetheryteForAethernet(marker.DataKey) is not null => () => $"Teleport to {GetAetheryteForAethernet(marker.DataKey)?.PlaceName.Value?.Name ?? "Unable to read aetheryte name"} {GetAetheryteTeleportCost(GetAetheryteForAethernet(marker.DataKey)!.RowId)}",
+                3 => () => $"Teleport to {Service.DataManager.GetExcelSheet<Aetheryte>().GetRow(marker.DataKey).PlaceName.Value.Name.ExtractText()} {GetAetheryteTeleportCost(marker.DataKey)}",
+                4 when GetAetheryteForAethernet(marker.DataKey) is not null => () => $"Teleport to {GetAetheryteForAethernet(marker.DataKey)!.Value.PlaceName.Value.Name.ExtractText()} {GetAetheryteTeleportCost(GetAetheryteForAethernet(marker.DataKey)!.Value.RowId)}",
                 _ => null,
             },
         });
@@ -56,7 +56,7 @@ public static class MapMarkerInfoExtensions {
         if (!tooltipText.TextValue.IsNullOrEmpty()) return tooltipText.ToString;
         
         return marker.DataType switch {
-            4 => () => Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(marker.DataKey)!.Name.ToString(),
+            4 => () => Service.DataManager.GetExcelSheet<PlaceName>().GetRow(marker.DataKey).Name.ToString(),
             _ => () => System.TooltipCache.GetValue(marker.MapMarker.IconId) ?? string.Empty,
         };
     }

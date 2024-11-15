@@ -4,13 +4,13 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Mappy.Classes;
+using FieldMarker = Lumina.Excel.Sheets.FieldMarker;
 using MarkerInfo = Mappy.Classes.MarkerInfo;
-using LuminaFieldMarker = Lumina.Excel.GeneratedSheets.FieldMarker;
 
 namespace Mappy.MapRenderer;
 
 public partial class MapRenderer {
-    private readonly List<LuminaFieldMarker> fieldMarkers = Service.DataManager.GetExcelSheet<LuminaFieldMarker>()!.Where(marker => marker.MapIcon is not 0).ToList();
+    private readonly List<FieldMarker> fieldMarkers = Service.DataManager.GetExcelSheet<FieldMarker>().Where(marker => marker.MapIcon is not 0).ToList();
 
     private unsafe void DrawFieldMarkers() {
         if (AgentMap.Instance()->CurrentMapId != AgentMap.Instance()->SelectedMapId) return;

@@ -16,11 +16,11 @@ using KamiLib.Classes;
 using KamiLib.CommandManager;
 using KamiLib.Extensions;
 using KamiLib.Window;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using Mappy.Classes;
 using Mappy.Controllers;
 using Mappy.Data;
-using Map = Lumina.Excel.GeneratedSheets.Map;
+using Map = Lumina.Excel.Sheets.Map;
 
 namespace Mappy.Windows;
 
@@ -154,27 +154,27 @@ public class MapWindow : Window {
 
         if (!locationChanged) return;
         var subLocationString = string.Empty;
-        var mapData = Service.DataManager.GetExcelSheet<Map>()!.GetRow(AgentMap.Instance()->SelectedMapId);
+        var mapData = Service.DataManager.GetExcelSheet<Map>().GetRow(AgentMap.Instance()->SelectedMapId);
 
         if (System.SystemConfig.ShowRegionLabel) {
-            var mapRegionName = mapData?.PlaceNameRegion.Value?.Name ?? string.Empty;
+            var mapRegionName = mapData.PlaceNameRegion.Value.Name.ExtractText();
             subLocationString += $" - {mapRegionName}";
         }
 
         if (System.SystemConfig.ShowMapLabel) {
-            var mapName = mapData?.PlaceName.Value?.Name ?? string.Empty;
+            var mapName = mapData.PlaceName.Value.Name.ExtractText();
             subLocationString += $" - {mapName}";
         }
 
         // Don't show specific locations if we aren't there.
         if (AgentMap.Instance()->SelectedMapId == AgentMap.Instance()->CurrentMapId) {
             if (TerritoryInfo.Instance()->AreaPlaceNameId is not 0 && System.SystemConfig.ShowAreaLabel) {
-                var areaLabel = Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(TerritoryInfo.Instance()->AreaPlaceNameId)!;
+                var areaLabel = Service.DataManager.GetExcelSheet<PlaceName>().GetRow(TerritoryInfo.Instance()->AreaPlaceNameId);
                 subLocationString += $" - {areaLabel.Name}";
             }
 
             if (TerritoryInfo.Instance()->SubAreaPlaceNameId is not 0 && System.SystemConfig.ShowSubAreaLabel) {
-                var subAreaLabel = Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(TerritoryInfo.Instance()->SubAreaPlaceNameId)!;
+                var subAreaLabel = Service.DataManager.GetExcelSheet<PlaceName>().GetRow(TerritoryInfo.Instance()->SubAreaPlaceNameId);
                 subLocationString += $" - {subAreaLabel.Name}";
             }
         }
@@ -464,8 +464,8 @@ public class MapWindow : Window {
         using var contextMenu = ImRaii.Popup("Mappy_Show_Layers");
         if (!contextMenu) return;
 
-        var currentMap = Service.DataManager.GetExcelSheet<Map>()!.GetRow(AgentMap.Instance()->SelectedMapId);
-        if (currentMap is null) return;
+        var currentMap = Service.DataManager.GetExcelSheet<Map>().GetRow(AgentMap.Instance()->SelectedMapId);
+        if (currentMap.RowId is 0) return;
         
         // If this is a region map
         if (currentMap.Hierarchy is 3) {
@@ -484,8 +484,8 @@ public class MapWindow : Window {
         
         // Any other map
         else {
-            var layers = Service.DataManager.GetExcelSheet<Map>()!
-                .Where(eachMap => eachMap.PlaceName.Row == currentMap.PlaceName.Row)
+            var layers = Service.DataManager.GetExcelSheet<Map>()
+                .Where(eachMap => eachMap.PlaceName.RowId == currentMap.PlaceName.RowId)
                 .Where(eachMap => eachMap.MapIndex != 0)
                 .OrderBy(eachMap => eachMap.MapIndex)
                 .ToList();
@@ -495,7 +495,7 @@ public class MapWindow : Window {
             }
         
             foreach (var layer in layers) {
-                if (ImGui.MenuItem(layer.PlaceNameSub.Value?.Name ?? "Unable to Parse Name", "", AgentMap.Instance()->SelectedMapId == layer.RowId)) {
+                if (ImGui.MenuItem(layer.PlaceNameSub.Value.Name.ExtractText(), "", AgentMap.Instance()->SelectedMapId == layer.RowId)) {
                     System.IntegrationsController.OpenMap(layer.RowId);
                     System.SystemConfig.FollowPlayer = false;
                     System.MapRenderer.DrawOffset = Vector2.Zero;

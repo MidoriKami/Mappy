@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
@@ -7,9 +8,9 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using KamiLib.Classes;
 using KamiLib.Window;
+using Lumina.Excel.Sheets;
 using Mappy.Classes;
 using Map = FFXIVClientStructs.FFXIV.Client.Game.UI.Map;
-using Quest = Lumina.Excel.GeneratedSheets.Quest;
 
 namespace Mappy.Windows;
 
@@ -49,7 +50,7 @@ public unsafe class UnacceptedQuestsTabItem : ITabItem {
     public void Draw() {
         if (Map.Instance()->UnacceptedQuestMarkers.Count > 0) {
             foreach (var quest in Map.Instance()->UnacceptedQuestMarkers) {
-                var questData = Service.DataManager.GetExcelSheet<Quest>()!.GetRow(quest.ObjectiveId + 65536u);
+                var questData = Service.DataManager.GetExcelSheet<Quest>().GetRow(quest.ObjectiveId + 65536u);
                 
                 foreach (var marker in quest.MarkerData) {
                     var cursorStart = ImGui.GetCursorScreenPos();
@@ -65,7 +66,7 @@ public unsafe class UnacceptedQuestsTabItem : ITabItem {
                     ImGui.Image(Service.TextureProvider.GetFromGameIcon(marker.IconId).GetWrapOrEmpty().ImGuiHandle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
                     
                     ImGui.SameLine();
-                    var text = $"Lv. {questData?.ClassJobLevel0} {quest.Label}";
+                    var text = $"Lv. {questData.ClassJobLevel.First()} {quest.Label}";
                     
                     ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ElementHeight * ImGuiHelpers.GlobalScale / 2.0f - ImGui.CalcTextSize(text).Y / 2.0f);
                     ImGui.Text(text);
@@ -94,7 +95,7 @@ public unsafe class AcceptedQuestsTabItem : ITabItem {
             foreach (var quest in Map.Instance()->QuestMarkers) {
                 if (quest.ObjectiveId is 0) continue;
                 
-                var questData = Service.DataManager.GetExcelSheet<Quest>()!.GetRow(quest.ObjectiveId + 65536u);
+                var questData = Service.DataManager.GetExcelSheet<Quest>().GetRow(quest.ObjectiveId + 65536u);
                 
                 var index = 0;
                 foreach (var marker in quest.MarkerData) {
@@ -114,7 +115,7 @@ public unsafe class AcceptedQuestsTabItem : ITabItem {
                     ImGui.Image(Service.TextureProvider.GetFromGameIcon(iconId).GetWrapOrEmpty().ImGuiHandle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
                     
                     ImGui.SameLine();
-                    var text = $"Lv. {questData?.ClassJobLevel0} {quest.Label}";
+                    var text = $"Lv. {questData.ClassJobLevel.First()} {quest.Label}";
                     
                     ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ElementHeight * ImGuiHelpers.GlobalScale / 2.0f - ImGui.CalcTextSize(text).Y / 2.0f);
                     ImGui.Text(text);

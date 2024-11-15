@@ -3,8 +3,7 @@ using System.Numerics;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets2;
-using Map = Lumina.Excel.GeneratedSheets.Map;
+using Lumina.Excel.Sheets;
 
 namespace Mappy.Classes.SelectionWindowComponents;
 
@@ -13,14 +12,9 @@ public class PoiDrawableOption : DrawableOption {
 
     public override Vector2? MarkerLocation => new Vector2(MapMarker.X, MapMarker.Y);
 
-    private Map? internalMap;
-    
-    public override Map? Map {
-        get => internalMap ??= Service.DataManager.GetExcelSheet<Map>()!.FirstOrDefault(map => map.MapMarkerRange == MapMarker.RowId);
-        set => internalMap = value;
-    }
+    public override Map Map => Service.DataManager.GetExcelSheet<Map>().FirstOrDefault(map => map.MapMarkerRange == MapMarker.RowId);
 
-    public override string ExtraLineLong => MapMarker.PlaceNameSubtext.Value?.Name.ToString() ?? string.Empty;
+    public override string ExtraLineLong => MapMarker.PlaceNameSubtext.Value.Name.ExtractText();
 
     protected override void DrawIcon() {
         using var imageFrame = ImRaii.Child($"image_frame{MapMarker}", ImGuiHelpers.ScaledVector2(Width * ImGuiHelpers.GlobalScale, Height), false, ImGuiWindowFlags.NoInputs);
@@ -32,6 +26,6 @@ public class PoiDrawableOption : DrawableOption {
     }
 
     protected override string[] GetAdditionalFilterStrings() => [
-        MapMarker.PlaceNameSubtext.Value?.Name.ToString() ?? string.Empty,
+        MapMarker.PlaceNameSubtext.Value.Name.ExtractText(),
     ];
 }
