@@ -19,7 +19,7 @@ public class AetheryteDrawableOption : DrawableOption {
     ];
 
     protected override void DrawIcon() {
-        using var imageFrame = ImRaii.Child($"image_frame{Aetheryte}", ImGuiHelpers.ScaledVector2(Width * ImGuiHelpers.GlobalScale, Height), false, ImGuiWindowFlags.NoInputs);
+        using var imageFrame = ImRaii.Child($"image_frame{Aetheryte.RowId}#{MarkerLocation}#{ExtraLineLong}", ImGuiHelpers.ScaledVector2(Width * ImGuiHelpers.GlobalScale, Height), false, ImGuiWindowFlags.NoInputs);
         if (!imageFrame) return;
 
         var xOffset = (Width - Height) / 2.0f;

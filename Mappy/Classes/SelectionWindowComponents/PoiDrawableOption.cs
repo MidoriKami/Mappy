@@ -17,7 +17,7 @@ public class PoiDrawableOption : DrawableOption {
     public override string ExtraLineLong => MapMarker.PlaceNameSubtext.Value.Name.ExtractText();
 
     protected override void DrawIcon() {
-        using var imageFrame = ImRaii.Child($"image_frame{MapMarker}", ImGuiHelpers.ScaledVector2(Width * ImGuiHelpers.GlobalScale, Height), false, ImGuiWindowFlags.NoInputs);
+        using var imageFrame = ImRaii.Child($"image_frame{MapMarker.RowId}#{MarkerLocation}", ImGuiHelpers.ScaledVector2(Width * ImGuiHelpers.GlobalScale, Height), false, ImGuiWindowFlags.NoInputs);
         if (!imageFrame) return;
 
         var xOffset = (Width - Height) / 2.0f;

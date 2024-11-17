@@ -49,7 +49,7 @@ public abstract class DrawableOption {
         DrawIcon();
         ImGui.SameLine();
         
-        using var contentsFrame = ImRaii.Child("contents_frame", new Vector2(ImGui.GetContentRegionAvail().X, Height * ImGuiHelpers.GlobalScale), false, ImGuiWindowFlags.NoInputs);
+        using var contentsFrame = ImRaii.Child($"contents_frame#{Map.RowId}#{MarkerLocation}#{ExtraLineShort}#{ExtraLineLong}", new Vector2(ImGui.GetContentRegionAvail().X, Height * ImGuiHelpers.GlobalScale), false, ImGuiWindowFlags.NoInputs);
         if (!contentsFrame) return;
         
         ImGuiHelpers.ScaledDummy(1.0f);
