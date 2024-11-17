@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using KamiLib.CommandManager;
 using KamiLib.Window;
-using Mappy.Classes;
 using Mappy.Classes.Caches;
 using Mappy.Controllers;
 using Mappy.Data;
@@ -26,7 +25,6 @@ public static class System {
         new FateModule(),
     ];
     
-    public static Teleporter Teleporter { get; set; }
     public static TooltipCache TooltipCache { get; set; } = new();
     public static CardRewardCache CardRewardCache { get; set; } = new();
     public static GatheringPointNameCache GatheringPointNameCache { get; set; } = new();

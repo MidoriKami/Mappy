@@ -7,9 +7,12 @@ using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface;
 using Dalamud.Memory;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Lumina.Excel.Sheets;
 using Mappy.Classes;
+using Map = Lumina.Excel.Sheets.Map;
+using MarkerInfo = Mappy.Classes.MarkerInfo;
 
 namespace Mappy.Extensions;
 
@@ -30,8 +33,30 @@ public static class MapMarkerInfoExtensions {
             PrimaryText = GetMarkerPrimaryTooltip(marker, tooltipText),
             OnLeftClicked = marker.DataType switch {
                 1 when !DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId) => () => System.IntegrationsController.OpenMap(marker.DataKey),
-                3 => () => System.Teleporter.Teleport(Service.DataManager.GetExcelSheet<Aetheryte>().GetRow(marker.DataKey)), // Gonna assume that can't be null, because it's a row index that comes from the active gamestate.
-                4 when GetAetheryteForAethernet(marker.DataKey) is not null => () => System.Teleporter.Teleport(GetAetheryteForAethernet(marker.DataKey)!.Value),
+                3 => () => {
+                    var aetheryte = Service.DataManager.GetExcelSheet<Aetheryte>().GetRow(marker.DataKey);
+                    Telepo.Instance()->Teleport(marker.DataKey, 0);
+                    Service.ChatGui.Print(new XivChatEntry {
+                        Message = new SeStringBuilder()
+                            .AddUiForeground("[Mappy] ", 45)
+                            .AddUiForeground("[Teleport] ", 62)
+                            .AddText("Teleporting to ")
+                            .AddUiForeground(aetheryte.PlaceName.Value.Name.ExtractText(), 576)
+                            .Build(),
+                    });
+                }, // Gonna assume that can't be null, because it's a row index that comes from the active gamestate.
+                4 when GetAetheryteForAethernet(marker.DataKey) is not null => () => {
+                    var aetheryte = Service.DataManager.GetExcelSheet<Aetheryte>().GetRow(marker.DataKey);
+                    Telepo.Instance()->Teleport(marker.DataKey, 0);
+                    Service.ChatGui.Print(new XivChatEntry {
+                        Message = new SeStringBuilder()
+                            .AddUiForeground("[Mappy] ", 45)
+                            .AddUiForeground("[Teleport] ", 62)
+                            .AddText("Teleporting to ")
+                            .AddUiForeground(aetheryte.PlaceName.Value.Name.ExtractText(), 576)
+                            .Build(),
+                    });
+                },
                 _ => null,
             },
             SecondaryText = marker.DataType switch {
