@@ -17,7 +17,7 @@ public class MapSelectionWindow : SelectionWindowBase<DrawableOption> {
 
     public MapSelectionWindow() : base(new Vector2(500.0f, 800.0f)) {
         var maps = Service.DataManager.GetExcelSheet<Map>()
-            .Where(map => map is { PlaceName.RowId: not 0, TerritoryType.Value.LoadingImage.RowId: not 0 })
+            .Where(map => map is { PlaceName.RowId: not 0, TerritoryType.ValueNullable.LoadingImage.RowId: not 0, TerritoryType.Value.LoadingImage.RowId: not 0 })
             .Where(map => map is not { PriorityUI: 0, PriorityCategoryUI: 0 } )
             .Select(map => new MapDrawableOption {
                 Map = map,
