@@ -28,11 +28,13 @@ public abstract class DrawableOption {
     public virtual Vector2? MarkerLocation => null;
     
     public string[] GetFilterStrings() {
+        if (Map.RowId is 0) return [];
+        
         var baseStrings = new[] { 
-            Map.PlaceNameRegion.Value.Name.ToString(),
-            Map.PlaceName.Value.Name.ToString(),
-            Map.PlaceNameSub.Value.Name.ToString(),
-            Map.TerritoryType.Value.Name.ToString(),
+            Map.PlaceNameRegion.ValueNullable?.Name.ToString() ?? string.Empty,
+            Map.PlaceName.ValueNullable?.Name.ToString() ?? string.Empty,
+            Map.PlaceNameSub.ValueNullable?.Name.ToString() ?? string.Empty,
+            Map.TerritoryType.ValueNullable?.Name.ToString() ?? string.Empty,
             Map.Id.ExtractText(),
         };
 
