@@ -1,5 +1,6 @@
 ﻿using Dalamud.Plugin;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using KamiLib.Classes;
 using KamiLib.CommandManager;
 using KamiLib.Window;
 using Mappy.Controllers;
@@ -15,6 +16,8 @@ public sealed class MappyPlugin : IDalamudPlugin {
         System.SystemConfig = SystemConfig.Load();
         System.IconConfig = IconConfig.Load();
 
+        System.Teleporter = new Teleporter(Service.PluginInterface);
+        
         System.CommandManager = new CommandManager(Service.PluginInterface, "mappy");
 
         System.MapRenderer = new MapRenderer.MapRenderer();

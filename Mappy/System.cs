@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using KamiLib.Classes;
 using KamiLib.CommandManager;
 using KamiLib.Window;
 using Mappy.Classes.Caches;
@@ -19,6 +20,7 @@ public static class System {
     public static MapRenderer.MapRenderer MapRenderer { get; set; }
     public static IntegrationsController IntegrationsController { get; set; }
     public static CommandManager CommandManager { get; set; }
+    public static Teleporter Teleporter { get; set; }
 
     public static List<ModuleBase> Modules { get; set; } = [
         new TripleTriadModule(),

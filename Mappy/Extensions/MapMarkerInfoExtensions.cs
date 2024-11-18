@@ -8,7 +8,6 @@ using Dalamud.Interface;
 using Dalamud.Memory;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using KamiLib.Classes;
 using Lumina.Excel.Sheets;
 using Mappy.Classes;
 using Map = Lumina.Excel.Sheets.Map;
@@ -23,7 +22,7 @@ public static class MapMarkerInfoExtensions {
         DrawHelpers.DrawMapMarker(new MarkerInfo {
             // Divide by 16, as it seems they use a fixed scalar
             // Add 1024 * scale, to offset from top-left, to center-based coordinate
-            // Add offset for drawing relative to map when its moved around
+            // Add offset for drawing relative to map when it's moved around
             Position = new Vector2(marker.MapMarker.X, marker.MapMarker.Y) / 16.0f * scale + DrawHelpers.GetMapCenterOffsetVector() * scale,
             Offset = offset,
             Scale = scale,
@@ -33,8 +32,8 @@ public static class MapMarkerInfoExtensions {
             PrimaryText = GetMarkerPrimaryTooltip(marker, tooltipText),
             OnLeftClicked = marker.DataType switch {
                 1 when !DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId) => () => System.IntegrationsController.OpenMap(marker.DataKey),
-                3 => () => Teleporter.Teleport(Service.DataManager, Service.ChatGui, marker.DataKey, "Mappy"),
-                4 when GetAetheryteForAethernet(marker.DataKey) is not null => () => Teleporter.Teleport(Service.DataManager, Service.ChatGui, marker.DataKey, "Mappy"),
+                3 => () => System.Teleporter.Teleport(marker.DataKey),
+                4 when GetAetheryteForAethernet(marker.DataKey) is not null => () => System.Teleporter.Teleport(marker.DataKey),
                 _ => null,
             },
             SecondaryText = marker.DataType switch {
