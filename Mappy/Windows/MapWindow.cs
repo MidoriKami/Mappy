@@ -231,6 +231,13 @@ public class MapWindow : Window {
             Flags &= ~(ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove);
         }
 
+        if (System.SystemConfig.NoFocusOnAppear) {
+            Flags |= ImGuiWindowFlags.NoFocusOnAppearing;
+        }
+        else {
+            Flags &= ~(ImGuiWindowFlags.NoFocusOnAppearing);
+        }
+
         RespectCloseHotkey = !System.SystemConfig.IgnoreEscapeKey;
 
         if (RespectCloseHotkey && Service.KeyState[VirtualKey.ESCAPE] && IsFocused) {
