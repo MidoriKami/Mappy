@@ -87,6 +87,7 @@ public class SystemConfig : CharacterConfiguration {
     public bool ShowMapLabel = true;
     public bool ShowAreaLabel = true;
     public bool ShowSubAreaLabel = true;
+    public bool NoFocusOnAppear = false;
 
     // Do not persist this setting
     [JsonIgnore] public bool DebugMode = false;

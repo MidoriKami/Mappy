@@ -81,6 +81,7 @@ public class MapFunctionsTab : ITabItem {
             configChanged |= ImGui.Checkbox("Show Misc Tooltips", ref System.SystemConfig.ShowMiscTooltips);
             configChanged |= ImGui.Checkbox("Lock Map on Center", ref System.SystemConfig.LockCenterOnMap);
             configChanged |= ImGui.Checkbox("Show Other Players", ref System.SystemConfig.ShowPlayers);
+            configChanged |= ImGui.Checkbox("Disable Map Focus on Appear", ref System.SystemConfig.NoFocusOnAppear);
             
             ImGuiHelpers.ScaledDummy(5.0f);
             
