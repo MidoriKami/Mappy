@@ -33,7 +33,7 @@ public static class MapMarkerInfoExtensions {
             OnLeftClicked = marker.DataType switch {
                 1 when !DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId) => () => System.IntegrationsController.OpenMap(marker.DataKey),
                 3 => () => System.Teleporter.Teleport(marker.DataKey),
-                4 when GetAetheryteForAethernet(marker.DataKey) is not null => () => System.Teleporter.Teleport(marker.DataKey),
+                4 when GetAetheryteForAethernet(marker.DataKey) is {} aetheryte => () => System.Teleporter.Teleport(aetheryte.RowId),
                 _ => null,
             },
             SecondaryText = marker.DataType switch {
