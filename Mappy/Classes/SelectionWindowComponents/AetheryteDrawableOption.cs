@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface.Utility;
+﻿using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
 using ImGuiNET;
 using KamiLib.Extensions;
@@ -19,14 +19,14 @@ public class AetheryteDrawableOption : DrawableOption {
     ];
 
     protected override void DrawIcon() {
-        using var imageFrame = ImRaii.Child($"image_frame{Aetheryte.RowId}#{MarkerLocation}#{ExtraLineLong}", ImGuiHelpers.ScaledVector2(Width * ImGuiHelpers.GlobalScale, Height), false, ImGuiWindowFlags.NoInputs);
+        using var imageFrame = ImRaii.Child($"image_frame{Aetheryte.RowId}#{MarkerLocation}#{ExtraLineLong}", new Vector2(Width, Height), false, ImGuiWindowFlags.NoInputs);
         if (!imageFrame) return;
 
         var xOffset = (Width - Height) / 2.0f;
         ImGui.SetCursorPosX(ImGui.GetCursorPosX() + xOffset);
-        ImGui.Image(Service.TextureProvider.GetFromGameIcon(Aetheryte.IsAetheryte ? 60453 : 60430).GetWrapOrEmpty().ImGuiHandle, ImGuiHelpers.ScaledVector2(Height, Height));
+        ImGui.Image(Service.TextureProvider.GetFromGameIcon(Aetheryte.IsAetheryte ? 60453 : 60430).GetWrapOrEmpty().ImGuiHandle, new Vector2(Height, Height));
     }
-    
+
     private Map? GetAetheryteMap() {
         if (Aetheryte.Map.RowId is not 0) return Aetheryte.Map.Value;
 
@@ -41,4 +41,7 @@ public class AetheryteDrawableOption : DrawableOption {
 
         return string.Empty;
     }
+
+    public override string GetElementKey()
+        => base.GetElementKey() + $"{Aetheryte.RowId}";
 }

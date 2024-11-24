@@ -26,7 +26,9 @@ public abstract class DrawableOption {
     public virtual string ExtraLineShort => string.Empty;
 
     public virtual Vector2? MarkerLocation => null;
-    
+
+    public virtual string GetElementKey() => $"{Map.RowId}{MarkerLocation}{ExtraLineShort}{ExtraLineLong}";
+
     public string[] GetFilterStrings() {
         if (Map.RowId is 0) return [];
         
@@ -42,14 +44,12 @@ public abstract class DrawableOption {
     }
 
     public void Draw() {
-        if (Map.RowId is 0) return;
-        
         using var id = ImRaii.PushId(Map.RowId.ToString());
         
         DrawIcon();
         ImGui.SameLine();
         
-        using var contentsFrame = ImRaii.Child($"contents_frame#{Map.RowId}#{MarkerLocation}#{ExtraLineShort}#{ExtraLineLong}", new Vector2(ImGui.GetContentRegionAvail().X, Height * ImGuiHelpers.GlobalScale), false, ImGuiWindowFlags.NoInputs);
+        using var contentsFrame = ImRaii.Child($"contents_frame#{GetElementKey()}", new Vector2(ImGui.GetContentRegionAvail().X, Height), false, ImGuiWindowFlags.NoInputs);
         if (!contentsFrame) return;
         
         ImGuiHelpers.ScaledDummy(1.0f);
@@ -60,9 +60,9 @@ public abstract class DrawableOption {
         ImGui.TableSetupColumn("##column1", ImGuiTableColumnFlags.None, 2.0f);
         ImGui.TableSetupColumn("##column2", ImGuiTableColumnFlags.None, 1.0f);
 
-        var placeName = Map.PlaceName.Value.Name.ExtractText();
-        var zoneName = Map.PlaceNameSub.Value.Name.ExtractText();
-        var regionName = Map.PlaceNameRegion.Value.Name.ExtractText();
+        var placeName = Map.PlaceName.ValueNullable?.Name.ExtractText() ?? string.Empty;
+        var zoneName = Map.PlaceNameSub.ValueNullable?.Name.ExtractText() ?? string.Empty;
+        var regionName = Map.PlaceNameRegion.ValueNullable?.Name.ExtractText() ?? string.Empty;
         
         ImGui.TableNextColumn();
         ImGui.TextUnformatted(placeName);

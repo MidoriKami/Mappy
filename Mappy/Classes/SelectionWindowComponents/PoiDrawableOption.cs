@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Numerics;
-using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using ImGuiNET;
 using Lumina.Excel.Sheets;
@@ -17,15 +16,19 @@ public class PoiDrawableOption : DrawableOption {
     public override string ExtraLineLong => MapMarker.PlaceNameSubtext.Value.Name.ExtractText();
 
     protected override void DrawIcon() {
-        using var imageFrame = ImRaii.Child($"image_frame{MapMarker.RowId}#{MarkerLocation}", ImGuiHelpers.ScaledVector2(Width * ImGuiHelpers.GlobalScale, Height), false, ImGuiWindowFlags.NoInputs);
+        using var imageFrame = ImRaii.Child($"image_frame{MapMarker.RowId}#{MarkerLocation}", new Vector2(Width, Height), false, ImGuiWindowFlags.NoInputs);
         if (!imageFrame) return;
 
         var xOffset = (Width - Height) / 2.0f;
         ImGui.SetCursorPosX(ImGui.GetCursorPosX() + xOffset);
-        ImGui.Image(Service.TextureProvider.GetFromGameIcon((uint)MapMarker.Icon).GetWrapOrEmpty().ImGuiHandle, ImGuiHelpers.ScaledVector2(Height, Height));
+        ImGui.Image(Service.TextureProvider.GetFromGameIcon((uint) MapMarker.Icon).GetWrapOrEmpty().ImGuiHandle, new Vector2(Height, Height));
     }
 
     protected override string[] GetAdditionalFilterStrings() => [
         MapMarker.PlaceNameSubtext.Value.Name.ExtractText(),
     ];
+
+    public override string GetElementKey()
+        => base.GetElementKey() + $"{MapMarker.RowId}";
+
 }
