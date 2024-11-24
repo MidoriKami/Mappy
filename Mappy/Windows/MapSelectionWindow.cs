@@ -15,12 +15,11 @@ public class MapSelectionWindow : SelectionWindowBase<DrawableOption> {
     
     protected override float SelectionHeight => 75.0f * ImGuiHelpers.GlobalScale;
 
-    public MapSelectionWindow() : base(new Vector2(500.0f, 800.0f)) {
+    public MapSelectionWindow() : base(new Vector2(500.0f, 800.0f), alternativeName: "Map Selection Window") {
         var maps = Service.DataManager.GetExcelSheet<Map>()
             .Where(map => map is {
                 PlaceName.RowId: not 0, 
                 TerritoryType.ValueNullable.LoadingImage.RowId: not 0, 
-                TerritoryType.ValueNullable.LoadingImage.RowId: not 0,
             })
             .Where(map => map is not { PriorityUI: 0, PriorityCategoryUI: 0 } )
             .Select(map => new MapDrawableOption {
