@@ -33,10 +33,10 @@ public abstract class DrawableOption {
         if (Map.RowId is 0) return [];
         
         var baseStrings = new[] { 
-            Map.PlaceNameRegion.ValueNullable?.Name.ToString() ?? string.Empty,
-            Map.PlaceName.ValueNullable?.Name.ToString() ?? string.Empty,
-            Map.PlaceNameSub.ValueNullable?.Name.ToString() ?? string.Empty,
-            Map.TerritoryType.ValueNullable?.Name.ToString() ?? string.Empty,
+            Map.PlaceNameRegion.ValueNullable?.Name.ExtractText() ?? string.Empty,
+            Map.PlaceName.ValueNullable?.Name.ExtractText() ?? string.Empty,
+            Map.PlaceNameSub.ValueNullable?.Name.ExtractText() ?? string.Empty,
+            Map.TerritoryType.ValueNullable?.Name.ExtractText() ?? string.Empty,
             Map.Id.ExtractText(),
         };
 

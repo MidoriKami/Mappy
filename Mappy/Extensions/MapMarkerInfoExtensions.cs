@@ -58,7 +58,7 @@ public static class MapMarkerInfoExtensions {
         if (!tooltipText.TextValue.IsNullOrEmpty()) return tooltipText.ToString;
         
         return marker.DataType switch {
-            4 => () => Service.DataManager.GetExcelSheet<PlaceName>().GetRow(marker.DataKey).Name.ToString(),
+            4 => () => Service.DataManager.GetExcelSheet<PlaceName>().GetRow(marker.DataKey).Name.ExtractText(),
             _ => () => System.TooltipCache.GetValue(marker.MapMarker.IconId) ?? string.Empty,
         };
     }
