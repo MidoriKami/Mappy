@@ -17,7 +17,7 @@ namespace Mappy.Extensions;
 
 public static class MapMarkerInfoExtensions {
     public  static unsafe void Draw(this MapMarkerInfo marker, Vector2 offset, float scale) {
-        var tooltipText = MemoryHelper.ReadSeStringNullTerminated((nint) marker.MapMarker.Subtext);
+        var tooltipText = marker.MapMarker.Subtext.AsDalamudSeString();
         
         DrawHelpers.DrawMapMarker(new MarkerInfo {
             // Divide by 16, as it seems they use a fixed scalar

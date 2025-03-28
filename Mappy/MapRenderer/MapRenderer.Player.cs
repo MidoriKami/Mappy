@@ -2,6 +2,7 @@
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using FFXIVClientStructs.FFXIV.Client.UI.Arrays;
 using ImGuiNET;
 using Mappy.Classes;
 using Mappy.Extensions;
@@ -70,7 +71,7 @@ public partial class MapRenderer {
     }
     
     private static unsafe float GetCameraRotation() 
-        => -DegreesToRadians(AddonAreaMap.AddonAreaMapNumberArray.Instance()->ConeRotation) - 0.5f * MathF.PI;
+        => -DegreesToRadians(AreaMapNumberArray.Instance()->ConeRotation) - 0.5f * MathF.PI;
 
     private static float DegreesToRadians(float degrees) 
         => MathF.PI / 180.0f * degrees;

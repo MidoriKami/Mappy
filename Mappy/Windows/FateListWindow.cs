@@ -49,7 +49,7 @@ public class FateListWindow : Window {
 					System.MapRenderer.DrawOffset = -new Vector2(fate->Location.X, fate->Location.Z);
 
 					if (System.SystemConfig.SetFlagOnFateClick) {
-						AgentMap.Instance()->IsFlagMarkerSet = 0;
+						AgentMap.Instance()->IsFlagMarkerSet = false;
 						AgentMap.Instance()->SetFlagMapMarker(AgentMap.Instance()->CurrentTerritoryId, AgentMap.Instance()->CurrentMapId, fate->Location.X, fate->Location.Z);
 						AgentChatLog.Instance()->InsertTextCommandParam(1048, false);
 					}

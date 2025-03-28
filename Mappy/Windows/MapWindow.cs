@@ -429,13 +429,13 @@ public class MapWindow : Window {
             var result = textureClickLocation - new Vector2(1024.0f, 1024.0f); // One of our vectors made the map centered, undo it.
             var scaledResult = result / DrawHelpers.GetMapScaleFactor() + DrawHelpers.GetRawMapOffsetVector(); // Apply offset x/y and scalefactor
                 
-            AgentMap.Instance()->IsFlagMarkerSet = 0;
+            AgentMap.Instance()->IsFlagMarkerSet = false;
             AgentMap.Instance()->SetFlagMapMarker(AgentMap.Instance()->SelectedTerritoryId, AgentMap.Instance()->SelectedMapId, scaledResult.X, scaledResult.Y);
             AgentChatLog.Instance()->InsertTextCommandParam(1048, false);
         }
         
-        if (ImGui.MenuItem("Remove Flag", AgentMap.Instance()->IsFlagMarkerSet is not 0)) {
-            AgentMap.Instance()->IsFlagMarkerSet = 0;
+        if (ImGui.MenuItem("Remove Flag", AgentMap.Instance()->IsFlagMarkerSet)) {
+            AgentMap.Instance()->IsFlagMarkerSet = false;
         }
 
         ImGuiHelpers.ScaledDummy(5.0f);
@@ -479,9 +479,9 @@ public class MapWindow : Window {
             foreach (var marker in AgentMap.Instance()->MapMarkers) {
                 if (!DrawHelpers.IsRegionIcon(marker.MapMarker.IconId)) continue;
 
-                var label = MemoryHelper.ReadStringNullTerminated((nint)marker.MapMarker.Subtext);
+                var label = marker.MapMarker.Subtext.AsDalamudSeString();
                 
-                if (ImGui.MenuItem(label)) {
+                if (ImGui.MenuItem(label.ToString())) {
                     System.IntegrationsController.OpenMap(marker.DataKey);
                     System.SystemConfig.FollowPlayer = false;
                     System.MapRenderer.DrawOffset = Vector2.Zero;
@@ -558,7 +558,7 @@ public class MapWindow : Window {
     private unsafe bool ShouldFade() 
         => System.SystemConfig.FadeMode.HasFlag(FadeMode.Always) ||
            System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenFocused) && IsFocused ||
-           System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenMoving) && AgentMap.Instance()->IsPlayerMoving is not 0 ||
+           System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenMoving) && AgentMap.Instance()->IsPlayerMoving ||
            System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenUnFocused) && !IsFocused;
 
     private unsafe void YeetVanillaMap() {
