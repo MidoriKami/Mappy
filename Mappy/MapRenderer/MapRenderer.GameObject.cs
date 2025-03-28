@@ -88,7 +88,7 @@ public partial class MapRenderer {
         if (csEventObject is null) return false;
 
         if (csEventObject->EventHandler is null) return false;
-        return csEventObject->EventHandler->Info.EventId.ContentId == EventHandlerType.AetherCurrent;
+        return csEventObject->EventHandler->Info.EventId.ContentId == EventHandlerContent.AetherCurrent;
     }
 
     private bool IsBoss(IGameObject chara)

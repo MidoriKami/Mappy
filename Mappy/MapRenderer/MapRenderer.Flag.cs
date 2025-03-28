@@ -6,7 +6,7 @@ namespace Mappy.MapRenderer;
 
 public partial class MapRenderer {
     private unsafe void DrawFlag() {
-        if (AgentMap.Instance()->IsFlagMarkerSet is not 0 && AgentMap.Instance()->FlagMapMarker.TerritoryId == AgentMap.Instance()->SelectedTerritoryId) {
+        if (AgentMap.Instance()->IsFlagMarkerSet is not false && AgentMap.Instance()->FlagMapMarker.TerritoryId == AgentMap.Instance()->SelectedTerritoryId) {
             ref var flagMarker = ref AgentMap.Instance()->FlagMapMarker;
             
             DrawHelpers.DrawMapMarker(new MarkerInfo {
