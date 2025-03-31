@@ -89,17 +89,6 @@ public unsafe class IntegrationsController : IDisposable {
 	private void OpenMap(AgentMap* agent, OpenMapInfo* mapInfo) 
 		=> HookSafety.ExecuteSafe(() => {
 			openMapHook!.Original(agent, mapInfo);
-			Service.Log.Debug($"[OpenMap] Called Original with MapInfo [ " +
-			                    $"MapId: {mapInfo->MapId}, " +
-			                    $"MapType: {mapInfo->Type}, " +
-			                    $"Title: {mapInfo->TitleString.ToString()}, " +
-			                    $"PlaceNameId: {mapInfo->PlaceNameId}, " +
-			                    $"AetheryteId: {mapInfo->AetheryteId}, " +
-			                    $"FateId: {mapInfo->FateId}, " +
-			                    $"Unknown 1C: {mapInfo->Unk1C}, " +
-			                    $"Unknown 88: {mapInfo->Unk88}, " +
-			                    $"Unknown 8C: {mapInfo->Unk8C}, " +
-			                    $"Unknown 8D: {mapInfo->Unk8D} ]");
 
 			switch (mapInfo->Type) {
 				case MapType.QuestLog: {
