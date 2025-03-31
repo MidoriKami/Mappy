@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
-using Dalamud.Memory;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Mappy.Classes;
@@ -10,7 +9,7 @@ namespace Mappy.Extensions;
 
 // Represents standard non-dynamic map markers, things that don't change, and may reference datasheet data with their key data
 public static class MapMarkerBaseExtensions {
-    public static unsafe void Draw(this MapMarkerBase marker, Vector2 offset, float scale) {
+    public static void Draw(this MapMarkerBase marker, Vector2 offset, float scale) {
         var tooltipText = marker.Subtext.AsDalamudSeString();
         
         DrawHelpers.DrawMapMarker(new MarkerInfo {

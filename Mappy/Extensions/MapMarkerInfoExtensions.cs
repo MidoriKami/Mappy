@@ -5,7 +5,6 @@ using System.Numerics;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Interface;
-using Dalamud.Memory;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Lumina.Excel.Sheets;
@@ -16,7 +15,7 @@ using MarkerInfo = Mappy.Classes.MarkerInfo;
 namespace Mappy.Extensions;
 
 public static class MapMarkerInfoExtensions {
-    public  static unsafe void Draw(this MapMarkerInfo marker, Vector2 offset, float scale) {
+    public  static void Draw(this MapMarkerInfo marker, Vector2 offset, float scale) {
         var tooltipText = marker.MapMarker.Subtext.AsDalamudSeString();
         
         DrawHelpers.DrawMapMarker(new MarkerInfo {
