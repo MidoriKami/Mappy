@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Mappy.Classes;
 using MarkerInfo = Mappy.Classes.MarkerInfo;
@@ -16,7 +17,7 @@ public static class MapMarkerDataExtensions {
             Radius = marker.Radius,
             RadiusColor = System.SystemConfig.AreaColor,
             RadiusOutlineColor = System.SystemConfig.AreaOutlineColor,
-            PrimaryText = () => marker.RecommendedLevel is 0 ? marker.TooltipString->ToString() : $"Lv. {marker.RecommendedLevel} {marker.TooltipString->ToString()}",
+            PrimaryText = () => marker.RecommendedLevel is 0 ? marker.TooltipString->StringPtr.AsReadOnlySeStringSpan().ExtractText() : $"Lv. {marker.RecommendedLevel} {marker.TooltipString->StringPtr.AsReadOnlySeStringSpan().ExtractText()}",
             IsDynamicMarker = true,
             ObjectiveId = marker.ObjectiveId,
             LevelId = marker.LevelId,
@@ -32,7 +33,7 @@ public static class MapMarkerDataExtensions {
             Radius = marker.Radius,
             RadiusColor = System.SystemConfig.AreaColor,
             RadiusOutlineColor = System.SystemConfig.AreaOutlineColor,
-            PrimaryText = () => marker.RecommendedLevel is 0 ? marker.TooltipString->ToString() : $"Lv. {marker.RecommendedLevel} {marker.TooltipString->ToString()}",
+            PrimaryText = () => marker.RecommendedLevel is 0 ? marker.TooltipString->StringPtr.AsReadOnlySeStringSpan().ExtractText() : $"Lv. {marker.RecommendedLevel} {marker.TooltipString->StringPtr.AsReadOnlySeStringSpan().ExtractText()}",
             IsDynamicMarker = true,
             ObjectiveId = marker.ObjectiveId,
             LevelId = marker.LevelId,
