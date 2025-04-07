@@ -237,7 +237,7 @@ public class MapWindow : Window {
             Flags &= ~(ImGuiWindowFlags.NoFocusOnAppearing);
         }
 
-        if (Service.KeyState[VirtualKey.ESCAPE] && IsFocused) {
+        if (Service.KeyState[VirtualKey.ESCAPE] && IsFocused && !IsMapLocked()) {
             AgentMap.Instance()->Hide();
         }
         
@@ -650,5 +650,12 @@ public class MapWindow : Window {
                 System.MapRenderer.DrawOffset = Vector2.Zero;
             },
         });
+    }
+
+    private unsafe bool IsMapLocked() {
+        var addon = Service.GameGui.GetAddonByName<AddonAreaMap>("AreaMap");
+        if (addon is null || addon->RootNode is null) return false;
+
+        return (addon->Param & 0x8_0000) > 0;
     }
 }
