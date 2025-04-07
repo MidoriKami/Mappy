@@ -54,7 +54,6 @@ public class SystemConfig : CharacterConfiguration {
     public Vector4 RadarOutlineColor = KnownColor.Gray.Vector() with { W = 0.30f };
     public bool HideWindowFrame = false;
     public bool EnableShiftDragMove = false;
-    public bool IgnoreEscapeKey = false;
     public bool LockWindow = false;
     public float FadePercent = 0.60f;
     public FadeMode FadeMode = FadeMode.WhenUnFocused | FadeMode.WhenMoving;

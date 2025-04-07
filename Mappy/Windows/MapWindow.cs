@@ -237,9 +237,7 @@ public class MapWindow : Window {
             Flags &= ~(ImGuiWindowFlags.NoFocusOnAppearing);
         }
 
-        RespectCloseHotkey = !System.SystemConfig.IgnoreEscapeKey;
-
-        if (RespectCloseHotkey && Service.KeyState[VirtualKey.ESCAPE] && IsFocused) {
+        if (Service.KeyState[VirtualKey.ESCAPE] && IsFocused) {
             AgentMap.Instance()->Hide();
         }
         

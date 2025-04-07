@@ -42,12 +42,7 @@ public class MapFunctionsTab : ITabItem {
     
     public void Draw() {
         var configChanged = false;
-        
-        ImGuiTweaks.Header("Key Input");
-        using (ImRaii.PushIndent()) {
-            configChanged |= ImGui.Checkbox("Ignore Escape Key", ref System.SystemConfig.IgnoreEscapeKey);
-        }
-        
+
         ImGuiTweaks.Header("Zoom Options");
         using (ImRaii.PushIndent()) {
             configChanged |= ImGui.Checkbox("Use Linear Zoom", ref System.SystemConfig.UseLinearZoom);
