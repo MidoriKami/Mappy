@@ -77,13 +77,11 @@ public unsafe class IntegrationsController : IDisposable {
 			}
 
 			showMapHook!.Original(agent, a1, a2);
-			Service.Log.Debug($"[OnShow] Called Original with A1 = {a1}, A2 = {a2}");
 		}, Service.Log, "Exception during OnShowHook");
 
 	private void OpenMapById(AgentMap* agent, uint mapId, uint a3, bool a4) 
 		=> HookSafety.ExecuteSafe(() => {
 			openMapByIdHook!.Original(agent, mapId, a3, a4);
-			Service.Log.Debug($"[OpenMapById] Called Original with MapId = {mapId}, A3 = {a3}, A4 = {a4}");
 		}, Service.Log, "Exception during OpenMapByMapId");
     
 	private void OpenMap(AgentMap* agent, OpenMapInfo* mapInfo) 
