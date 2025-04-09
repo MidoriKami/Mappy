@@ -8,7 +8,7 @@ namespace Mappy.Extensions;
 
 // MapMarkerData struct represents dynamic markers that have information like radius, and other fields.
 public static class MapMarkerDataExtensions {
-    public static unsafe void Draw(this MapMarkerData marker, Vector2 offset, float scale) {
+    public static void Draw(this MapMarkerData marker, Vector2 offset, float scale) {
         DrawHelpers.DrawMapMarker(new MarkerInfo {
             Position = (new Vector2(marker.X, marker.Z) * DrawHelpers.GetMapScaleFactor() - DrawHelpers.GetMapOffsetVector() + DrawHelpers.GetMapCenterOffsetVector()) * scale,
             Offset = offset,
@@ -17,14 +17,14 @@ public static class MapMarkerDataExtensions {
             Radius = marker.Radius,
             RadiusColor = System.SystemConfig.AreaColor,
             RadiusOutlineColor = System.SystemConfig.AreaOutlineColor,
-            PrimaryText = () => marker.RecommendedLevel is 0 ? marker.TooltipString->StringPtr.ExtractText() : $"Lv. {marker.RecommendedLevel} {marker.TooltipString->StringPtr.ExtractText()}",
+            PrimaryText = () => GetMarkerPrimaryText(ref marker),
             IsDynamicMarker = true,
             ObjectiveId = marker.ObjectiveId,
             LevelId = marker.LevelId,
         });
     }
 
-    public static unsafe void DrawText(this MapMarkerData marker, string text, Vector2 offset, float scale) {
+    public static void DrawText(this MapMarkerData marker, string text, Vector2 offset, float scale) {
         DrawHelpers.DrawText(new MarkerInfo {
             Position = (new Vector2(marker.X, marker.Z) * DrawHelpers.GetMapScaleFactor() - DrawHelpers.GetMapOffsetVector() + DrawHelpers.GetMapCenterOffsetVector()) * scale,
             Offset = offset,
@@ -33,10 +33,19 @@ public static class MapMarkerDataExtensions {
             Radius = marker.Radius,
             RadiusColor = System.SystemConfig.AreaColor,
             RadiusOutlineColor = System.SystemConfig.AreaOutlineColor,
-            PrimaryText = () => marker.RecommendedLevel is 0 ? marker.TooltipString->StringPtr.ExtractText() : $"Lv. {marker.RecommendedLevel} {marker.TooltipString->StringPtr.ExtractText()}",
+            PrimaryText = () => GetMarkerPrimaryText(ref marker),
             IsDynamicMarker = true,
             ObjectiveId = marker.ObjectiveId,
             LevelId = marker.LevelId,
         }, text);
+    }
+
+    private static unsafe string GetMarkerPrimaryText(ref MapMarkerData marker) {
+        if (marker.TooltipString is null) return "Error Parsing Marker Text\nTooltipString is null";
+        if (marker.TooltipString->StringPtr.Value is null) return "Error Parsing Marker Text\nTooltipString.Value is null";
+        if (marker.TooltipString->StringPtr.ExtractText().IsNullOrEmpty()) return "Error Parsing Marker Text\nExtracted Text is null or empty.";
+        
+        var text = marker.TooltipString->StringPtr.ExtractText();
+        return marker.RecommendedLevel is 0 ? text : $"Lv. {text}";
     }
 }
