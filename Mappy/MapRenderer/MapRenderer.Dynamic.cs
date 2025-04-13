@@ -26,7 +26,7 @@ public partial class MapRenderer {
                     // Set the next marker's radius (writing to a copy of the marker, not mutating the original data)
                     nextMarker.Radius = marker.Radius;
                     
-                    // Skip drawing the circle marker, and1584. instead just draw the icon marker, with a correct radius.
+                    // Skip drawing the circle marker, and instead just draw the icon marker, with a correct radius.
                     nextMarker.Draw(DrawPosition, Scale);
                     
                     // Now that we have drawn out of order, we need to skip 2 markers.
