@@ -18,6 +18,8 @@ public class MarkerInfo {
     public required float Scale { get; init; }
     public uint? ObjectiveId { get; init; }
     public uint? LevelId { get; set; }
+    public uint? DataId { get; set; }
+    public MarkerType MarkerType { get; set; }
     public uint IconId { get; set; }
     public Func<string?>? PrimaryText { get; set; }
     public Func<string?>? SecondaryText { get; set; }
