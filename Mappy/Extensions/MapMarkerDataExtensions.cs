@@ -50,6 +50,6 @@ public static class MapMarkerDataExtensions {
         if (marker.TooltipString->StringPtr.ExtractText().IsNullOrEmpty()) return string.Empty;
         
         var text = marker.TooltipString->StringPtr.ExtractText();
-        return marker.RecommendedLevel is 0 ? text : $"Lv. {text}";
+        return marker.RecommendedLevel is 0 ? text : $"Lv. {marker.RecommendedLevel} {text}";
     }
 }
