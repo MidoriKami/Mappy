@@ -32,12 +32,14 @@ public class FateListWindow : Window {
 			using (var toolbarChild = ImRaii.Child("fatelist_toolbar", new Vector2(ImGui.GetContentRegionAvail().X, 32.0f))) {
 				if (toolbarChild) {
 					using var color = ImRaii.PushColor(ImGuiCol.Button, ImGui.GetStyle().Colors[(int) ImGuiCol.ButtonActive], System.SystemConfig.SetFlagOnFateClick);
-					if (ImGuiTweaks.IconButtonWithSize(Service.PluginInterface.UiBuilder.IconFontFixedWidthHandle, FontAwesomeIcon.Flag, "flag_on_click", ImGuiHelpers.ScaledVector2(23.0f), "Set Flag On Click")) {
-						System.SystemConfig.SetFlagOnFateClick = !System.SystemConfig.SetFlagOnFateClick;
+					ImGui.Spacing();
+					if (ImGui.Checkbox("Place Map Flag on Click", ref System.SystemConfig.SetFlagOnFateClick)) {
 						SystemConfig.Save();
 					}
 				}
 			}
+			
+			ImGui.Separator();
 			
 			foreach (var index in Enumerable.Range(0, Service.FateTable.Length)) {
 				var fate = FateManager.Instance()->Fates[index].Value;
@@ -64,13 +66,19 @@ public class FateListWindow : Window {
                     
 				using (ImRaii.Child($"text_child_{fate->FateId}", new Vector2(ImGui.GetContentRegionAvail().X, ElementHeight), false, ImGuiWindowFlags.NoInputs)) {
 					ImGui.TextColored(FateContextExtensions.GetColor(fate, 1.0f), $"Lv. {fate->Level} {fate->Name}");
-					ImGui.TextUnformatted($"Progress: {fate->Progress}%");
 
-					var timeRemaining = FateContextExtensions.GetTimeRemaining(fate);
-					if (timeRemaining != TimeSpan.Zero) {
-						var timeString = $"{(fate->IsBonus ? "Exp Bonus!\t" : string.Empty)}{SeIconChar.Clock.ToIconString()} {FateContextExtensions.GetTimeRemaining(fate):mm\\:ss}";
-						ImGui.SameLine(ImGui.GetContentRegionMax().X - ImGui.CalcTextSize(timeString).X);
-						ImGui.Text(timeString);
+					if (fate->State is FateState.Running) {
+						ImGui.TextUnformatted($"Progress: {fate->Progress}%");
+
+						var timeRemaining = FateContextExtensions.GetTimeRemaining(fate);
+						if (timeRemaining != TimeSpan.Zero) {
+							var timeString = $"{(fate->IsBonus ? "Exp Bonus!\t" : string.Empty)}{SeIconChar.Clock.ToIconString()} {FateContextExtensions.GetTimeRemaining(fate):mm\\:ss}";
+							ImGui.SameLine(ImGui.GetContentRegionMax().X - ImGui.CalcTextSize(timeString).X);
+							ImGui.Text(timeString);
+						}
+					}
+					else {
+						ImGui.TextUnformatted(fate->State.ToString());
 					}
 				}
 			}
