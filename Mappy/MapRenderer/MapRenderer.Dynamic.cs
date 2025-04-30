@@ -13,6 +13,8 @@ public partial class MapRenderer {
         for (var index = 0; index < AgentMap.Instance()->EventMarkers.Count; ++index) {
             var marker = AgentMap.Instance()->EventMarkers[index];
             if (marker.IconId is 0) continue;
+            // Fixes Cosmic exploration mech op markers duplicated markers
+            if (marker.MarkerType is 5 && marker.IconId == 60493) continue;
 
             // If there's at least one more marker after this
             if (index < AgentMap.Instance()->EventMarkers.Count - 1) {
