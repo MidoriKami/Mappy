@@ -33,6 +33,8 @@ public class MarkerInfo {
 
 public static class DrawHelpers {
     private static bool DebugMode => System.SystemConfig.DebugMode;
+
+    public const uint QuestionMarkIcon = 60071;
     
     /// <summary>
     /// Offset Vector of SelectedX, SelectedY, scaled with SelectedSizeFactor
@@ -72,7 +74,7 @@ public static class DrawHelpers {
 
         markerInfo.IconId = markerInfo.IconId switch {
             // Translate circle markers that don't have icons, into [?] icon
-            >= 60483 and <= 60494 => 60071,
+            >= 60483 and <= 60494 => QuestionMarkIcon,
             
             // Translate Gemstone Trader Icon into smaller version... why square, why.
             60091 => 61731,

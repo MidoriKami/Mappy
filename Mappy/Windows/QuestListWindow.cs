@@ -107,7 +107,7 @@ public unsafe class AcceptedQuestsTabItem : ITabItem {
                     }
 
                     var iconId = marker.IconId switch {
-                        >= 60483 and <= 60494 => 60071u,
+                        >= 60483 and <= 60494 => DrawHelpers.QuestionMarkIcon,
                         _ => marker.IconId,
                     };
                     
