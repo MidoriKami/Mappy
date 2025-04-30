@@ -205,10 +205,12 @@ public unsafe class IntegrationsController : IDisposable {
 				.Value.Map.RowId;
 		}
 
-		return Service.DataManager.GetExcelSheet<Quest>().FirstOrDefault(quest =>
+		var fallbackQuest = Service.DataManager.GetExcelSheet<Quest>().FirstOrDefault(quest =>
 			IsNameMatch(quest.Name.ExtractText(), mapInfo) &&
-			quest is { IssuerLocation.RowId: not 0 })
-			.IssuerLocation.Value.Map.RowId;
+			quest is { IssuerLocation.RowId: not 0 });
+		
+		if (fallbackQuest.RowId == 0) return null;
+		return fallbackQuest.IssuerLocation.RowId;
 	}
 
 	private static bool IsNameMatch(string name, OpenMapInfo* mapInfo) 

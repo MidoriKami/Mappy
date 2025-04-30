@@ -22,6 +22,9 @@ public partial class MapRenderer {
                 
                 // Check if the next marker matches our position, and that the next marker has a radius, and we do not.
                 if (currentPosition == nextPosition && marker.MapMarker.Scale <= 1.0f && nextMarker.MapMarker.Scale > 1.0f) {
+                    // to cover cosmic exploration missions that do not set a icon id
+                    if (marker.MapMarker.IconId == 0)
+                        marker.MapMarker.IconId = 60492;
                     
                     // Set the next marker's radius (writing to a copy of the marker, not mutating the original data)
                     marker.MapMarker.Scale = nextMarker.MapMarker.Scale;
