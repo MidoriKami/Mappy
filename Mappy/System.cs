@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Dalamud.Interface.ManagedFontAtlas;
 using KamiLib.Classes;
 using KamiLib.CommandManager;
 using KamiLib.Window;
@@ -33,4 +34,6 @@ public static class System {
     public static GatheringPointIconCache GatheringPointIconCache { get; set; } = new();
     public static TripleTriadCache TripleTriadCache { get; set; } = new();
     public static AetheryteAethernetCache AetheryteAethernetCache { get; set; } = new();
+    
+    public static IFontHandle LargeAxisFontHandle { get; set; }
 }

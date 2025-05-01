@@ -1,4 +1,5 @@
-﻿using Dalamud.Plugin;
+﻿using Dalamud.Interface.GameFonts;
+using Dalamud.Plugin;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiLib.Classes;
 using KamiLib.CommandManager;
@@ -12,6 +13,13 @@ namespace Mappy;
 public sealed class MappyPlugin : IDalamudPlugin {
     public MappyPlugin(IDalamudPluginInterface pluginInterface) {
         pluginInterface.Create<Service>();
+        
+        System.LargeAxisFontHandle = Service.PluginInterface.UiBuilder.FontAtlas.NewGameFontHandle(new GameFontStyle {
+            SizePt = 36.0f,
+            FamilyAndSize = GameFontFamilyAndSize.Axis36,
+            Italic = true,
+            BaseSkewStrength = 16f,
+        });
         
         System.SystemConfig = SystemConfig.Load();
         System.IconConfig = IconConfig.Load();
