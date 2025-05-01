@@ -15,10 +15,10 @@ using MarkerInfo = Mappy.Classes.MarkerInfo;
 namespace Mappy.Extensions;
 
 public static class MapMarkerInfoExtensions {
-    public  static void Draw(this MapMarkerInfo marker, Vector2 offset, float scale) {
+    public static void Draw(this MapMarkerInfo marker, Vector2 offset, float scale) {
         var tooltipText = marker.MapMarker.Subtext.AsDalamudSeString();
-        
-        DrawHelpers.DrawMapMarker(new MarkerInfo {
+
+        var markerInfo = new MarkerInfo {
             // Divide by 16, as it seems they use a fixed scalar
             // Add 1024 * scale, to offset from top-left, to center-based coordinate
             // Add offset for drawing relative to map when it's moved around
@@ -32,7 +32,7 @@ public static class MapMarkerInfoExtensions {
             OnLeftClicked = marker.DataType switch {
                 1 when !DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId) => () => System.IntegrationsController.OpenMap(marker.DataKey),
                 3 => () => System.Teleporter.Teleport(marker.DataKey),
-                4 when GetAetheryteForAethernet(marker.DataKey) is {} aetheryte => () => System.Teleporter.Teleport(aetheryte.RowId),
+                4 when GetAetheryteForAethernet(marker.DataKey) is { } aetheryte => () => System.Teleporter.Teleport(aetheryte.RowId),
                 _ => null,
             },
             SecondaryText = marker.DataType switch {
@@ -42,7 +42,19 @@ public static class MapMarkerInfoExtensions {
                 4 when GetAetheryteForAethernet(marker.DataKey) is not null => () => $"Teleport to {GetAetheryteForAethernet(marker.DataKey)!.Value.PlaceName.Value.Name.ExtractText()} {GetAetheryteTeleportCost(GetAetheryteForAethernet(marker.DataKey)!.Value.RowId)}",
                 _ => null,
             },
-        });
+        };
+        
+        if (marker.MapMarker.IconId is 0 && marker.MapMarker.Index is not 0) {
+            markerInfo.Scale *= marker.MapMarker.SubtextStyle switch {
+                1 => System.SystemConfig.LargeAreaTextScale,
+                _ => System.SystemConfig.SmallAreaTextScale,
+            };
+            
+            DrawHelpers.DrawText(markerInfo, tooltipText);
+        }
+        else {
+            DrawHelpers.DrawMapMarker(markerInfo);
+        }
     }
 
     private static Aetheryte? GetAetheryteForAethernet(uint aethernetKey)

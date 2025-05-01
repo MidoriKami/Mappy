@@ -115,5 +115,6 @@ public partial class MapRenderer {
         DrawFieldMarkers();
         DrawPlayer();
         DrawFlag();
+        DrawStaticTextMarkers();
     }
 }

@@ -87,6 +87,8 @@ public class SystemConfig : CharacterConfiguration {
     public bool ShowAreaLabel = true;
     public bool ShowSubAreaLabel = true;
     public bool NoFocusOnAppear = false;
+    public float LargeAreaTextScale = 3.0f;
+    public float SmallAreaTextScale = 2.0f;
 
     // Do not persist this setting
     [JsonIgnore] public bool DebugMode = false;

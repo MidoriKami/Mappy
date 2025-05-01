@@ -9,13 +9,14 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 using KamiLib.Classes;
 using Mappy.Data;
+using SeString = Dalamud.Game.Text.SeStringHandling.SeString;
 
 namespace Mappy.Classes;
 
 public class MarkerInfo {
     public required Vector2 Position { get; set; }
     public required Vector2 Offset { get; set; }
-    public required float Scale { get; init; }
+    public required float Scale { get; set; }
     public uint? ObjectiveId { get; init; }
     public uint? LevelId { get; set; }
     public uint? DataId { get; set; }
@@ -157,25 +158,40 @@ public static class DrawHelpers {
             ImGui.GetWindowDrawList().AddRect(cursorScreenPos, cursorScreenPos + iconSize, ImGui.GetColorU32(KnownColor.Red.Vector()), 3.0f);
         }
     }
+
+    public static void DrawText(MarkerInfo markerInfo, SeString text)
+        => DrawText(markerInfo, text.ToString());
     
     public static void DrawText(MarkerInfo markerInfo, string text) {
         // Don't draw markers that are positioned off the map texture
         if (markerInfo.Position.X < 0.0f || markerInfo.Position.X > 2048.0f * markerInfo.Scale || markerInfo.Position.Y < 0.0f || markerInfo.Position.Y > 2048.0f * markerInfo.Scale) return;
 
-        var drawPosition = markerInfo.Position + markerInfo.Offset + new Vector2(8.0f, 8.0f) * markerInfo.Scale + ImGui.GetWindowPos();
-        var outlineColor = ImGui.GetColorU32(KnownColor.Black.Vector());
-        var textColor = ImGui.GetColorU32(KnownColor.White.Vector());
+        using var largeFont = System.LargeAxisFontHandle.Push();
+        ImGui.SetWindowFontScale(0.20f * markerInfo.Scale);
 
-        drawPosition = new Vector2(MathF.Round(drawPosition.X), MathF.Round(drawPosition.Y));
+        var textSize = ImGui.CalcTextSize(text);
+        var drawPosition = markerInfo.Position + markerInfo.Offset + ImGui.GetWindowPos() - textSize / 2.0f;
         
+        drawPosition = new Vector2(MathF.Round(drawPosition.X), MathF.Round(drawPosition.Y));
+
+        if (System.SystemConfig.DebugMode) {
+            ImGui.GetWindowDrawList().AddCircleFilled(markerInfo.Position + markerInfo.Offset + ImGui.GetWindowPos(), 5.0f, ImGui.GetColorU32(KnownColor.Red.Vector()));
+            ImGui.GetWindowDrawList().AddRect(drawPosition, drawPosition + textSize, ImGui.GetColorU32(KnownColor.Green.Vector()), 3.0f); 
+        }
+
         foreach (var x in Enumerable.Range(-1, 3)) {
             foreach (var y in Enumerable.Range(-1, 3)) {
                 if (x is 0 && y is 0) continue;
-                ImGui.GetWindowDrawList().AddText(System.LargeAxisFontHandle.Lock().ImFont, 14 * markerInfo.Scale, drawPosition + new Vector2(x, y), outlineColor, text);
+                
+                ImGui.SetCursorScreenPos(drawPosition + new Vector2(x, y));
+                ImGui.TextColored(KnownColor.Black.Vector(), text);
             }
         }
         
-        ImGui.GetWindowDrawList().AddText(System.LargeAxisFontHandle.Lock().ImFont, 14 * markerInfo.Scale, drawPosition, textColor, text);
+        ImGui.SetCursorScreenPos(drawPosition);
+        ImGui.TextColored(KnownColor.White.Vector(), text);
+        
+        ImGui.SetWindowFontScale(1.0f);
     }
     
     private static void ProcessInteractions(MarkerInfo markerInfo) {

@@ -80,6 +80,11 @@ public class MapFunctionsTab : ITabItem {
             
             ImGuiHelpers.ScaledDummy(5.0f);
             
+            configChanged |= ImGui.DragFloat("Large Label Scale", ref System.SystemConfig.LargeAreaTextScale, 0.01f, 1.0f, 4.0f);
+            configChanged |= ImGui.DragFloat("Small Label Scale", ref System.SystemConfig.SmallAreaTextScale, 0.01f, 0.5f, 3.0f);
+            
+            ImGuiHelpers.ScaledDummy(5.0f);
+            
             configChanged |= ImGui.Checkbox("Debug Mode", ref System.SystemConfig.DebugMode);
         }
         
