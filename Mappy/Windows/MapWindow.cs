@@ -4,7 +4,6 @@ using Dalamud.Game.ClientState.Keys;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
-using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -34,6 +33,8 @@ public class MapWindow : Window {
     private uint lastSubAreaPlaceNameId;
 
     private readonly MapToolbar mapToolbar = new();
+    private readonly MapCoordinateBar mapCoordinateBar = new();
+    private readonly MapContextMenu mapContextMenu = new();
 
     public MapWindow() : base("###MappyMapWindow", new Vector2(400.0f, 250.0f)) {
         UpdateTitle();
@@ -113,7 +114,9 @@ public class MapWindow : Window {
             
             isMapItemHovered |= ImGui.IsItemHovered();
             
-            DrawCoordinateBar();
+            if (!System.SystemConfig.ShowCoordinateBar) {
+                mapCoordinateBar.Draw(isMapItemHovered, MapDrawOffset);
+            }
             isMapItemHovered |= ImGui.IsItemHovered();
         }
         isMapItemHovered |= ImGui.IsItemHovered();
@@ -197,7 +200,7 @@ public class MapWindow : Window {
         }
 
         // Draw Context Menu
-        DrawGeneralContextMenu();
+        mapContextMenu.Draw(MapDrawOffset);
     }
     
     private unsafe void UpdateStyle() {
@@ -235,48 +238,6 @@ public class MapWindow : Window {
         if (System.SystemConfig.LockCenterOnMap) {
             System.SystemConfig.FollowPlayer = false;
             System.MapRenderer.DrawOffset = Vector2.Zero;
-        }
-    }
-
-    private unsafe void DrawCoordinateBar() {
-        if (!System.SystemConfig.ShowCoordinateBar) return;
-        
-        var coordinateBarSize = new Vector2(ImGui.GetContentRegionMax().X, 20.0f * ImGuiHelpers.GlobalScale);
-        ImGui.SetCursorPos(ImGui.GetContentRegionMax() - coordinateBarSize);
-        
-        using var childBackgroundStyle = ImRaii.PushColor(ImGuiCol.ChildBg, Vector4.Zero with { W = System.SystemConfig.CoordinateBarFade });
-        using var coordinateChild = ImRaii.Child("coordinate_child", coordinateBarSize);
-        if (!coordinateChild) return;
-
-        var offsetX = -AgentMap.Instance()->SelectedOffsetX;
-        var offsetY = -AgentMap.Instance()->SelectedOffsetY;
-        var scale = AgentMap.Instance()->SelectedMapSizeFactor;
-
-        var characterMapPosition = MapUtil.WorldToMap(Service.ClientState.LocalPlayer?.Position ?? Vector3.Zero, offsetX, offsetY, 0, (uint)scale);
-        var characterPosition = $"Character  {characterMapPosition.X:F1}  {characterMapPosition.Y:F1}";
-        
-        ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 2.0f * ImGuiHelpers.GlobalScale);
-
-        var characterStringSize = ImGui.CalcTextSize(characterPosition);
-        ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X / 3.0f - characterStringSize.X / 2.0f);
-
-        if (AgentMap.Instance()->SelectedMapId == AgentMap.Instance()->CurrentMapId) {
-            ImGui.TextColored(System.SystemConfig.CoordinateTextColor, characterPosition);
-        }
-
-        if (IsMapHovered) {
-            var cursorPosition = ImGui.GetMousePos() - MapDrawOffset;
-            cursorPosition -= System.MapRenderer.DrawPosition;
-            cursorPosition /= MapRenderer.MapRenderer.Scale;
-            cursorPosition -= new Vector2(1024.0f, 1024.0f);
-            cursorPosition -= new Vector2(offsetX, offsetY);
-            cursorPosition /= AgentMap.Instance()->SelectedMapSizeFactorFloat;
- 
-            var cursorMapPosition = MapUtil.WorldToMap(new Vector3(cursorPosition.X, 0.0f, cursorPosition.Y), offsetX, offsetY, 0, (uint)scale);
-            var cursorPositionString = $"Cursor  {cursorMapPosition.X:F1}  {cursorMapPosition.Y:F1}";
-            var cursorStringSize = ImGui.CalcTextSize(characterPosition);
-            ImGui.SameLine(ImGui.GetContentRegionMax().X * 2.0f / 3.0f - cursorStringSize.X / 2.0f);
-            ImGui.TextColored(System.SystemConfig.CoordinateTextColor, cursorPositionString);
         }
     }
 
@@ -330,56 +291,6 @@ public class MapWindow : Window {
                     ImGui.SetTooltip("Hold Shift + Control while clicking activate button");
                 }
             }
-        }
-    }
-
-    private unsafe void DrawGeneralContextMenu() {
-        using var contextMenu = ImRaii.ContextPopup("Mappy_Context_Menu");
-        if (!contextMenu) return;
-        
-        if (ImGui.MenuItem("Place Flag")) {
-            var cursorPosition = ImGui.GetMousePosOnOpeningCurrentPopup(); // Get initial cursor position (screen relative)
-            var mapChildOffset = MapDrawOffset; // Get the screen position we started drawing the map at
-            var mapDrawOffset = System.MapRenderer.DrawPosition; // Get the map texture top left offset vector
-            var textureClickLocation = (cursorPosition - mapChildOffset - mapDrawOffset) / MapRenderer.MapRenderer.Scale; // Math
-            var result = textureClickLocation - new Vector2(1024.0f, 1024.0f); // One of our vectors made the map centered, undo it.
-            var scaledResult = result / DrawHelpers.GetMapScaleFactor() + DrawHelpers.GetRawMapOffsetVector(); // Apply offset x/y and scalefactor
-                
-            AgentMap.Instance()->IsFlagMarkerSet = false;
-            AgentMap.Instance()->SetFlagMapMarker(AgentMap.Instance()->SelectedTerritoryId, AgentMap.Instance()->SelectedMapId, scaledResult.X, scaledResult.Y);
-            AgentChatLog.Instance()->InsertTextCommandParam(1048, false);
-        }
-        
-        if (ImGui.MenuItem("Remove Flag", AgentMap.Instance()->IsFlagMarkerSet)) {
-            AgentMap.Instance()->IsFlagMarkerSet = false;
-        }
-
-        ImGuiHelpers.ScaledDummy(5.0f);
-
-        if (ImGui.MenuItem("Center on Player", Service.ClientState.LocalPlayer is not null) && Service.ClientState.LocalPlayer is not null) {
-            System.IntegrationsController.OpenOccupiedMap();
-            System.MapRenderer.CenterOnGameObject(Service.ClientState.LocalPlayer);
-        }
-        
-        if (ImGui.MenuItem("Center on Map")) {
-            System.SystemConfig.FollowPlayer = false;
-            System.MapRenderer.DrawOffset = Vector2.Zero;
-        }
-
-        ImGuiHelpers.ScaledDummy(5.0f);
-        
-        if (ImGui.MenuItem("Lock Zoom", "", ref System.SystemConfig.ZoomLocked)) {
-            SystemConfig.Save();
-        }
-        
-        ImGuiHelpers.ScaledDummy(5.0f);
-        
-        if (ImGui.MenuItem("Open Quest List", System.WindowManager.GetWindow<QuestListWindow>() is null))  {
-            System.WindowManager.AddWindow(new QuestListWindow(), WindowFlags.OpenImmediately | WindowFlags.RequireLoggedIn);
-        }
-
-        if (ImGui.MenuItem("Open Fate List", System.WindowManager.GetWindow<FateListWindow>() is null)) {
-            System.WindowManager.AddWindow(new FateListWindow(), WindowFlags.OpenImmediately | WindowFlags.RequireLoggedIn);
         }
     }
     
@@ -450,7 +361,6 @@ public class MapWindow : Window {
         addon->RootNode->ToggleVisibility(false);
         Service.Framework.RunOnTick(() => addon->RootNode->ToggleVisibility(true), delayTicks: 10);
     }
-    
     
     private void RegisterCommands() {
         System.CommandManager.RegisterCommand(new ToggleCommandHandler {
