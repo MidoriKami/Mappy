@@ -204,11 +204,12 @@ public unsafe class IntegrationsController : IDisposable {
 				.ToDoLocation.FirstOrDefault(location => location is not { RowId: 0, ValueNullable: null })
 				.Value.Map.RowId;
 		}
+		
+		var possibleQuests = Service.DataManager.GetExcelSheet<Quest>()
+			.Where(quest => quest is { IssuerLocation: { IsValid: true, RowId: not 0 } })
+			.FirstOrNull(quest => IsNameMatch(quest.Name.ExtractText(), mapInfo));
 
-		return Service.DataManager.GetExcelSheet<Quest>().FirstOrDefault(quest =>
-			IsNameMatch(quest.Name.ExtractText(), mapInfo) &&
-			quest is { IssuerLocation.RowId: not 0 })
-			.IssuerLocation.Value.Map.RowId;
+		return possibleQuests?.IssuerLocation.Value.Map.RowId ?? null;
 	}
 
 	private static bool IsNameMatch(string name, OpenMapInfo* mapInfo) 
