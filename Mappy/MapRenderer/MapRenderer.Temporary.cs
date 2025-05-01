@@ -26,7 +26,7 @@ public partial class MapRenderer {
             markerCopy.MapMarker.IconId = correctIconId?.MapMarker.IconId ?? markerCopy.MapMarker.IconId;
 
             // Special handling for WKS Markers
-            if (markerCopy.Type is 6 or 4) {
+            if (group.Any(marker => marker.Type is 6)) {
                 markerCopy.MapMarker.IconId = DrawHelpers.QuestionMarkIcon;
             }
             
