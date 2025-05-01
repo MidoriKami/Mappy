@@ -12,7 +12,7 @@ using KamiLib.Window;
 using Lumina.Excel.Sheets;
 using Mappy.Windows;
 
-namespace Mappy.Classes;
+namespace Mappy.Classes.MapWindowComponents;
 
 public unsafe class MapToolbar {
 	public void Draw() {

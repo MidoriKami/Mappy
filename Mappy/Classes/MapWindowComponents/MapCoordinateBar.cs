@@ -5,7 +5,7 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
 
-namespace Mappy.Classes;
+namespace Mappy.Classes.MapWindowComponents;
 
 public unsafe class MapCoordinateBar {
 	public void Draw(bool isMapHovered, Vector2 mapDrawOffset) {

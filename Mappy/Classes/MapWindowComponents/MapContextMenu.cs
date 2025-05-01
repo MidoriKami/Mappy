@@ -7,7 +7,7 @@ using KamiLib.Window;
 using Mappy.Data;
 using Mappy.Windows;
 
-namespace Mappy.Classes;
+namespace Mappy.Classes.MapWindowComponents;
 
 public unsafe class MapContextMenu {
 	public void Draw(Vector2 mapDrawOffset) {
