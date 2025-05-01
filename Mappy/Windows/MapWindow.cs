@@ -13,7 +13,6 @@ using KamiLib.CommandManager;
 using KamiLib.Extensions;
 using KamiLib.Window;
 using Lumina.Excel.Sheets;
-using Mappy.Classes;
 using Mappy.Classes.MapWindowComponents;
 using Mappy.Controllers;
 using Mappy.Data;
