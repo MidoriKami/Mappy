@@ -10,6 +10,7 @@ using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ImGuiNET;
+using KamiLib.Extensions;
 using KamiLib.Window;
 using Mappy.Data;
 using Mappy.Extensions;
@@ -76,7 +77,7 @@ public class FateListWindow : Window {
 	private static void DrawOptions() {
 		using var toolbarChild = ImRaii.Child("fatelist_toolbar", new Vector2(ImGui.GetContentRegionAvail().X, 32.0f));
 		if (toolbarChild) {
-			using var color = ImRaii.PushColor(ImGuiCol.Button, ImGui.GetStyle().Colors[(int) ImGuiCol.ButtonActive], System.SystemConfig.SetFlagOnFateClick);
+			using var color = ImRaii.PushColor(ImGuiCol.Button, ImGui.GetStyle().GetColor(ImGuiCol.ButtonActive), System.SystemConfig.SetFlagOnFateClick);
 			ImGui.Spacing();
 			if (ImGui.Checkbox("Place Map Flag on Click", ref System.SystemConfig.SetFlagOnFateClick)) {
 				SystemConfig.Save();

@@ -7,6 +7,7 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
+using KamiLib.Extensions;
 using KamiLib.Window;
 using Lumina.Excel.Sheets;
 using Mappy.Windows;
@@ -43,7 +44,7 @@ public unsafe class MapToolbar {
         
         ImGui.SameLine();
         
-        using (var _ = ImRaii.PushColor(ImGuiCol.Button, ImGui.GetStyle().Colors[(int) ImGuiCol.ButtonActive], System.SystemConfig.FollowPlayer)) {
+        using (var _ = ImRaii.PushColor(ImGuiCol.Button, ImGui.GetStyle().GetColor(ImGuiCol.ButtonActive), System.SystemConfig.FollowPlayer)) {
             if (MappyGuiTweaks.IconButton(FontAwesomeIcon.LocationArrow, "follow", "Toggle Follow Player")) {
                 System.SystemConfig.FollowPlayer = !System.SystemConfig.FollowPlayer;
         
