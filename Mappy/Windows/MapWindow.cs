@@ -101,43 +101,18 @@ public class MapWindow : Window {
         using (var renderChild = ImRaii.Child("render_child", ImGui.GetContentRegionAvail(), false, ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoScrollbar)) {
             if (!renderChild) return;
             if (!System.SystemConfig.AcceptedSpoilerWarning) {
-                using (ImRaii.PushColor(ImGuiCol.Text, KnownColor.Orange.Vector())) {
-                    const string warningLine1 = "Warning, Mappy does not protect you from spoilers and will show everything.";
-                    const string warningLine2 = "Do not use Mappy if you are not comfortable with this.";
-
-                    ImGui.SetCursorPos(ImGui.GetContentRegionAvail() / 2.0f - (ImGui.CalcTextSize(warningLine1) * 2.0f) with { X = 0.0f });
-                    ImGuiHelpers.CenteredText(warningLine1);
-                    ImGuiHelpers.CenteredText(warningLine2);
-                }
-                
-                ImGuiHelpers.ScaledDummy(30.0f);
-                ImGui.SetCursorPosX(ImGui.GetContentRegionAvail().X / 3.0f);
-                using (ImRaii.Disabled(!(ImGui.GetIO().KeyShift && ImGui.GetIO().KeyCtrl))) {
-                    if (ImGui.Button("I understand", new Vector2(ImGui.GetContentRegionAvail().X / 2.0f, 23.0f * ImGuiHelpers.GlobalScale))) {
-                        System.SystemConfig.AcceptedSpoilerWarning = true;
-                        SystemConfig.Save();
-                    }
-                    
-                    using (ImRaii.PushStyle(ImGuiStyleVar.Alpha, 1.0f)) {
-                        if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
-                            ImGui.SetTooltip("Hold Shift + Control while clicking activate button");
-                        }
-                    }
-                }
-
+                DrawSpoilerWarning();
                 return;
             }
             
-            if (renderChild) {
-                System.MapRenderer.Draw();
-                ImGui.SetCursorPos(Vector2.Zero);
-                
-                DrawToolbar();
-                isMapItemHovered |= ImGui.IsItemHovered();
-                
-                DrawCoordinateBar();
-                isMapItemHovered |= ImGui.IsItemHovered();
-            }
+            System.MapRenderer.Draw();
+            ImGui.SetCursorPos(Vector2.Zero);
+            
+            DrawToolbar();
+            isMapItemHovered |= ImGui.IsItemHovered();
+            
+            DrawCoordinateBar();
+            isMapItemHovered |= ImGui.IsItemHovered();
         }
         isMapItemHovered |= ImGui.IsItemHovered();
         
@@ -234,7 +209,7 @@ public class MapWindow : Window {
             Flags |= ImGuiWindowFlags.NoFocusOnAppearing;
         }
         else {
-            Flags &= ~(ImGuiWindowFlags.NoFocusOnAppearing);
+            Flags &= ~ImGuiWindowFlags.NoFocusOnAppearing;
         }
 
         if (Service.KeyState[VirtualKey.ESCAPE] && IsFocused && !IsMapLocked()) {
@@ -410,6 +385,32 @@ public class MapWindow : Window {
             if (systemConfig.WindowSize != windowSize) {
                 systemConfig.WindowSize = windowSize;
                 SystemConfig.Save();
+            }
+        }
+    }
+    
+    private static void DrawSpoilerWarning() {
+        using (ImRaii.PushColor(ImGuiCol.Text, KnownColor.Orange.Vector())) {
+            const string warningLine1 = "Warning, Mappy does not protect you from spoilers and will show everything.";
+            const string warningLine2 = "Do not use Mappy if you are not comfortable with this.";
+
+            ImGui.SetCursorPos(ImGui.GetContentRegionAvail() / 2.0f - (ImGui.CalcTextSize(warningLine1) * 2.0f) with { X = 0.0f });
+            ImGuiHelpers.CenteredText(warningLine1);
+            ImGuiHelpers.CenteredText(warningLine2);
+        }
+            
+        ImGuiHelpers.ScaledDummy(30.0f);
+        ImGui.SetCursorPosX(ImGui.GetContentRegionAvail().X / 3.0f);
+        using (ImRaii.Disabled(!(ImGui.GetIO().KeyShift && ImGui.GetIO().KeyCtrl))) {
+            if (ImGui.Button("I understand", new Vector2(ImGui.GetContentRegionAvail().X / 2.0f, 23.0f * ImGuiHelpers.GlobalScale))) {
+                System.SystemConfig.AcceptedSpoilerWarning = true;
+                SystemConfig.Save();
+            }
+                
+            using (ImRaii.PushStyle(ImGuiStyleVar.Alpha, 1.0f)) {
+                if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
+                    ImGui.SetTooltip("Hold Shift + Control while clicking activate button");
+                }
             }
         }
     }
