@@ -35,7 +35,7 @@ public partial class MapRenderer {
         DrawBackgroundTexture();
         DrawMapMarkers();
     }
-    
+
     private void UpdateScaleLimits() {
         Scale = Math.Clamp(Scale, 0.05f, 20.0f);
     }
