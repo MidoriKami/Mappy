@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiLib.Extensions;
+using Mappy.Classes;
 using Mappy.Extensions;
 
 namespace Mappy.MapRenderer;
@@ -13,7 +14,7 @@ public partial class MapRenderer {
         if (AgentMap.Instance()->SelectedMapSub != AgentMap.Instance()->SelectedMapId) return;
         
         // Group together icons based on their dataId, this is because square enix shows circles then draws the actual icon overtop
-        var validMarkers = new Span<TempMapMarker>(Unsafe.AsPointer(ref AgentMap.Instance()->TempMapMarkers[0]), AgentMap.Instance()->TempMapMarkers.Length);
+        var validMarkers = new Span<TempMapMarker>(Unsafe.AsPointer(ref AgentMap.Instance()->TempMapMarkers[0]), AgentMap.Instance()->TempMapMarkerCount);
         var iconGroups = validMarkers.ToArray().GroupBy(markers => new Vector2(markers.MapMarker.X, markers.MapMarker.Y));
         
         foreach (var group in iconGroups) {
@@ -23,6 +24,11 @@ public partial class MapRenderer {
             // Get the actual iconId we want, typically the icon for the marker, not the circle
             var correctIconId = group.FirstOrNull(marker => marker.MapMarker.IconId is not 60493);
             markerCopy.MapMarker.IconId = correctIconId?.MapMarker.IconId ?? markerCopy.MapMarker.IconId;
+
+            // Special handling for WKS Markers
+            if (markerCopy.Type is 6 or 4) {
+                markerCopy.MapMarker.IconId = DrawHelpers.QuestionMarkIcon;
+            }
             
             // Get the actual radius value for this marker, typically the circle icon will have this value.
             markerCopy.MapMarker.Scale = group.Max(marker => marker.MapMarker.Scale);
