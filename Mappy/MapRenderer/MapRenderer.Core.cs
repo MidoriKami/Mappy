@@ -139,42 +139,39 @@ public partial class MapRenderer {
         var backgroundBytes = bgFile.GetRgbaImageData();
         var fogTextureBytes = fogTextureFile.GetRgbaImageData();
         
-        foreach (var xPageIndex in Enumerable.Range(0, 4)) { // 4
-            foreach (var yPageIndex in Enumerable.Range(0, 3)) { // 3
-                foreach (var color in Enumerable.Range(0, 3)) { // 3
+        foreach (var xPageIndex in Enumerable.Range(0, 4))
+        foreach (var yPageIndex in Enumerable.Range(0, 3))
+        foreach (var color in Enumerable.Range(0, 3)) {
                     
-                    // If this visibility flag is set
-                    var currentBitIndex = (xPageIndex * 3 + yPageIndex * 12 + color);
-                    if (currentBitIndex >= 32) continue;
+            // If this visibility flag is set
+            var currentBitIndex = (xPageIndex * 3 + yPageIndex * 12 + color);
+            if (currentBitIndex >= 32) continue;
 
-                    if ((lastKnownDiscoveryFlags & (1 << currentBitIndex)) != 0) {
+            if ((lastKnownDiscoveryFlags & (1 << currentBitIndex)) != 0) {
                         
-                        Service.Log.Debug($"Flag {currentBitIndex} is Set, Revealing [ {xPageIndex:00}, {yPageIndex:00} ] Color [ {color} ]");
+                Service.Log.Debug($"Flag {currentBitIndex} is Set, Revealing [ {xPageIndex:00}, {yPageIndex:00} ] Color [ {color} ]");
 
-                        Parallel.For(0, 128, x => {
-                            Parallel.For(0, 128, y => {
-                                var pixelIndex = (x + y * 512) * 4 + xPageIndex * 128 * 4 + yPageIndex * 512 * 4;
-                                var targetPixel = (x + 2048 * y) * 4;
+                Parallel.For(0, 128, x => {
+                    Parallel.For(0, 128, y => {
+                        var pixelIndex = (x + y * 512) * 4 + xPageIndex * 128 * 4 + yPageIndex * 512 * 4;
+                        var targetPixel = (x + 2048 * y) * 4;
 
-                                var alphaValue = color switch {
-                                    0 => fogTextureBytes[pixelIndex + 0],
-                                    1 => fogTextureBytes[pixelIndex + 1],
-                                    2 => fogTextureBytes[pixelIndex + 2],
-                                    _ => throw new ArgumentOutOfRangeException(),
-                                };
+                        var alphaValue = color switch {
+                            0 => fogTextureBytes[pixelIndex + 0],
+                            1 => fogTextureBytes[pixelIndex + 1],
+                            2 => fogTextureBytes[pixelIndex + 2],
+                            _ => throw new ArgumentOutOfRangeException(),
+                        };
 
-                                const int scaleFactor = 16;
-                                foreach (var xScalar in Enumerable.Range(0, scaleFactor)) {
-                                    foreach (var yScalar in Enumerable.Range(0, scaleFactor)) {
-                                        var scalingPixelTarget = targetPixel * scaleFactor + xScalar * 4 + yScalar * 2048 * 4;
+                        const int scaleFactor = 16;
+                        foreach (var xScalar in Enumerable.Range(0, scaleFactor))
+                        foreach (var yScalar in Enumerable.Range(0, scaleFactor)) {
+                            var scalingPixelTarget = targetPixel * scaleFactor + xScalar * 4 + yScalar * 2048 * 4;
 
-                                        backgroundBytes[scalingPixelTarget + 3] = Math.Min(backgroundBytes[scalingPixelTarget + 3], (byte)(255 - alphaValue));
-                                    }
-                                }
-                            });
-                        });
-                    }
-                }
+                            backgroundBytes[scalingPixelTarget + 3] = Math.Min(backgroundBytes[scalingPixelTarget + 3], (byte)(255 - alphaValue));
+                        }
+                    });
+                });
             }
         }
 
