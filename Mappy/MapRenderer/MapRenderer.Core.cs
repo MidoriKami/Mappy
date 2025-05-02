@@ -151,10 +151,17 @@ public partial class MapRenderer {
                                 var pixelIndex = (x + y * 512) * 4;
                                 var targetPixel = (x + 2048 * y) * 4;
 
-                                backgroundBytes[targetPixel] = fogTextureBytes[pixelIndex];
-                                backgroundBytes[targetPixel + 1] = fogTextureBytes[pixelIndex + 1];
-                                backgroundBytes[targetPixel + 2] = fogTextureBytes[pixelIndex + 2];
-                                backgroundBytes[targetPixel + 3] = fogTextureBytes[pixelIndex + 3];
+                                var scaleFactor = 16;
+                                foreach (var xScalar in Enumerable.Range(0, scaleFactor)) {
+                                    foreach (var yScalar in Enumerable.Range(0, scaleFactor)) {
+                                        var scalingPixelTarget = targetPixel * scaleFactor + xScalar * 4 + yScalar * 2048 * 4;
+                                        
+                                        backgroundBytes[scalingPixelTarget] = fogTextureBytes[pixelIndex];
+                                        backgroundBytes[scalingPixelTarget + 1] = fogTextureBytes[pixelIndex + 1];
+                                        backgroundBytes[scalingPixelTarget + 2] = fogTextureBytes[pixelIndex + 2];
+                                        backgroundBytes[scalingPixelTarget + 3] = fogTextureBytes[pixelIndex + 3];
+                                    }
+                                }
                             }
                         }
 
