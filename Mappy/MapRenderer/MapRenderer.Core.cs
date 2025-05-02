@@ -106,7 +106,6 @@ public partial class MapRenderer {
 
     private void DrawMapMarkers() {
         DrawStaticMapMarkers();
-        DrawHousingMarkers();
         DrawDynamicMarkers();
         DrawGameObjects();
         DrawGroupMembers();
