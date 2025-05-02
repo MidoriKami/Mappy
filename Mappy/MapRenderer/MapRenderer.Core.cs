@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Game.ClientState.Objects.Types;
@@ -9,6 +10,7 @@ using Mappy.Classes;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Data.Files;
 
 namespace Mappy.MapRenderer;
@@ -23,6 +25,8 @@ public partial class MapRenderer {
     public Vector2 DrawPosition { get; private set; }
 
     private IDalamudTextureWrap? blendedTexture;
+    private IDalamudTextureWrap? fogTexture;
+    private int lastKnownDiscoveryFlags;
     private string blendedPath = string.Empty;
 
     public void CenterOnGameObject(IGameObject obj) 
@@ -33,6 +37,7 @@ public partial class MapRenderer {
         UpdateDrawOffset();
         
         DrawBackgroundTexture();
+        DrawFogOfWar();
         DrawMapMarkers();
     }
 
@@ -68,20 +73,35 @@ public partial class MapRenderer {
         }
     }
 
+    private unsafe void DrawFogOfWar() {
+        if (!System.SystemConfig.ShowFogOfWar) return;
+        
+        var areaMapNumberArray = AtkStage.Instance()->GetNumberArrayData(NumberArrayType.AreaMap2);
+
+        if (areaMapNumberArray->IntArray[2] != lastKnownDiscoveryFlags) {
+            lastKnownDiscoveryFlags = areaMapNumberArray->IntArray[2];
+            Service.Log.Debug($"Updating Discovery Flags {lastKnownDiscoveryFlags:X}");
+
+            if (lastKnownDiscoveryFlags != -1) {
+                    fogTexture = LoadFogTexture();
+            }
+            else {
+                Service.Log.Debug($"Skipping Update");
+            }
+        }
+
+        if (fogTexture is not null && lastKnownDiscoveryFlags != -1) {
+            ImGui.SetCursorPos(DrawPosition);
+            ImGui.Image(fogTexture.ImGuiHandle, fogTexture.Size * Scale);
+        }
+    }
+    
     private static unsafe IDalamudTextureWrap? LoadTexture() {
         var vanillaBgPath = $"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex";
         var vanillaFgPath = $"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex";
         
-        var moddedBgPath = Service.TextureSubstitutionProvider.GetSubstitutedPath(vanillaBgPath);
-        var moddedFgPath = Service.TextureSubstitutionProvider.GetSubstitutedPath(vanillaFgPath);
-
-        var bgFile = Path.IsPathRooted(moddedBgPath) ? 
-                         Service.DataManager.GameData.GetFileFromDisk<TexFile>(moddedBgPath) : 
-                         Service.DataManager.GetFile<TexFile>(vanillaBgPath);
-
-        var fgFile = Path.IsPathRooted(moddedFgPath) ? 
-                         Service.DataManager.GameData.GetFileFromDisk<TexFile>(moddedFgPath) : 
-                         Service.DataManager.GetFile<TexFile>(vanillaFgPath);
+        var bgFile = GetTexFile(vanillaBgPath);
+        var fgFile = GetTexFile(vanillaFgPath);
 
         if (bgFile is null || fgFile is null) {
             Service.Log.Warning("Failed to load map textures");
@@ -102,6 +122,73 @@ public partial class MapRenderer {
         });
 
         return Service.TextureProvider.CreateFromRaw(RawImageSpecification.Rgba32(2048, 2048), backgroundBytes);
+    }
+
+    private unsafe IDalamudTextureWrap? LoadFogTexture() {
+        var fogTexturePath = $"{AgentMap.Instance()->SelectedMapBgPath.ToString().TrimEnd('_', 'm')}d.tex";
+        var vanillaBgPath = $"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex";
+        
+        var fogTextureFile = GetTexFile(fogTexturePath);
+        var bgFile = GetTexFile(vanillaBgPath);
+
+        if (bgFile is null || fogTextureFile is null) {
+            Service.Log.Warning("Failed to load map textures");
+            return null;
+        }
+        
+        var backgroundBytes = bgFile.GetRgbaImageData();
+        var fogTextureBytes = fogTextureFile.GetRgbaImageData();
+        
+        foreach (var xPageIndex in Enumerable.Range(0, 4)) { // 4
+            foreach (var yPageIndex in Enumerable.Range(0, 3)) { // 3
+                foreach (var color in Enumerable.Range(0, 3)) { // 3
+                    
+                    // If this visibility flag is set
+                    var currentBitIndex = (xPageIndex * 3 + yPageIndex * 12 + color);
+                    if (currentBitIndex >= 32) continue;
+
+                    if ((lastKnownDiscoveryFlags & (1 << currentBitIndex)) != 0) {
+                        
+                        Service.Log.Debug($"Flag {currentBitIndex} is Set, Revealing [ {xPageIndex:00}, {yPageIndex:00} ] Color [ {color} ]");
+
+                        Parallel.For(0, 128, x => {
+                            Parallel.For(0, 128, y => {
+                                var pixelIndex = (x + y * 512) * 4 + xPageIndex * 128 * 4 + yPageIndex * 512 * 4;
+                                var targetPixel = (x + 2048 * y) * 4;
+
+                                var alphaValue = color switch {
+                                    0 => fogTextureBytes[pixelIndex + 0],
+                                    1 => fogTextureBytes[pixelIndex + 1],
+                                    2 => fogTextureBytes[pixelIndex + 2],
+                                    _ => throw new ArgumentOutOfRangeException(),
+                                };
+
+                                const int scaleFactor = 16;
+                                foreach (var xScalar in Enumerable.Range(0, scaleFactor)) {
+                                    foreach (var yScalar in Enumerable.Range(0, scaleFactor)) {
+                                        var scalingPixelTarget = targetPixel * scaleFactor + xScalar * 4 + yScalar * 2048 * 4;
+
+                                        backgroundBytes[scalingPixelTarget + 3] = Math.Min(backgroundBytes[scalingPixelTarget + 3], (byte)(255 - alphaValue));
+                                    }
+                                }
+                            });
+                        });
+                    }
+                }
+            }
+        }
+
+        return Service.TextureProvider.CreateFromRaw(RawImageSpecification.Rgba32(2048, 2048), backgroundBytes);
+    }
+
+    private static TexFile? GetTexFile(string rawPath) {
+        var path = Service.TextureSubstitutionProvider.GetSubstitutedPath(rawPath);
+
+        if (Path.IsPathRooted(path)) {
+            return Service.DataManager.GameData.GetFileFromDisk<TexFile>(path);
+        }
+
+        return Service.DataManager.GetFile<TexFile>(path);
     }
 
     private void DrawMapMarkers() {

@@ -90,6 +90,7 @@ public class SystemConfig : CharacterConfiguration {
     public float LargeAreaTextScale = 3.0f;
     public float SmallAreaTextScale = 2.0f;
     public bool ShowTextLabels = true;
+    public bool ShowFogOfWar = true;
 
     // Do not persist this setting
     [JsonIgnore] public bool DebugMode = false;
