@@ -45,12 +45,14 @@ public static class MapMarkerInfoExtensions {
         };
         
         if (marker.MapMarker.IconId is 0 && marker.MapMarker.Index is not 0) {
-            markerInfo.Scale *= marker.MapMarker.SubtextStyle switch {
-                1 => System.SystemConfig.LargeAreaTextScale,
-                _ => System.SystemConfig.SmallAreaTextScale,
-            };
+            if (System.SystemConfig.ShowTextLabels) {
+                markerInfo.Scale *= marker.MapMarker.SubtextStyle switch {
+                    1 => System.SystemConfig.LargeAreaTextScale,
+                    _ => System.SystemConfig.SmallAreaTextScale,
+                };
             
-            DrawHelpers.DrawText(markerInfo, tooltipText);
+                DrawHelpers.DrawText(markerInfo, tooltipText);
+            }
         }
         else {
             DrawHelpers.DrawMapMarker(markerInfo);

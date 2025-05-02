@@ -89,6 +89,7 @@ public class SystemConfig : CharacterConfiguration {
     public bool NoFocusOnAppear = false;
     public float LargeAreaTextScale = 3.0f;
     public float SmallAreaTextScale = 2.0f;
+    public bool ShowTextLabels = true;
 
     // Do not persist this setting
     [JsonIgnore] public bool DebugMode = false;
