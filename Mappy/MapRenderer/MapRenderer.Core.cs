@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Game.ClientState.Objects.Types;
@@ -11,7 +11,6 @@ using Mappy.Classes;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Utility;
-using FFXIVClientStructs.FFXIV.Client.UI.Arrays;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Data.Files;
 
@@ -153,8 +152,8 @@ public partial class MapRenderer {
                         
                         Service.Log.Debug($"Flag {currentBitIndex} is Set, Revealing [ {xPageIndex:00}, {yPageIndex:00} ] Color [ {color} ]");
 
-                        foreach (var x in Enumerable.Range(0, 128)) {
-                            foreach (var y in Enumerable.Range(0, 128)) {
+                        Parallel.For(0, 128, x => {
+                            Parallel.For(0, 128, y => {
                                 var pixelIndex = (x + y * 512) * 4 + xPageIndex * 128 * 4 + yPageIndex * 512 * 4;
                                 var targetPixel = (x + 2048 * y) * 4;
 
@@ -173,8 +172,8 @@ public partial class MapRenderer {
                                         backgroundBytes[scalingPixelTarget + 3] = Math.Min(backgroundBytes[scalingPixelTarget + 3], (byte)(255 - alphaValue));
                                     }
                                 }
-                            }
-                        }
+                            });
+                        });
                     }
                 }
             }
