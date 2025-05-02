@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Numerics;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Lumina.Extensions;
 using Mappy.Extensions;
@@ -21,6 +22,11 @@ public partial class MapRenderer {
             
             // Get the actual radius value for this marker, typically the circle icon will have this value.
             markerCopy.Radius = group.Max(marker => marker.Radius);
+
+            // Disable radius markings for housing areas
+            if (HousingManager.Instance()->CurrentTerritory is not null) {
+                markerCopy.Radius = 0.0f;
+            }
 
             markerCopy.Draw(DrawPosition, Scale);
         }
