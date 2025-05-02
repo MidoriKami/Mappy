@@ -76,16 +76,23 @@ public partial class MapRenderer {
     }
 
     private unsafe void DrawFogOfWar() {
+        if (!System.SystemConfig.ShowFogOfWar) return;
+        
         var areaMapNumberArray = AtkStage.Instance()->GetNumberArrayData(NumberArrayType.AreaMap2);
 
         if (areaMapNumberArray->IntArray[2] != lastKnownDiscoveryFlags) {
             lastKnownDiscoveryFlags = areaMapNumberArray->IntArray[2];
-            Task.Run(() => {
-                fogTexture = LoadFogTexture();
-            });
+            Service.Log.Debug($"Updating Discovery Flags {lastKnownDiscoveryFlags:X}");
+
+            if (lastKnownDiscoveryFlags != -1) {
+                    fogTexture = LoadFogTexture();
+            }
+            else {
+                Service.Log.Debug($"Skipping Update");
+            }
         }
 
-        if (fogTexture is not null) {
+        if (fogTexture is not null && lastKnownDiscoveryFlags != -1) {
             ImGui.SetCursorPos(DrawPosition);
             ImGui.Image(fogTexture.ImGuiHandle, fogTexture.Size * Scale);
         }
@@ -120,7 +127,7 @@ public partial class MapRenderer {
     }
 
     private unsafe IDalamudTextureWrap? LoadFogTexture() {
-        var fogTexturePath = $"{AgentMap.Instance()->CurrentMapBgPath.ToString().TrimEnd('_', 'm')}d.tex";
+        var fogTexturePath = $"{AgentMap.Instance()->SelectedMapBgPath.ToString().TrimEnd('_', 'm')}d.tex";
         var vanillaBgPath = $"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex";
         
         var fogTextureFile = GetTexFile(fogTexturePath);
@@ -134,38 +141,40 @@ public partial class MapRenderer {
         var backgroundBytes = bgFile.GetRgbaImageData();
         var fogTextureBytes = fogTextureFile.GetRgbaImageData();
         
-        foreach (var xPageIndex in Enumerable.Range(0, 1)) { // 4
-            foreach (var yPageIndex in Enumerable.Range(0, 1)) { // 3
-                foreach (var color in Enumerable.Range(0, 1)) { // 3
+        foreach (var xPageIndex in Enumerable.Range(0, 4)) { // 4
+            foreach (var yPageIndex in Enumerable.Range(0, 3)) { // 3
+                foreach (var color in Enumerable.Range(0, 3)) { // 3
+                    
                     // If this visibility flag is set
                     var currentBitIndex = (xPageIndex * 3 + yPageIndex * 12 + color);
-                    
-                    Service.Log.Debug($"Starting {xPageIndex}, {yPageIndex} color : {color}" );
-                    
-                    if ((lastKnownDiscoveryFlags & 1 << currentBitIndex) == 1) {
+                    if (currentBitIndex >= 32) continue;
+
+                    if ((lastKnownDiscoveryFlags & (1 << currentBitIndex)) != 0) {
                         
-                        Service.Log.Debug("Flag Valid, Setting.");
+                        Service.Log.Debug($"Flag {currentBitIndex} is Set, Revealing [ {xPageIndex:00}, {yPageIndex:00} ] Color [ {color} ]");
 
                         foreach (var x in Enumerable.Range(0, 128)) {
                             foreach (var y in Enumerable.Range(0, 128)) {
-                                var pixelIndex = (x + y * 512) * 4;
+                                var pixelIndex = (x + y * 512) * 4 + xPageIndex * 128 * 4 + yPageIndex * 512 * 4;
                                 var targetPixel = (x + 2048 * y) * 4;
 
-                                var scaleFactor = 16;
+                                var alphaValue = color switch {
+                                    0 => fogTextureBytes[pixelIndex + 0],
+                                    1 => fogTextureBytes[pixelIndex + 1],
+                                    2 => fogTextureBytes[pixelIndex + 2],
+                                    _ => throw new ArgumentOutOfRangeException(),
+                                };
+
+                                const int scaleFactor = 16;
                                 foreach (var xScalar in Enumerable.Range(0, scaleFactor)) {
                                     foreach (var yScalar in Enumerable.Range(0, scaleFactor)) {
                                         var scalingPixelTarget = targetPixel * scaleFactor + xScalar * 4 + yScalar * 2048 * 4;
-                                        
-                                        backgroundBytes[scalingPixelTarget] = fogTextureBytes[pixelIndex];
-                                        backgroundBytes[scalingPixelTarget + 1] = fogTextureBytes[pixelIndex + 1];
-                                        backgroundBytes[scalingPixelTarget + 2] = fogTextureBytes[pixelIndex + 2];
-                                        backgroundBytes[scalingPixelTarget + 3] = fogTextureBytes[pixelIndex + 3];
+
+                                        backgroundBytes[scalingPixelTarget + 3] = Math.Min(backgroundBytes[scalingPixelTarget + 3], (byte)(255 - alphaValue));
                                     }
                                 }
                             }
                         }
-
-                        Service.Log.Debug("Finished.");
                     }
                 }
             }
