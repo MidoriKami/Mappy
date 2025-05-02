@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -27,7 +26,7 @@ public partial class MapRenderer {
 
     private IDalamudTextureWrap? blendedTexture;
     private IDalamudTextureWrap? fogTexture;
-    private int lastKnownDiscoveryFlags = 0x00;
+    private int lastKnownDiscoveryFlags;
     private string blendedPath = string.Empty;
 
     public void CenterOnGameObject(IGameObject obj) 
