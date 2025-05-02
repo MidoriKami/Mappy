@@ -68,7 +68,7 @@ public partial class MapRenderer {
         }
     }
 
-    private unsafe IDalamudTextureWrap? LoadTexture() {
+    private static unsafe IDalamudTextureWrap? LoadTexture() {
         var vanillaBgPath = $"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex";
         var vanillaFgPath = $"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex";
         
@@ -113,7 +113,7 @@ public partial class MapRenderer {
         DrawGatheringMarkers();
         DrawFieldMarkers();
         DrawPlayer();
-        DrawFlag();
         DrawStaticTextMarkers();
+        DrawFlag();
     }
 }
