@@ -9,6 +9,8 @@ namespace Mappy.Extensions;
 // MapMarkerData struct represents dynamic markers that have information like radius, and other fields.
 public static class MapMarkerDataExtensions {
     public static void Draw(this MapMarkerData marker, Vector2 offset, float scale) {
+        if ((marker.Flags & 1) == 1) return;
+        
         DrawHelpers.DrawMapMarker(new MarkerInfo {
             Position = (new Vector2(marker.X, marker.Z) * DrawHelpers.GetMapScaleFactor() - DrawHelpers.GetMapOffsetVector() + DrawHelpers.GetMapCenterOffsetVector()) * scale,
             Offset = offset,
