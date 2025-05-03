@@ -11,7 +11,6 @@ using Mappy.Classes;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Utility;
-using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Data.Files;
 
@@ -155,77 +154,74 @@ public partial class MapRenderer {
         
         var timer = Stopwatch.StartNew();
         
+        // Radius of pixels to blend after applying transparency
+        const int blurRadius = 8;
+        
+        // Scale of ColorMap to Map Texture Size
+        const int scaleFactor = 16;
+
         // Make transparent any section that the player has already explored, while leaving unexpored areas blocked.
-        Parallel.For(0, 4, xPageIndex => {
-            Parallel.For(0, 3, yPageIndex => {
-                Parallel.For(0, 3, color => {
-                    var currentBitIndex = (xPageIndex * 3 + yPageIndex * 12 + color);
-                    if (currentBitIndex >= 32) return;
+        foreach(var xPageIndex in Enumerable.Range(0, 4))
+        foreach (var yPageIndex in Enumerable.Range(0, 3))
+        foreach (var color in Enumerable.Range(0, 3)) {
+            var currentBitIndex = (xPageIndex * 3 + yPageIndex * 12 + color);
+            if (currentBitIndex >= 32) continue;
 
-                    // If this visibility flag is set, set transparency on pixels.
-                    if ((lastKnownDiscoveryFlags & (1 << currentBitIndex)) != 0) {
+            // If this visibility flag is set, set transparency on pixels.
+            if ((lastKnownDiscoveryFlags & (1 << currentBitIndex)) != 0) {
 
-                        // Service.Log.Debug($"Flag {currentBitIndex} is Set, Revealing [ {xPageIndex:00}, {yPageIndex:00} ] Color [ {color} ]");
+                // Service.Log.Debug($"Flag {currentBitIndex} is Set, Revealing [ {xPageIndex:00}, {yPageIndex:00} ] Color [ {color} ]");
+                Parallel.For(0, 128, x => {
+                    Parallel.For(0, 128, y => {
+                        var pixelIndex = (x + y * 512) * 4 + xPageIndex * 128 * 4 + yPageIndex * 512 * 4;
+                        var targetPixel = (x + 2048 * y) * 4;
 
-                        Parallel.For(0, 128, x => {
-                            Parallel.For(0, 128, y => {
-                                var pixelIndex = (x + y * 512) * 4 + xPageIndex * 128 * 4 + yPageIndex * 512 * 4;
-                                var targetPixel = (x + 2048 * y) * 4;
+                        var alphaValue = color switch {
+                            0 => fogTextureBytes[pixelIndex + 0],
+                            1 => fogTextureBytes[pixelIndex + 1],
+                            2 => fogTextureBytes[pixelIndex + 2],
+                            _ => throw new ArgumentOutOfRangeException(),
+                        };
 
-                                var alphaValue = color switch {
-                                    0 => fogTextureBytes[pixelIndex + 0],
-                                    1 => fogTextureBytes[pixelIndex + 1],
-                                    2 => fogTextureBytes[pixelIndex + 2],
-                                    _ => throw new ArgumentOutOfRangeException(),
-                                };
+                        // If we actually changed this pixels alpha, blend it with surrounding pixels
+                        if (alphaValue > 0) {
+                            foreach (var xScalar in Enumerable.Range(0, scaleFactor))
+                            foreach (var yScalar in Enumerable.Range(0, scaleFactor)) {
+                                var scalingPixelTarget = targetPixel * scaleFactor + xScalar * 4 + yScalar * 2048 * 4;
+                                backgroundBytes[scalingPixelTarget + 3] = (byte) (255 - alphaValue);
+                            }
 
-                                const int scaleFactor = 16;
-                                Parallel.For(0, scaleFactor, xScalar => {
-                                    Parallel.For(0, scaleFactor, yScalar => {
-                                        var scalingPixelTarget = targetPixel * scaleFactor + xScalar * 4 + yScalar * 2048 * 4;
+                            const int blendRange = (int)(scaleFactor * 2.5);
 
-                                        var originalColor = backgroundBytes[scalingPixelTarget + 3];
-                                        var newColor = (byte) (255 - alphaValue);
+                            // Increase blending range so we aren't just blending with our own cell
+                            foreach (var xScalar in Enumerable.Range(-blendRange / 2, blendRange))
+                            foreach (var yScalar in Enumerable.Range(-blendRange / 2, blendRange)) {
+                                var scalingPixelTarget = targetPixel * scaleFactor + xScalar * 4 + yScalar * 2048 * 4;
 
-                                        backgroundBytes[scalingPixelTarget + 3] = Math.Min(originalColor, newColor);
-                                    });
-                                });
-                            });
-                        });
-                    }
+                                // Blend alpha in surrounding pixels
+                                var alphaAverage = 0.0f;
+                                var numAveraged = 0;
+
+                                foreach (var xBlur in Enumerable.Range(-blurRadius / 2, blurRadius))
+                                foreach (var yBlur in Enumerable.Range(-blurRadius / 2, blurRadius)) {
+                                    var currentPixelIndex = scalingPixelTarget + (xBlur + yBlur * 2048) * 4;
+                                    if (currentPixelIndex is <= 0 or >= 2048 * 2048 * 4) continue;
+
+                                    alphaAverage += backgroundBytes[currentPixelIndex + 3];
+                                    numAveraged++;
+                                }
+
+                                var newAlpha = (byte) (alphaAverage / numAveraged);
+
+                                backgroundBytes[scalingPixelTarget + 3] = newAlpha;
+                            }
+                        }
+                    });
                 });
-            });
-        });
-        
-        // Because we had to scale a 128x128 texture mapping onto a 2048x2048, it'll look very blurry, lets blend the alpha channel
-        const int blurRadius = 6;
-        Parallel.For(0, 2048, x => {
-            Parallel.For(0, 2048, y => {
-                var pixelIndex = (x + y * 2048) * 4;
+            }
+        }
 
-                var alphaAverage = 0.0f;
-                var numAveraged = 0;
-
-                foreach (var xBlur in Enumerable.Range(-blurRadius, blurRadius * 2)) {
-                    foreach (var yBlur in Enumerable.Range(-blurRadius, blurRadius * 2)) {
-                        var currentX = x + xBlur;
-                        var currentY = y + yBlur;
-                        
-                        if (currentX is < 0 or >= 2048 || currentY is < 0 or >= 2048) return;
-                        var currentPixelIndex = (currentX + currentY * 2048) * 4;
-                        
-                        alphaAverage += backgroundBytes[currentPixelIndex + 3];
-                        numAveraged++;
-                    }
-                }
-
-                var newAlpha = (byte)(alphaAverage / numAveraged);
-                
-                backgroundBytes[pixelIndex + 3] = newAlpha;
-            });
-        });
-        
-        Service.Log.Debug(timer.Elapsed.ToString());
+        Service.Log.Debug(timer.ElapsedMilliseconds + " ms");
 
         return Service.TextureProvider.CreateFromRaw(RawImageSpecification.Rgba32(2048, 2048), backgroundBytes);
     }
