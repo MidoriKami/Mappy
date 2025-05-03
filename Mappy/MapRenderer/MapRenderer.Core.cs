@@ -34,7 +34,7 @@ public partial class MapRenderer {
     public void CenterOnGameObject(IGameObject obj) 
         => DrawOffset = -new Vector2(obj.Position.X, obj.Position.Z) * DrawHelpers.GetMapScaleFactor() + DrawHelpers.GetMapOffsetVector();
 
-    public unsafe void Draw() {
+    public void Draw() {
         UpdateScaleLimits();
         UpdateDrawOffset();
         
