@@ -166,8 +166,10 @@ public static class DrawHelpers {
         // Don't draw markers that are positioned off the map texture
         if (markerInfo.Position.X < 0.0f || markerInfo.Position.X > 2048.0f * markerInfo.Scale || markerInfo.Position.Y < 0.0f || markerInfo.Position.Y > 2048.0f * markerInfo.Scale) return;
 
+        var scale = System.SystemConfig.ScaleTextWithZoom ? 0.20f * markerInfo.Scale : 0.5f;
+        
         using var largeFont = System.LargeAxisFontHandle.Push();
-        ImGui.SetWindowFontScale(0.20f * markerInfo.Scale);
+        ImGui.SetWindowFontScale(scale);
 
         var textSize = ImGui.CalcTextSize(text);
         var drawPosition = markerInfo.Position + markerInfo.Offset + ImGui.GetWindowPos() - textSize / 2.0f;
