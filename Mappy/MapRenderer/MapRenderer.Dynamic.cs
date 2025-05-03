@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Lumina.Extensions;
@@ -10,7 +9,7 @@ namespace Mappy.MapRenderer;
 public partial class MapRenderer {
     private unsafe void DrawDynamicMarkers() {
         // Group together icons based on their dataId, this is because square enix shows circles then draws the actual icon overtop
-        var iconGroups = AgentMap.Instance()->EventMarkers.GroupBy(markers => (markers.DataId, new Vector3(markers.X, markers.Y, markers.Z)));
+        var iconGroups = AgentMap.Instance()->EventMarkers.GroupBy(markers => (markers.DataId, markers.Position));
 
         foreach (var group in iconGroups) {
             // Make a copy of the first marker in the set, we will be mutating this copy.

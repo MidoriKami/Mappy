@@ -10,6 +10,7 @@ using KamiLib.Classes;
 using KamiLib.Window;
 using Lumina.Excel.Sheets;
 using Mappy.Classes;
+using Mappy.Extensions;
 using Map = FFXIVClientStructs.FFXIV.Client.Game.UI.Map;
 
 namespace Mappy.Windows;
@@ -59,7 +60,7 @@ public unsafe class UnacceptedQuestsTabItem : ITabItem {
                         System.SystemConfig.FollowPlayer = false;
 
                         var mapOffsetVector = DrawHelpers.GetMapOffsetVector();
-                        System.MapRenderer.DrawOffset = -new Vector2(marker.X, marker.Z) * AgentMap.Instance()->SelectedMapSizeFactorFloat + mapOffsetVector;
+                        System.MapRenderer.DrawOffset = -marker.Position.AsMapVector() * AgentMap.Instance()->SelectedMapSizeFactorFloat + mapOffsetVector;
                     }
 
                     ImGui.SetCursorScreenPos(cursorStart);
@@ -103,7 +104,7 @@ public unsafe class AcceptedQuestsTabItem : ITabItem {
                     if (ImGui.Selectable($"##{quest.ObjectiveId}_Selectable_{marker.LevelId}_{index++}", false, ImGuiSelectableFlags.None, new Vector2(ImGui.GetContentRegionAvail().X, ElementHeight * ImGuiHelpers.GlobalScale))) {
                         System.IntegrationsController.OpenMap(marker.MapId);
                         System.SystemConfig.FollowPlayer = false;
-                        System.MapRenderer.DrawOffset = -new Vector2(marker.X, marker.Z);
+                        System.MapRenderer.DrawOffset = -marker.Position.AsMapVector();
                     }
 
                     var iconId = marker.IconId switch {

@@ -12,7 +12,7 @@ public static class MapMarkerDataExtensions {
         if ((marker.Flags & 1) == 1) return;
         
         DrawHelpers.DrawMapMarker(new MarkerInfo {
-            Position = (new Vector2(marker.X, marker.Z) * DrawHelpers.GetMapScaleFactor() - DrawHelpers.GetMapOffsetVector() + DrawHelpers.GetMapCenterOffsetVector()) * scale,
+            Position = (marker.Position.AsMapVector() * DrawHelpers.GetMapScaleFactor() - DrawHelpers.GetMapOffsetVector() + DrawHelpers.GetMapCenterOffsetVector()) * scale,
             Offset = offset,
             Scale = scale,
             IconId = marker.IconId,
@@ -26,24 +26,6 @@ public static class MapMarkerDataExtensions {
             MarkerType = (MarkerType) marker.MarkerType,
             DataId = marker.DataId,
         });
-    }
-
-    public static void DrawText(this MapMarkerData marker, string text, Vector2 offset, float scale) {
-        DrawHelpers.DrawText(new MarkerInfo {
-            Position = (new Vector2(marker.X, marker.Z) * DrawHelpers.GetMapScaleFactor() - DrawHelpers.GetMapOffsetVector() + DrawHelpers.GetMapCenterOffsetVector()) * scale,
-            Offset = offset,
-            Scale = scale,
-            IconId = marker.IconId,
-            Radius = marker.Radius,
-            RadiusColor = System.SystemConfig.AreaColor,
-            RadiusOutlineColor = System.SystemConfig.AreaOutlineColor,
-            PrimaryText = () => GetMarkerPrimaryText(marker),
-            IsDynamicMarker = true,
-            ObjectiveId = marker.ObjectiveId,
-            LevelId = marker.LevelId,
-            MarkerType = (MarkerType) marker.MarkerType,
-            DataId = marker.DataId,
-        }, text);
     }
 
     private static unsafe string GetMarkerPrimaryText(MapMarkerData marker) {
