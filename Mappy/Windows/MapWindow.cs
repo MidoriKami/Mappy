@@ -114,7 +114,7 @@ public class MapWindow : Window {
             
             isMapItemHovered |= ImGui.IsItemHovered();
             
-            if (!System.SystemConfig.ShowCoordinateBar) {
+            if (System.SystemConfig.ShowCoordinateBar) {
                 mapCoordinateBar.Draw(isMapItemHovered, MapDrawOffset);
             }
             isMapItemHovered |= ImGui.IsItemHovered();
