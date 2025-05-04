@@ -42,6 +42,12 @@ public unsafe class AddonAreaMapController :IDisposable {
 		
 		showAreaMapHook?.Dispose();
 		hideAreaMapHook?.Dispose();
+		
+		// Reset windows root node position on dispose
+		var addonAreaMap = Service.GameGui.GetAddonByName<AddonAreaMap>("AreaMap");
+		if (addonAreaMap is not null) {
+			addonAreaMap->RootNode->SetPositionFloat(addonAreaMap->X, addonAreaMap->Y);
+		}
 	}
 
 	public void EnableIntegrations() {
