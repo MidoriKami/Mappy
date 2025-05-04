@@ -186,7 +186,7 @@ public unsafe partial class MapRenderer {
 		var timer = Stopwatch.StartNew();
         
 		// Because we had to scale a 128x128 texture mapping onto a 2048x2048, it'll look very blurry, lets blend the alpha channel
-		const int blurRadius = 16;
+		const int blurRadius = 8;
         
 		for(var x = 0; x < 2048; x++)
 		for(var y = 0; y < 2048; y++) {
@@ -194,6 +194,8 @@ public unsafe partial class MapRenderer {
 
 			var alphaAverage = 0.0f;
 			var numAveraged = 0;
+
+			if (blockyFogBytes[pixelIndex + 3] == 255) continue;
 
 			for (var xBlur = -blurRadius; xBlur < -blurRadius + blurRadius * 2; ++xBlur) {
 				var currentX = x + xBlur;
