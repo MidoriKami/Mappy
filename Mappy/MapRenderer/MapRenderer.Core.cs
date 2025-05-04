@@ -195,6 +195,7 @@ public partial class MapRenderer {
                             foreach (var xScalar in Enumerable.Range(-blendRange / 2, blendRange))
                             foreach (var yScalar in Enumerable.Range(-blendRange / 2, blendRange)) {
                                 var scalingPixelTarget = targetPixel * scaleFactor + xScalar * 4 + yScalar * 2048 * 4;
+                                if (scalingPixelTarget is <= 0 or >= 2048 * 2048 * 4) continue;
 
                                 // Blend alpha in surrounding pixels
                                 var alphaAverage = 0.0f;
@@ -210,7 +211,6 @@ public partial class MapRenderer {
                                 }
 
                                 var newAlpha = (byte) (alphaAverage / numAveraged);
-
                                 backgroundBytes[scalingPixelTarget + 3] = newAlpha;
                             }
                         }
