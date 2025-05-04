@@ -171,7 +171,7 @@ public partial class MapRenderer {
                 // Service.Log.Debug($"Flag {currentBitIndex} is Set, Revealing [ {xPageIndex:00}, {yPageIndex:00} ] Color [ {color} ]");
                 Parallel.For(0, 128, x => {
                     Parallel.For(0, 128, y => {
-                        var pixelIndex = (x + y * 512) * 4 + xPageIndex * 128 * 4 + yPageIndex * 512 * 4;
+                        var pixelIndex = (x + y * 512) * 4 + xPageIndex * 128 * 4 + yPageIndex * 512 * 128 * 4;
                         var targetPixel = (x + 2048 * y) * 4;
 
                         var alphaValue = color switch {
