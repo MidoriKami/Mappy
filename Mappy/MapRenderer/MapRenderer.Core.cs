@@ -85,12 +85,10 @@ public partial class MapRenderer {
             lastKnownDiscoveryFlags = areaMapNumberArray->IntArray[2];
 
             if (lastKnownDiscoveryFlags != -1) {
+                Service.Log.Debug("[Fog of War] Discovery Bits Changed, updating fog texture.");
                 Task.Run(() => {
                     fogTexture = LoadFogTexture();
                 });
-            }
-            else {
-                Service.Log.Debug("Skipping Fog of War Update");
             }
         }
         
