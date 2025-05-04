@@ -27,6 +27,7 @@ public static class System {
     public static List<ModuleBase> Modules { get; set; } = [
         new TripleTriadModule(),
         new FateModule(),
+        new StellarModule(),
     ];
     
     public static TooltipCache TooltipCache { get; set; } = new();
