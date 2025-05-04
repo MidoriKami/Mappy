@@ -87,8 +87,8 @@ public class SystemConfig : CharacterConfiguration {
     public bool ShowAreaLabel = true;
     public bool ShowSubAreaLabel = true;
     public bool NoFocusOnAppear = false;
-    public float LargeAreaTextScale = 3.0f;
-    public float SmallAreaTextScale = 2.0f;
+    public float LargeAreaTextScale = 1.5f;
+    public float SmallAreaTextScale = 1.0f;
     public bool ShowTextLabels = true;
     public bool ShowFogOfWar = true;
     public bool ScaleTextWithZoom = true;
