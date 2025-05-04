@@ -41,27 +41,20 @@ public class MapWindow : Window {
 
         DisableWindowSounds = true;
         RegisterCommands();
-
-        // Mirroring behavior doesn't let the close button work, so, remove it.
-        ShowCloseButton = false;
     }
 
     public override bool DrawConditions()
         => IntegrationsController.ShouldShowMap();
 
-    public override unsafe void PreOpenCheck() {
-        IsOpen = AgentMap.Instance()->IsAgentActive() || System.SystemConfig.KeepOpen;
+    public override void PreOpenCheck() {
+        if (System.SystemConfig.KeepOpen) {
+            IsOpen = true;
+        }
 
         if (Service.ClientState is { IsLoggedIn: false } or { IsPvP: true }) IsOpen = false;
     }
     
-    public override unsafe void OnOpen() {
-        if (!AgentMap.Instance()->IsAgentActive()) {
-            AgentMap.Instance()->Show();
-        }
-        
-        YeetVanillaMap();
-
+    public override void OnOpen() {
         if (ProcessingCommand) {
             ProcessingCommand = false;
             System.SystemConfig.FollowPlayer = false;
@@ -229,8 +222,6 @@ public class MapWindow : Window {
             AgentMap.Instance()->Hide();
         }
         
-        YeetVanillaMap();
-        
         if (System.SystemConfig.FollowPlayer && Service.ClientState is { LocalPlayer: {} localPlayer}) {
             System.MapRenderer.CenterOnGameObject(localPlayer);
         }
@@ -294,8 +285,8 @@ public class MapWindow : Window {
         }
     }
     
-    public override void OnClose() {
-        UnYeetVanillaMap();
+    public override unsafe void OnClose() {
+        AgentMap.Instance()->Hide();
         
         SystemConfig.Save();
     }
@@ -343,24 +334,6 @@ public class MapWindow : Window {
            System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenFocused) && IsFocused ||
            System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenMoving) && AgentMap.Instance()->IsPlayerMoving ||
            System.SystemConfig.FadeMode.HasFlag(FadeMode.WhenUnFocused) && !IsFocused;
-
-    private unsafe void YeetVanillaMap() {
-        var addon = Service.GameGui.GetAddonByName<AddonAreaMap>("AreaMap");
-        if (addon is null || addon->RootNode is null) return;
-        
-        addon->RootNode->SetPositionFloat(-9001.0f, -9001.0f);
-        addon->RootNode->ToggleVisibility(false);
-    }
-    
-    private unsafe void UnYeetVanillaMap() {
-        var addon = Service.GameGui.GetAddonByName<AddonAreaMap>("AreaMap");
-        if (addon is null || addon->RootNode is null) return;
-        
-        AgentMap.Instance()->Hide();
-        addon->RootNode->SetPositionFloat(addon->X, addon->Y);
-        addon->RootNode->ToggleVisibility(false);
-        Service.Framework.RunOnTick(() => addon->RootNode->ToggleVisibility(true), delayTicks: 10);
-    }
     
     private void RegisterCommands() {
         System.CommandManager.RegisterCommand(new ToggleCommandHandler {
@@ -437,7 +410,7 @@ public class MapWindow : Window {
         });
     }
 
-    private unsafe bool IsMapLocked() {
+    private static unsafe bool IsMapLocked() {
         var addon = Service.GameGui.GetAddonByName<AddonAreaMap>("AreaMap");
         if (addon is null || addon->RootNode is null) return false;
 

@@ -15,17 +15,15 @@ using MapType = FFXIVClientStructs.FFXIV.Client.UI.Agent.MapType;
 namespace Mappy.Controllers;
 
 public unsafe class IntegrationsController : IDisposable {
-	private delegate void OpenMapByMapIdDelegate(AgentMap* thisPtr, uint mapId, uint a3, bool a4);
-    
 	private readonly Hook<AgentMap.Delegates.ShowMap>? showMapHook;
-	private readonly Hook<OpenMapByMapIdDelegate>? openMapByIdHook;
 	private readonly Hook<AgentMap.Delegates.OpenMap>? openMapHook;
+
+	public bool IntegrationsEnabled { get; private set; }
     
 	public IntegrationsController() {
 		showMapHook ??= Service.Hooker.HookFromAddress<AgentMap.Delegates.ShowMap>(AgentMap.MemberFunctionPointers.ShowMap, OnShowHook);
-		openMapByIdHook ??= Service.Hooker.HookFromAddress<OpenMapByMapIdDelegate>(AgentMap.MemberFunctionPointers.OpenMapByMapId, OpenMapById);
 		openMapHook ??= Service.Hooker.HookFromAddress<AgentMap.Delegates.OpenMap>(AgentMap.MemberFunctionPointers.OpenMap, OpenMap);
-        
+
 		if (Service.ClientState is { IsPvP: false }) {
 			EnableIntegrations();
 		}
@@ -38,27 +36,30 @@ public unsafe class IntegrationsController : IDisposable {
 		DisableIntegrations();
         
 		showMapHook?.Dispose();
-		openMapByIdHook?.Dispose();
 		openMapHook?.Dispose();
-        
+
 		Service.ClientState.EnterPvP -= DisableIntegrations;
 		Service.ClientState.LeavePvP -= EnableIntegrations;
 	}
 
 	private void EnableIntegrations() {
 		Service.Log.Debug("Enabling Integrations");
+		IntegrationsEnabled = true;
         
 		showMapHook?.Enable();
-		openMapByIdHook?.Enable();
 		openMapHook?.Enable();
+		
+		System.AreaMapController.EnableIntegrations();
 	}
 
 	private void DisableIntegrations() {
 		Service.Log.Debug("Disabling Integrations");
+		IntegrationsEnabled = false;
         
 		showMapHook?.Disable();
-		openMapByIdHook?.Disable();
 		openMapHook?.Disable();
+		
+		System.AreaMapController.DisableIntegrations();
 	}
 
 	private void OnShowHook(AgentMap* agent, bool a1, bool a2)
@@ -76,14 +77,13 @@ public unsafe class IntegrationsController : IDisposable {
 				return;
 			}
 
+			if (System.SystemConfig.KeepOpen) {
+				Service.Log.Debug("[OnShow] Keeping Open");
+				return;
+			}
 			showMapHook!.Original(agent, a1, a2);
 		}, Service.Log, "Exception during OnShowHook");
 
-	private void OpenMapById(AgentMap* agent, uint mapId, uint a3, bool a4) 
-		=> HookSafety.ExecuteSafe(() => {
-			openMapByIdHook!.Original(agent, mapId, a3, a4);
-		}, Service.Log, "Exception during OpenMapByMapId");
-    
 	private void OpenMap(AgentMap* agent, OpenMapInfo* mapInfo) 
 		=> HookSafety.ExecuteSafe(() => {
 			openMapHook!.Original(agent, mapInfo);

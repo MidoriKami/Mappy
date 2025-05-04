@@ -1,0 +1,87 @@
+﻿using System;
+using Dalamud.Game.Addon.Lifecycle;
+using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
+using Dalamud.Hooking;
+using FFXIVClientStructs.FFXIV.Client.UI;
+using KamiLib.Classes;
+using KamiLib.Extensions;
+using Mappy.Windows;
+
+namespace Mappy.Controllers;
+
+public unsafe class AddonAreaMapController :IDisposable {
+	private Hook<AddonAreaMap.Delegates.Show>? showAreaMapHook;
+	private Hook<AddonAreaMap.Delegates.Hide>? hideAreaMapHook;
+	
+	public AddonAreaMapController() {
+		Service.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, "AreaMap", OnAreaMapDraw);
+
+		var addonAreaMap = Service.GameGui.GetAddonByName<AddonAreaMap>("AreaMap");
+		if (addonAreaMap is null) {
+			Service.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "AreaMap", OnAreaMapSetup);
+		}
+		else {
+			HookAreaMapFunctions(addonAreaMap);
+		}
+	}
+	
+	public void Dispose() {
+		Service.AddonLifecycle.UnregisterListener(OnAreaMapSetup);
+		
+		showAreaMapHook?.Dispose();
+		hideAreaMapHook?.Dispose();
+	}
+
+	public void EnableIntegrations() {
+		showAreaMapHook?.Enable();
+		hideAreaMapHook?.Enable();
+	}
+
+	public void DisableIntegrations() {
+		showAreaMapHook?.Disable();
+		hideAreaMapHook?.Disable();
+	}
+	
+	private void OnAreaMapSetup(AddonEvent type, AddonArgs args)
+		=> HookAreaMapFunctions((AddonAreaMap*) args.Addon);
+	
+	private void HookAreaMapFunctions(AddonAreaMap* areaMap) {
+		showAreaMapHook = Service.Hooker.HookFromAddress<AddonAreaMap.Delegates.Show>(areaMap->VirtualTable->Show, OnAreaMapShow);
+		hideAreaMapHook = Service.Hooker.HookFromAddress<AddonAreaMap.Delegates.Hide>(areaMap->VirtualTable->Hide, OnAreaMapHide);
+	}
+	
+	private void OnAreaMapShow(AddonAreaMap* thisPtr, bool silenceOpenSoundEffect, uint unsetShowHideFlags)
+		=> HookSafety.ExecuteSafe(() => {
+			Service.Log.Debug("[AreaMap] OnAreaMapShow");
+		
+			System.WindowManager.GetWindow<MapWindow>()?.Open();
+			showAreaMapHook!.Original(thisPtr, silenceOpenSoundEffect, unsetShowHideFlags);
+		}, Service.Log, "Exception during OnAreaMapShow");
+
+	private void OnAreaMapHide(AddonAreaMap* thisPtr, bool unkBool, bool callHideCallback, uint setShowHideFlags) 		
+		=> HookSafety.ExecuteSafe(() => {
+			Service.Log.Debug("[AreaMap] OnAreaMapHide");
+			
+			System.WindowManager.GetWindow<MapWindow>()?.Close();
+			hideAreaMapHook!.Original(thisPtr, unkBool, callHideCallback, setShowHideFlags);
+		}, Service.Log, "Exception during OnAreaMapHide");
+
+	private void OnAreaMapDraw(AddonEvent type, AddonArgs args) {
+		var addon = (AddonAreaMap*) args.Addon;
+		if (addon is null || addon->RootNode is null) return;
+		if (!System.IntegrationsController.IntegrationsEnabled) return;
+		
+		// if (System.WindowManager.GetWindow<MapWindow>() is { IsOpen: false } mapWindow && addon->IsVisible) {
+		// 	mapWindow.Open();
+		// }
+
+		// Have to check for color, because it likes to animate a fadeout,
+		// and we want the map to stay completely hidden until it's done.
+		if (addon->IsVisible || addon->RootNode->Color.A is not 0x00) {
+			addon->RootNode->SetPositionFloat(-9001.0f, -9001.0f);
+		}
+		else {
+			addon->RootNode->SetPositionFloat(addon->X, addon->Y);
+		}
+	}
+}
