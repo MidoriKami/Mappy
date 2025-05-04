@@ -84,7 +84,7 @@ public partial class MapRenderer {
         if (areaMapNumberArray->IntArray[2] != lastKnownDiscoveryFlags) {
             lastKnownDiscoveryFlags = areaMapNumberArray->IntArray[2];
 
-            if (lastKnownDiscoveryFlags != -1) {
+            if (lastKnownDiscoveryFlags != -1 && lastKnownDiscoveryFlags != AgentMap.Instance()->SelectedMapDiscoveryFlag) {
                 Service.Log.Debug("[Fog of War] Discovery Bits Changed, updating fog texture.");
                 Task.Run(() => {
                     fogTexture = LoadFogTexture();
