@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Dalamud.Game.ClientState.Objects.Types;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -11,12 +12,18 @@ using Mappy.Classes;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiLib.Extensions;
 using Lumina.Data.Files;
+using SharpDX;
+using SharpDX.Direct3D11;
+using SharpDX.DXGI;
+using Texture = FFXIVClientStructs.FFXIV.Client.Graphics.Kernel.Texture;
 
 namespace Mappy.MapRenderer;
 
-public partial class MapRenderer {
+public unsafe partial class MapRenderer {
     public static float Scale {
         get => System.SystemConfig.MapScale;
         set => System.SystemConfig.MapScale = value;
@@ -56,7 +63,7 @@ public partial class MapRenderer {
         DrawPosition = childCenterOffset - mapCenterOffset + DrawOffset * Scale;
     }
 
-    private unsafe void DrawBackgroundTexture() {
+    private void DrawBackgroundTexture() {
         if (AgentMap.Instance()->SelectedMapBgPath.Length is 0) {
             var texture = Service.TextureProvider.GetFromGame($"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex").GetWrapOrEmpty();
             
@@ -78,7 +85,7 @@ public partial class MapRenderer {
         }
     }
 
-    private unsafe void DrawFogOfWar() {
+    private void DrawFogOfWar() {
         if (!System.SystemConfig.ShowFogOfWar) return;
         if (blendedTexture is null) return;
         
@@ -107,7 +114,7 @@ public partial class MapRenderer {
         }
     }
     
-    private static unsafe IDalamudTextureWrap? LoadTexture() {
+    private static IDalamudTextureWrap? LoadTexture() {
         var vanillaBgPath = $"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex";
         var vanillaFgPath = $"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex";
         
@@ -135,14 +142,11 @@ public partial class MapRenderer {
         return Service.TextureProvider.CreateFromRaw(RawImageSpecification.Rgba32(2048, 2048), backgroundBytes);
     }
 
-    private unsafe IDalamudTextureWrap? LoadFogTexture() {
-        var fogTexturePath = $"{AgentMap.Instance()->SelectedMapBgPath.ToString().TrimEnd('_', 'm')}d.tex";
+    private IDalamudTextureWrap? LoadFogTexture() {
         var vanillaBgPath = $"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex";
-        
-        var fogTextureFile = GetTexFile(fogTexturePath);
         var bgFile = GetTexFile(vanillaBgPath);
 
-        if (bgFile is null || fogTextureFile is null) {
+        if (bgFile is null) {
             Service.Log.Warning("Failed to load map textures");
             return null;
         }
@@ -151,56 +155,80 @@ public partial class MapRenderer {
         var backgroundBytes = bgFile.GetRgbaImageData();
         
         // Load alpha maps
-        var fogTextureBytes = fogTextureFile.GetRgbaImageData();
+        var fogTextureBytes = GetPrebakedTextureBytes();
+        if (fogTextureBytes is null) return null;
         
         var timer = Stopwatch.StartNew();
         
-        // Scale of ColorMap to Map Texture Size
-        const int scaleFactor = 16;
-
-        // Make background texture fullly invisible
+        // Make background texture fully invisible
         Parallel.For(0, 2048 * 2048, i => {
             backgroundBytes[i * 4 + 3] = 0;
         });
         
         // Make non-transparent any section that the player has not-already explored
-        foreach(var xPageIndex in Enumerable.Range(0, 4))
-        foreach (var yPageIndex in Enumerable.Range(0, 3))
-        foreach (var color in Enumerable.Range(0, 3)) {
-            var currentBitIndex = (xPageIndex * 3 + yPageIndex * 12 + color);
-            if (currentBitIndex >= 32) continue;
-
-            // If this visibility flag is set, set transparency on pixels.
-            if ((lastKnownDiscoveryFlags & (1 << currentBitIndex)) == 0) {
-
-                // Service.Log.Debug($"Flag {currentBitIndex} is Set, Revealing [ {xPageIndex:00}, {yPageIndex:00} ] Color [ {color} ]");
-                Parallel.For(0, 128, x => {
-                    Parallel.For(0, 128, y => {
-                        var pixelIndex = (x + y * 512) * 4 + xPageIndex * 128 * 4 + yPageIndex * 512 * 128 * 4;
-                        var targetPixel = (x + 2048 * y) * 4;
-
-                        var alphaValue = color switch {
-                            0 => fogTextureBytes[pixelIndex + 0],
-                            1 => fogTextureBytes[pixelIndex + 1],
-                            2 => fogTextureBytes[pixelIndex + 2],
-                            _ => throw new ArgumentOutOfRangeException(),
-                        };
-
-                        if (alphaValue > 0) {
-                            foreach (var xScalar in Enumerable.Range(0, scaleFactor))
-                            foreach (var yScalar in Enumerable.Range(0, scaleFactor)) {
-                                var scalingPixelTarget = targetPixel * scaleFactor + xScalar * 4 + yScalar * 2048 * 4;
-                                backgroundBytes[scalingPixelTarget + 3] = alphaValue;
-                            }
-                        }
-                    });
-                });
-            }
-        }
+        Parallel.For(0, 128, x => {
+            Parallel.For(0, 128, y => {
+                var pixelIndex = (x + y * 128) * 4;
+                var targetPixel = (x + 2048 * y) * 4;
+                
+                var redAmount = fogTextureBytes[pixelIndex + 0] / 255.0f;
+                var greenAmount = fogTextureBytes[pixelIndex + 1] / 255.0f;
+                var blueAmount = fogTextureBytes[pixelIndex + 2] / 255.0f;
+                
+                var maxAlpha = Math.Max(redAmount, Math.Max(greenAmount, blueAmount));
+                var alphaSum = (byte) ( maxAlpha * 255 );
+                
+                if (alphaSum is not 0) {
+                    const int scaleFactor = 16;
+                    foreach (var xScalar in Enumerable.Range(0, scaleFactor))
+                    foreach (var yScalar in Enumerable.Range(0, scaleFactor)) {
+                        var scalingPixelTarget = targetPixel * scaleFactor + xScalar * 4 + yScalar * 2048 * 4;
+                        backgroundBytes[scalingPixelTarget + 3] = alphaSum;
+                    }
+                }
+            });
+        });
 
         Service.Log.Debug($"Fog of War Calculated in {timer.ElapsedMilliseconds} ms");
 
         return Service.TextureProvider.CreateFromRaw(RawImageSpecification.Rgba32(2048, 2048), backgroundBytes);
+    }
+
+    private static byte[]? GetPrebakedTextureBytes() {
+        var addon = Service.GameGui.GetAddonByName<AddonAreaMap>("AreaMap");
+        if (addon is null) return null;
+
+        var componentMap = (void*) Marshal.ReadIntPtr((nint) addon, 0x430);
+        if (componentMap is null) return null;
+        
+        var texturePointer = (Texture*) Marshal.ReadIntPtr((nint) componentMap, 0x270);
+        if (texturePointer is null) return null;
+
+        var device = Service.PluginInterface.UiBuilder.Device;
+        var texture = CppObject.FromPointer<Texture2D>((nint)texturePointer->D3D11Texture2D);
+        var desc = new Texture2DDescription {
+            ArraySize = 1,
+            BindFlags = BindFlags.None,
+            CpuAccessFlags = CpuAccessFlags.Read,
+            Format = texture.Description.Format,
+            Height = texture.Description.Height,
+            Width = texture.Description.Width,
+            MipLevels = 1,
+            OptionFlags = texture.Description.OptionFlags,
+            SampleDescription = new SampleDescription(1, 0),
+            Usage = ResourceUsage.Staging
+        };
+
+        using var stagingTexture = new Texture2D(device, desc);
+        var context = device.ImmediateContext;
+
+        context.CopyResource(texture, stagingTexture);
+        device.ImmediateContext.MapSubresource(stagingTexture, 0, MapMode.Read, SharpDX.Direct3D11.MapFlags.None, out var dataStream);
+
+        using var pixelDataStream = new MemoryStream();
+        dataStream.CopyTo(pixelDataStream);
+
+        return pixelDataStream.ToArray();
     }
 
     private static TexFile? GetTexFile(string rawPath) {
