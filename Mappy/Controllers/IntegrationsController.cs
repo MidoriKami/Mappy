@@ -18,8 +18,6 @@ public unsafe class IntegrationsController : IDisposable {
 	private readonly Hook<AgentMap.Delegates.ShowMap>? showMapHook;
 	private readonly Hook<AgentMap.Delegates.OpenMap>? openMapHook;
 
-	public bool IntegrationsEnabled { get; private set; }
-    
 	public IntegrationsController() {
 		showMapHook ??= Service.Hooker.HookFromAddress<AgentMap.Delegates.ShowMap>(AgentMap.MemberFunctionPointers.ShowMap, OnShowHook);
 		openMapHook ??= Service.Hooker.HookFromAddress<AgentMap.Delegates.OpenMap>(AgentMap.MemberFunctionPointers.OpenMap, OpenMap);
@@ -44,7 +42,6 @@ public unsafe class IntegrationsController : IDisposable {
 
 	private void EnableIntegrations() {
 		Service.Log.Debug("Enabling Integrations");
-		IntegrationsEnabled = true;
         
 		showMapHook?.Enable();
 		openMapHook?.Enable();
@@ -55,7 +52,6 @@ public unsafe class IntegrationsController : IDisposable {
 
 	private void DisableIntegrations() {
 		Service.Log.Debug("Disabling Integrations");
-		IntegrationsEnabled = false;
         
 		showMapHook?.Disable();
 		openMapHook?.Disable();

@@ -19,5 +19,6 @@ public class Service {
     [PluginService] public static ICondition Condition { get; set; }
     [PluginService] public static IKeyState KeyState { get; set; }
     [PluginService] public static ITextureSubstitutionProvider TextureSubstitutionProvider { get; set; }
+    [PluginService] public static IFramework Framework { get; set; }
     [PluginService] public static IAddonLifecycle AddonLifecycle { get; set; }
 }
