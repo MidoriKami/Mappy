@@ -30,12 +30,13 @@ public unsafe partial class MapRenderer {
 
 	private bool requestUpdatedMaskingTexture;
 	private byte[]? maskingTextureBytes;
-	
+
+	private byte[]? blockyFogBytes;
 	private IDalamudTextureWrap? fogTexture;
 	private int lastKnownDiscoveryFlags;
 	private int frameCounter;
 
-	private int CurrentDiscoveryFlags => AtkStage.Instance()->GetNumberArrayData(NumberArrayType.AreaMap2)->IntArray[2];
+	private static int CurrentDiscoveryFlags => AtkStage.Instance()->GetNumberArrayData(NumberArrayType.AreaMap2)->IntArray[2];
 	
 	private void LoadFogHooks() {
 		Service.Hooker.InitializeFromAttributes(this);
@@ -106,37 +107,39 @@ public unsafe partial class MapRenderer {
 		var timer = Stopwatch.StartNew();
 		
 		// Make background texture fully invisible
-		Parallel.For(0, 2048 * 2048, i => {
-		    backgroundBytes[i * 4 + 3] = 0;
-		});
+		for (var index = 0; index < 2048 * 2048; index++) {
+			backgroundBytes[index * 4 + 3] = 0;
+		}
 		
 		// Make non-transparent any section that the player has not-already explored
-		Parallel.For(0, 128, x => {
-		    Parallel.For(0, 128, y => {
-		        var pixelIndex = (x + y * 128) * 4;
-		        var targetPixel = (x + 2048 * y) * 4;
+		for (var x = 0; x < 128; x++) 
+		for (var y = 0; y < 128; y++) {
+			var pixelIndex = (x + y * 128) * 4;
+			var targetPixel = (x + 2048 * y) * 4;
 		        
-		        var redAmount = maskingTextureBytes[pixelIndex + 0] / 255.0f;
-		        var greenAmount = maskingTextureBytes[pixelIndex + 1] / 255.0f;
-		        var blueAmount = maskingTextureBytes[pixelIndex + 2] / 255.0f;
+			var redAmount = maskingTextureBytes[pixelIndex + 0] / 255.0f;
+			var greenAmount = maskingTextureBytes[pixelIndex + 1] / 255.0f;
+			var blueAmount = maskingTextureBytes[pixelIndex + 2] / 255.0f;
 		        
-		        var maxAlpha = Math.Max(redAmount, Math.Max(greenAmount, blueAmount));
-		        var alphaSum = (byte) ( maxAlpha * 255 );
+			var maxAlpha = Math.Max(redAmount, Math.Max(greenAmount, blueAmount));
+			var alphaSum = (byte) ( maxAlpha * 255 );
 		        
-		        if (alphaSum is not 0) {
-		            const int scaleFactor = 16;
-		            foreach (var xScalar in Enumerable.Range(0, scaleFactor))
-		            foreach (var yScalar in Enumerable.Range(0, scaleFactor)) {
-		                var scalingPixelTarget = targetPixel * scaleFactor + xScalar * 4 + yScalar * 2048 * 4;
-		                backgroundBytes[scalingPixelTarget + 3] = alphaSum;
-		            }
-		        }
-		    });
-		});
+			if (alphaSum is not 0) {
+				const int scaleFactor = 16;
+				foreach (var xScalar in Enumerable.Range(0, scaleFactor))
+				foreach (var yScalar in Enumerable.Range(0, scaleFactor)) {
+					var scalingPixelTarget = targetPixel * scaleFactor + xScalar * 4 + yScalar * 2048 * 4;
+					backgroundBytes[scalingPixelTarget + 3] = alphaSum;
+				}
+			}
+		}
 
 		Service.Log.Debug($"Fog of War Calculated in {timer.ElapsedMilliseconds} ms");
-		
+
+		blockyFogBytes = backgroundBytes;
 		fogTexture = Service.TextureProvider.CreateFromRaw(RawImageSpecification.Rgba32(2048, 2048), backgroundBytes);
+
+		Task.Run(CleanupFogTexture);
 	}
 	
 	private static byte[]? GetPrebakedTextureBytes() {
@@ -175,5 +178,48 @@ public unsafe partial class MapRenderer {
 		dataStream.CopyTo(pixelDataStream);
 
 		return pixelDataStream.ToArray();
+	}
+	
+	private void CleanupFogTexture() {
+		if (blockyFogBytes is null) return;
+        
+		var timer = Stopwatch.StartNew();
+        
+		// Because we had to scale a 128x128 texture mapping onto a 2048x2048, it'll look very blurry, lets blend the alpha channel
+		const int blurRadius = 16;
+        
+		for(var x = 0; x < 2048; x++)
+		for(var y = 0; y < 2048; y++) {
+			var pixelIndex = (x + y * 2048) * 4;
+
+			var alphaAverage = 0.0f;
+			var numAveraged = 0;
+
+			for (var xBlur = -blurRadius; xBlur < -blurRadius + blurRadius * 2; ++xBlur) {
+				var currentX = x + xBlur;
+				if (currentX is < 0 or >= 2048) continue;
+				var currentPixelIndex = (currentX + y * 2048) * 4;
+
+				alphaAverage += blockyFogBytes[currentPixelIndex + 3];
+				numAveraged++;
+			}
+			
+			for(var yBlur = -blurRadius; yBlur < -blurRadius + blurRadius * 2; ++yBlur) {
+				var currentY = y + yBlur;
+
+				if (currentY is < 0 or >= 2048) continue;
+				var currentPixelIndex = (x + currentY * 2048) * 4;
+
+				alphaAverage += blockyFogBytes[currentPixelIndex + 3];
+				numAveraged++;
+			}
+
+			var newAlpha = (byte) (alphaAverage / numAveraged);
+			blockyFogBytes[pixelIndex + 3] = newAlpha;
+		}
+
+		fogTexture = Service.TextureProvider.CreateFromRaw(RawImageSpecification.Rgba32(2048, 2048), blockyFogBytes);
+        
+		Service.Log.Debug($"Texture Cleanup completed in {timer.ElapsedMilliseconds} ms");
 	}
 }
