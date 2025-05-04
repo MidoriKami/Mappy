@@ -7,7 +7,6 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 using KamiLib.Classes;
 using KamiLib.CommandManager;
 using KamiLib.Extensions;
-using Lumina.Excel.Sheets.Experimental;
 using Mappy.Windows;
 
 namespace Mappy.Controllers;

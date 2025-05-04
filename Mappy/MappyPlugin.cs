@@ -54,6 +54,7 @@ public sealed class MappyPlugin : IDalamudPlugin {
         System.IntegrationsController.Dispose();
         System.AreaMapController.Dispose();
         System.FlagController.Dispose();
+        System.MapRenderer.Dispose();
         
         Service.PluginInterface.UiBuilder.OpenMainUi -= OpenMapWindow;
     }

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Game.ClientState.Objects.Types;
@@ -11,12 +9,11 @@ using Mappy.Classes;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Utility;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Data.Files;
 
 namespace Mappy.MapRenderer;
 
-public partial class MapRenderer {
+public unsafe partial class MapRenderer : IDisposable {
     public static float Scale {
         get => System.SystemConfig.MapScale;
         set => System.SystemConfig.MapScale = value;
@@ -26,9 +23,15 @@ public partial class MapRenderer {
     public Vector2 DrawPosition { get; private set; }
 
     private IDalamudTextureWrap? blendedTexture;
-    private IDalamudTextureWrap? fogTexture;
-    private int lastKnownDiscoveryFlags;
     private string blendedPath = string.Empty;
+
+    public MapRenderer() {
+        LoadFogHooks();
+    }
+    
+    public void Dispose() {
+        UnloadFogHooks();
+    }
 
     public void CenterOnGameObject(IGameObject obj) 
         => CenterOnCoordinate(new Vector2(obj.Position.X, obj.Position.Y));
@@ -45,9 +48,8 @@ public partial class MapRenderer {
         DrawMapMarkers();
     }
 
-    private void UpdateScaleLimits() {
-        Scale = Math.Clamp(Scale, 0.05f, 20.0f);
-    }
+    private void UpdateScaleLimits()
+        => Scale = Math.Clamp(Scale, 0.05f, 20.0f);
 
     private void UpdateDrawOffset() {
         var childCenterOffset = ImGui.GetContentRegionAvail() / 2.0f;
@@ -56,7 +58,7 @@ public partial class MapRenderer {
         DrawPosition = childCenterOffset - mapCenterOffset + DrawOffset * Scale;
     }
 
-    private unsafe void DrawBackgroundTexture() {
+    private void DrawBackgroundTexture() {
         if (AgentMap.Instance()->SelectedMapBgPath.Length is 0) {
             var texture = Service.TextureProvider.GetFromGame($"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex").GetWrapOrEmpty();
             
@@ -78,36 +80,7 @@ public partial class MapRenderer {
         }
     }
 
-    private unsafe void DrawFogOfWar() {
-        if (!System.SystemConfig.ShowFogOfWar) return;
-        if (blendedTexture is null) return;
-        
-        var areaMapNumberArray = AtkStage.Instance()->GetNumberArrayData(NumberArrayType.AreaMap2);
-
-        if (areaMapNumberArray->IntArray[2] != lastKnownDiscoveryFlags) {
-            lastKnownDiscoveryFlags = areaMapNumberArray->IntArray[2];
-
-            if (lastKnownDiscoveryFlags != -1 && lastKnownDiscoveryFlags != AgentMap.Instance()->SelectedMapDiscoveryFlag) {
-                Service.Log.Debug("[Fog of War] Discovery Bits Changed, updating fog texture.");
-                Task.Run(() => {
-                    fogTexture = LoadFogTexture();
-                });
-            }
-        }
-        
-        if (fogTexture is not null && lastKnownDiscoveryFlags != -1) {
-            ImGui.SetCursorPos(DrawPosition);
-            ImGui.Image(fogTexture.ImGuiHandle, fogTexture.Size * Scale);
-            
-        } else if (fogTexture is null && lastKnownDiscoveryFlags != -1) {
-            var defaultBackgroundTexture = Service.TextureProvider.GetFromGame($"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex").GetWrapOrEmpty();
-            
-            ImGui.SetCursorPos(DrawPosition);
-            ImGui.Image(defaultBackgroundTexture.ImGuiHandle, defaultBackgroundTexture.Size * Scale);
-        }
-    }
-    
-    private static unsafe IDalamudTextureWrap? LoadTexture() {
+    private static IDalamudTextureWrap? LoadTexture() {
         var vanillaBgPath = $"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex";
         var vanillaFgPath = $"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex";
         
@@ -131,74 +104,6 @@ public partial class MapRenderer {
             backgroundBytes[index + 1] = (byte)(backgroundBytes[index + 1] * foregroundBytes[index + 1] / 255);
             backgroundBytes[index + 2] = (byte)(backgroundBytes[index + 2] * foregroundBytes[index + 2] / 255);
         });
-
-        return Service.TextureProvider.CreateFromRaw(RawImageSpecification.Rgba32(2048, 2048), backgroundBytes);
-    }
-
-    private unsafe IDalamudTextureWrap? LoadFogTexture() {
-        var fogTexturePath = $"{AgentMap.Instance()->SelectedMapBgPath.ToString().TrimEnd('_', 'm')}d.tex";
-        var vanillaBgPath = $"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex";
-        
-        var fogTextureFile = GetTexFile(fogTexturePath);
-        var bgFile = GetTexFile(vanillaBgPath);
-
-        if (bgFile is null || fogTextureFile is null) {
-            Service.Log.Warning("Failed to load map textures");
-            return null;
-        }
-        
-        // Load non-transparent background texture
-        var backgroundBytes = bgFile.GetRgbaImageData();
-        
-        // Load alpha maps
-        var fogTextureBytes = fogTextureFile.GetRgbaImageData();
-        
-        var timer = Stopwatch.StartNew();
-        
-        // Scale of ColorMap to Map Texture Size
-        const int scaleFactor = 16;
-
-        // Make background texture fullly invisible
-        Parallel.For(0, 2048 * 2048, i => {
-            backgroundBytes[i * 4 + 3] = 0;
-        });
-        
-        // Make non-transparent any section that the player has not-already explored
-        foreach(var xPageIndex in Enumerable.Range(0, 4))
-        foreach (var yPageIndex in Enumerable.Range(0, 3))
-        foreach (var color in Enumerable.Range(0, 3)) {
-            var currentBitIndex = (xPageIndex * 3 + yPageIndex * 12 + color);
-            if (currentBitIndex >= 32) continue;
-
-            // If this visibility flag is set, set transparency on pixels.
-            if ((lastKnownDiscoveryFlags & (1 << currentBitIndex)) == 0) {
-
-                // Service.Log.Debug($"Flag {currentBitIndex} is Set, Revealing [ {xPageIndex:00}, {yPageIndex:00} ] Color [ {color} ]");
-                Parallel.For(0, 128, x => {
-                    Parallel.For(0, 128, y => {
-                        var pixelIndex = (x + y * 512) * 4 + xPageIndex * 128 * 4 + yPageIndex * 512 * 128 * 4;
-                        var targetPixel = (x + 2048 * y) * 4;
-
-                        var alphaValue = color switch {
-                            0 => fogTextureBytes[pixelIndex + 0],
-                            1 => fogTextureBytes[pixelIndex + 1],
-                            2 => fogTextureBytes[pixelIndex + 2],
-                            _ => throw new ArgumentOutOfRangeException(),
-                        };
-
-                        if (alphaValue > 0) {
-                            foreach (var xScalar in Enumerable.Range(0, scaleFactor))
-                            foreach (var yScalar in Enumerable.Range(0, scaleFactor)) {
-                                var scalingPixelTarget = targetPixel * scaleFactor + xScalar * 4 + yScalar * 2048 * 4;
-                                backgroundBytes[scalingPixelTarget + 3] = alphaValue;
-                            }
-                        }
-                    });
-                });
-            }
-        }
-
-        Service.Log.Debug($"Fog of War Calculated in {timer.ElapsedMilliseconds} ms");
 
         return Service.TextureProvider.CreateFromRaw(RawImageSpecification.Rgba32(2048, 2048), backgroundBytes);
     }
