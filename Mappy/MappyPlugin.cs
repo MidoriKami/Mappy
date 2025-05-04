@@ -15,7 +15,7 @@ public sealed class MappyPlugin : IDalamudPlugin {
         pluginInterface.Create<Service>();
         
         System.LargeAxisFontHandle = Service.PluginInterface.UiBuilder.FontAtlas.NewGameFontHandle(new GameFontStyle {
-            SizePt = 36.0f,
+            SizePt = 72.0f,
             FamilyAndSize = GameFontFamilyAndSize.Axis36,
             Italic = true,
             BaseSkewStrength = 16f,

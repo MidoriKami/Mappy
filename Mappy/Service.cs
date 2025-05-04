@@ -8,7 +8,6 @@ namespace Mappy;
 public class Service {
     [PluginService] public static IDalamudPluginInterface PluginInterface { get; set; }
     [PluginService] public static IClientState ClientState { get; set; }
-    [PluginService] public static IFramework Framework { get; set; }
     [PluginService] public static IDataManager DataManager { get; set; }
     [PluginService] public static ITextureProvider TextureProvider { get; set; }
     [PluginService] public static IObjectTable ObjectTable { get; set; }
