@@ -13,7 +13,7 @@ using Lumina.Data.Files;
 
 namespace Mappy.MapRenderer;
 
-public unsafe partial class MapRenderer {
+public unsafe partial class MapRenderer : IDisposable {
     public static float Scale {
         get => System.SystemConfig.MapScale;
         set => System.SystemConfig.MapScale = value;
@@ -23,9 +23,15 @@ public unsafe partial class MapRenderer {
     public Vector2 DrawPosition { get; private set; }
 
     private IDalamudTextureWrap? blendedTexture;
-    private IDalamudTextureWrap? fogTexture;
-    private int lastKnownDiscoveryFlags;
     private string blendedPath = string.Empty;
+
+    public MapRenderer() {
+        LoadFogHooks();
+    }
+    
+    public void Dispose() {
+        UnloadFogHooks();
+    }
 
     public void CenterOnGameObject(IGameObject obj) 
         => CenterOnCoordinate(new Vector2(obj.Position.X, obj.Position.Y));
