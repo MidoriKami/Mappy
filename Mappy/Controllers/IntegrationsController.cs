@@ -50,6 +50,7 @@ public unsafe class IntegrationsController : IDisposable {
 		openMapHook?.Enable();
 		
 		System.AreaMapController.EnableIntegrations();
+		System.FlagController.EnableIntegrations();
 	}
 
 	private void DisableIntegrations() {
@@ -60,6 +61,7 @@ public unsafe class IntegrationsController : IDisposable {
 		openMapHook?.Disable();
 		
 		System.AreaMapController.DisableIntegrations();
+		System.FlagController.DisableIntegrations();
 	}
 
 	private void OnShowHook(AgentMap* agent, bool a1, bool a2)

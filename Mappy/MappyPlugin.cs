@@ -23,6 +23,7 @@ public sealed class MappyPlugin : IDalamudPlugin {
         
         System.SystemConfig = SystemConfig.Load();
         System.IconConfig = IconConfig.Load();
+        System.FlagConfig = FlagConfig.Load();
 
         System.Teleporter = new Teleporter(Service.PluginInterface);
         
@@ -37,6 +38,7 @@ public sealed class MappyPlugin : IDalamudPlugin {
         System.WindowManager.AddWindow(System.ConfigWindow, WindowFlags.IsConfigWindow | WindowFlags.RequireLoggedIn);
         System.WindowManager.AddWindow(System.MapWindow, WindowFlags.RequireLoggedIn);
 
+        System.FlagController = new FlagController();
         System.AreaMapController = new AddonAreaMapController();
         System.IntegrationsController = new IntegrationsController();
 
@@ -51,6 +53,7 @@ public sealed class MappyPlugin : IDalamudPlugin {
         System.WindowManager.Dispose();
         System.IntegrationsController.Dispose();
         System.AreaMapController.Dispose();
+        System.FlagController.Dispose();
         
         Service.PluginInterface.UiBuilder.OpenMainUi -= OpenMapWindow;
     }

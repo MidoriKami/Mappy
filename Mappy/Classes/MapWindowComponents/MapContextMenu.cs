@@ -59,5 +59,9 @@ public unsafe class MapContextMenu {
         if (ImGui.MenuItem("Open Fate List", System.WindowManager.GetWindow<FateListWindow>() is null)) {
             System.WindowManager.AddWindow(new FateListWindow(), WindowFlags.OpenImmediately | WindowFlags.RequireLoggedIn);
         }
+
+        if (ImGui.MenuItem("Open Flag List", System.WindowManager.GetWindow<FlagHistoryWindow>() is null)) {
+            System.WindowManager.AddWindow(new FlagHistoryWindow(), WindowFlags.OpenImmediately | WindowFlags.RequireLoggedIn);
+        }
 	}
 }

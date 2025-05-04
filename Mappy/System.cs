@@ -15,12 +15,14 @@ namespace Mappy;
 public static class System {
     public static SystemConfig SystemConfig { get; set; }
     public static IconConfig IconConfig { get; set; }
+    public static FlagConfig FlagConfig { get; set; }
     public static WindowManager WindowManager { get; set; }
     public static MapWindow MapWindow { get; set; }
     public static ConfigurationWindow ConfigWindow { get; set; }
     public static MapRenderer.MapRenderer MapRenderer { get; set; }
     public static IntegrationsController IntegrationsController { get; set; }
     public static AddonAreaMapController AreaMapController { get; set; }
+    public static FlagController FlagController { get; set; }
     public static CommandManager CommandManager { get; set; }
     public static Teleporter Teleporter { get; set; }
 
