@@ -4,6 +4,7 @@ using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Hooking;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using KamiLib.Classes;
+using KamiLib.CommandManager;
 using KamiLib.Extensions;
 using Mappy.Windows;
 
@@ -23,6 +24,17 @@ public unsafe class AddonAreaMapController :IDisposable {
 		else {
 			HookAreaMapFunctions(addonAreaMap);
 		}
+		
+		// Add a special error handler for the case that somehow the addon is stuck offscreen
+		System.CommandManager.RegisterCommand(new CommandHandler {
+			ActivationPath = "/areamap/reset",
+			Delegate = _ => {
+				var addon = Service.GameGui.GetAddonByName<AddonAreaMap>("AreaMap");
+				if (addon is not null && addon->RootNode is not null) {
+					addon->RootNode->SetPositionFloat(addon->X, addon->Y);
+				}
+			},
+		});
 	}
 	
 	public void Dispose() {
@@ -70,10 +82,6 @@ public unsafe class AddonAreaMapController :IDisposable {
 		var addon = (AddonAreaMap*) args.Addon;
 		if (addon is null || addon->RootNode is null) return;
 		if (!System.IntegrationsController.IntegrationsEnabled) return;
-		
-		// if (System.WindowManager.GetWindow<MapWindow>() is { IsOpen: false } mapWindow && addon->IsVisible) {
-		// 	mapWindow.Open();
-		// }
 
 		// Have to check for color, because it likes to animate a fadeout,
 		// and we want the map to stay completely hidden until it's done.
