@@ -37,7 +37,7 @@ public class FlagHistoryWindow : Window {
 			
 			using (ImRaii.Child("flag_contents_container", ImGui.GetContentRegionAvail())) {
 				DrawFlagData(flag);
-				DrawPlaceFlagButton(flag);
+				DrawButtons(flag);
 			}
 		}
 	}
@@ -65,7 +65,7 @@ public class FlagHistoryWindow : Window {
 		ImGui.TextColored(KnownColor.Gray.Vector().Lighten(0.20f), flag.GetTerritoryType().PlaceNameZone.Value.Name.ExtractText());
 	}
 
-	private void DrawPlaceFlagButton(Flag flag) {
+	private void DrawButtons(Flag flag) {
 		var buttonSize = ImGuiHelpers.ScaledVector2(100.0f, 24.0f);
 		
 		ImGui.SetCursorPos(new Vector2(0.0f, ImGui.GetContentRegionMax().Y - buttonSize.Y));
