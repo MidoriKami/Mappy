@@ -8,7 +8,7 @@ namespace Mappy.Modules;
 
 public class FateModule : ModuleBase {
     public override unsafe bool ProcessMarker(MarkerInfo markerInfo) {
-        if (markerInfo.MarkerType is not MarkerType.Fate) return false; 
+        if (markerInfo.MarkerType is not MarkerType.Fate) return false;
 
         var fateData = FateManager.Instance()->Fates.FirstOrNull(fate => fate.Value->FateId == markerInfo.DataId);
         if (fateData is null) return false;
