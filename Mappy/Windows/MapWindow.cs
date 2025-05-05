@@ -102,31 +102,12 @@ public class MapWindow : Window {
                 return;
             }
 
-            System.MapRenderer.DrawBaseTexture();
-            if (ImGui.IsItemHovered()) {
-                HoveredFlags |= HoverFlags.MapTexture;
-            }
+            DrawMapElements();
+            
+            // Reset Draw Position for Overlay Extras
             ImGui.SetCursorPos(Vector2.Zero);
-            
-            System.MapRenderer.DrawDynamicElements();
-
-            if (ShouldShowToolbar()) {
-                using (ImRaii.Group()) {
-                    mapToolbar.Draw();
-                }
-                if (ImGui.IsItemHovered()) {
-                    HoveredFlags |= HoverFlags.Toolbar;
-                }
-            }
-            
-            if (System.SystemConfig.ShowCoordinateBar) {
-                using (ImRaii.Group()) {
-                    mapCoordinateBar.Draw(HoveredFlags.HasFlag(HoverFlags.MapTexture), MapDrawOffset);
-                }
-                if (ImGui.IsItemHovered()) {
-                    HoveredFlags |= HoverFlags.CoordinateBar;
-                }
-            }
+            DrawToolbar();
+            DrawCoordinateBar();
         }
 
         if (ImGui.IsItemHovered()) {
@@ -135,6 +116,36 @@ public class MapWindow : Window {
         
         // Process Inputs
         ProcessInputs();
+    }
+
+    private void DrawMapElements() {
+        System.MapRenderer.DrawBaseTexture();
+        if (ImGui.IsItemHovered()) {
+            HoveredFlags |= HoverFlags.MapTexture;
+        }
+        System.MapRenderer.DrawDynamicElements();
+    }
+    
+    private void DrawToolbar() {
+        if (!ShouldShowToolbar()) return;
+        
+        using (ImRaii.Group()) {
+            mapToolbar.Draw();
+        }
+        if (ImGui.IsItemHovered()) {
+            HoveredFlags |= HoverFlags.Toolbar;
+        }
+    }
+    
+    private void DrawCoordinateBar() {
+        if (!System.SystemConfig.ShowCoordinateBar) return;
+        
+        using (ImRaii.Group()) {
+            mapCoordinateBar.Draw(HoveredFlags.HasFlag(HoverFlags.MapTexture), MapDrawOffset);
+        }
+        if (ImGui.IsItemHovered()) {
+            HoveredFlags |= HoverFlags.CoordinateBar;
+        }
     }
 
     private bool ShouldShowToolbar() {
