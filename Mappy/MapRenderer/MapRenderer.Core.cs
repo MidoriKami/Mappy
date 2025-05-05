@@ -39,11 +39,14 @@ public unsafe partial class MapRenderer : IDisposable {
     public void CenterOnCoordinate(Vector2 coord)
         => DrawOffset = -coord * DrawHelpers.GetMapScaleFactor() + DrawHelpers.GetMapOffsetVector();
 
-    public void Draw() {
+    public void DrawBaseTexture() {
         UpdateScaleLimits();
         UpdateDrawOffset();
         
         DrawBackgroundTexture();
+    }
+    
+    public void DrawDynamicElements() {
         DrawFogOfWar();
         DrawMapMarkers();
     }

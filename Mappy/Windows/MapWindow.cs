@@ -13,6 +13,7 @@ using KamiLib.CommandManager;
 using KamiLib.Extensions;
 using KamiLib.Window;
 using Lumina.Excel.Sheets;
+using Mappy.Classes;
 using Mappy.Classes.MapWindowComponents;
 using Mappy.Controllers;
 using Mappy.Data;
@@ -22,10 +23,9 @@ namespace Mappy.Windows;
 
 public class MapWindow : Window {
     public Vector2 MapDrawOffset { get; private set; }
-    public bool IsMapHovered { get; private set; }
+    public HoverFlags HoveredFlags { get; private set; }
     public bool ProcessingCommand { get; set; }
 
-    private bool isMapItemHovered;
     private bool isDragStarted;
     private Vector2 lastWindowSize;
     private uint lastMapId;
@@ -86,8 +86,12 @@ public class MapWindow : Window {
         UpdateTitle();
         UpdateStyle();
         UpdateSizePosition();
-        IsMapHovered = WindowBounds.IsBoundedBy(ImGui.GetMousePos(), ImGui.GetCursorScreenPos(), ImGui.GetCursorScreenPos() + ImGui.GetContentRegionMax());
-        isMapItemHovered = false;
+
+        HoveredFlags = HoverFlags.Nothing;
+        
+        if (WindowBounds.IsBoundedBy(ImGui.GetMousePos(), ImGui.GetCursorScreenPos(), ImGui.GetCursorScreenPos() + ImGui.GetContentRegionMax())) {
+            HoveredFlags |= HoverFlags.Window;
+        }
         
         MapDrawOffset = ImGui.GetCursorScreenPos();
         using var fade = ImRaii.PushStyle(ImGuiStyleVar.Alpha, System.SystemConfig.FadePercent,  ShouldFade());
@@ -97,22 +101,37 @@ public class MapWindow : Window {
                 DrawSpoilerWarning();
                 return;
             }
-            
-            System.MapRenderer.Draw();
+
+            System.MapRenderer.DrawBaseTexture();
+            if (ImGui.IsItemHovered()) {
+                HoveredFlags |= HoverFlags.MapTexture;
+            }
             ImGui.SetCursorPos(Vector2.Zero);
+            
+            System.MapRenderer.DrawDynamicElements();
 
             if (ShouldShowToolbar()) {
-                mapToolbar.Draw();
+                using (ImRaii.Group()) {
+                    mapToolbar.Draw();
+                }
+                if (ImGui.IsItemHovered()) {
+                    HoveredFlags |= HoverFlags.Toolbar;
+                }
             }
-            
-            isMapItemHovered |= ImGui.IsItemHovered();
             
             if (System.SystemConfig.ShowCoordinateBar) {
-                mapCoordinateBar.Draw(isMapItemHovered, MapDrawOffset);
+                using (ImRaii.Group()) {
+                    mapCoordinateBar.Draw(HoveredFlags.HasFlag(HoverFlags.MapTexture), MapDrawOffset);
+                }
+                if (ImGui.IsItemHovered()) {
+                    HoveredFlags |= HoverFlags.CoordinateBar;
+                }
             }
-            isMapItemHovered |= ImGui.IsItemHovered();
         }
-        isMapItemHovered |= ImGui.IsItemHovered();
+
+        if (ImGui.IsItemHovered()) {
+            HoveredFlags |= HoverFlags.WindowInnerFrame;
+        }
         
         // Process Inputs
         ProcessInputs();
@@ -120,7 +139,7 @@ public class MapWindow : Window {
 
     private bool ShouldShowToolbar() {
         if (isDragStarted) return false;
-        if (System.SystemConfig.ShowToolbarOnHover && IsMapHovered) return true;
+        if (System.SystemConfig.ShowToolbarOnHover && HoveredFlags.Any()) return true;
         if (System.SystemConfig.AlwaysShowToolbar) return true;
 
         return false;
@@ -177,7 +196,7 @@ public class MapWindow : Window {
             ImGui.OpenPopup("Mappy_Context_Menu");
         }
         else {
-            if (isMapItemHovered) {
+            if (HoveredFlags.Any()) {
                 if (System.SystemConfig.EnableShiftDragMove && ImGui.GetIO().KeyShift) {
                     Flags &= ~ImGuiWindowFlags.NoMove;
                 }

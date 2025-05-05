@@ -18,7 +18,6 @@ public class MarkerInfo {
     public required Vector2 Offset { get; set; }
     public required float Scale { get; set; }
     public uint? ObjectiveId { get; init; }
-    public uint? LevelId { get; set; }
     public uint? DataId { get; set; }
     public MarkerType MarkerType { get; set; }
     public uint IconId { get; set; }
@@ -219,7 +218,7 @@ public static class DrawHelpers {
             var center = markerInfo.Position + markerInfo.Offset + ImGui.GetWindowPos();
             var radius = sameRadius * markerInfo.Scale * AgentMap.Instance()->SelectedMapSizeFactorFloat;
 
-            if (Vector2.Distance(ImGui.GetMousePos() - System.MapWindow.MapDrawOffset + ImGui.GetWindowPos(), center) <= radius && System.MapWindow.IsMapHovered) {
+            if (Vector2.Distance(ImGui.GetMousePos() - System.MapWindow.MapDrawOffset + ImGui.GetWindowPos(), center) <= radius && System.MapWindow.HoveredFlags.Any()) {
                 isActivatedViaRadius = true;
             }
         }

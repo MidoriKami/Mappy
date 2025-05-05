@@ -22,7 +22,6 @@ public static class MapMarkerDataExtensions {
             PrimaryText = () => GetMarkerPrimaryText(marker),
             IsDynamicMarker = true,
             ObjectiveId = marker.ObjectiveId,
-            LevelId = marker.LevelId,
             MarkerType = (MarkerType) marker.MarkerType,
             DataId = marker.DataId,
         });
