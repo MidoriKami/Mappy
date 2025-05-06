@@ -90,7 +90,6 @@ public unsafe class AddonAreaMapController :IDisposable {
 		=> HookSafety.ExecuteSafe(() => {
 			Service.Log.Debug("[AreaMap] OnAreaMapHide");
 			
-			System.WindowManager.GetWindow<MapWindow>()?.Close();
 			hideAreaMapHook!.Original(thisPtr, unkBool, callHideCallback, setShowHideFlags);
 
 			if (Service.GameGui.FindAgentInterface((nint) thisPtr) == nint.Zero) {
