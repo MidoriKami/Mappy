@@ -34,7 +34,7 @@ public unsafe partial class MapRenderer : IDisposable {
     }
 
     public void CenterOnGameObject(IGameObject obj) 
-        => CenterOnCoordinate(new Vector2(obj.Position.X, obj.Position.Y));
+        => CenterOnCoordinate(new Vector2(obj.Position.X, obj.Position.Z));
     
     public void CenterOnCoordinate(Vector2 coord)
         => DrawOffset = -coord * DrawHelpers.GetMapScaleFactor() + DrawHelpers.GetMapOffsetVector();
