@@ -92,6 +92,11 @@ public unsafe class AddonAreaMapController :IDisposable {
 			
 			System.WindowManager.GetWindow<MapWindow>()?.Close();
 			hideAreaMapHook!.Original(thisPtr, unkBool, callHideCallback, setShowHideFlags);
+
+			if (Service.GameGui.FindAgentInterface((nint) thisPtr) == nint.Zero) {
+				System.WindowManager.GetWindow<MapWindow>()?.Close();
+			}
+			
 		}, Service.Log, "Exception during OnAreaMapHide");
 
 	private void OnAreaMapDraw(AddonEvent type, AddonArgs args) {
