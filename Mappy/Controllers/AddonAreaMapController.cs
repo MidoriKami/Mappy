@@ -4,6 +4,7 @@ using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Hooking;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiLib.Classes;
 using KamiLib.CommandManager;
 using KamiLib.Extensions;
@@ -92,7 +93,8 @@ public unsafe class AddonAreaMapController :IDisposable {
 			
 			hideAreaMapHook!.Original(thisPtr, unkBool, callHideCallback, setShowHideFlags);
 
-			if (Service.GameGui.FindAgentInterface((nint) thisPtr) == nint.Zero) {
+			// If the window actually considered closed by the agent.
+			if (AgentMap.Instance()->AddonId is 0) {
 				System.WindowManager.GetWindow<MapWindow>()?.Close();
 			}
 			
