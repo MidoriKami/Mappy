@@ -78,4 +78,8 @@ public class FlagHistoryWindow : Window {
 			flag.PlaceFlag();
 		}
 	}
+	
+	public override void OnClose() {
+		System.WindowManager.RemoveWindow(this);
+	}
 }
