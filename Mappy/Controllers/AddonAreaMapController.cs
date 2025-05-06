@@ -100,6 +100,8 @@ public unsafe class AddonAreaMapController :IDisposable {
 		}, Service.Log, "Exception during OnAreaMapHide");
 
 	private void OnAreaMapDraw(AddonEvent type, AddonArgs args) {
+		if (Service.ClientState is { IsPvP: true }) return;
+
 		var addon = (AddonAreaMap*) args.Addon;
 		if (addon->RootNode is null) return;
 
