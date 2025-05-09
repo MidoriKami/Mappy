@@ -46,12 +46,10 @@ public static class MapMarkerInfoExtensions {
         
         if (marker.MapMarker.IconId is 0 && marker.MapMarker.Index is not 0) {
             if (System.SystemConfig.ShowTextLabels) {
-                markerInfo.Scale *= marker.MapMarker.SubtextStyle switch {
-                    1 => System.SystemConfig.LargeAreaTextScale,
-                    _ => System.SystemConfig.SmallAreaTextScale,
-                };
+
+                var subtextStyle = marker.MapMarker.SubtextStyle;
             
-                DrawHelpers.DrawText(markerInfo, tooltipText);
+                DrawHelpers.DrawText(markerInfo, tooltipText, subtextStyle);
             }
         }
         else {

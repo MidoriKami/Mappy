@@ -158,15 +158,19 @@ public static class DrawHelpers {
         }
     }
 
-    public static void DrawText(MarkerInfo markerInfo, SeString text)
-        => DrawText(markerInfo, text.ToString());
+    public static void DrawText(MarkerInfo markerInfo, SeString text, Single subtextStyle)
+        => DrawText(markerInfo, text.ToString(), subtextStyle);
     
-    public static void DrawText(MarkerInfo markerInfo, string text) {
+    public static void DrawText(MarkerInfo markerInfo, string text, Single subtextStyle) {
         // Don't draw markers that are positioned off the map texture
         if (markerInfo.Position.X < 0.0f || markerInfo.Position.X > 2048.0f * markerInfo.Scale || markerInfo.Position.Y < 0.0f || markerInfo.Position.Y > 2048.0f * markerInfo.Scale) return;
 
-        var scale = System.SystemConfig.ScaleTextWithZoom ? 0.20f * markerInfo.Scale : 0.5f;
-        
+        var textScale = subtextStyle switch {
+            1 => System.SystemConfig.LargeAreaTextScale,
+            _ => System.SystemConfig.SmallAreaTextScale,
+        };
+        var scale = 0.20f * textScale * (System.SystemConfig.ScaleTextWithZoom ? markerInfo.Scale : 1.0f);
+
         using var largeFont = System.LargeAxisFontHandle.Push();
         ImGui.SetWindowFontScale(scale);
 
