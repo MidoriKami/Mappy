@@ -158,10 +158,10 @@ public static class DrawHelpers {
         }
     }
 
-    public static void DrawText(MarkerInfo markerInfo, SeString text, Single subtextStyle)
+    public static void DrawText(MarkerInfo markerInfo, SeString text, uint subtextStyle)
         => DrawText(markerInfo, text.ToString(), subtextStyle);
     
-    public static void DrawText(MarkerInfo markerInfo, string text, Single subtextStyle) {
+    public static void DrawText(MarkerInfo markerInfo, string text, uint subtextStyle) {
         // Don't draw markers that are positioned off the map texture
         if (markerInfo.Position.X < 0.0f || markerInfo.Position.X > 2048.0f * markerInfo.Scale || markerInfo.Position.Y < 0.0f || markerInfo.Position.Y > 2048.0f * markerInfo.Scale) return;
 
