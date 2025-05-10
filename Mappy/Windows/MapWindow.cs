@@ -248,6 +248,13 @@ public class MapWindow : Window {
             Flags &= ~ImGuiWindowFlags.NoFocusOnAppearing;
         }
 
+        if (System.SystemConfig.HideWindowBackground) {
+            Flags |= ImGuiWindowFlags.NoBackground;
+        }
+        else {
+            Flags &= ~ImGuiWindowFlags.NoBackground;
+        }
+
         if (Service.KeyState[VirtualKey.ESCAPE] && IsFocused && !IsMapLocked()) {
             AgentMap.Instance()->Hide();
         }

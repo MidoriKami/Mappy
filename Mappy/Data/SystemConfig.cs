@@ -53,6 +53,7 @@ public class SystemConfig : CharacterConfiguration {
     public Vector4 RadarColor = KnownColor.Gray.Vector() with { W = 0.10f };
     public Vector4 RadarOutlineColor = KnownColor.Gray.Vector() with { W = 0.30f };
     public bool HideWindowFrame = false;
+    public bool HideWindowBackground = false;
     public bool EnableShiftDragMove = false;
     public bool LockWindow = false;
     public float FadePercent = 0.60f;

@@ -152,6 +152,7 @@ public class StyleOptionsTab : ITabItem {
             configChanged |= ImGui.Checkbox("Keep Open", ref System.SystemConfig.KeepOpen);
             configChanged |= ImGui.Checkbox("Lock Window Position", ref System.SystemConfig.LockWindow);
             configChanged |= ImGui.Checkbox("Hide Window Frame", ref System.SystemConfig.HideWindowFrame);
+            configChanged |= ImGui.Checkbox("Hide Window Background", ref System.SystemConfig.HideWindowBackground);
             configChanged |= ImGui.Checkbox("Enable Shift + Drag to Move Window Frame", ref System.SystemConfig.EnableShiftDragMove);
         }
         
