@@ -160,7 +160,6 @@ public class StyleOptionsTab : ITabItem {
         using (ImRaii.PushIndent()) {
             configChanged |= ImGui.Checkbox("Hide With Game GUI", ref System.SystemConfig.HideWithGameGui);
             configChanged |= ImGui.Checkbox("Hide Between Areas", ref System.SystemConfig.HideBetweenAreas);
-            configChanged |= ImGui.Checkbox("Hide in Duties", ref System.SystemConfig.HideInDuties);
             configChanged |= ImGui.Checkbox("Hide in Combat", ref System.SystemConfig.HideInCombat);
         }
         

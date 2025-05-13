@@ -168,7 +168,6 @@ public unsafe class IntegrationsController : IDisposable {
 
 	public static bool ShouldShowMap() {
 		if (Service.ClientState is { IsLoggedIn: false } or { IsPvP: true }) return false;
-		if (System.SystemConfig.HideInDuties && Service.Condition.IsBoundByDuty()) return false;
 		if (System.SystemConfig.HideInCombat && Service.Condition.IsInCombat()) return false;
 		if (System.SystemConfig.HideBetweenAreas && Service.Condition.IsBetweenAreas()) return false;
 		if (System.SystemConfig.HideWithGameGui && !IsNamePlateAddonVisible()) return false;

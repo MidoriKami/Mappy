@@ -41,7 +41,6 @@ public class SystemConfig : CharacterConfiguration {
     public bool ShowMiscTooltips = true;
     public bool HideWithGameGui = true;
     public bool HideBetweenAreas = false;
-    public bool HideInDuties = false;
     public bool HideInCombat = false;
     public bool KeepOpen = false;
     public bool FollowOnOpen = false;
