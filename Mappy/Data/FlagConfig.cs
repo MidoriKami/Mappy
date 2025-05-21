@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Utility;
@@ -41,6 +42,17 @@ public unsafe record Flag(uint Territory, uint Map, float X, float Y, uint IconI
 		System.SystemConfig.FollowPlayer = false;
 		System.IntegrationsController.OpenMap(Map);
 		System.MapRenderer.CenterOnCoordinate(GetCoordinate());
+	}
+
+	public bool IsFlagSet() {
+		var setMarker = AgentMap.Instance()->FlagMapMarker;
+		
+		if (setMarker.TerritoryId != Territory) return false;
+		if (setMarker.MapId != Map) return false;
+		if (Math.Abs(setMarker.XFloat - X) > 0.01f) return false;
+		if (Math.Abs(setMarker.YFloat - Y) > 0.01f) return false;
+		
+		return true;
 	}
 }
 
