@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Immutable;
+using System.Drawing;
 using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
@@ -10,7 +11,10 @@ using Mappy.Data;
 namespace Mappy.Windows;
 
 public class FlagHistoryWindow : Window {
-	public FlagHistoryWindow() : base("Mappy Flag History Window", new Vector2(400.0f, 600.0f)) {
+	
+	private static float FlagElementHeight => 95.0f * ImGuiHelpers.GlobalScale;
+	
+	public FlagHistoryWindow() : base("Mappy Flag History Window", new Vector2(400.0f, 400.0f)) {
 		AdditionalInfoTooltip = "Shows a list of all recently used flags";
 	}
 	
@@ -19,16 +23,13 @@ public class FlagHistoryWindow : Window {
 	}
 
 	protected override void DrawContents() {
-		foreach (var flag in System.FlagConfig.FlagHistory) {
-			DrawFlag(flag);
-			ImGui.Spacing();
-		}
+		ImGuiClip.ClippedDraw(System.FlagConfig.FlagHistory.ToImmutableList(), DrawFlag, FlagElementHeight);
 	}
 
 	private void DrawFlag(Flag flag) {
 		using var id = ImRaii.PushId(flag.GetIdString());
 		
-		using (ImRaii.Child("flag_container", new Vector2(ImGui.GetContentRegionAvail().X, 85.0f * ImGuiHelpers.GlobalScale))) {
+		using (ImRaii.Child("flag_container", new Vector2(ImGui.GetContentRegionAvail().X, FlagElementHeight - ImGui.GetStyle().FramePadding.Y * 2.0f))) {
 			using (ImRaii.Child("flag_image_container", new Vector2(155.0f * ImGuiHelpers.GlobalScale, ImGui.GetContentRegionAvail().Y))) {
 				DrawFlagImage(flag);
 			}
@@ -40,6 +41,8 @@ public class FlagHistoryWindow : Window {
 				DrawButtons(flag);
 			}
 		}
+			
+		ImGui.Spacing();
 	}
 
 	private void DrawFlagImage(Flag flag) {
@@ -63,6 +66,11 @@ public class FlagHistoryWindow : Window {
 		ImGui.Text(coordinateString);
 		
 		ImGui.TextColored(KnownColor.Gray.Vector().Lighten(0.20f), flag.GetTerritoryType().PlaceNameZone.Value.Name.ExtractText());
+
+		if (flag.IsFlagSet()) {
+			ImGui.Spacing();
+			ImGui.TextColored(KnownColor.ForestGreen.Vector().Lighten(0.40f), "Flag is currently active");
+		}
 	}
 
 	private void DrawButtons(Flag flag) {
@@ -74,8 +82,10 @@ public class FlagHistoryWindow : Window {
 		}
 		
 		ImGui.SetCursorPos(ImGui.GetContentRegionMax() - buttonSize);
-		if (ImGui.Button("Place", buttonSize)) {
-			flag.PlaceFlag();
+		using (ImRaii.Disabled(flag.IsFlagSet())) {
+			if (ImGui.Button("Place", buttonSize)) {
+				flag.PlaceFlag();
+			}
 		}
 	}
 	
