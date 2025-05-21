@@ -45,6 +45,7 @@ public unsafe record Flag(uint Territory, uint Map, float X, float Y, uint IconI
 	}
 
 	public bool IsFlagSet() {
+		if (!AgentMap.Instance()->IsFlagMarkerSet) return false;
 		var setMarker = AgentMap.Instance()->FlagMapMarker;
 		
 		if (setMarker.TerritoryId != Territory) return false;
