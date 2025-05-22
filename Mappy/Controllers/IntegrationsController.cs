@@ -70,7 +70,10 @@ public unsafe class IntegrationsController : IDisposable {
 			}
 			
 			if (AgentMap.Instance()->AddonId is not 0 && AgentMap.Instance()->CurrentMapId != AgentMap.Instance()->SelectedMapId) {
-				AgentMap.Instance()->Hide();
+				if (!System.SystemConfig.KeepOpen) {
+					AgentMap.Instance()->Hide();
+				}
+
 				Service.Log.Debug("[OnShow] Vanilla tried to return to current map, aborted.");
 				return;
 			}
@@ -79,6 +82,7 @@ public unsafe class IntegrationsController : IDisposable {
 				Service.Log.Debug("[OnShow] Keeping Open");
 				return;
 			}
+
 			showMapHook!.Original(agent, a1, a2);
 		}, Service.Log, "Exception during OnShowHook");
 

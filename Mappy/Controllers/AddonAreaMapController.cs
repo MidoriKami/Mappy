@@ -90,6 +90,11 @@ public unsafe class AddonAreaMapController :IDisposable {
 	private void OnAreaMapHide(AddonAreaMap* thisPtr, bool unkBool, bool callHideCallback, uint setShowHideFlags) 		
 		=> HookSafety.ExecuteSafe(() => {
 			Service.Log.Debug("[AreaMap] OnAreaMapHide");
+
+			if (System.SystemConfig.KeepOpen) {
+				Service.Log.Debug("[AreaMap] Keeping Open");
+				return;
+			}
 			
 			hideAreaMapHook!.Original(thisPtr, unkBool, callHideCallback, setShowHideFlags);
 
