@@ -48,7 +48,11 @@ public class MapFunctionsTab : ITabItem {
             configChanged |= ImGui.Checkbox("Use Linear Zoom", ref System.SystemConfig.UseLinearZoom);
             configChanged |= ImGui.Checkbox("Scale icons with zoom", ref System.SystemConfig.ScaleWithZoom);
             configChanged |= ImGui.Checkbox("Scale text labels with zoom", ref System.SystemConfig.ScaleTextWithZoom);
+            
+            ImGuiHelpers.ScaledDummy(5.0f);
+            
             configChanged |= ImGuiTweaks.Checkbox("Auto Zoom", ref System.SystemConfig.AutoZoom, "Automatically sets zoom to a reasonable value relative to the map size.");
+            configChanged |= ImGui.SliderFloat("Auto Zoom Scale Factor", ref System.SystemConfig.AutoZoomScaleFactor, 0.20f, 1.00f);
             
             ImGuiHelpers.ScaledDummy(5.0f);
             

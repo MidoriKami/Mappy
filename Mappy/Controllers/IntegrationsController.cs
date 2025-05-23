@@ -148,7 +148,7 @@ public unsafe class IntegrationsController : IDisposable {
 			}
 			
 			if (System.SystemConfig.AutoZoom) {
-				MapRenderer.MapRenderer.Scale = DrawHelpers.GetMapScaleFactor() * 0.33f;
+				MapRenderer.MapRenderer.Scale = DrawHelpers.GetMapScaleFactor() * System.SystemConfig.AutoZoomScaleFactor;
 			}
 		}, Service.Log, "Exception during OpenMap");
 
