@@ -43,6 +43,27 @@ public sealed class MappyPlugin : IDalamudPlugin {
         System.IntegrationsController = new IntegrationsController();
 
         Service.PluginInterface.UiBuilder.OpenMainUi += OpenMapWindow;
+        
+        System.CommandManager.RegisterCommand(new ToggleCommandHandler {
+            BaseActivationPath = "/fatelist",
+            EnableDelegate = _ => System.WindowManager.OpenOrCreateUnique<FateListWindow>(WindowFlags.OpenImmediately | WindowFlags.RequireLoggedIn),
+            DisableDelegate = _ => System.WindowManager.GetWindow<FateListWindow>()?.Close(),
+            ToggleDelegate = _ => System.WindowManager.GetWindow<FateListWindow>()?.UnCollapseOrToggle(),
+        });
+        
+        System.CommandManager.RegisterCommand(new ToggleCommandHandler {
+            BaseActivationPath = "/questlist",
+            EnableDelegate = _ => System.WindowManager.OpenOrCreateUnique<QuestListWindow>(WindowFlags.OpenImmediately | WindowFlags.RequireLoggedIn),
+            DisableDelegate = _ => System.WindowManager.GetWindow<QuestListWindow>()?.Close(),
+            ToggleDelegate = _ => System.WindowManager.GetWindow<QuestListWindow>()?.UnCollapseOrToggle(),
+        });
+        
+        System.CommandManager.RegisterCommand(new ToggleCommandHandler {
+            BaseActivationPath = "/flaglist",
+            EnableDelegate = _ => System.WindowManager.OpenOrCreateUnique<FlagHistoryWindow>(WindowFlags.OpenImmediately | WindowFlags.RequireLoggedIn),
+            DisableDelegate = _ => System.WindowManager.GetWindow<FlagHistoryWindow>()?.Close(),
+            ToggleDelegate = _ => System.WindowManager.GetWindow<FlagHistoryWindow>()?.UnCollapseOrToggle(),
+        });
     }
 
     private unsafe void OpenMapWindow()

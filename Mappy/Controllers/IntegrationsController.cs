@@ -119,6 +119,8 @@ public unsafe class IntegrationsController : IDisposable {
 						Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
 					}
 
+					System.MapWindow.ProcessingCommand = true;
+					
 					break;
 				}
 
@@ -131,6 +133,9 @@ public unsafe class IntegrationsController : IDisposable {
 						CenterOnMarker(targetMarker);
 						Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
 					}
+					
+					System.MapWindow.ProcessingCommand = true;
+					
 					break;
 				}
 
@@ -143,6 +148,9 @@ public unsafe class IntegrationsController : IDisposable {
 						CenterOnMarker(targetMarker);
 						Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
 					}
+					
+					System.MapWindow.ProcessingCommand = true;
+					
 					break;
 				}
 			}

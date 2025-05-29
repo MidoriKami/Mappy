@@ -23,10 +23,6 @@ public class FateListWindow : Window {
 	public FateListWindow() : base("Mappy Fate List Window", new Vector2(300.0f, 400.0f)) {
 		AdditionalInfoTooltip = "Shows Fates for the zone you are currently in";
 	}
-
-	public override void PreOpenCheck() {
-		if (!System.MapWindow.IsOpen) IsOpen = false;
-	}
 	
 	protected override unsafe void DrawContents() {
 		DrawBackgroundImage();
