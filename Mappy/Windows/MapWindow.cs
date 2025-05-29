@@ -328,9 +328,10 @@ public class MapWindow : Window {
         SystemConfig.Save();
     }
 
-    private static void ProcessMouseScroll() {
+    private void ProcessMouseScroll() {
         if (System.SystemConfig.ZoomLocked) return;
         if (ImGui.GetIO().MouseWheel is 0) return;
+        if (!HoveredFlags.HasFlag(HoverFlags.WindowInnerFrame)) return;
         
         if (System.SystemConfig.UseLinearZoom) {
             MapRenderer.MapRenderer.Scale += System.SystemConfig.ZoomSpeed * ImGui.GetIO().MouseWheel;
