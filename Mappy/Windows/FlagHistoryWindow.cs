@@ -17,10 +17,6 @@ public class FlagHistoryWindow : Window {
 	public FlagHistoryWindow() : base("Mappy Flag History Window", new Vector2(400.0f, 400.0f)) {
 		AdditionalInfoTooltip = "Shows a list of all recently used flags";
 	}
-	
-	public override void PreOpenCheck() {
-		if (!System.MapWindow.IsOpen) IsOpen = false;
-	}
 
 	protected override void DrawContents() {
 		ImGuiClip.ClippedDraw(System.FlagConfig.FlagHistory.ToImmutableList(), DrawFlag, FlagElementHeight);
