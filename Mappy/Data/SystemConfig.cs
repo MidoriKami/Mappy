@@ -49,6 +49,7 @@ public class SystemConfig : CharacterConfiguration {
     public bool ScalePlayerCone = false;
     public float ConeSize = 150.0f;
     public bool ShowRadar = true;
+    public bool ShowRadarInDuties = false;
     public Vector4 RadarColor = KnownColor.Gray.Vector() with { W = 0.10f };
     public Vector4 RadarOutlineColor = KnownColor.Gray.Vector() with { W = 0.30f };
     public bool HideWindowFrame = false;

@@ -22,8 +22,10 @@ public partial class MapRenderer {
         
         if (Service.ClientState is not { LocalPlayer: { } player }) return;
 
-        if (System.SystemConfig.ShowRadar && !Service.Condition.IsBoundByDuty()) {
-            DrawRadar(player);
+        if (System.SystemConfig.ShowRadar) {
+            if ((Service.Condition.IsBoundByDuty() && System.SystemConfig.ShowRadarInDuties) || !Service.Condition.IsBoundByDuty()) {
+                DrawRadar(player);
+            }
         }
 
         foreach (var obj in Service.ObjectTable.Reverse()) {

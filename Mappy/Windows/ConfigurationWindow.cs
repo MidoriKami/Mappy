@@ -255,6 +255,7 @@ public class PlayerOptionsTab : ITabItem {
         ImGuiTweaks.Header("Radar Options");
         using (ImRaii.PushIndent()) {
             configChanged |= ImGui.Checkbox("Show Radar Radius", ref System.SystemConfig.ShowRadar);
+            configChanged |= ImGui.Checkbox("Show in Duties", ref System.SystemConfig.ShowRadarInDuties);
 
             ImGuiHelpers.ScaledDummy(5.0f);
             
