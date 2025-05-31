@@ -4,12 +4,14 @@ using System.Numerics;
 using Dalamud.Hooking;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiLib.Classes;
 using KamiLib.Extensions;
 using Lumina.Excel.Sheets;
 using Mappy.Classes;
+using Mappy.Extensions;
 using MapType = FFXIVClientStructs.FFXIV.Client.UI.Agent.MapType;
 
 namespace Mappy.Controllers;
@@ -153,6 +155,19 @@ public unsafe class IntegrationsController : IDisposable {
 					
 					break;
 				}
+				
+				case MapType.Bozja:
+					Service.Log.Debug("[OpenMap] Processing Bozja Event");
+
+					var eventMarker = agent->EventMarkers.FirstOrNull(marker => marker.DataId == mapInfo->FateId && marker.Flags == 0x40);
+					if (eventMarker is not null) {
+						CenterOnMarker(eventMarker.Value);
+					}
+					break;
+				
+				default:
+					Service.Log.Debug("[OpenMap] Unknown MapType " + mapInfo->Type);
+					break;
 			}
 			
 			if (System.SystemConfig.AutoZoom) {
@@ -168,6 +183,18 @@ public unsafe class IntegrationsController : IDisposable {
 
 	private static void CenterOnMarker(MapMarkerBase marker) {
 		var coordinates = new Vector2(marker.X, marker.Y) / 16.0f * DrawHelpers.GetMapScaleFactor() - DrawHelpers.GetMapOffsetVector();
+
+		System.SystemConfig.FollowPlayer = false;
+		System.MapRenderer.DrawOffset = -coordinates;
+
+		// If the map isn't open, we want to force it to not center on whatever the user decided and center on our markers instead.
+		if (!System.MapWindow.IsOpen) {
+			System.MapWindow.ProcessingCommand = true;
+		}
+	}
+
+	private static void CenterOnMarker(MapMarkerData marker) {
+		var coordinates = marker.Position.AsMapVector() * DrawHelpers.GetMapScaleFactor() - DrawHelpers.GetMapOffsetVector();
 
 		System.SystemConfig.FollowPlayer = false;
 		System.MapRenderer.DrawOffset = -coordinates;
@@ -215,12 +242,25 @@ public unsafe class IntegrationsController : IDisposable {
 		}
 		
 		var possibleQuests = Service.DataManager.GetExcelSheet<Quest>()
-			.Where(quest => quest is { IssuerLocation: { IsValid: true, RowId: not 0 } })
-			.FirstOrNull(quest => IsNameMatch(quest.Name.ExtractText(), mapInfo));
+			.Where(quest => quest is { IssuerLocation: { IsValid: true, RowId: not 0 } }).FirstOrNull(quest => IsNameMatch(quest.Name.ExtractText(), mapInfo));
 
 		return possibleQuests?.IssuerLocation.Value.Map.RowId ?? null;
 	}
 
 	private static bool IsNameMatch(string name, OpenMapInfo* mapInfo) 
 		=> string.Equals(name, mapInfo->TitleString.ToString(), StringComparison.OrdinalIgnoreCase);
+
+	// public Vector3 GetLgbEventObjPos(uint lgbEventObjId) {
+	// 	var layout = LayoutWorld.Instance()->ActiveLayout;
+	// 	
+	// 	if (layout == null) return default;
+	// 	
+	// 	if (!layout->InstancesByType.TryGetValue(InstanceType.EventObject, out var map, false))
+	// 		return default;
+	// 	
+	// 	if (!map.Value->TryGetValue((ulong)lgbEventObjId << 32, out var pInstance, false))
+	// 		
+	// 		return default;
+	// 	return pInstance.Value->GetTransformImpl()->Translation;
+	// }
 }
