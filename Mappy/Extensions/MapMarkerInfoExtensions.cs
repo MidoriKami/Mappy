@@ -31,15 +31,15 @@ public static class MapMarkerInfoExtensions {
             PrimaryText = GetMarkerPrimaryTooltip(marker, tooltipText),
             OnLeftClicked = marker.DataType switch {
                 1 when !DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId) => () => System.IntegrationsController.OpenMap(marker.DataKey),
-                3 => () => System.Teleporter.Teleport(marker.DataKey),
-                4 when GetAetheryteForAethernet(marker.DataKey) is { } aetheryte => () => System.Teleporter.Teleport(aetheryte.RowId),
+                3 when marker.DataKey is not 0 => () => System.Teleporter.Teleport(marker.DataKey),
+                4 when GetAetheryteForAethernet(marker.DataKey) is { RowId: not 0 } aetheryte => () => System.Teleporter.Teleport(aetheryte.RowId),
                 _ => null,
             },
             SecondaryText = marker.DataType switch {
                 1 when !DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId) => () => $"Open Map {Service.DataManager.GetExcelSheet<Map>().GetRow(marker.DataKey).PlaceName.Value.Name.ExtractText()}",
                 2 => () => $"Instance Link {marker.DataKey}",
-                3 => () => $"Teleport to {Service.DataManager.GetExcelSheet<Aetheryte>().GetRow(marker.DataKey).PlaceName.Value.Name.ExtractText()} {GetAetheryteTeleportCost(marker.DataKey)}",
-                4 when GetAetheryteForAethernet(marker.DataKey) is not null => () => $"Teleport to {GetAetheryteForAethernet(marker.DataKey)!.Value.PlaceName.Value.Name.ExtractText()} {GetAetheryteTeleportCost(GetAetheryteForAethernet(marker.DataKey)!.Value.RowId)}",
+                3 when marker.DataKey is not 0 => () => $"Teleport to {Service.DataManager.GetExcelSheet<Aetheryte>().GetRow(marker.DataKey).PlaceName.Value.Name.ExtractText()} {GetAetheryteTeleportCost(marker.DataKey)}",
+                4 when GetAetheryteForAethernet(marker.DataKey) is { RowId: not 0 } => () => $"Teleport to {GetAetheryteForAethernet(marker.DataKey)!.Value.PlaceName.Value.Name.ExtractText()} {GetAetheryteTeleportCost(GetAetheryteForAethernet(marker.DataKey)!.Value.RowId)}",
                 _ => null,
             },
         };
