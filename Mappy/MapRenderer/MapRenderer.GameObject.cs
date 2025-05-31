@@ -48,7 +48,7 @@ public partial class MapRenderer {
                     ObjectKind.BattleNpc when obj is { SubKind: (int) BattleNpcSubKind.Enemy, TargetObject: not null } => 60422,
                     ObjectKind.BattleNpc when obj is { SubKind: (int) BattleNpcSubKind.Enemy, TargetObject: null } => 60424,
                     ObjectKind.BattleNpc when obj.SubKind == (int) BattleNpcSubKind.Pet => 60961,
-                    ObjectKind.Treasure when Vector3.Distance(obj.Position, player.Position) <= 50.0f => 60003,
+                    ObjectKind.Treasure => 60003,
                     ObjectKind.GatheringPoint => System.GatheringPointIconCache.GetValue(obj.DataId),
                     ObjectKind.EventObj when IsAetherCurrent(obj) => 60653,
                     _ => 0,
