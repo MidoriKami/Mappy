@@ -163,6 +163,9 @@ public unsafe class IntegrationsController : IDisposable {
 					if (eventMarker is not null) {
 						CenterOnMarker(eventMarker.Value);
 					}
+					
+					System.MapWindow.ProcessingCommand = true;
+					
 					break;
 				
 				default:
@@ -186,11 +189,6 @@ public unsafe class IntegrationsController : IDisposable {
 
 		System.SystemConfig.FollowPlayer = false;
 		System.MapRenderer.DrawOffset = -coordinates;
-
-		// If the map isn't open, we want to force it to not center on whatever the user decided and center on our markers instead.
-		if (!System.MapWindow.IsOpen) {
-			System.MapWindow.ProcessingCommand = true;
-		}
 	}
 
 	private static void CenterOnMarker(MapMarkerData marker) {
@@ -198,11 +196,6 @@ public unsafe class IntegrationsController : IDisposable {
 
 		System.SystemConfig.FollowPlayer = false;
 		System.MapRenderer.DrawOffset = -coordinates;
-
-		// If the map isn't open, we want to force it to not center on whatever the user decided and center on our markers instead.
-		if (!System.MapWindow.IsOpen) {
-			System.MapWindow.ProcessingCommand = true;
-		}
 	}
 
 	public static bool ShouldShowMap() {
