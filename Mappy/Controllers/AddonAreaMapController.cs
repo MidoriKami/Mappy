@@ -9,6 +9,7 @@ using KamiLib.Classes;
 using KamiLib.CommandManager;
 using KamiLib.Extensions;
 using Mappy.Windows;
+using Mappy.Extensions;
 
 namespace Mappy.Controllers;
 
@@ -106,18 +107,22 @@ public unsafe class AddonAreaMapController :IDisposable {
 		}, Service.Log, "Exception during OnAreaMapHide");
 
 	private void OnAreaMapDraw(AddonEvent type, AddonArgs args) {
-		if (Service.ClientState is { IsPvP: true }) return;
-
 		var addon = (AddonAreaMap*) args.Addon;
-		if (addon->RootNode is null) return;
+		
+		if (Service.ClientState is { IsPvP: true }) {
+			if (addon->IsOffscreen()) {
+				addon->RestorePosition();
+			}
+			return;
+		}
 
 		// Have to check for color, because it likes to animate a fadeout,
 		// and we want the map to stay completely hidden until it's done.
 		if (addon->IsVisible || addon->RootNode->Color.A is not 0x00) {
-			addon->RootNode->SetPositionFloat(-9001.0f, -9001.0f);
+			addon->ForceOffscreen();
 		}
 		else {
-			addon->RootNode->SetPositionFloat(addon->X, addon->Y);
+			addon->RestorePosition();
 		}
 	}
 }
