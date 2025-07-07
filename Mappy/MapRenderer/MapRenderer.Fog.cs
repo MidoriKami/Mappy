@@ -51,7 +51,7 @@ public unsafe partial class MapRenderer {
 	=> HookSafety.ExecuteSafe(() => {
 
 		// Delay by a certain number of frames because the game hasn't loaded the new texture yet.
-		if (requestUpdatedMaskingTexture && frameCounter++ == 2) {
+		if (requestUpdatedMaskingTexture && frameCounter++ == 10) {
 			maskingTextureBytes = null;
 			maskingTextureBytes = GetPrebakedTextureBytes();
 			requestUpdatedMaskingTexture = false;
@@ -146,7 +146,7 @@ public unsafe partial class MapRenderer {
 		var addon = Service.GameGui.GetAddonByName<AddonAreaMap>("AreaMap");
 		if (addon is null) return null;
 
-		var componentMap = (void*) Marshal.ReadIntPtr((nint) addon, 0x430);
+		var componentMap =   (void*) Marshal.ReadIntPtr((nint) addon, 0x430);
 		if (componentMap is null) return null;
         
 		var texturePointer = (Texture*) Marshal.ReadIntPtr((nint) componentMap, 0x270);
