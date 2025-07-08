@@ -38,7 +38,9 @@ public static class MapMarkerInfoExtensions {
             SecondaryText = marker.DataType switch {
                 1 when !DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId) => () => $"Open Map {Service.DataManager.GetExcelSheet<Map>().GetRow(marker.DataKey).PlaceName.Value.Name.ExtractText()}",
                 2 => () => $"Instance Link {marker.DataKey}",
+                3 when marker.DataKey is not 0 && GetAetheryteTeleportGilCost(marker.DataKey) is null or 0 => () => "Not attuned to aetheryte",
                 3 when marker.DataKey is not 0 => () => $"Teleport to {Service.DataManager.GetExcelSheet<Aetheryte>().GetRow(marker.DataKey).PlaceName.Value.Name.ExtractText()} {GetAetheryteTeleportCost(marker.DataKey)}",
+                4 when GetAetheryteForAethernet(marker.DataKey) is { RowId: not 0 } && GetAetheryteTeleportGilCost(marker.DataKey) is null or 0 => () => "Not attuned to aetheryte",
                 4 when GetAetheryteForAethernet(marker.DataKey) is { RowId: not 0 } => () => $"Teleport to {GetAetheryteForAethernet(marker.DataKey)!.Value.PlaceName.Value.Name.ExtractText()} {GetAetheryteTeleportCost(GetAetheryteForAethernet(marker.DataKey)!.Value.RowId)}",
                 _ => null,
             },
@@ -69,8 +71,11 @@ public static class MapMarkerInfoExtensions {
     private static Aetheryte? GetAetheryteForAethernet(uint aethernetKey)
         => System.AetheryteAethernetCache.GetValue(aethernetKey);
 
+    private static uint? GetAetheryteTeleportGilCost(uint aethernetKey)
+        => Service.AetheryteList.FirstOrDefault(entry => entry.AetheryteId == aethernetKey)?.GilCost;
+    
     private static string GetAetheryteTeleportCost(uint targetDataKey) 
-        => $"({Service.AetheryteList.FirstOrDefault(entry => entry.AetheryteId == targetDataKey)?.GilCost ?? 0:n0} {SeIconChar.Gil.ToIconChar()})";
+        => $"({GetAetheryteTeleportGilCost(targetDataKey) ?? 0:n0} {SeIconChar.Gil.ToIconChar()})";
 
     private static Func<string> GetMarkerPrimaryTooltip(MapMarkerInfo marker, SeString tooltipText) {
         if (DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId)) return () => string.Empty;
