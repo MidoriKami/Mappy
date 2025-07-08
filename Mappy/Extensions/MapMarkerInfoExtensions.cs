@@ -29,43 +29,137 @@ public static class MapMarkerInfoExtensions {
             RadiusColor = KnownColor.MediumPurple.Vector(),
             IconId = marker.MapMarker.IconId,
             PrimaryText = GetMarkerPrimaryTooltip(marker, tooltipText),
-            OnLeftClicked = marker.DataType switch {
-                1 when !DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId) => () => System.IntegrationsController.OpenMap(marker.DataKey),
-                3 when marker.DataKey is not 0 => () => System.Teleporter.Teleport(marker.DataKey),
-                4 when GetAetheryteForAethernet(marker.DataKey) is { RowId: not 0 } aetheryte => () => System.Teleporter.Teleport(aetheryte.RowId),
-                _ => null,
-            },
-            SecondaryText = marker.DataType switch {
-                1 when !DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId) => () => $"Open Map {Service.DataManager.GetExcelSheet<Map>().GetRow(marker.DataKey).PlaceName.Value.Name.ExtractText()}",
-                2 => () => $"Instance Link {marker.DataKey}",
-                3 when marker.DataKey is not 0 && GetAetheryteTeleportGilCost(marker.DataKey) is null or 0 => () => "Not attuned to aetheryte",
-                3 when marker.DataKey is not 0 => () => $"Teleport to {Service.DataManager.GetExcelSheet<Aetheryte>().GetRow(marker.DataKey).PlaceName.Value.Name.ExtractText()} {GetAetheryteTeleportCost(marker.DataKey)}",
-                4 when GetAetheryteForAethernet(marker.DataKey) is { RowId: not 0 } && GetAetheryteTeleportGilCost(marker.DataKey) is null or 0 => () => "Not attuned to aetheryte",
-                4 when GetAetheryteForAethernet(marker.DataKey) is { RowId: not 0 } => () => $"Teleport to {GetAetheryteForAethernet(marker.DataKey)!.Value.PlaceName.Value.Name.ExtractText()} {GetAetheryteTeleportCost(GetAetheryteForAethernet(marker.DataKey)!.Value.RowId)}",
-                _ => null,
-            },
+            OnLeftClicked = () => OnMarkerClicked(ref marker),
+            SecondaryText = () => OnMarkerHovered(ref marker),
         };
         
         if (marker.MapMarker.IconId is 0 && marker.MapMarker.Index is not 0) {
-            if (System.SystemConfig.ShowTextLabels) {
-                var textTypeScalar = marker.MapMarker.SubtextStyle switch {
-                    1 => System.SystemConfig.LargeAreaTextScale,
-                    _ => System.SystemConfig.SmallAreaTextScale,
-                };
-
-                if (System.SystemConfig.ScaleTextWithZoom) {
-                    markerInfo.Scale *= textTypeScalar * 0.33f;
-                }
-                else {
-                    markerInfo.Scale = textTypeScalar * 0.33f;
-                }
-
-                DrawHelpers.DrawText(markerInfo, tooltipText);
-            }
+            TryDrawText(marker, markerInfo, tooltipText);
         }
         else {
             DrawHelpers.DrawMapMarker(markerInfo);
         }
+    }
+
+    private static void TryDrawText(MapMarkerInfo marker, MarkerInfo markerInfo, SeString tooltipText) {
+        if (!System.SystemConfig.ShowTextLabels) return;
+        
+        var textTypeScalar = marker.MapMarker.SubtextStyle switch {
+            1 => System.SystemConfig.LargeAreaTextScale,
+            _ => System.SystemConfig.SmallAreaTextScale,
+        };
+
+        if (System.SystemConfig.ScaleTextWithZoom) {
+            markerInfo.Scale *= textTypeScalar * 0.33f;
+        }
+        else {
+            markerInfo.Scale = textTypeScalar * 0.33f;
+        }
+
+        DrawHelpers.DrawText(markerInfo, tooltipText);
+    }
+
+    private static void OnMarkerClicked(ref MapMarkerInfo marker) {
+        switch (marker.DataType) {
+            case 1: // MapLinkMarker
+                OnMapLinkMarkerClicked(ref marker);
+                break;
+            
+            case 2: // InstanceLink
+                OnInstanceLinkClicked(ref marker);
+                break;
+            
+            case 3: // Aetheryte
+                OnAetheryteClicked(ref marker);
+                break;
+            
+            case 4: // Aethernet
+                OnAethernetClicked(ref marker);
+                break;
+        }
+    }
+
+    private static void OnMapLinkMarkerClicked(ref MapMarkerInfo marker) {
+        if (marker.DataKey is 0) return;
+        if (DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId)) return;
+
+        System.IntegrationsController.OpenMap(marker.DataKey);
+    }
+    
+    private static void OnInstanceLinkClicked(ref MapMarkerInfo _) {
+        // Might consider opening contents finder to this duty, maybe
+    }
+    
+    private static void OnAetheryteClicked(ref MapMarkerInfo marker) {
+        if (marker.DataKey is 0) return;
+
+        System.Teleporter.Teleport(marker.DataKey);
+    }
+
+    private static void OnAethernetClicked(ref MapMarkerInfo marker) {
+        var aetheryte = GetAetheryteForAethernet(marker.DataKey);
+        if (aetheryte is null) return;
+        if (aetheryte.Value.RowId is 0) return;
+
+        System.Teleporter.Teleport(aetheryte.Value.RowId);
+    }
+
+    private static string OnMarkerHovered(ref MapMarkerInfo marker) {
+        switch (marker.DataType) {
+            case 1: // MapLinkMarker
+                return OnMapLinkMarkerHovered(ref marker);
+            
+            case 2: // InstanceLink
+                return OnInstanceLinkHovered(ref marker);
+            
+            case 3: // Aetheryte
+                return OnAetheryteHovered(ref marker);
+            
+            case 4: // Aethernet
+                return OnAethernetHovered(ref marker);
+        }
+
+        return string.Empty;
+    }
+
+    private static string OnMapLinkMarkerHovered(ref MapMarkerInfo marker) {
+        if (marker.DataKey is 0) return string.Empty;
+        if (DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId)) return string.Empty;
+
+        var map = Service.DataManager.GetExcelSheet<Map>().GetRow(marker.DataKey);
+        var mapPlaceName = map.PlaceName.ValueNullable?.Name.ExtractText() ?? string.Empty;
+
+        return $"Open Map {mapPlaceName}";
+    }
+
+    private static string OnInstanceLinkHovered(ref MapMarkerInfo marker) {
+        return $"Instance Link {marker.DataKey}";
+    }
+
+    private static string OnAetheryteHovered(ref MapMarkerInfo marker) {
+        if (marker.DataKey is 0) return string.Empty;
+
+        var aetheryteTeleportCost = GetAetheryteTeleportGilCost(marker.DataKey);
+        if (aetheryteTeleportCost is null) return string.Empty;
+        if (aetheryteTeleportCost.Value is 0) return "Not attuned to aetheryte";
+
+        var aetheryte = Service.DataManager.GetExcelSheet<Aetheryte>().GetRow(marker.DataKey);
+        var aetherytePlaceName = aetheryte.PlaceName.ValueNullable?.Name.ExtractText() ?? string.Empty;
+        var aetheryteCost = GetAetheryteTeleportCost(marker.DataKey);
+        
+        return $"Teleport to {aetherytePlaceName} {aetheryteCost}";
+    }
+
+    private static string OnAethernetHovered(ref MapMarkerInfo marker) {
+        if (marker.DataKey is 0) return string.Empty;
+
+        var aetheryte = GetAetheryteForAethernet(marker.DataKey);
+        if (aetheryte is null) return string.Empty;
+        if (aetheryte.Value.RowId is 0) return string.Empty;
+        
+        var aetherytePlaceName = aetheryte.Value.PlaceName.ValueNullable?.Name.ExtractText() ?? string.Empty;
+
+        return $"Teleport to {aetherytePlaceName} {GetAetheryteTeleportCost(aetheryte.Value.RowId)}";
     }
 
     private static Aetheryte? GetAetheryteForAethernet(uint aethernetKey)
