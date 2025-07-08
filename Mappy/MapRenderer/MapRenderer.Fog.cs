@@ -34,7 +34,7 @@ public unsafe partial class MapRenderer {
 	private byte[]? blockyFogBytes;
 	private IDalamudTextureWrap? fogTexture;
 	private int lastKnownDiscoveryFlags;
-	private int frameCounter;
+	private readonly Stopwatch textureLoadStopwatch = new();
 
 	private static int CurrentDiscoveryFlags => AtkStage.Instance()->GetNumberArrayData(NumberArrayType.AreaMap2)->IntArray[2];
 	
@@ -51,11 +51,11 @@ public unsafe partial class MapRenderer {
 	=> HookSafety.ExecuteSafe(() => {
 
 		// Delay by a certain number of frames because the game hasn't loaded the new texture yet.
-		if (requestUpdatedMaskingTexture && frameCounter++ == 10) {
+		if (requestUpdatedMaskingTexture && textureLoadStopwatch is { IsRunning: true, ElapsedMilliseconds: > 100 }) {
 			maskingTextureBytes = null;
 			maskingTextureBytes = GetPrebakedTextureBytes();
 			requestUpdatedMaskingTexture = false;
-			frameCounter = 0;
+			textureLoadStopwatch.Stop();
 
 			Task.Run(LoadFogTexture);
 		}
@@ -74,6 +74,7 @@ public unsafe partial class MapRenderer {
 		if (flagsChanged) {
 			Service.Log.Debug("[Fog of War] Discovery Bits Changed, updating fog texture.");
 			requestUpdatedMaskingTexture = true;
+			textureLoadStopwatch.Restart();
 			fogTexture = null;
 		}
 		
