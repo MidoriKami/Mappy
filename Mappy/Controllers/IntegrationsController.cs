@@ -93,79 +93,20 @@ public unsafe class IntegrationsController : IDisposable {
 			openMapHook!.Original(agent, mapInfo);
 
 			switch (mapInfo->Type) {
-				case MapType.QuestLog: {
-					Service.Log.Debug("[OpenMap] Processing QuestLog Event");
-
-					var targetMapId = mapInfo->MapId;
-
-					if (GetMapIdForQuest(mapInfo) is { } foundMapId) {
-						Service.Log.Debug($"[OpenMap] GetMapIdForQuest identified Quest Target Map as MapId: {foundMapId}");
-
-						if (targetMapId is 0) {
-							Service.Log.Debug($"[OpenMap] targetMapId was {targetMapId} using foundMapId: {foundMapId}");
-							targetMapId = foundMapId;
-						}
-					}
-
-					if (agent->SelectedMapId != targetMapId) {
-						Service.Log.Debug($"[OpenMap] Opening MapId: {targetMapId}");
-						OpenMap(targetMapId);
-					}
-					else {
-						Service.Log.Debug($"[OpenMap] Already in MapId: {targetMapId}, aborting.");
-					}
-
-					if (System.SystemConfig.CenterOnQuest) {
-						ref var targetMarker = ref agent->TempMapMarkers[0].MapMarker;
-						CenterOnMarker(targetMarker);
-						Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
-					}
-
-					System.MapWindow.ProcessingCommand = true;
-					
+				case MapType.QuestLog:
+					ProcessQuestLink(agent, mapInfo);
 					break;
-				}
 
-				case MapType.GatheringLog: {
-					Service.Log.Debug("[OpenMap] Processing GatheringLog Event");
-					
-					if (System.SystemConfig.CenterOnGathering) {
-						ref var targetMarker = ref agent->TempMapMarkers[0].MapMarker;
-						
-						CenterOnMarker(targetMarker);
-						Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
-					}
-					
-					System.MapWindow.ProcessingCommand = true;
-					
+				case MapType.GatheringLog:
+					ProcessGatheringLink(agent);
 					break;
-				}
 
-				case MapType.FlagMarker: {
-					Service.Log.Debug("[OpenMap] Processing FlagMarker Event");
-					
-					if (System.SystemConfig.CenterOnFlag) {
-						ref var targetMarker = ref agent->FlagMapMarker.MapMarker;
-						
-						CenterOnMarker(targetMarker);
-						Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
-					}
-					
-					System.MapWindow.ProcessingCommand = true;
-					
+				case MapType.FlagMarker:
+					ProcessFlagLink(agent);
 					break;
-				}
 				
 				case MapType.Bozja:
-					Service.Log.Debug("[OpenMap] Processing Bozja Event");
-
-					var eventMarker = agent->EventMarkers.FirstOrNull(marker => marker.DataId == mapInfo->FateId && marker.Flags == 0x40);
-					if (eventMarker is not null) {
-						CenterOnMarker(eventMarker.Value);
-					}
-					
-					System.MapWindow.ProcessingCommand = true;
-					
+					ProcessForayLink(agent, mapInfo);
 					break;
 				
 				default:
@@ -177,6 +118,74 @@ public unsafe class IntegrationsController : IDisposable {
 				MapRenderer.MapRenderer.Scale = DrawHelpers.GetMapScaleFactor() * System.SystemConfig.AutoZoomScaleFactor;
 			}
 		}, Service.Log, "Exception during OpenMap");
+
+	private void ProcessQuestLink(AgentMap* agent, OpenMapInfo* mapInfo) {
+		Service.Log.Debug("[OpenMap] Processing QuestLog Event");
+
+		var targetMapId = mapInfo->MapId;
+
+		if (GetMapIdForQuest(mapInfo) is { } foundMapId) {
+			Service.Log.Debug($"[OpenMap] GetMapIdForQuest identified Quest Target Map as MapId: {foundMapId}");
+
+			if (targetMapId is 0) {
+				Service.Log.Debug($"[OpenMap] targetMapId was {targetMapId} using foundMapId: {foundMapId}");
+				targetMapId = foundMapId;
+			}
+		}
+
+		if (agent->SelectedMapId != targetMapId) {
+			Service.Log.Debug($"[OpenMap] Opening MapId: {targetMapId}");
+			OpenMap(targetMapId);
+		}
+		else {
+			Service.Log.Debug($"[OpenMap] Already in MapId: {targetMapId}, aborting.");
+		}
+
+		if (System.SystemConfig.CenterOnQuest) {
+			ref var targetMarker = ref agent->TempMapMarkers[0].MapMarker;
+			CenterOnMarker(targetMarker);
+			Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
+		}
+
+		System.MapWindow.ProcessingCommand = true;
+	}
+	
+	private static void ProcessGatheringLink(AgentMap* agent) {
+		Service.Log.Debug("[OpenMap] Processing GatheringLog Event");
+					
+		if (System.SystemConfig.CenterOnGathering) {
+			ref var targetMarker = ref agent->TempMapMarkers[0].MapMarker;
+						
+			CenterOnMarker(targetMarker);
+			Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
+		}
+					
+		System.MapWindow.ProcessingCommand = true;
+	}
+	
+	private static void ProcessFlagLink(AgentMap* agent) {
+		Service.Log.Debug("[OpenMap] Processing FlagMarker Event");
+					
+		if (System.SystemConfig.CenterOnFlag) {
+			ref var targetMarker = ref agent->FlagMapMarker.MapMarker;
+						
+			CenterOnMarker(targetMarker);
+			Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
+		}
+					
+		System.MapWindow.ProcessingCommand = true;
+	}
+	
+	private static void ProcessForayLink(AgentMap* agent, OpenMapInfo* mapInfo) {
+		Service.Log.Debug("[OpenMap] Processing Bozja Event");
+
+		var eventMarker = agent->EventMarkers.FirstOrNull(marker => marker.DataId == mapInfo->FateId && marker.Flags == 0x40);
+		if (eventMarker is not null) {
+			CenterOnMarker(eventMarker.Value);
+		}
+					
+		System.MapWindow.ProcessingCommand = true;
+	}
 
 	public void OpenMap(uint mapId)
 		=> AgentMap.Instance()->OpenMapByMapId(mapId, 0, true);
