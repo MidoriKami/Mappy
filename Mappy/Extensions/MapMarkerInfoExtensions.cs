@@ -30,7 +30,7 @@ public static class MapMarkerInfoExtensions {
             IconId = marker.MapMarker.IconId,
             PrimaryText = GetMarkerPrimaryTooltip(marker, tooltipText),
             OnLeftClicked = () => OnMarkerClicked(ref marker),
-            SecondaryText = () => OnMarkerHovered(ref marker),
+            SecondaryText = () => GetTooltip(ref marker),
         };
         
         if (marker.MapMarker.IconId is 0 && marker.MapMarker.Index is not 0) {
@@ -104,25 +104,25 @@ public static class MapMarkerInfoExtensions {
         System.Teleporter.Teleport(aetheryte.Value.RowId);
     }
 
-    private static string OnMarkerHovered(ref MapMarkerInfo marker) {
+    private static string GetTooltip(ref MapMarkerInfo marker) {
         switch (marker.DataType) {
             case 1: // MapLinkMarker
-                return OnMapLinkMarkerHovered(ref marker);
+                return GetMapLinkTooltip(ref marker);
             
             case 2: // InstanceLink
-                return OnInstanceLinkHovered(ref marker);
+                return GetInstanceLinkTooltip(ref marker);
             
             case 3: // Aetheryte
-                return OnAetheryteHovered(ref marker);
+                return GetAetheryteTooltip(ref marker);
             
             case 4: // Aethernet
-                return OnAethernetHovered(ref marker);
+                return GetAethernetTooltip(ref marker);
         }
 
         return string.Empty;
     }
 
-    private static string OnMapLinkMarkerHovered(ref MapMarkerInfo marker) {
+    private static string GetMapLinkTooltip(ref MapMarkerInfo marker) {
         if (marker.DataKey is 0) return string.Empty;
         if (DrawHelpers.IsDisallowedIcon(marker.MapMarker.IconId)) return string.Empty;
 
@@ -132,11 +132,11 @@ public static class MapMarkerInfoExtensions {
         return $"Open Map {mapPlaceName}";
     }
 
-    private static string OnInstanceLinkHovered(ref MapMarkerInfo marker) {
+    private static string GetInstanceLinkTooltip(ref MapMarkerInfo marker) {
         return $"Instance Link {marker.DataKey}";
     }
 
-    private static string OnAetheryteHovered(ref MapMarkerInfo marker) {
+    private static string GetAetheryteTooltip(ref MapMarkerInfo marker) {
         if (marker.DataKey is 0) return string.Empty;
 
         var aetheryteTeleportCost = GetAetheryteTeleportGilCost(marker.DataKey);
@@ -150,7 +150,7 @@ public static class MapMarkerInfoExtensions {
         return $"Teleport to {aetherytePlaceName} {aetheryteCost}";
     }
 
-    private static string OnAethernetHovered(ref MapMarkerInfo marker) {
+    private static string GetAethernetTooltip(ref MapMarkerInfo marker) {
         if (marker.DataKey is 0) return string.Empty;
 
         var aetheryte = GetAetheryteForAethernet(marker.DataKey);
