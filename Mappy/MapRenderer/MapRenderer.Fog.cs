@@ -51,7 +51,7 @@ public unsafe partial class MapRenderer {
 	=> HookSafety.ExecuteSafe(() => {
 
 		// Delay by a certain number of frames because the game hasn't loaded the new texture yet.
-		if (requestUpdatedMaskingTexture && textureLoadStopwatch is { IsRunning: true, ElapsedMilliseconds: > 100 }) {
+		if (requestUpdatedMaskingTexture && textureLoadStopwatch is { IsRunning: true, ElapsedMilliseconds: > 200 }) {
 			maskingTextureBytes = null;
 			maskingTextureBytes = GetPrebakedTextureBytes();
 			requestUpdatedMaskingTexture = false;
