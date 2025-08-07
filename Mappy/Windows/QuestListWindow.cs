@@ -1,11 +1,11 @@
 ﻿using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using ImGuiNET;
 using KamiLib.Classes;
 using KamiLib.Window;
 using Lumina.Excel.Sheets;
@@ -60,7 +60,7 @@ public unsafe class UnacceptedQuestsTabItem : ITabItem {
                     }
 
                     ImGui.SetCursorScreenPos(cursorStart);
-                    ImGui.Image(Service.TextureProvider.GetFromGameIcon(marker.IconId).GetWrapOrEmpty().ImGuiHandle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
+                    ImGui.Image(Service.TextureProvider.GetFromGameIcon(marker.IconId).GetWrapOrEmpty().Handle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
                     
                     ImGui.SameLine();
                     var text = $"Lv. {questData.ClassJobLevel.First()} {quest.Label}";
@@ -109,7 +109,7 @@ public unsafe class AcceptedQuestsTabItem : ITabItem {
                     };
                     
                     ImGui.SetCursorScreenPos(cursorStart);
-                    ImGui.Image(Service.TextureProvider.GetFromGameIcon(iconId).GetWrapOrEmpty().ImGuiHandle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
+                    ImGui.Image(Service.TextureProvider.GetFromGameIcon(iconId).GetWrapOrEmpty().Handle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
                     
                     ImGui.SameLine();
                     var text = $"Lv. {questData.ClassJobLevel.First()} {quest.Label}";

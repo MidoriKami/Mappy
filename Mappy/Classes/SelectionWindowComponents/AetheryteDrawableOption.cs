@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility.Raii;
-using ImGuiNET;
 using KamiLib.Extensions;
 using Lumina.Excel.Sheets;
 
@@ -24,7 +24,7 @@ public class AetheryteDrawableOption : DrawableOption {
 
         var xOffset = (Width - Height) / 2.0f;
         ImGui.SetCursorPosX(ImGui.GetCursorPosX() + xOffset);
-        ImGui.Image(Service.TextureProvider.GetFromGameIcon(Aetheryte.IsAetheryte ? 60453 : 60430).GetWrapOrEmpty().ImGuiHandle, new Vector2(Height, Height));
+        ImGui.Image(Service.TextureProvider.GetFromGameIcon(Aetheryte.IsAetheryte ? 60453 : 60430).GetWrapOrEmpty().Handle, new Vector2(Height, Height));
     }
 
     private Map? GetAetheryteMap() {

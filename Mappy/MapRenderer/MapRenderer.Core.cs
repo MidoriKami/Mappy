@@ -2,9 +2,9 @@
 using System.IO;
 using System.Numerics;
 using System.Threading.Tasks;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Game.ClientState.Objects.Types;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using ImGuiNET;
 using Mappy.Classes;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
@@ -66,7 +66,7 @@ public unsafe partial class MapRenderer : IDisposable {
             var texture = Service.TextureProvider.GetFromGame($"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex").GetWrapOrEmpty();
             
             ImGui.SetCursorPos(DrawPosition);
-            ImGui.Image(texture.ImGuiHandle, texture.Size * Scale);
+            ImGui.Image(texture.Handle, texture.Size * Scale);
         }
         else {
             if (blendedPath != AgentMap.Instance()->SelectedMapBgPath.ToString()) {
@@ -78,7 +78,7 @@ public unsafe partial class MapRenderer : IDisposable {
 
             if (blendedTexture is not null) {
                 ImGui.SetCursorPos(DrawPosition);
-                ImGui.Image(blendedTexture.ImGuiHandle, blendedTexture.Size * Scale);
+                ImGui.Image(blendedTexture.Handle, blendedTexture.Size * Scale);
             }
         }
     }

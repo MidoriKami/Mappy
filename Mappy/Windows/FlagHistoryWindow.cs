@@ -1,10 +1,10 @@
 ﻿using System.Collections.Immutable;
 using System.Drawing;
 using System.Numerics;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
-using ImGuiNET;
 using KamiLib.Window;
 using Mappy.Data;
 
@@ -44,7 +44,7 @@ public class FlagHistoryWindow : Window {
 	private void DrawFlagImage(Flag flag) {
 		var texture = flag.GetMapTexture();
 		if (texture is not null) {
-			ImGui.Image(texture.ImGuiHandle, ImGui.GetContentRegionAvail(), new Vector2(0.15f, 0.15f), new Vector2(0.85f, 0.85f));
+			ImGui.Image(texture.Handle, ImGui.GetContentRegionAvail(), new Vector2(0.15f, 0.15f), new Vector2(0.85f, 0.85f));
 		}
 		else {
 			ImGuiHelpers.ScaledDummy(ImGui.GetContentRegionAvail());

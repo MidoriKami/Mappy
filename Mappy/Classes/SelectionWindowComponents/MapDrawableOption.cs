@@ -1,8 +1,8 @@
 ﻿using System.Numerics;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
-using ImGuiNET;
 using Lumina.Excel.Sheets;
 
 namespace Mappy.Classes.SelectionWindowComponents;
@@ -16,7 +16,7 @@ public class MapDrawableOption : DrawableOption {
 
         var texture = GetMapTexture(Map.RowId);
         if (texture is not null) {
-            ImGui.Image(texture.ImGuiHandle, new Vector2(Width, Height), new Vector2(0.15f, 0.15f), new Vector2(0.85f, 0.85f));
+            ImGui.Image(texture.Handle, new Vector2(Width, Height), new Vector2(0.15f, 0.15f), new Vector2(0.85f, 0.85f));
         }
         else {
             ImGuiHelpers.ScaledDummy(Width, Height);

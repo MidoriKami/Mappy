@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Numerics;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility.Raii;
-using ImGuiNET;
 using Lumina.Excel.Sheets;
 
 namespace Mappy.Classes.SelectionWindowComponents;
@@ -21,7 +21,7 @@ public class PoiDrawableOption : DrawableOption {
 
         var xOffset = (Width - Height) / 2.0f;
         ImGui.SetCursorPosX(ImGui.GetCursorPosX() + xOffset);
-        ImGui.Image(Service.TextureProvider.GetFromGameIcon((uint) MapMarker.Icon).GetWrapOrEmpty().ImGuiHandle, new Vector2(Height, Height));
+        ImGui.Image(Service.TextureProvider.GetFromGameIcon((uint) MapMarker.Icon).GetWrapOrEmpty().Handle, new Vector2(Height, Height));
     }
 
     protected override string[] GetAdditionalFilterStrings() => [

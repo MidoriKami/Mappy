@@ -2,11 +2,11 @@
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
-using ImGuiNET;
 using KamiLib.Classes;
 using KamiLib.CommandManager;
 using KamiLib.Extensions;
@@ -300,7 +300,7 @@ public class IconConfigurationTab : ITabItem {
                     }  
                 
                     ImGui.SetCursorScreenPos(cursorStart);
-                    ImGui.Image(texture.ImGuiHandle, texture.Size / 2.0f * ImGuiHelpers.GlobalScale);
+                    ImGui.Image(texture.Handle, texture.Size / 2.0f * ImGuiHelpers.GlobalScale);
                 } 
             }
         }
@@ -326,7 +326,7 @@ public class IconConfigurationTab : ITabItem {
                         ImGui.SetCursorPosX(remainingSpace / 2.0f);
                     }
                 
-                    ImGui.Image(texture.ImGuiHandle, new Vector2(smallestAxis, smallestAxis), Vector2.Zero, Vector2.One, new Vector4(1.0f, 1.0f, 1.0f, 0.20f));
+                    ImGui.Image(texture.Handle, new Vector2(smallestAxis, smallestAxis), Vector2.Zero, Vector2.One, new Vector4(1.0f, 1.0f, 1.0f, 0.20f));
                     ImGui.SetCursorPos(Vector2.Zero);
                     
                     // Draw settings

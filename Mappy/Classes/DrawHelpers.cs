@@ -2,11 +2,11 @@
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using ImGuiNET;
 using KamiLib.Classes;
 using Mappy.Data;
 using SeString = Dalamud.Game.Text.SeStringHandling.SeString;
@@ -145,7 +145,7 @@ public static class DrawHelpers {
         var cursorScreenPos = ImGui.GetCursorScreenPos();
         var iconSize = texture.Size * scale * iconScale * System.IconConfig.IconSettingMap[markerInfo.IconId].Scale;
         
-        ImGui.Image(texture.ImGuiHandle, iconSize, Vector2.Zero, Vector2.One, System.IconConfig.IconSettingMap[markerInfo.IconId].Color);
+        ImGui.Image(texture.Handle, iconSize, Vector2.Zero, Vector2.One, System.IconConfig.IconSettingMap[markerInfo.IconId].Color);
 
         if (DebugMode) {
             foreach (var x in Enumerable.Range(-1, 3)) {
@@ -222,7 +222,7 @@ public static class DrawHelpers {
             if (markerInfo.PrimaryText?.Invoke() is { Length: > 0 } primaryText) {
                 using var tooltip = ImRaii.Tooltip();
                 
-                ImGui.Image(Service.TextureProvider.GetFromGameIcon(markerInfo.IconId).GetWrapOrEmpty().ImGuiHandle, ImGuiHelpers.ScaledVector2(32.0f, 32.0f));
+                ImGui.Image(Service.TextureProvider.GetFromGameIcon(markerInfo.IconId).GetWrapOrEmpty().Handle, ImGuiHelpers.ScaledVector2(32.0f, 32.0f));
                     
                 ImGui.SameLine();
                 ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 7.5f * ImGuiHelpers.GlobalScale);

@@ -1,8 +1,8 @@
 ﻿using System.Numerics;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using ImGuiNET;
 using KamiLib.Window;
 using Mappy.Data;
 using Mappy.Windows;
@@ -23,18 +23,18 @@ public unsafe class MapContextMenu {
             var result = textureClickLocation - new Vector2(1024.0f, 1024.0f); // One of our vectors made the map centered, undo it.
             var scaledResult = result / DrawHelpers.GetMapScaleFactor() + DrawHelpers.GetRawMapOffsetVector(); // Apply offset x/y and scalefactor
                 
-            AgentMap.Instance()->IsFlagMarkerSet = false;
+            AgentMap.Instance()->FlagMarkerCount = 0;
             AgentMap.Instance()->SetFlagMapMarker(AgentMap.Instance()->SelectedTerritoryId, AgentMap.Instance()->SelectedMapId, scaledResult.X, scaledResult.Y);
             AgentChatLog.Instance()->InsertTextCommandParam(1048, false);
         }
         
-        if (ImGui.MenuItem("Remove Flag", AgentMap.Instance()->IsFlagMarkerSet)) {
-            AgentMap.Instance()->IsFlagMarkerSet = false;
+        if (ImGui.MenuItem("Remove Flag", false, AgentMap.Instance()->FlagMarkerCount is not 0)) {
+            AgentMap.Instance()->FlagMarkerCount = 0;
         }
 
         ImGuiHelpers.ScaledDummy(5.0f);
 
-        if (ImGui.MenuItem("Center on Player", Service.ClientState.LocalPlayer is not null) && Service.ClientState.LocalPlayer is not null) {
+        if (ImGui.MenuItem("Center on Player", false, Service.ClientState.LocalPlayer is not null) && Service.ClientState.LocalPlayer is not null) {
             System.IntegrationsController.OpenOccupiedMap();
             System.MapRenderer.CenterOnGameObject(Service.ClientState.LocalPlayer);
         }
@@ -52,15 +52,15 @@ public unsafe class MapContextMenu {
         
         ImGuiHelpers.ScaledDummy(5.0f);
         
-        if (ImGui.MenuItem("Open Quest List", System.WindowManager.GetWindow<QuestListWindow>() is null))  {
+        if (ImGui.MenuItem("Open Quest List", false, System.WindowManager.GetWindow<QuestListWindow>() is null))  {
             System.WindowManager.AddWindow(new QuestListWindow(), WindowFlags.OpenImmediately | WindowFlags.RequireLoggedIn);
         }
 
-        if (ImGui.MenuItem("Open Fate List", System.WindowManager.GetWindow<FateListWindow>() is null)) {
+        if (ImGui.MenuItem("Open Fate List", false, System.WindowManager.GetWindow<FateListWindow>() is null)) {
             System.WindowManager.AddWindow(new FateListWindow(), WindowFlags.OpenImmediately | WindowFlags.RequireLoggedIn);
         }
 
-        if (ImGui.MenuItem("Open Flag List", System.WindowManager.GetWindow<FlagHistoryWindow>() is null)) {
+        if (ImGui.MenuItem("Open Flag List", false, System.WindowManager.GetWindow<FlagHistoryWindow>() is null)) {
             System.WindowManager.AddWindow(new FlagHistoryWindow(), WindowFlags.OpenImmediately | WindowFlags.RequireLoggedIn);
         }
 	}

@@ -12,7 +12,7 @@ public unsafe partial class MapRenderer {
             if (partyMember.TerritoryType != AgentMap.Instance()->SelectedTerritoryId) continue;
             
             DrawHelpers.DrawMapMarker(new MarkerInfo {
-                Position = (new Vector2(partyMember.X, partyMember.Z) * DrawHelpers.GetMapScaleFactor() -
+                Position = (new Vector2(partyMember.Position.X, partyMember.Position.Z) * DrawHelpers.GetMapScaleFactor() -
                             DrawHelpers.GetMapOffsetVector() +
                             DrawHelpers.GetMapCenterOffsetVector()) * Scale,
                 Offset = DrawPosition,
@@ -27,7 +27,7 @@ public unsafe partial class MapRenderer {
             if (AgentMap.Instance()->SelectedMapId != AgentMap.Instance()->CurrentMapId) continue;
 
             DrawHelpers.DrawMapMarker(new MarkerInfo {
-                Position = (new Vector2(allianceMember.X, allianceMember.Z) * DrawHelpers.GetMapScaleFactor() -
+                Position = (new Vector2(allianceMember.Position.X, allianceMember.Position.Z) * DrawHelpers.GetMapScaleFactor() -
                             DrawHelpers.GetMapOffsetVector() +
                             DrawHelpers.GetMapCenterOffsetVector()) * Scale,
                 Offset = DrawPosition,

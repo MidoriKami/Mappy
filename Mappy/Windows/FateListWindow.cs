@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Game.Text;
 using Dalamud.Interface;
 using Dalamud.Interface.Textures;
@@ -9,7 +10,6 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using ImGuiNET;
 using KamiLib.Extensions;
 using KamiLib.Window;
 using Mappy.Data;
@@ -61,7 +61,7 @@ public class FateListWindow : Window {
 		ImGui.Spacing();
 		
 		ImGui.Image(
-			Service.TextureProvider.GetFromGameIcon(new GameIconLookup{ IconId = 60502 }).GetWrapOrEmpty().ImGuiHandle, 
+			Service.TextureProvider.GetFromGameIcon(new GameIconLookup{ IconId = 60502 }).GetWrapOrEmpty().Handle, 
 			new Vector2(ImGui.GetContentRegionMax().X, ImGui.GetContentRegionMax().X),
 			Vector2.Zero,
 			Vector2.One,
@@ -89,7 +89,7 @@ public class FateListWindow : Window {
 		System.MapRenderer.DrawOffset = -new Vector2(fate->Location.X, fate->Location.Z);
 
 		if (System.SystemConfig.SetFlagOnFateClick) {
-			AgentMap.Instance()->IsFlagMarkerSet = false;
+			AgentMap.Instance()->FlagMarkerCount = 0;
 			AgentMap.Instance()->SetFlagMapMarker(AgentMap.Instance()->CurrentTerritoryId, AgentMap.Instance()->CurrentMapId, fate->Location.X, fate->Location.Z);
 			AgentChatLog.Instance()->InsertTextCommandParam(1048, false);
 		}
@@ -97,7 +97,7 @@ public class FateListWindow : Window {
 	
 	private static unsafe void DrawFateInfo(FateContext* fate) {
 		using (ImRaii.Child($"image_child_{fate->FateId}", new Vector2(ElementHeight, ElementHeight), false, ImGuiWindowFlags.NoInputs)) {
-			ImGui.Image(Service.TextureProvider.GetFromGameIcon(fate->IconId).GetWrapOrEmpty().ImGuiHandle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
+			ImGui.Image(Service.TextureProvider.GetFromGameIcon(fate->IconId).GetWrapOrEmpty().Handle, ImGuiHelpers.ScaledVector2(ElementHeight, ElementHeight));
 		}
                     
 		ImGui.SameLine();

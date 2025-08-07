@@ -21,7 +21,7 @@ public unsafe record Flag(uint Territory, uint Map, float X, float Y, uint IconI
 		=> Service.DataManager.GetExcelSheet<TerritoryType>().GetRow(Territory);
 
 	public void PlaceFlag() {
-		AgentMap.Instance()->IsFlagMarkerSet = false;
+		AgentMap.Instance()->FlagMarkerCount = 0;
 		AgentMap.Instance()->SetFlagMapMarker(Territory, Map, X, Y, IconId);
 
 		if (System.SystemConfig.CenterOnFlag) {
@@ -45,8 +45,8 @@ public unsafe record Flag(uint Territory, uint Map, float X, float Y, uint IconI
 	}
 
 	public bool IsFlagSet() {
-		if (!AgentMap.Instance()->IsFlagMarkerSet) return false;
-		var setMarker = AgentMap.Instance()->FlagMapMarker;
+		if (AgentMap.Instance()->FlagMarkerCount is 0) return false;
+		ref var setMarker = ref AgentMap.Instance()->FlagMapMarkers[0];
 		
 		if (setMarker.TerritoryId != Territory) return false;
 		if (setMarker.MapId != Map) return false;

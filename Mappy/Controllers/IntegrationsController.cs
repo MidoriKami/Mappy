@@ -167,7 +167,7 @@ public unsafe class IntegrationsController : IDisposable {
 		Service.Log.Debug("[OpenMap] Processing FlagMarker Event");
 					
 		if (System.SystemConfig.CenterOnFlag) {
-			ref var targetMarker = ref agent->FlagMapMarker.MapMarker;
+			ref var targetMarker = ref agent->FlagMapMarkers[0].MapMarker;
 						
 			CenterOnMarker(targetMarker);
 			Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");

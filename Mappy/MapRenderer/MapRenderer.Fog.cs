@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Hooking;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
@@ -13,7 +14,6 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using ImGuiNET;
 using KamiLib.Classes;
 using KamiLib.Extensions;
 using SharpDX;
@@ -80,13 +80,13 @@ public unsafe partial class MapRenderer {
 		
 		if (fogTexture is not null) {
 			ImGui.SetCursorPos(DrawPosition);
-			ImGui.Image(fogTexture.ImGuiHandle, fogTexture.Size * Scale);
+			ImGui.Image(fogTexture.Handle, fogTexture.Size * Scale);
             
 		} else {
 			var defaultBackgroundTexture = Service.TextureProvider.GetFromGame($"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex").GetWrapOrEmpty();
             
 			ImGui.SetCursorPos(DrawPosition);
-			ImGui.Image(defaultBackgroundTexture.ImGuiHandle, defaultBackgroundTexture.Size * Scale);
+			ImGui.Image(defaultBackgroundTexture.Handle, defaultBackgroundTexture.Size * Scale);
 		}
 	}
 	
@@ -153,7 +153,7 @@ public unsafe partial class MapRenderer {
 		var texturePointer = (Texture*) Marshal.ReadIntPtr((nint) componentMap, 0x270);
 		if (texturePointer is null) return null;
 
-		var device = Service.PluginInterface.UiBuilder.Device;
+		var device = CppObject.FromPointer<SharpDX.Direct3D11.Device>(Service.PluginInterface.UiBuilder.DeviceHandle);
 			
 		var texture = CppObject.FromPointer<Texture2D>((nint)texturePointer->D3D11Texture2D);
 		var desc = new Texture2DDescription {

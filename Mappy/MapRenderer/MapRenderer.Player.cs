@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Numerics;
+using Dalamud.Bindings.ImGui;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Arrays;
-using ImGuiNET;
 using Mappy.Classes;
 using Mappy.Extensions;
 
@@ -87,7 +87,7 @@ public partial class MapRenderer {
 
         var vectors = GetRotationVectors(angle, position, texture.Size / 2.0f * scale);
     
-        ImGui.GetWindowDrawList().AddImageQuad(texture.ImGuiHandle, vectors[0], vectors[1], vectors[2], vectors[3]);
+        ImGui.GetWindowDrawList().AddImageQuad(texture.Handle, vectors[0], vectors[1], vectors[2], vectors[3]);
     }
     
     private static Vector2[] GetRotationVectors(float angle, Vector2 center, Vector2 size) {
