@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
-using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
@@ -12,6 +11,7 @@ using KamiLib.Extensions;
 using Lumina.Excel.Sheets;
 using Mappy.Classes;
 using Mappy.Extensions;
+using BattleNpcSubKind = Dalamud.Game.ClientState.Objects.Enums.BattleNpcSubKind;
 using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
 
 namespace Mappy.MapRenderer;
@@ -34,26 +34,27 @@ public partial class MapRenderer {
             if (GroupManager.Instance()->MainGroup.IsEntityIdInAlliance(obj.EntityId)) continue;
             if (Vector3.Distance(obj.Position, player.Position) >= 150.0f) continue;
 
-            DrawHelpers.DrawMapMarker(new MarkerInfo {
+            DrawHelpers.DrawMapMarker(new MarkerInfo
+            {
                 Position = (obj.GetMapPosition() -
                             DrawHelpers.GetMapOffsetVector() +
                             DrawHelpers.GetMapCenterOffsetVector()) * Scale,
                 Offset = DrawPosition,
                 Scale = Scale,
-                IconId = obj.ObjectKind switch {
+                IconId = obj.ObjectKind switch
+                {
                     ObjectKind.Player when GroupManager.Instance()->MainGroup.MemberCount is 0 && System.SystemConfig.ShowPlayers => 60421,
                     ObjectKind.Player when System.SystemConfig.ShowPlayers => 60444,
                     ObjectKind.BattleNpc when IsBoss(obj) && obj.TargetObject is null => 60402,
                     ObjectKind.BattleNpc when IsBoss(obj) && obj.TargetObject is not null => 60401,
-                    ObjectKind.BattleNpc when obj is { SubKind: (int) BattleNpcSubKind.Enemy, TargetObject: not null } => 60422,
-                    ObjectKind.BattleNpc when obj is { SubKind: (int) BattleNpcSubKind.Enemy, TargetObject: null } => 60424,
-                    ObjectKind.BattleNpc when obj.SubKind == (int) BattleNpcSubKind.Pet => 60961,
+                    ObjectKind.BattleNpc when obj is { SubKind: (int)BattleNpcSubKind.Enemy, TargetObject: not null } => 60422,
+                    ObjectKind.BattleNpc when obj is { SubKind: (int)BattleNpcSubKind.Enemy, TargetObject: null } => 60424,
+                    ObjectKind.BattleNpc when obj.SubKind == (int)BattleNpcSubKind.Pet => 60961,
                     ObjectKind.Treasure => 60003,
                     ObjectKind.GatheringPoint => System.GatheringPointIconCache.GetValue(obj.DataId),
                     ObjectKind.EventObj when IsAetherCurrent(obj) => 60653,
-                    _ => 0,
+                    _ => 0
                 },
-
                 PrimaryText = () => GetTooltipForGameObject(obj),
             });
         }
@@ -70,15 +71,18 @@ public partial class MapRenderer {
         ImGui.GetWindowDrawList().AddCircle(position, 150.0f * Scale, ImGui.GetColorU32(System.SystemConfig.RadarOutlineColor));
     }
 
-    private string GetTooltipForGameObject(IGameObject obj) {
-        return obj switch {
+    private string GetTooltipForGameObject(IGameObject obj)
+    {
+        return obj switch
+        {
             IBattleNpc { Level: > 0 } battleNpc => $"Lv. {battleNpc.Level} {battleNpc.Name}",
             IPlayerCharacter { Level: > 0 } playerCharacter => $"Lv. {playerCharacter.Level} {playerCharacter.Name}",
-            _ => obj.ObjectKind switch {
+            _ => obj.ObjectKind switch
+            {
                 ObjectKind.GatheringPoint => System.GatheringPointNameCache.GetValue((obj.DataId, obj.Name.ToString())) ?? string.Empty,
                 ObjectKind.Treasure => obj.Name.ToString(),
                 ObjectKind.EventObj when IsAetherCurrent(obj) => obj.Name.ToString(),
-                _ => string.Empty,
+                _ => string.Empty
             },
         };
     }
