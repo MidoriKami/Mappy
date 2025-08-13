@@ -16,10 +16,12 @@ using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
 
 namespace Mappy.MapRenderer;
 
-public partial class MapRenderer {
-    private unsafe void DrawGameObjects() {
+public partial class MapRenderer
+{
+    private unsafe void DrawGameObjects()
+    {
         if (AgentMap.Instance()->SelectedMapId != AgentMap.Instance()->CurrentMapId) return;
-        
+
         if (Service.ClientState is not { LocalPlayer: { } player }) return;
 
         if (System.SystemConfig.ShowRadar) {
@@ -60,13 +62,14 @@ public partial class MapRenderer {
         }
     }
 
-    private void DrawRadar(IPlayerCharacter gameObjectCenter) {
+    private void DrawRadar(IPlayerCharacter gameObjectCenter)
+    {
         var position = ImGui.GetWindowPos() +
                        DrawPosition +
                        (gameObjectCenter.GetMapPosition() -
                         DrawHelpers.GetMapOffsetVector() +
                         DrawHelpers.GetMapCenterOffsetVector()) * Scale;
-        
+
         ImGui.GetWindowDrawList().AddCircleFilled(position, 150.0f * Scale, ImGui.GetColorU32(System.SystemConfig.RadarColor));
         ImGui.GetWindowDrawList().AddCircle(position, 150.0f * Scale, ImGui.GetColorU32(System.SystemConfig.RadarOutlineColor));
     }
@@ -87,16 +90,16 @@ public partial class MapRenderer {
         };
     }
 
-    private unsafe bool IsAetherCurrent(IGameObject gameObject) {
+    private unsafe bool IsAetherCurrent(IGameObject gameObject)
+    {
         if (gameObject.ObjectKind is not ObjectKind.EventObj) return false;
 
-        var csEventObject = (GameObject*) gameObject.Address;
+        var csEventObject = (GameObject*)gameObject.Address;
         if (csEventObject is null) return false;
 
         if (csEventObject->EventHandler is null) return false;
         return csEventObject->EventHandler->Info.EventId.ContentId == EventHandlerContent.AetherCurrent;
     }
 
-    private bool IsBoss(IGameObject chara)
-        => Service.DataManager.GetExcelSheet<BNpcBase>().GetRow(chara.DataId).Rank is 2 or 6;
+    private bool IsBoss(IGameObject chara) => Service.DataManager.GetExcelSheet<BNpcBase>().GetRow(chara.DataId).Rank is 2 or 6;
 }

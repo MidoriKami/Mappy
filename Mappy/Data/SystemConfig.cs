@@ -8,7 +8,8 @@ using KamiLib.Configuration;
 
 namespace Mappy.Data;
 
-public enum CenterTarget {
+public enum CenterTarget
+{
     [Description("Disabled")]
     Disabled = 0,
 
@@ -20,21 +21,23 @@ public enum CenterTarget {
 }
 
 [Flags]
-public enum FadeMode {
+public enum FadeMode
+{
     [Description("Always")]
     Always = 1 << 0,
-    
+
     [Description("When Moving")]
     WhenMoving = 1 << 2,
-    
+
     [Description("When Focused")]
     WhenFocused = 1 << 3,
-    
+
     [Description("When Unfocused")]
     WhenUnFocused = 1 << 4,
 }
 
-public class SystemConfig : CharacterConfiguration {
+public class SystemConfig : CharacterConfiguration
+{
     public bool UseLinearZoom = false;
     public float ZoomSpeed = 0.25f;
     public float IconScale = 0.50f;
@@ -96,11 +99,10 @@ public class SystemConfig : CharacterConfiguration {
     public float AutoZoomScaleFactor = 0.33f;
 
     // Do not persist this setting
-    [JsonIgnore] public bool DebugMode = false;
+    [JsonIgnore]
+    public bool DebugMode = false;
 
-    public static SystemConfig Load() 
-        => Service.PluginInterface.LoadConfigFile("System.config.json", () => new SystemConfig());
+    public static SystemConfig Load() => Service.PluginInterface.LoadConfigFile("System.config.json", () => new SystemConfig());
 
-    public static void Save() 
-        => Service.PluginInterface.SaveConfigFile("System.config.json", System.SystemConfig);
+    public static void Save() => Service.PluginInterface.SaveConfigFile("System.config.json", System.SystemConfig);
 }

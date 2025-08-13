@@ -16,253 +16,264 @@ using MapType = FFXIVClientStructs.FFXIV.Client.UI.Agent.MapType;
 
 namespace Mappy.Controllers;
 
-public unsafe class IntegrationsController : IDisposable {
-	private readonly Hook<AgentMap.Delegates.ShowMap>? showMapHook;
-	private readonly Hook<AgentMap.Delegates.OpenMap>? openMapHook;
+public unsafe class IntegrationsController : IDisposable
+{
+    private readonly Hook<AgentMap.Delegates.ShowMap>? showMapHook;
+    private readonly Hook<AgentMap.Delegates.OpenMap>? openMapHook;
 
-	public IntegrationsController() {
-		showMapHook ??= Service.Hooker.HookFromAddress<AgentMap.Delegates.ShowMap>(AgentMap.MemberFunctionPointers.ShowMap, OnShowHook);
-		openMapHook ??= Service.Hooker.HookFromAddress<AgentMap.Delegates.OpenMap>(AgentMap.MemberFunctionPointers.OpenMap, OpenMap);
+    public IntegrationsController()
+    {
+        showMapHook ??= Service.Hooker.HookFromAddress<AgentMap.Delegates.ShowMap>(AgentMap.MemberFunctionPointers.ShowMap, OnShowHook);
+        openMapHook ??= Service.Hooker.HookFromAddress<AgentMap.Delegates.OpenMap>(AgentMap.MemberFunctionPointers.OpenMap, OpenMap);
 
-		if (Service.ClientState is { IsPvP: false }) {
-			EnableIntegrations();
-		}
-        
-		Service.ClientState.EnterPvP += DisableIntegrations;
-		Service.ClientState.LeavePvP += EnableIntegrations;
-	}
+        if (Service.ClientState is { IsPvP: false }) {
+            EnableIntegrations();
+        }
 
-	public void Dispose() {
-		DisableIntegrations();
-        
-		showMapHook?.Dispose();
-		openMapHook?.Dispose();
+        Service.ClientState.EnterPvP += DisableIntegrations;
+        Service.ClientState.LeavePvP += EnableIntegrations;
+    }
 
-		Service.ClientState.EnterPvP -= DisableIntegrations;
-		Service.ClientState.LeavePvP -= EnableIntegrations;
-	}
+    public void Dispose()
+    {
+        DisableIntegrations();
 
-	private void EnableIntegrations() {
-		Service.Log.Debug("Enabling Integrations");
-        
-		showMapHook?.Enable();
-		openMapHook?.Enable();
-		
-		System.AreaMapController.EnableIntegrations();
-		System.FlagController.EnableIntegrations();
-	}
+        showMapHook?.Dispose();
+        openMapHook?.Dispose();
 
-	private void DisableIntegrations() {
-		Service.Log.Debug("Disabling Integrations");
-        
-		showMapHook?.Disable();
-		openMapHook?.Disable();
-		
-		System.AreaMapController.DisableIntegrations();
-		System.FlagController.DisableIntegrations();
-	}
+        Service.ClientState.EnterPvP -= DisableIntegrations;
+        Service.ClientState.LeavePvP -= EnableIntegrations;
+    }
 
-	private void OnShowHook(AgentMap* agent, bool a1, bool a2)
-		=> HookSafety.ExecuteSafe(() => {
-			Service.Log.Debug("[OnShow] Beginning Show");
+    private void EnableIntegrations()
+    {
+        Service.Log.Debug("Enabling Integrations");
 
-			if (!ShouldShowMap()) {
-				Service.Log.Debug("[OnShow] Condition to open map is rejected, aborting.");
-				return;
-			}
-			
-			if (AgentMap.Instance()->AddonId is not 0 && AgentMap.Instance()->CurrentMapId != AgentMap.Instance()->SelectedMapId) {
-				if (!System.SystemConfig.KeepOpen) {
-					AgentMap.Instance()->Hide();
-				}
+        showMapHook?.Enable();
+        openMapHook?.Enable();
 
-				Service.Log.Debug("[OnShow] Vanilla tried to return to current map, aborted.");
-				return;
-			}
+        System.AreaMapController.EnableIntegrations();
+        System.FlagController.EnableIntegrations();
+    }
 
-			if (System.SystemConfig.KeepOpen) {
-				Service.Log.Debug("[OnShow] Keeping Open");
-				return;
-			}
+    private void DisableIntegrations()
+    {
+        Service.Log.Debug("Disabling Integrations");
 
-			showMapHook!.Original(agent, a1, a2);
-		}, Service.Log, "Exception during OnShowHook");
+        showMapHook?.Disable();
+        openMapHook?.Disable();
 
-	private void OpenMap(AgentMap* agent, OpenMapInfo* mapInfo) 
-		=> HookSafety.ExecuteSafe(() => {
-			openMapHook!.Original(agent, mapInfo);
+        System.AreaMapController.DisableIntegrations();
+        System.FlagController.DisableIntegrations();
+    }
 
-			switch (mapInfo->Type) {
-				case MapType.QuestLog:
-					ProcessQuestLink(agent, mapInfo);
-					break;
+    private void OnShowHook(AgentMap* agent, bool a1, bool a2) =>
+        HookSafety.ExecuteSafe(() =>
+        {
+            Service.Log.Debug("[OnShow] Beginning Show");
 
-				case MapType.GatheringLog:
-					ProcessGatheringLink(agent);
-					break;
+            if (!ShouldShowMap()) {
+                Service.Log.Debug("[OnShow] Condition to open map is rejected, aborting.");
+                return;
+            }
 
-				case MapType.FlagMarker:
-					ProcessFlagLink(agent);
-					break;
-				
-				case MapType.Bozja:
-					ProcessForayLink(agent, mapInfo);
-					break;
-				
-				default:
-					Service.Log.Debug("[OpenMap] Unknown MapType " + mapInfo->Type);
-					break;
-			}
-			
-			if (System.SystemConfig.AutoZoom) {
-				MapRenderer.MapRenderer.Scale = DrawHelpers.GetMapScaleFactor() * System.SystemConfig.AutoZoomScaleFactor;
-			}
-		}, Service.Log, "Exception during OpenMap");
+            if (AgentMap.Instance()->AddonId is not 0 && AgentMap.Instance()->CurrentMapId != AgentMap.Instance()->SelectedMapId) {
+                if (!System.SystemConfig.KeepOpen) {
+                    AgentMap.Instance()->Hide();
+                }
 
-	private void ProcessQuestLink(AgentMap* agent, OpenMapInfo* mapInfo) {
-		Service.Log.Debug("[OpenMap] Processing QuestLog Event");
+                Service.Log.Debug("[OnShow] Vanilla tried to return to current map, aborted.");
+                return;
+            }
 
-		var targetMapId = mapInfo->MapId;
+            if (System.SystemConfig.KeepOpen) {
+                Service.Log.Debug("[OnShow] Keeping Open");
+                return;
+            }
 
-		if (GetMapIdForQuest(mapInfo) is { } foundMapId) {
-			Service.Log.Debug($"[OpenMap] GetMapIdForQuest identified Quest Target Map as MapId: {foundMapId}");
+            showMapHook!.Original(agent, a1, a2);
+        }, Service.Log, "Exception during OnShowHook");
 
-			if (targetMapId is 0) {
-				Service.Log.Debug($"[OpenMap] targetMapId was {targetMapId} using foundMapId: {foundMapId}");
-				targetMapId = foundMapId;
-			}
-		}
+    private void OpenMap(AgentMap* agent, OpenMapInfo* mapInfo) =>
+        HookSafety.ExecuteSafe(() =>
+        {
+            openMapHook!.Original(agent, mapInfo);
 
-		if (agent->SelectedMapId != targetMapId) {
-			Service.Log.Debug($"[OpenMap] Opening MapId: {targetMapId}");
-			OpenMap(targetMapId);
-		}
-		else {
-			Service.Log.Debug($"[OpenMap] Already in MapId: {targetMapId}, aborting.");
-		}
+            switch (mapInfo->Type) {
+                case MapType.QuestLog:
+                    ProcessQuestLink(agent, mapInfo);
+                    break;
 
-		if (System.SystemConfig.CenterOnQuest) {
-			ref var targetMarker = ref agent->TempMapMarkers[0].MapMarker;
-			CenterOnMarker(targetMarker);
-			Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
-		}
+                case MapType.GatheringLog:
+                    ProcessGatheringLink(agent);
+                    break;
 
-		System.MapWindow.ProcessingCommand = true;
-	}
-	
-	private static void ProcessGatheringLink(AgentMap* agent) {
-		Service.Log.Debug("[OpenMap] Processing GatheringLog Event");
-					
-		if (System.SystemConfig.CenterOnGathering) {
-			ref var targetMarker = ref agent->TempMapMarkers[0].MapMarker;
-						
-			CenterOnMarker(targetMarker);
-			Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
-		}
-					
-		System.MapWindow.ProcessingCommand = true;
-	}
-	
-	private static void ProcessFlagLink(AgentMap* agent) {
-		Service.Log.Debug("[OpenMap] Processing FlagMarker Event");
-					
-		if (System.SystemConfig.CenterOnFlag) {
-			ref var targetMarker = ref agent->FlagMapMarkers[0].MapMarker;
-						
-			CenterOnMarker(targetMarker);
-			Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
-		}
-					
-		System.MapWindow.ProcessingCommand = true;
-	}
-	
-	private static void ProcessForayLink(AgentMap* agent, OpenMapInfo* mapInfo) {
-		Service.Log.Debug("[OpenMap] Processing Bozja Event");
+                case MapType.FlagMarker:
+                    ProcessFlagLink(agent);
+                    break;
 
-		var eventMarker = agent->EventMarkers.FirstOrNull(marker => marker.DataId == mapInfo->FateId && marker.Flags == 0x40);
-		if (eventMarker is not null) {
-			CenterOnMarker(eventMarker.Value);
-		}
-					
-		System.MapWindow.ProcessingCommand = true;
-	}
+                case MapType.Bozja:
+                    ProcessForayLink(agent, mapInfo);
+                    break;
 
-	public void OpenMap(uint mapId)
-		=> AgentMap.Instance()->OpenMapByMapId(mapId, 0, true);
+                default:
+                    Service.Log.Debug("[OpenMap] Unknown MapType " + mapInfo->Type);
+                    break;
+            }
 
-	public void OpenOccupiedMap()
-		=> OpenMap(AgentMap.Instance()->CurrentMapId);
+            if (System.SystemConfig.AutoZoom) {
+                MapRenderer.MapRenderer.Scale = DrawHelpers.GetMapScaleFactor() * System.SystemConfig.AutoZoomScaleFactor;
+            }
+        }, Service.Log, "Exception during OpenMap");
 
-	private static void CenterOnMarker(MapMarkerBase marker) {
-		var coordinates = new Vector2(marker.X, marker.Y) / 16.0f * DrawHelpers.GetMapScaleFactor() - DrawHelpers.GetMapOffsetVector();
+    private void ProcessQuestLink(AgentMap* agent, OpenMapInfo* mapInfo)
+    {
+        Service.Log.Debug("[OpenMap] Processing QuestLog Event");
 
-		System.SystemConfig.FollowPlayer = false;
-		System.MapRenderer.DrawOffset = -coordinates;
-	}
+        var targetMapId = mapInfo->MapId;
 
-	private static void CenterOnMarker(MapMarkerData marker) {
-		var coordinates = marker.Position.AsMapVector() * DrawHelpers.GetMapScaleFactor() - DrawHelpers.GetMapOffsetVector();
+        if (GetMapIdForQuest(mapInfo) is { } foundMapId) {
+            Service.Log.Debug($"[OpenMap] GetMapIdForQuest identified Quest Target Map as MapId: {foundMapId}");
 
-		System.SystemConfig.FollowPlayer = false;
-		System.MapRenderer.DrawOffset = -coordinates;
-	}
+            if (targetMapId is 0) {
+                Service.Log.Debug($"[OpenMap] targetMapId was {targetMapId} using foundMapId: {foundMapId}");
+                targetMapId = foundMapId;
+            }
+        }
 
-	public static bool ShouldShowMap() {
-		if (Service.ClientState is { IsLoggedIn: false } or { IsPvP: true }) return false;
-		if (System.SystemConfig.HideInCombat && Service.Condition.IsInCombat()) return false;
-		if (System.SystemConfig.HideBetweenAreas && Service.Condition.IsBetweenAreas()) return false;
-		if (System.SystemConfig.HideWithGameGui && !IsNamePlateAddonVisible()) return false;
-		if (System.SystemConfig.HideWithGameGui && Control.Instance()->TargetSystem.TargetModeIndex is 1) return false;
+        if (agent->SelectedMapId != targetMapId) {
+            Service.Log.Debug($"[OpenMap] Opening MapId: {targetMapId}");
+            OpenMap(targetMapId);
+        }
+        else {
+            Service.Log.Debug($"[OpenMap] Already in MapId: {targetMapId}, aborting.");
+        }
 
-		return true;
-	}
-	
-	private static bool IsNamePlateAddonVisible()
-		=> !RaptureAtkUnitManager.Instance()->UiFlags.HasFlag(UIModule.UiFlags.Nameplates);
+        if (System.SystemConfig.CenterOnQuest) {
+            ref var targetMarker = ref agent->TempMapMarkers[0].MapMarker;
+            CenterOnMarker(targetMarker);
+            Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
+        }
 
-	private uint? GetMapIdForQuest(OpenMapInfo* mapInfo) {
-		foreach (var leveQuest in QuestManager.Instance()->LeveQuests) {
-			if (leveQuest.LeveId is 0) continue;
+        System.MapWindow.ProcessingCommand = true;
+    }
 
-			var leveData = Service.DataManager.GetExcelSheet<Leve>().GetRow(leveQuest.LeveId);
-			if (!IsNameMatch(leveData.Name.ExtractText(), mapInfo)) continue;
+    private static void ProcessGatheringLink(AgentMap* agent)
+    {
+        Service.Log.Debug("[OpenMap] Processing GatheringLog Event");
 
-			return leveData.LevelStart.Value.Map.RowId;
-		}
-		
-		foreach (var quest in QuestManager.Instance()->NormalQuests) {
-			if (quest.QuestId is 0) continue;
-			
-			// Is this the quest we are looking for?
-			var questData = Service.DataManager.GetExcelSheet<Quest>().GetRow(quest.QuestId + 65536u);
-			if (!IsNameMatch(questData.Name.ExtractText(), mapInfo)) continue;
+        if (System.SystemConfig.CenterOnGathering) {
+            ref var targetMarker = ref agent->TempMapMarkers[0].MapMarker;
 
-			return questData
-				.TodoParams.FirstOrDefault(param => param.ToDoCompleteSeq == quest.Sequence)
-				.ToDoLocation.FirstOrDefault(location => location is not { RowId: 0, ValueNullable: null })
-				.Value.Map.RowId;
-		}
-		
-		var possibleQuests = Service.DataManager.GetExcelSheet<Quest>()
-			.Where(quest => quest is { IssuerLocation: { IsValid: true, RowId: not 0 } }).FirstOrNull(quest => IsNameMatch(quest.Name.ExtractText(), mapInfo));
+            CenterOnMarker(targetMarker);
+            Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
+        }
 
-		return possibleQuests?.IssuerLocation.Value.Map.RowId ?? null;
-	}
+        System.MapWindow.ProcessingCommand = true;
+    }
 
-	private static bool IsNameMatch(string name, OpenMapInfo* mapInfo) 
-		=> string.Equals(name, mapInfo->TitleString.ToString(), StringComparison.OrdinalIgnoreCase);
+    private static void ProcessFlagLink(AgentMap* agent)
+    {
+        Service.Log.Debug("[OpenMap] Processing FlagMarker Event");
 
-	// public Vector3 GetLgbEventObjPos(uint lgbEventObjId) {
-	// 	var layout = LayoutWorld.Instance()->ActiveLayout;
-	// 	
-	// 	if (layout == null) return default;
-	// 	
-	// 	if (!layout->InstancesByType.TryGetValue(InstanceType.EventObject, out var map, false))
-	// 		return default;
-	// 	
-	// 	if (!map.Value->TryGetValue((ulong)lgbEventObjId << 32, out var pInstance, false))
-	// 		
-	// 		return default;
-	// 	return pInstance.Value->GetTransformImpl()->Translation;
-	// }
+        if (System.SystemConfig.CenterOnFlag) {
+            ref var targetMarker = ref agent->FlagMapMarkers[0].MapMarker;
+
+            CenterOnMarker(targetMarker);
+            Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
+        }
+
+        System.MapWindow.ProcessingCommand = true;
+    }
+
+    private static void ProcessForayLink(AgentMap* agent, OpenMapInfo* mapInfo)
+    {
+        Service.Log.Debug("[OpenMap] Processing Bozja Event");
+
+        var eventMarker = agent->EventMarkers.FirstOrNull(marker => marker.DataId == mapInfo->FateId && marker.Flags == 0x40);
+        if (eventMarker is not null) {
+            CenterOnMarker(eventMarker.Value);
+        }
+
+        System.MapWindow.ProcessingCommand = true;
+    }
+
+    public void OpenMap(uint mapId) => AgentMap.Instance()->OpenMapByMapId(mapId, 0, true);
+
+    public void OpenOccupiedMap() => OpenMap(AgentMap.Instance()->CurrentMapId);
+
+    private static void CenterOnMarker(MapMarkerBase marker)
+    {
+        var coordinates = new Vector2(marker.X, marker.Y) / 16.0f * DrawHelpers.GetMapScaleFactor() - DrawHelpers.GetMapOffsetVector();
+
+        System.SystemConfig.FollowPlayer = false;
+        System.MapRenderer.DrawOffset = -coordinates;
+    }
+
+    private static void CenterOnMarker(MapMarkerData marker)
+    {
+        var coordinates = marker.Position.AsMapVector() * DrawHelpers.GetMapScaleFactor() - DrawHelpers.GetMapOffsetVector();
+
+        System.SystemConfig.FollowPlayer = false;
+        System.MapRenderer.DrawOffset = -coordinates;
+    }
+
+    public static bool ShouldShowMap()
+    {
+        if (Service.ClientState is { IsLoggedIn: false } or { IsPvP: true }) return false;
+        if (System.SystemConfig.HideInCombat && Service.Condition.IsInCombat()) return false;
+        if (System.SystemConfig.HideBetweenAreas && Service.Condition.IsBetweenAreas()) return false;
+        if (System.SystemConfig.HideWithGameGui && !IsNamePlateAddonVisible()) return false;
+        if (System.SystemConfig.HideWithGameGui && Control.Instance()->TargetSystem.TargetModeIndex is 1) return false;
+
+        return true;
+    }
+
+    private static bool IsNamePlateAddonVisible() => !RaptureAtkUnitManager.Instance()->UiFlags.HasFlag(UIModule.UiFlags.Nameplates);
+
+    private uint? GetMapIdForQuest(OpenMapInfo* mapInfo)
+    {
+        foreach (var leveQuest in QuestManager.Instance()->LeveQuests) {
+            if (leveQuest.LeveId is 0) continue;
+
+            var leveData = Service.DataManager.GetExcelSheet<Leve>().GetRow(leveQuest.LeveId);
+            if (!IsNameMatch(leveData.Name.ExtractText(), mapInfo)) continue;
+
+            return leveData.LevelStart.Value.Map.RowId;
+        }
+
+        foreach (var quest in QuestManager.Instance()->NormalQuests) {
+            if (quest.QuestId is 0) continue;
+
+            // Is this the quest we are looking for?
+            var questData = Service.DataManager.GetExcelSheet<Quest>().GetRow(quest.QuestId + 65536u);
+            if (!IsNameMatch(questData.Name.ExtractText(), mapInfo)) continue;
+
+            return questData
+                .TodoParams.FirstOrDefault(param => param.ToDoCompleteSeq == quest.Sequence)
+                .ToDoLocation.FirstOrDefault(location => location is not { RowId: 0, ValueNullable: null })
+                .Value.Map.RowId;
+        }
+
+        var possibleQuests = Service.DataManager.GetExcelSheet<Quest>()
+            .Where(quest => quest is { IssuerLocation: { IsValid: true, RowId: not 0 } }).FirstOrNull(quest => IsNameMatch(quest.Name.ExtractText(), mapInfo));
+
+        return possibleQuests?.IssuerLocation.Value.Map.RowId ?? null;
+    }
+
+    private static bool IsNameMatch(string name, OpenMapInfo* mapInfo) => string.Equals(name, mapInfo->TitleString.ToString(), StringComparison.OrdinalIgnoreCase);
+
+    // public Vector3 GetLgbEventObjPos(uint lgbEventObjId) {
+    // 	var layout = LayoutWorld.Instance()->ActiveLayout;
+    //
+    // 	if (layout == null) return default;
+    //
+    // 	if (!layout->InstancesByType.TryGetValue(InstanceType.EventObject, out var map, false))
+    // 		return default;
+    //
+    // 	if (!map.Value->TryGetValue((ulong)lgbEventObjId << 32, out var pInstance, false))
+    //
+    // 		return default;
+    // 	return pInstance.Value->GetTransformImpl()->Translation;
+    // }
 }

@@ -4,9 +4,12 @@ using Mappy.Classes;
 
 namespace Mappy.Extensions;
 
-public static class TempMapMarkerExtensions {
-    public static void Draw(this TempMapMarker marker, Vector2 offset, float scale) {
-        DrawHelpers.DrawMapMarker(new MarkerInfo {
+public static class TempMapMarkerExtensions
+{
+    public static void Draw(this TempMapMarker marker, Vector2 offset, float scale)
+    {
+        DrawHelpers.DrawMapMarker(new MarkerInfo
+        {
             // Divide by 16, as it seems they use a fixed scalar
             // Add 1024 * scale, to offset from top-left, to center-based coordinate
             // Add offset for drawing relative to map when its moved around

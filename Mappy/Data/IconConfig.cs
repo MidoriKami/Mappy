@@ -6,7 +6,8 @@ using KamiLib.Configuration;
 
 namespace Mappy.Data;
 
-public class IconSetting {
+public class IconSetting
+{
     public required uint IconId { get; set; }
     public bool Hide;
     public bool AllowTooltip = true;
@@ -14,7 +15,8 @@ public class IconSetting {
     public bool AllowClick = true;
     public Vector4 Color = KnownColor.White.Vector();
 
-    public void Reset() {
+    public void Reset()
+    {
         Hide = false;
         AllowTooltip = true;
         Scale = 1.0f;
@@ -23,12 +25,11 @@ public class IconSetting {
     }
 }
 
-public class IconConfig {
+public class IconConfig
+{
     public Dictionary<uint, IconSetting> IconSettingMap = [];
-    
-    public static IconConfig Load() 
-        => Service.PluginInterface.LoadConfigFile("Icons.config.json", () => new IconConfig());
 
-    public void Save()
-        => Service.PluginInterface.SaveConfigFile("Icons.config.json", System.IconConfig);
+    public static IconConfig Load() => Service.PluginInterface.LoadConfigFile("Icons.config.json", () => new IconConfig());
+
+    public void Save() => Service.PluginInterface.SaveConfigFile("Icons.config.json", System.IconConfig);
 }

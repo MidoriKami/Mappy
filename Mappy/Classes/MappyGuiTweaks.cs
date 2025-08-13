@@ -4,8 +4,10 @@ using Dalamud.Interface.Utility.Raii;
 
 namespace Mappy.Classes;
 
-public static class MappyGuiTweaks {
-    public static bool IconButton(FontAwesomeIcon icon, string id, string? tooltip) {
+public static class MappyGuiTweaks
+{
+    public static bool IconButton(FontAwesomeIcon icon, string id, string? tooltip)
+    {
         using var imRaiiId = ImRaii.PushId(id);
 
         bool result;

@@ -8,11 +8,14 @@ using Mappy.Classes;
 namespace Mappy.Extensions;
 
 // Represents standard non-dynamic map markers, things that don't change, and may reference datasheet data with their key data
-public static class MapMarkerBaseExtensions {
-    public static void Draw(this MapMarkerBase marker, Vector2 offset, float scale) {
+public static class MapMarkerBaseExtensions
+{
+    public static void Draw(this MapMarkerBase marker, Vector2 offset, float scale)
+    {
         var tooltipText = marker.Subtext.AsDalamudSeString();
-        
-        DrawHelpers.DrawMapMarker(new MarkerInfo {
+
+        DrawHelpers.DrawMapMarker(new MarkerInfo
+        {
             // Divide by 16, as it seems they use a fixed scalar
             // Add 1024 * scale, to offset from top-left, to center-based coordinate
             // Add offset for drawing relative to map when its moved around
@@ -22,7 +25,8 @@ public static class MapMarkerBaseExtensions {
             Radius = marker.Scale,
             RadiusColor = KnownColor.MediumPurple.Vector(),
             IconId = marker.IconId,
-            PrimaryText = () => tooltipText.TextValue.IsNullOrEmpty() && System.SystemConfig.ShowMiscTooltips ? System.TooltipCache.GetValue(marker.IconId) : tooltipText.ToString(),
+            PrimaryText =
+                () => tooltipText.TextValue.IsNullOrEmpty() && System.SystemConfig.ShowMiscTooltips ? System.TooltipCache.GetValue(marker.IconId) : tooltipText.ToString(),
         });
     }
 }

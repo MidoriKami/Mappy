@@ -7,8 +7,10 @@ using FFXIVClientStructs.Interop;
 
 namespace Mappy.Extensions;
 
-public static unsafe class FateContextExtensions {
-    public static Vector4 GetColor(this Pointer<FateContext> context, float alpha = 0.33f) {
+public static unsafe class FateContextExtensions
+{
+    public static Vector4 GetColor(this Pointer<FateContext> context, float alpha = 0.33f)
+    {
         var timeRemaining = GetTimeRemaining(context);
         if (timeRemaining <= TimeSpan.FromSeconds(300) && timeRemaining.TotalSeconds > 0) {
             var hue = (float)(timeRemaining.TotalSeconds / 300.0f * 25.0f);
@@ -20,9 +22,10 @@ public static unsafe class FateContextExtensions {
         return KnownColor.White.Vector();
     }
 
-    public static TimeSpan GetTimeRemaining(this Pointer<FateContext> context) {
+    public static TimeSpan GetTimeRemaining(this Pointer<FateContext> context)
+    {
         if (context.Value->Duration is 0) return TimeSpan.Zero;
-        
+
         return TimeSpan.FromSeconds(context.Value->StartTimeEpoch + context.Value->Duration - DateTimeOffset.Now.ToUnixTimeSeconds());
     }
 }

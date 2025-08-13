@@ -16,31 +16,34 @@ using Mappy.Data;
 
 namespace Mappy.Windows;
 
-public class ConfigurationWindow : Window {
+public class ConfigurationWindow : Window
+{
     private readonly TabBar tabBar = new("mappy_tab_bar", [
         new IconConfigurationTab(),
         new MapFunctionsTab(),
         new StyleOptionsTab(),
         new PlayerOptionsTab(),
     ]);
-    
-    public ConfigurationWindow() : base("Mappy Configuration Window", new Vector2(500.0f, 580.0f)) {
-        System.CommandManager.RegisterCommand(new CommandHandler {
-            Delegate = _ => System.ConfigWindow.Toggle(),
-            ActivationPath = "/",
+
+    public ConfigurationWindow() : base("Mappy Configuration Window", new Vector2(500.0f, 580.0f))
+    {
+        System.CommandManager.RegisterCommand(new CommandHandler
+        {
+            Delegate = _ => System.ConfigWindow.Toggle(), ActivationPath = "/",
         });
     }
-    
-    protected override void DrawContents() 
-        => tabBar.Draw();
+
+    protected override void DrawContents() => tabBar.Draw();
 }
 
-public class MapFunctionsTab : ITabItem {
+public class MapFunctionsTab : ITabItem
+{
     public string Name => "Map Functions";
-    
+
     public bool Disabled => false;
-    
-    public void Draw() {
+
+    public void Draw()
+    {
         var configChanged = false;
 
         ImGuiTweaks.Header("Zoom Options");
@@ -48,82 +51,83 @@ public class MapFunctionsTab : ITabItem {
             configChanged |= ImGui.Checkbox("Use Linear Zoom", ref System.SystemConfig.UseLinearZoom);
             configChanged |= ImGui.Checkbox("Scale icons with zoom", ref System.SystemConfig.ScaleWithZoom);
             configChanged |= ImGui.Checkbox("Scale text labels with zoom", ref System.SystemConfig.ScaleTextWithZoom);
-            
+
             ImGuiHelpers.ScaledDummy(5.0f);
-            
+
             configChanged |= ImGuiTweaks.Checkbox("Auto Zoom", ref System.SystemConfig.AutoZoom, "Automatically sets zoom to a reasonable value relative to the map size.");
             configChanged |= ImGui.SliderFloat("Auto Zoom Scale Factor", ref System.SystemConfig.AutoZoomScaleFactor, 0.20f, 1.00f);
-            
+
             ImGuiHelpers.ScaledDummy(5.0f);
-            
+
             configChanged |= ImGui.SliderFloat("Zoom Speed", ref System.SystemConfig.ZoomSpeed, 0.001f, 0.500f);
             configChanged |= ImGui.SliderFloat("Icon Scale", ref System.SystemConfig.IconScale, 0.10f, 3.0f);
         }
-        
+
         ImGuiTweaks.Header("When Opening Map");
         using (ImRaii.PushIndent()) {
-            configChanged |= ImGui.Checkbox("Follow On Open", ref System.SystemConfig.FollowOnOpen);   
-            
+            configChanged |= ImGui.Checkbox("Follow On Open", ref System.SystemConfig.FollowOnOpen);
+
             ImGuiHelpers.ScaledDummy(5.0f);
 
             DrawCenterModeRadio();
         }
-        
+
         ImGuiTweaks.Header("Link Behaviors");
         using (ImRaii.PushIndent()) {
             configChanged |= ImGui.Checkbox("Center on Flags", ref System.SystemConfig.CenterOnFlag);
             configChanged |= ImGui.Checkbox("Center on Gathering Areas", ref System.SystemConfig.CenterOnGathering);
             configChanged |= ImGui.Checkbox("Center on Quest", ref System.SystemConfig.CenterOnQuest);
         }
-        
+
         ImGuiTweaks.Header("Misc Options");
         using (ImRaii.PushIndent()) {
             configChanged |= ImGui.Checkbox("Show Misc Tooltips", ref System.SystemConfig.ShowMiscTooltips);
             configChanged |= ImGui.Checkbox("Lock Map on Center", ref System.SystemConfig.LockCenterOnMap);
             configChanged |= ImGui.Checkbox("Show Other Players", ref System.SystemConfig.ShowPlayers);
             configChanged |= ImGui.Checkbox("Disable Map Focus on Appear", ref System.SystemConfig.NoFocusOnAppear);
-            
+
             ImGuiHelpers.ScaledDummy(5.0f);
-            
+
             configChanged |= ImGui.Checkbox("Show Text Labels", ref System.SystemConfig.ShowTextLabels);
             configChanged |= ImGui.DragFloat("Large Label Scale", ref System.SystemConfig.LargeAreaTextScale, 0.01f, 1.0f, 4.0f);
             configChanged |= ImGui.DragFloat("Small Label Scale", ref System.SystemConfig.SmallAreaTextScale, 0.01f, 0.5f, 3.0f);
-            
+
             ImGuiHelpers.ScaledDummy(5.0f);
-            
+
             configChanged |= ImGui.Checkbox("Show Fog of War", ref System.SystemConfig.ShowFogOfWar);
 
             ImGuiHelpers.ScaledDummy(5.0f);
-            
+
             configChanged |= ImGui.Checkbox("Debug Mode", ref System.SystemConfig.DebugMode);
         }
-        
+
         ImGuiTweaks.Header("Toolbar");
         using (ImRaii.PushIndent()) {
             configChanged |= ImGui.Checkbox("Always Show", ref System.SystemConfig.AlwaysShowToolbar);
             configChanged |= ImGui.Checkbox("Show On Hover", ref System.SystemConfig.ShowToolbarOnHover);
-            
+
             ImGuiHelpers.ScaledDummy(5.0f);
             configChanged |= ImGui.DragFloat("Opacity##toolbar", ref System.SystemConfig.ToolbarFade, 0.01f, 0.0f, 1.0f);
         }
-        
+
         ImGuiTweaks.Header("Coordinates");
         using (ImRaii.PushIndent()) {
             configChanged |= ImGui.Checkbox("Show Coordinate Bar", ref System.SystemConfig.ShowCoordinateBar);
-            
+
             ImGuiHelpers.ScaledDummy(5.0f);
             configChanged |= ImGuiTweaks.ColorEditWithDefault("Text Color", ref System.SystemConfig.CoordinateTextColor, KnownColor.White.Vector());
 
             ImGuiHelpers.ScaledDummy(5.0f);
             configChanged |= ImGui.DragFloat("Opacity##coordinatebar", ref System.SystemConfig.CoordinateBarFade, 0.01f, 0.0f, 1.0f);
         }
-        
+
         if (configChanged) {
             SystemConfig.Save();
         }
     }
-    
-    private void DrawCenterModeRadio() {
+
+    private void DrawCenterModeRadio()
+    {
         var enumObject = System.SystemConfig.CenterOnOpen;
         var firstLine = true;
 
@@ -131,26 +135,28 @@ public class MapFunctionsTab : ITabItem {
             if (!firstLine) ImGui.SameLine();
 
             if (ImGui.RadioButton(enumValue.GetDescription(), enumValue.Equals(enumObject))) {
-                System.SystemConfig.CenterOnOpen = (CenterTarget) enumValue;
+                System.SystemConfig.CenterOnOpen = (CenterTarget)enumValue;
                 SystemConfig.Save();
             }
 
             firstLine = false;
         }
-        
-        ImGui.SameLine(); 
+
+        ImGui.SameLine();
         ImGui.Text("\t\tCenter on Open");
     }
 }
 
-public class StyleOptionsTab : ITabItem {
+public class StyleOptionsTab : ITabItem
+{
     public string Name => "Style";
-    
+
     public bool Disabled => false;
-    
-    public void Draw() {
+
+    public void Draw()
+    {
         var configChanged = false;
-        
+
         ImGuiTweaks.Header("Window Options");
         using (ImRaii.PushIndent()) {
             configChanged |= ImGui.Checkbox("Keep Open", ref System.SystemConfig.KeepOpen);
@@ -159,14 +165,14 @@ public class StyleOptionsTab : ITabItem {
             configChanged |= ImGui.Checkbox("Hide Window Background", ref System.SystemConfig.HideWindowBackground);
             configChanged |= ImGui.Checkbox("Enable Shift + Drag to Move Window Frame", ref System.SystemConfig.EnableShiftDragMove);
         }
-        
+
         ImGuiTweaks.Header("Window Hiding");
         using (ImRaii.PushIndent()) {
             configChanged |= ImGui.Checkbox("Hide With Game GUI", ref System.SystemConfig.HideWithGameGui);
             configChanged |= ImGui.Checkbox("Hide Between Areas", ref System.SystemConfig.HideBetweenAreas);
             configChanged |= ImGui.Checkbox("Hide in Combat", ref System.SystemConfig.HideInCombat);
         }
-        
+
         ImGuiTweaks.Header("Window Title");
         using (ImRaii.PushIndent()) {
             configChanged |= ImGui.Checkbox("Show Region Text", ref System.SystemConfig.ShowRegionLabel);
@@ -174,13 +180,13 @@ public class StyleOptionsTab : ITabItem {
             configChanged |= ImGui.Checkbox("Show Area Text", ref System.SystemConfig.ShowAreaLabel);
             configChanged |= ImGui.Checkbox("Show Sub-Area Text", ref System.SystemConfig.ShowSubAreaLabel);
         }
-        
+
         ImGuiTweaks.Header("Window Location");
         using (ImRaii.PushIndent()) {
             configChanged |= ImGui.DragFloat2("Window Position", ref System.SystemConfig.WindowPosition);
             configChanged |= ImGui.DragFloat2("Window Size", ref System.SystemConfig.WindowSize);
         }
-        
+
         ImGuiTweaks.Header("Fade Options");
         using (ImRaii.PushIndent()) {
             using (var columns = ImRaii.Table("fade_options_toggles", 2)) {
@@ -196,28 +202,30 @@ public class StyleOptionsTab : ITabItem {
                         var targetValue = Convert.ToInt32(enumValue);
 
                         if (value.HasFlag(enumValue)) {
-                            System.SystemConfig.FadeMode = (FadeMode) Enum.ToObject(value.GetType(), sourceValue & ~targetValue);
+                            System.SystemConfig.FadeMode = (FadeMode)Enum.ToObject(value.GetType(), sourceValue & ~targetValue);
                         }
                         else {
-                            System.SystemConfig.FadeMode = (FadeMode) Enum.ToObject(value.GetType(), sourceValue | targetValue);
+                            System.SystemConfig.FadeMode = (FadeMode)Enum.ToObject(value.GetType(), sourceValue | targetValue);
                         }
 
                         configChanged = true;
                     }
+
                     ImGui.SameLine();
                     ImGui.TextUnformatted(enumValue.GetDescription());
 
                     ImGui.TableNextColumn();
-                } 
+                }
             }
 
             configChanged |= ImGui.DragFloat("Fade Opacity", ref System.SystemConfig.FadePercent, 0.01f, 0.05f, 1.0f);
         }
-        
+
         ImGuiTweaks.Header("Area Style");
         using (ImRaii.PushIndent()) {
             configChanged |= ImGuiTweaks.ColorEditWithDefault("Area Color", ref System.SystemConfig.AreaColor, KnownColor.CornflowerBlue.Vector() with { W = 0.33f });
-            configChanged |= ImGuiTweaks.ColorEditWithDefault("Area Outline Color", ref System.SystemConfig.AreaOutlineColor, KnownColor.CornflowerBlue.Vector() with { W = 0.30f });
+            configChanged |= ImGuiTweaks.ColorEditWithDefault("Area Outline Color", ref System.SystemConfig.AreaOutlineColor,
+                KnownColor.CornflowerBlue.Vector() with { W = 0.30f });
         }
 
         if (configChanged) {
@@ -225,21 +233,23 @@ public class StyleOptionsTab : ITabItem {
                 System.SystemConfig.WindowSize.X = MathF.Max(System.SystemConfig.WindowSize.X, constraints.MinimumSize.X);
                 System.SystemConfig.WindowSize.Y = MathF.Max(System.SystemConfig.WindowSize.Y, constraints.MinimumSize.Y);
             }
-            
+
             System.MapWindow.RefreshTitle();
             SystemConfig.Save();
         }
     }
 }
 
-public class PlayerOptionsTab : ITabItem {
+public class PlayerOptionsTab : ITabItem
+{
     public string Name => "Player";
-    
+
     public bool Disabled => false;
-    
-    public void Draw() {
+
+    public void Draw()
+    {
         var configChanged = false;
-        
+
         ImGuiTweaks.Header("Cone Options");
         using (ImRaii.PushIndent()) {
             configChanged |= ImGui.Checkbox("Scale Player Cone", ref System.SystemConfig.ScalePlayerCone);
@@ -249,24 +259,25 @@ public class PlayerOptionsTab : ITabItem {
 
             ImGuiHelpers.ScaledDummy(5.0f);
             configChanged |= ImGuiTweaks.ColorEditWithDefault("Cone Color", ref System.SystemConfig.PlayerConeColor, KnownColor.CornflowerBlue.Vector() with { W = 0.33f });
-            configChanged |= ImGuiTweaks.ColorEditWithDefault("Cone Outline Color", ref System.SystemConfig.PlayerConeOutlineColor, KnownColor.CornflowerBlue.Vector() with { W = 1.00f });
+            configChanged |= ImGuiTweaks.ColorEditWithDefault("Cone Outline Color", ref System.SystemConfig.PlayerConeOutlineColor,
+                KnownColor.CornflowerBlue.Vector() with { W = 1.00f });
         }
-        
+
         ImGuiTweaks.Header("Radar Options");
         using (ImRaii.PushIndent()) {
             configChanged |= ImGui.Checkbox("Show Radar Radius", ref System.SystemConfig.ShowRadar);
             configChanged |= ImGui.Checkbox("Show in Duties", ref System.SystemConfig.ShowRadarInDuties);
 
             ImGuiHelpers.ScaledDummy(5.0f);
-            
+
             configChanged |= ImGuiTweaks.ColorEditWithDefault("Radar Area Color", ref System.SystemConfig.RadarColor, KnownColor.Gray.Vector() with { W = 0.10f });
             configChanged |= ImGuiTweaks.ColorEditWithDefault("Radar Outline Color", ref System.SystemConfig.RadarOutlineColor, KnownColor.Gray.Vector() with { W = 0.30f });
         }
-        
+
         ImGuiTweaks.Header("Player Icon Options");
         using (ImRaii.PushIndent()) {
             configChanged |= ImGui.Checkbox("Show Player Icon", ref System.SystemConfig.ShowPlayerIcon);
-            
+
             ImGuiHelpers.ScaledDummy(5.0f);
             configChanged |= ImGui.DragFloat("Player Icon Size", ref System.SystemConfig.PlayerIconScale, 0.05f);
         }
@@ -277,19 +288,21 @@ public class PlayerOptionsTab : ITabItem {
     }
 }
 
-public class IconConfigurationTab : ITabItem {
+public class IconConfigurationTab : ITabItem
+{
     public string Name => "Icon Settings";
-    
+
     public bool Disabled => false;
 
     private IconSetting? currentSetting;
 
-    public void Draw() {
-        using (var leftChild = ImRaii.Child("left_child", new Vector2(48.0f * ImGuiHelpers.GlobalScale + ImGui.GetStyle().ItemSpacing.X , ImGui.GetContentRegionAvail().Y))) {
+    public void Draw()
+    {
+        using (var leftChild = ImRaii.Child("left_child", new Vector2(48.0f * ImGuiHelpers.GlobalScale + ImGui.GetStyle().ItemSpacing.X, ImGui.GetContentRegionAvail().Y))) {
             if (leftChild) {
                 using var selectionList = ImRaii.ListBox("iconSelection", ImGui.GetContentRegionAvail());
-            
-                foreach (var (iconId, settings) in System.IconConfig.IconSettingMap.OrderBy(pairData =>  pairData.Key)) {
+
+                foreach (var (iconId, settings) in System.IconConfig.IconSettingMap.OrderBy(pairData => pairData.Key)) {
                     if (iconId is 0) continue;
                     if (DrawHelpers.IsDisallowedIcon(iconId)) continue;
 
@@ -297,16 +310,16 @@ public class IconConfigurationTab : ITabItem {
                     var cursorStart = ImGui.GetCursorScreenPos();
                     if (ImGui.Selectable($"##iconSelect{iconId}", currentSetting == settings, ImGuiSelectableFlags.None, ImGuiHelpers.ScaledVector2(32.0f, 32.0f))) {
                         currentSetting = currentSetting == settings ? null : settings;
-                    }  
-                
+                    }
+
                     ImGui.SetCursorScreenPos(cursorStart);
                     ImGui.Image(texture.Handle, texture.Size / 2.0f * ImGuiHelpers.GlobalScale);
-                } 
+                }
             }
         }
-        
+
         ImGui.SameLine();
-       
+
         using (var rightChild = ImRaii.Child("right_child", ImGui.GetContentRegionAvail(), false, ImGuiWindowFlags.NoScrollbar)) {
             if (rightChild) {
                 if (currentSetting is null) {
@@ -325,17 +338,17 @@ public class IconConfigurationTab : ITabItem {
                         var remainingSpace = ImGui.GetContentRegionAvail().X - smallestAxis;
                         ImGui.SetCursorPosX(remainingSpace / 2.0f);
                     }
-                
+
                     ImGui.Image(texture.Handle, new Vector2(smallestAxis, smallestAxis), Vector2.Zero, Vector2.One, new Vector4(1.0f, 1.0f, 1.0f, 0.20f));
                     ImGui.SetCursorPos(Vector2.Zero);
-                    
+
                     // Draw settings
                     ImGuiTweaks.Header($"Configure Marker #{currentSetting.IconId}");
                     using (ImRaii.PushIndent()) {
                         settingsChanged |= ImGui.Checkbox("Hide Icon", ref currentSetting.Hide);
                         settingsChanged |= ImGui.Checkbox("Allow Tooltip", ref currentSetting.AllowTooltip);
                         settingsChanged |= ImGui.Checkbox("Allow Click Interaction", ref currentSetting.AllowClick);
-                
+
                         ImGuiHelpers.ScaledDummy(5.0f);
                         settingsChanged |= ImGuiTweaks.ColorEditWithDefault("Color", ref currentSetting.Color, KnownColor.White.Vector());
 
@@ -348,7 +361,7 @@ public class IconConfigurationTab : ITabItem {
                         currentSetting.Reset();
                         System.IconConfig.Save();
                     }
-                
+
                     if (settingsChanged) {
                         System.IconConfig.Save();
                     }

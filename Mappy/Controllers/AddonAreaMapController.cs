@@ -8,121 +8,133 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiLib.Classes;
 using KamiLib.CommandManager;
 using KamiLib.Extensions;
-using Mappy.Windows;
 using Mappy.Extensions;
+using Mappy.Windows;
 
 namespace Mappy.Controllers;
 
-public unsafe class AddonAreaMapController :IDisposable {
-	private Hook<AddonAreaMap.Delegates.Show>? showAreaMapHook;
-	private Hook<AddonAreaMap.Delegates.Hide>? hideAreaMapHook;
-	
-	public AddonAreaMapController() {
-		Service.Log.Debug("Beginning Listening for AddonAreaMap");
-		Service.Framework.Update += AddonAreaMapListener;
-		
-		Service.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, "AreaMap", OnAreaMapDraw);
-		
-		// Add a special error handler for the case that somehow the addon is stuck offscreen
-		System.CommandManager.RegisterCommand(new CommandHandler {
-			ActivationPath = "/areamap/reset",
-			Delegate = _ => {
-				var addon = Service.GameGui.GetAddonByName<AddonAreaMap>("AreaMap");
-				if (addon is not null && addon->RootNode is not null) {
-					addon->RootNode->SetPositionFloat(addon->X, addon->Y);
-				}
-			},
-		});
-	}
+public unsafe class AddonAreaMapController : IDisposable
+{
+    private Hook<AddonAreaMap.Delegates.Show>? showAreaMapHook;
+    private Hook<AddonAreaMap.Delegates.Hide>? hideAreaMapHook;
 
-	private void AddonAreaMapListener(IFramework framework) {
-		var addonAreaMap = Service.GameGui.GetAddonByName<AddonAreaMap>("AreaMap");
-		if (addonAreaMap is not null) {
-			Service.Log.Debug("AddonAreaMap Found, Hooking");
-			
-			HookAreaMapFunctions(addonAreaMap);
-			
-			Service.Log.Debug("Finished Listening for AddonAreaMap");
-			Service.Framework.Update -= AddonAreaMapListener;
-		}
-	}
+    public AddonAreaMapController()
+    {
+        Service.Log.Debug("Beginning Listening for AddonAreaMap");
+        Service.Framework.Update += AddonAreaMapListener;
 
-	public void Dispose() {
-		Service.AddonLifecycle.UnregisterListener(OnAreaMapDraw);
-		Service.Framework.Update -= AddonAreaMapListener;
-		
-		showAreaMapHook?.Dispose();
-		hideAreaMapHook?.Dispose();
-		
-		// Reset windows root node position on dispose
-		var addonAreaMap = Service.GameGui.GetAddonByName<AddonAreaMap>("AreaMap");
-		if (addonAreaMap is not null) {
-			addonAreaMap->RootNode->SetPositionFloat(addonAreaMap->X, addonAreaMap->Y);
-		}
-	}
+        Service.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, "AreaMap", OnAreaMapDraw);
 
-	public void EnableIntegrations() {
-		showAreaMapHook?.Enable();
-		hideAreaMapHook?.Enable();
-	}
+        // Add a special error handler for the case that somehow the addon is stuck offscreen
+        System.CommandManager.RegisterCommand(new CommandHandler
+        {
+            ActivationPath = "/areamap/reset",
+            Delegate = _ =>
+            {
+                var addon = Service.GameGui.GetAddonByName<AddonAreaMap>("AreaMap");
+                if (addon is not null && addon->RootNode is not null) {
+                    addon->RootNode->SetPositionFloat(addon->X, addon->Y);
+                }
+            },
+        });
+    }
 
-	public void DisableIntegrations() {
-		showAreaMapHook?.Disable();
-		hideAreaMapHook?.Disable();
-	}
+    private void AddonAreaMapListener(IFramework framework)
+    {
+        var addonAreaMap = Service.GameGui.GetAddonByName<AddonAreaMap>("AreaMap");
+        if (addonAreaMap is not null) {
+            Service.Log.Debug("AddonAreaMap Found, Hooking");
 
-	private void HookAreaMapFunctions(AddonAreaMap* areaMap) {
-		showAreaMapHook = Service.Hooker.HookFromAddress<AddonAreaMap.Delegates.Show>(areaMap->VirtualTable->Show, OnAreaMapShow);
-		hideAreaMapHook = Service.Hooker.HookFromAddress<AddonAreaMap.Delegates.Hide>(areaMap->VirtualTable->Hide, OnAreaMapHide);
+            HookAreaMapFunctions(addonAreaMap);
 
-		if (Service.ClientState is { IsPvP: false }) {
-			EnableIntegrations();
-		}
-	}
+            Service.Log.Debug("Finished Listening for AddonAreaMap");
+            Service.Framework.Update -= AddonAreaMapListener;
+        }
+    }
 
-	private void OnAreaMapShow(AddonAreaMap* thisPtr, bool silenceOpenSoundEffect, uint unsetShowHideFlags)
-		=> HookSafety.ExecuteSafe(() => {
-			Service.Log.Debug("[AreaMap] OnAreaMapShow");
-		
-			System.WindowManager.GetWindow<MapWindow>()?.Open();
-			showAreaMapHook!.Original(thisPtr, silenceOpenSoundEffect, unsetShowHideFlags);
-		}, Service.Log, "Exception during OnAreaMapShow");
+    public void Dispose()
+    {
+        Service.AddonLifecycle.UnregisterListener(OnAreaMapDraw);
+        Service.Framework.Update -= AddonAreaMapListener;
 
-	private void OnAreaMapHide(AddonAreaMap* thisPtr, bool unkBool, bool callHideCallback, uint setShowHideFlags) 		
-		=> HookSafety.ExecuteSafe(() => {
-			Service.Log.Debug("[AreaMap] OnAreaMapHide");
+        showAreaMapHook?.Dispose();
+        hideAreaMapHook?.Dispose();
 
-			if (System.SystemConfig.KeepOpen) {
-				Service.Log.Debug("[AreaMap] Keeping Open");
-				return;
-			}
-			
-			hideAreaMapHook!.Original(thisPtr, unkBool, callHideCallback, setShowHideFlags);
+        // Reset windows root node position on dispose
+        var addonAreaMap = Service.GameGui.GetAddonByName<AddonAreaMap>("AreaMap");
+        if (addonAreaMap is not null) {
+            addonAreaMap->RootNode->SetPositionFloat(addonAreaMap->X, addonAreaMap->Y);
+        }
+    }
 
-			// If the window actually considered closed by the agent.
-			if (AgentMap.Instance()->AddonId is 0) {
-				System.WindowManager.GetWindow<MapWindow>()?.Close();
-			}
-			
-		}, Service.Log, "Exception during OnAreaMapHide");
+    public void EnableIntegrations()
+    {
+        showAreaMapHook?.Enable();
+        hideAreaMapHook?.Enable();
+    }
 
-	private void OnAreaMapDraw(AddonEvent type, AddonArgs args) {
-		var addon = args.GetAddon<AddonAreaMap>();
-		
-		if (Service.ClientState is { IsPvP: true }) {
-			if (addon->IsOffscreen()) {
-				addon->RestorePosition();
-			}
-			return;
-		}
+    public void DisableIntegrations()
+    {
+        showAreaMapHook?.Disable();
+        hideAreaMapHook?.Disable();
+    }
 
-		// Have to check for color, because it likes to animate a fadeout,
-		// and we want the map to stay completely hidden until it's done.
-		if (addon->IsVisible || addon->RootNode->Color.A is not 0x00) {
-			addon->ForceOffscreen();
-		}
-		else {
-			addon->RestorePosition();
-		}
-	}
+    private void HookAreaMapFunctions(AddonAreaMap* areaMap)
+    {
+        showAreaMapHook = Service.Hooker.HookFromAddress<AddonAreaMap.Delegates.Show>(areaMap->VirtualTable->Show, OnAreaMapShow);
+        hideAreaMapHook = Service.Hooker.HookFromAddress<AddonAreaMap.Delegates.Hide>(areaMap->VirtualTable->Hide, OnAreaMapHide);
+
+        if (Service.ClientState is { IsPvP: false }) {
+            EnableIntegrations();
+        }
+    }
+
+    private void OnAreaMapShow(AddonAreaMap* thisPtr, bool silenceOpenSoundEffect, uint unsetShowHideFlags) =>
+        HookSafety.ExecuteSafe(() =>
+        {
+            Service.Log.Debug("[AreaMap] OnAreaMapShow");
+
+            System.WindowManager.GetWindow<MapWindow>()?.Open();
+            showAreaMapHook!.Original(thisPtr, silenceOpenSoundEffect, unsetShowHideFlags);
+        }, Service.Log, "Exception during OnAreaMapShow");
+
+    private void OnAreaMapHide(AddonAreaMap* thisPtr, bool unkBool, bool callHideCallback, uint setShowHideFlags) =>
+        HookSafety.ExecuteSafe(() =>
+        {
+            Service.Log.Debug("[AreaMap] OnAreaMapHide");
+
+            if (System.SystemConfig.KeepOpen) {
+                Service.Log.Debug("[AreaMap] Keeping Open");
+                return;
+            }
+
+            hideAreaMapHook!.Original(thisPtr, unkBool, callHideCallback, setShowHideFlags);
+
+            // If the window actually considered closed by the agent.
+            if (AgentMap.Instance()->AddonId is 0) {
+                System.WindowManager.GetWindow<MapWindow>()?.Close();
+            }
+        }, Service.Log, "Exception during OnAreaMapHide");
+
+    private void OnAreaMapDraw(AddonEvent type, AddonArgs args)
+    {
+        var addon = args.GetAddon<AddonAreaMap>();
+
+        if (Service.ClientState is { IsPvP: true }) {
+            if (addon->IsOffscreen()) {
+                addon->RestorePosition();
+            }
+
+            return;
+        }
+
+        // Have to check for color, because it likes to animate a fadeout,
+        // and we want the map to stay completely hidden until it's done.
+        if (addon->IsVisible || addon->RootNode->Color.A is not 0x00) {
+            addon->ForceOffscreen();
+        }
+        else {
+            addon->RestorePosition();
+        }
+    }
 }
