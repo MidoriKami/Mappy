@@ -4,17 +4,19 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Game.ClientState.Objects.Types;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using Mappy.Classes;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Lumina.Data.Files;
+using Mappy.Classes;
 
 namespace Mappy.MapRenderer;
 
-public unsafe partial class MapRenderer : IDisposable {
-    public static float Scale {
+public unsafe partial class MapRenderer : IDisposable
+{
+    public static float Scale
+    {
         get => System.SystemConfig.MapScale;
         set => System.SystemConfig.MapScale = value;
     }
@@ -25,46 +27,49 @@ public unsafe partial class MapRenderer : IDisposable {
     private IDalamudTextureWrap? blendedTexture;
     private string blendedPath = string.Empty;
 
-    public MapRenderer() {
+    public MapRenderer()
+    {
         LoadFogHooks();
     }
-    
-    public void Dispose() {
+
+    public void Dispose()
+    {
         UnloadFogHooks();
     }
 
-    public void CenterOnGameObject(IGameObject obj) 
-        => CenterOnCoordinate(new Vector2(obj.Position.X, obj.Position.Z));
-    
-    public void CenterOnCoordinate(Vector2 coord)
-        => DrawOffset = -coord * DrawHelpers.GetMapScaleFactor() + DrawHelpers.GetMapOffsetVector();
+    public void CenterOnGameObject(IGameObject obj) => CenterOnCoordinate(new Vector2(obj.Position.X, obj.Position.Z));
 
-    public void DrawBaseTexture() {
+    public void CenterOnCoordinate(Vector2 coord) => DrawOffset = -coord * DrawHelpers.GetMapScaleFactor() + DrawHelpers.GetMapOffsetVector();
+
+    public void DrawBaseTexture()
+    {
         UpdateScaleLimits();
         UpdateDrawOffset();
-        
+
         DrawBackgroundTexture();
     }
-    
-    public void DrawDynamicElements() {
+
+    public void DrawDynamicElements()
+    {
         DrawFogOfWar();
         DrawMapMarkers();
     }
 
-    private void UpdateScaleLimits()
-        => Scale = Math.Clamp(Scale, 0.05f, 20.0f);
+    private void UpdateScaleLimits() => Scale = Math.Clamp(Scale, 0.05f, 20.0f);
 
-    private void UpdateDrawOffset() {
+    private void UpdateDrawOffset()
+    {
         var childCenterOffset = ImGui.GetContentRegionAvail() / 2.0f;
-        var mapCenterOffset = new Vector2(1024.0f, 1024.0f) * Scale ;
+        var mapCenterOffset = new Vector2(1024.0f, 1024.0f) * Scale;
 
         DrawPosition = childCenterOffset - mapCenterOffset + DrawOffset * Scale;
     }
 
-    private void DrawBackgroundTexture() {
+    private void DrawBackgroundTexture()
+    {
         if (AgentMap.Instance()->SelectedMapBgPath.Length is 0) {
             var texture = Service.TextureProvider.GetFromGame($"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex").GetWrapOrEmpty();
-            
+
             ImGui.SetCursorPos(DrawPosition);
             ImGui.Image(texture.Handle, texture.Size * Scale);
         }
@@ -83,10 +88,11 @@ public unsafe partial class MapRenderer : IDisposable {
         }
     }
 
-    private static IDalamudTextureWrap? LoadTexture() {
+    private static IDalamudTextureWrap? LoadTexture()
+    {
         var vanillaBgPath = $"{AgentMap.Instance()->SelectedMapBgPath.ToString()}.tex";
         var vanillaFgPath = $"{AgentMap.Instance()->SelectedMapPath.ToString()}.tex";
-        
+
         var bgFile = GetTexFile(vanillaBgPath);
         var fgFile = GetTexFile(vanillaFgPath);
 
@@ -99,9 +105,10 @@ public unsafe partial class MapRenderer : IDisposable {
         var foregroundBytes = fgFile.GetRgbaImageData();
 
         // Blend textures together
-        Parallel.For(0, 2048 * 2048, i => {
+        Parallel.For(0, 2048 * 2048, i =>
+        {
             var index = i * 4;
-            
+
             // Blend, R, G, B, skip A.
             backgroundBytes[index + 0] = (byte)(backgroundBytes[index + 0] * foregroundBytes[index + 0] / 255);
             backgroundBytes[index + 1] = (byte)(backgroundBytes[index + 1] * foregroundBytes[index + 1] / 255);
@@ -111,7 +118,8 @@ public unsafe partial class MapRenderer : IDisposable {
         return Service.TextureProvider.CreateFromRaw(RawImageSpecification.Rgba32(2048, 2048), backgroundBytes);
     }
 
-    private static TexFile? GetTexFile(string rawPath) {
+    private static TexFile? GetTexFile(string rawPath)
+    {
         var path = Service.TextureSubstitutionProvider.GetSubstitutedPath(rawPath);
 
         if (Path.IsPathRooted(path)) {
@@ -120,8 +128,9 @@ public unsafe partial class MapRenderer : IDisposable {
 
         return Service.DataManager.GetFile<TexFile>(path);
     }
-    
-    private void DrawMapMarkers() {
+
+    private void DrawMapMarkers()
+    {
         DrawStaticMapMarkers();
         DrawDynamicMarkers();
         DrawGameObjects();

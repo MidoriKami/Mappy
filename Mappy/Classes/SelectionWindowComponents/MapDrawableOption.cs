@@ -7,10 +7,12 @@ using Lumina.Excel.Sheets;
 
 namespace Mappy.Classes.SelectionWindowComponents;
 
-public class MapDrawableOption : DrawableOption {
-    protected override void DrawIcon() {
+public class MapDrawableOption : DrawableOption
+{
+    protected override void DrawIcon()
+    {
         var option = Map.TerritoryType.Value;
-        
+
         using var imageFrame = ImRaii.Child($"image_frame{option}", new Vector2(Width, Height), false, ImGuiWindowFlags.NoInputs);
         if (!imageFrame) return;
 
@@ -23,9 +25,10 @@ public class MapDrawableOption : DrawableOption {
         }
     }
 
-    public static IDalamudTextureWrap? GetMapTexture(uint mapId) {
+    public static IDalamudTextureWrap? GetMapTexture(uint mapId)
+    {
         if (mapId is 0) return null;
-        
+
         var map = Service.DataManager.GetExcelSheet<Map>().GetRow(mapId);
         var territory = map.TerritoryType;
         if (!territory.IsValid) return null;
