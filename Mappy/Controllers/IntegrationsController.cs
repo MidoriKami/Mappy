@@ -22,19 +22,19 @@ public unsafe class IntegrationsController : IDisposable {
 
 	public IntegrationsController() {
 		showMapHook ??= Service.Hooker.HookFromAddress<AgentMap.Delegates.ShowMap>(AgentMap.MemberFunctionPointers.ShowMap, OnShowHook);
-		openMapHook ??= Service.Hooker.HookFromAddress<AgentMap.Delegates.OpenMap>(AgentMap.MemberFunctionPointers.OpenMap, OpenMap);
+		openMapHook ??= Service.Hooker.HookFromAddress<AgentMap.Delegates.OpenMap>(AgentMap.MemberFunctionPointers.OpenMap, OnOpenMapHook);
 
 		if (Service.ClientState is { IsPvP: false }) {
 			EnableIntegrations();
 		}
-        
+
 		Service.ClientState.EnterPvP += DisableIntegrations;
 		Service.ClientState.LeavePvP += EnableIntegrations;
 	}
 
 	public void Dispose() {
 		DisableIntegrations();
-        
+
 		showMapHook?.Dispose();
 		openMapHook?.Dispose();
 
@@ -44,33 +44,33 @@ public unsafe class IntegrationsController : IDisposable {
 
 	private void EnableIntegrations() {
 		Service.Log.Debug("Enabling Integrations");
-        
+
 		showMapHook?.Enable();
 		openMapHook?.Enable();
-		
+
 		System.AreaMapController.EnableIntegrations();
 		System.FlagController.EnableIntegrations();
 	}
 
 	private void DisableIntegrations() {
 		Service.Log.Debug("Disabling Integrations");
-        
+
 		showMapHook?.Disable();
 		openMapHook?.Disable();
-		
+
 		System.AreaMapController.DisableIntegrations();
 		System.FlagController.DisableIntegrations();
 	}
 
-	private void OnShowHook(AgentMap* agent, bool a1, bool a2)
-		=> HookSafety.ExecuteSafe(() => {
+	private void OnShowHook(AgentMap* agent, bool a1, bool a2) =>
+		HookSafety.ExecuteSafe(() => {
 			Service.Log.Debug("[OnShow] Beginning Show");
 
 			if (!ShouldShowMap()) {
 				Service.Log.Debug("[OnShow] Condition to open map is rejected, aborting.");
 				return;
 			}
-			
+
 			if (AgentMap.Instance()->AddonId is not 0 && AgentMap.Instance()->CurrentMapId != AgentMap.Instance()->SelectedMapId) {
 				if (!System.SystemConfig.KeepOpen) {
 					AgentMap.Instance()->Hide();
@@ -88,8 +88,8 @@ public unsafe class IntegrationsController : IDisposable {
 			showMapHook!.Original(agent, a1, a2);
 		}, Service.Log, "Exception during OnShowHook");
 
-	private void OpenMap(AgentMap* agent, OpenMapInfo* mapInfo) 
-		=> HookSafety.ExecuteSafe(() => {
+	private void OnOpenMapHook(AgentMap* agent, OpenMapInfo* mapInfo) =>
+		HookSafety.ExecuteSafe(() => {
 			openMapHook!.Original(agent, mapInfo);
 
 			switch (mapInfo->Type) {
@@ -104,16 +104,27 @@ public unsafe class IntegrationsController : IDisposable {
 				case MapType.FlagMarker:
 					ProcessFlagLink(agent);
 					break;
-				
+
 				case MapType.Bozja:
 					ProcessForayLink(agent, mapInfo);
 					break;
-				
+
+				case MapType.SharedFate:
+				case MapType.Teleport:
+					ProcessTeleportLink(mapInfo);
+					break;
+
+				// This appears to get triggered after a Teleport/Share Fate teleport event.
+				case MapType.Centered:
+
+				case MapType.AetherCurrent:
+				case MapType.Treasure:
+				case MapType.MobHunt:
 				default:
-					Service.Log.Debug("[OpenMap] Unknown MapType " + mapInfo->Type);
+					Service.Log.Debug($"[OpenMap] Unknown MapType: {mapInfo->Type}");
 					break;
 			}
-			
+
 			if (System.SystemConfig.AutoZoom) {
 				MapRenderer.MapRenderer.Scale = DrawHelpers.GetMapScaleFactor() * System.SystemConfig.AutoZoomScaleFactor;
 			}
@@ -149,33 +160,33 @@ public unsafe class IntegrationsController : IDisposable {
 
 		System.MapWindow.ProcessingCommand = true;
 	}
-	
+
 	private static void ProcessGatheringLink(AgentMap* agent) {
 		Service.Log.Debug("[OpenMap] Processing GatheringLog Event");
-					
+
 		if (System.SystemConfig.CenterOnGathering) {
 			ref var targetMarker = ref agent->TempMapMarkers[0].MapMarker;
-						
+
 			CenterOnMarker(targetMarker);
 			Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
 		}
-					
+
 		System.MapWindow.ProcessingCommand = true;
 	}
-	
+
 	private static void ProcessFlagLink(AgentMap* agent) {
 		Service.Log.Debug("[OpenMap] Processing FlagMarker Event");
-					
+
 		if (System.SystemConfig.CenterOnFlag) {
 			ref var targetMarker = ref agent->FlagMapMarkers[0].MapMarker;
-						
+
 			CenterOnMarker(targetMarker);
 			Service.Log.Debug($"[OpenMap] Centering Map on X = {targetMarker.X}, Y = {targetMarker.Y}");
 		}
-					
+
 		System.MapWindow.ProcessingCommand = true;
 	}
-	
+
 	private static void ProcessForayLink(AgentMap* agent, OpenMapInfo* mapInfo) {
 		Service.Log.Debug("[OpenMap] Processing Bozja Event");
 
@@ -183,15 +194,24 @@ public unsafe class IntegrationsController : IDisposable {
 		if (eventMarker is not null) {
 			CenterOnMarker(eventMarker.Value);
 		}
-					
+
 		System.MapWindow.ProcessingCommand = true;
 	}
 
-	public void OpenMap(uint mapId)
-		=> AgentMap.Instance()->OpenMapByMapId(mapId, 0, true);
+	private void ProcessTeleportLink(OpenMapInfo* mapInfo) {
+		Service.Log.Debug("[OpenMap] Processing Teleport Event");
 
-	public void OpenOccupiedMap()
-		=> OpenMap(AgentMap.Instance()->CurrentMapId);
+		OpenMap(mapInfo->MapId);
+
+		System.MapWindow.ProcessingCommand = true;
+	}
+
+	public void OpenMap(uint mapId) {
+		AgentMap.Instance()->OpenMapByMapId(mapId, 0, true);
+		AgentMap.Instance()->ResetMapMarkers();
+	}
+
+	public void OpenOccupiedMap() => OpenMap(AgentMap.Instance()->CurrentMapId);
 
 	private static void CenterOnMarker(MapMarkerBase marker) {
 		var coordinates = new Vector2(marker.X, marker.Y) / 16.0f * DrawHelpers.GetMapScaleFactor() - DrawHelpers.GetMapOffsetVector();
@@ -216,9 +236,8 @@ public unsafe class IntegrationsController : IDisposable {
 
 		return true;
 	}
-	
-	private static bool IsNamePlateAddonVisible()
-		=> !RaptureAtkUnitManager.Instance()->UiFlags.HasFlag(UIModule.UiFlags.Nameplates);
+
+	private static bool IsNamePlateAddonVisible() => !RaptureAtkUnitManager.Instance()->UiFlags.HasFlag(UIModule.UiFlags.Nameplates);
 
 	private uint? GetMapIdForQuest(OpenMapInfo* mapInfo) {
 		foreach (var leveQuest in QuestManager.Instance()->LeveQuests) {
@@ -229,10 +248,10 @@ public unsafe class IntegrationsController : IDisposable {
 
 			return leveData.LevelStart.Value.Map.RowId;
 		}
-		
+
 		foreach (var quest in QuestManager.Instance()->NormalQuests) {
 			if (quest.QuestId is 0) continue;
-			
+
 			// Is this the quest we are looking for?
 			var questData = Service.DataManager.GetExcelSheet<Quest>().GetRow(quest.QuestId + 65536u);
 			if (!IsNameMatch(questData.Name.ExtractText(), mapInfo)) continue;
@@ -242,26 +261,25 @@ public unsafe class IntegrationsController : IDisposable {
 				.ToDoLocation.FirstOrDefault(location => location is not { RowId: 0, ValueNullable: null })
 				.Value.Map.RowId;
 		}
-		
+
 		var possibleQuests = Service.DataManager.GetExcelSheet<Quest>()
 			.Where(quest => quest is { IssuerLocation: { IsValid: true, RowId: not 0 } }).FirstOrNull(quest => IsNameMatch(quest.Name.ExtractText(), mapInfo));
 
 		return possibleQuests?.IssuerLocation.Value.Map.RowId ?? null;
 	}
 
-	private static bool IsNameMatch(string name, OpenMapInfo* mapInfo) 
-		=> string.Equals(name, mapInfo->TitleString.ToString(), StringComparison.OrdinalIgnoreCase);
+	private static bool IsNameMatch(string name, OpenMapInfo* mapInfo) => string.Equals(name, mapInfo->TitleString.ToString(), StringComparison.OrdinalIgnoreCase);
 
 	// public Vector3 GetLgbEventObjPos(uint lgbEventObjId) {
 	// 	var layout = LayoutWorld.Instance()->ActiveLayout;
-	// 	
+	//
 	// 	if (layout == null) return default;
-	// 	
+	//
 	// 	if (!layout->InstancesByType.TryGetValue(InstanceType.EventObject, out var map, false))
 	// 		return default;
-	// 	
+	//
 	// 	if (!map.Value->TryGetValue((ulong)lgbEventObjId << 32, out var pInstance, false))
-	// 		
+	//
 	// 		return default;
 	// 	return pInstance.Value->GetTransformImpl()->Translation;
 	// }
