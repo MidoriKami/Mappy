@@ -62,7 +62,7 @@ public class FlagConfig
     // Not exposed to users, might be in the future.
     public int HistoryLimit = 10;
 
-    public static FlagConfig Load() => Service.PluginInterface.LoadConfigFile("Flags.data.json", () => new FlagConfig());
+    public static FlagConfig Load() => Service.PluginInterface.LoadConfigFile<FlagConfig>("Flags.data.json");
 
     public void Save() => Service.PluginInterface.SaveConfigFile("Flags.data.json", System.FlagConfig);
 }

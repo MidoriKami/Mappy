@@ -102,7 +102,7 @@ public class SystemConfig : CharacterConfiguration
     [JsonIgnore]
     public bool DebugMode = false;
 
-    public static SystemConfig Load() => Service.PluginInterface.LoadConfigFile("System.config.json", () => new SystemConfig());
+    public static SystemConfig Load() => Service.PluginInterface.LoadConfigFile<SystemConfig>("System.config.json");
 
     public static void Save() => Service.PluginInterface.SaveConfigFile("System.config.json", System.SystemConfig);
 }
