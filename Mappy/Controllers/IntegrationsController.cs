@@ -124,10 +124,10 @@ public unsafe class IntegrationsController : IDisposable
 
                 case MapType.SharedFate:
                 case MapType.Teleport:
-                    ProcessTeleportLink(mapInfo);
+                    ProcessTeleportLink(agent, mapInfo);
                     break;
 
-                // This appears to get triggered after a Teleport/Share Fate teleport event.
+                // This appears to get triggered after a Teleport/Shared Fate teleport event.
                 case MapType.Centered:
 
                 case MapType.AetherCurrent:
@@ -224,18 +224,32 @@ public unsafe class IntegrationsController : IDisposable
         System.MapWindow.ProcessingCommand = true;
     }
 
-    private void ProcessTeleportLink(OpenMapInfo* mapInfo)
+    private void ProcessTeleportLink(AgentMap* agent, OpenMapInfo* mapInfo)
     {
         Service.Log.Debug("[OpenMap] Processing Teleport Event");
 
-        OpenMap(mapInfo->MapId);
+        var targetMapId = mapInfo->MapId;
 
+        if (agent->CurrentMapId != targetMapId)
+        {
+            Service.Log.Debug($"[OpenMap] Opening MapId: {targetMapId}");
+
+            OpenMap(mapInfo->MapId);
+
+            System.MapWindow.ProcessingCommand = true;
+
+            return;
+        }
+
+        Service.Log.Debug($"[OpenMap] Already in MapId: {targetMapId}, aborting.");
         System.MapWindow.ProcessingCommand = true;
     }
 
     public void OpenMap(uint mapId)
     {
         AgentMap.Instance()->OpenMapByMapId(mapId, 0, true);
+
+        // Since this is effecting state, we need to keep an eye on it for potential issues.
         AgentMap.Instance()->ResetMapMarkers();
     }
 

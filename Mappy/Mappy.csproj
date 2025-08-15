@@ -3,14 +3,17 @@
         <PackageProjectUrl>https://github.com/MidoriKami/Mappy.git</PackageProjectUrl>
         <Version>3.1.6.4</Version>
     </PropertyGroup>
-
     <ItemGroup>
-        <ProjectReference Include="..\KamiLib\KamiLib.csproj"/>
+      <None Include=".editorconfig" />
     </ItemGroup>
 
     <ItemGroup>
-        <Reference Include="SharpDX" Private="false"/>
-        <Reference Include="SharpDX.Direct3D11" Private="false"/>
-        <Reference Include="SharpDX.DXGI" Private="false"/>
+        <ProjectReference Include="..\KamiLib\KamiLib.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="SharpDX" Private="false" />
+        <Reference Include="SharpDX.Direct3D11" Private="false" />
+        <Reference Include="SharpDX.DXGI" Private="false" />
     </ItemGroup>
 </Project>
