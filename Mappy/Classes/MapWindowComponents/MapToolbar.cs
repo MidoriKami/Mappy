@@ -94,11 +94,23 @@ public unsafe class MapToolbar
             }, WindowFlags.OpenImmediately | WindowFlags.RequireLoggedIn);
         }
 
+        var offset = System.SystemConfig.HideWindowFrame ? 50.0f : 25.0f;
+
         ImGui.SameLine();
-        ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - 25.0f * ImGuiHelpers.GlobalScale - ImGui.GetStyle().ItemSpacing.X);
+        ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - offset * ImGuiHelpers.GlobalScale - ImGui.GetStyle().ItemSpacing.X);
+
         if (MappyGuiTweaks.IconButton(FontAwesomeIcon.Cog, "settings", "Open Settings")) {
             System.ConfigWindow.UnCollapseOrShow();
             ImGui.SetWindowFocus(System.ConfigWindow.WindowName);
+        }
+
+        if (!System.SystemConfig.HideWindowFrame) return;
+
+        ImGui.SameLine();
+
+        if (MappyGuiTweaks.IconButton(FontAwesomeIcon.Times, "closeMap", "Close Map"))
+        {
+            System.MapWindow.Close();
         }
     }
 
