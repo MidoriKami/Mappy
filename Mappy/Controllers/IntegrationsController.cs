@@ -122,8 +122,10 @@ public unsafe class IntegrationsController : IDisposable
                     ProcessForayLink(agent, mapInfo);
                     break;
 
+                case MapType.MobHunt:
                 case MapType.SharedFate:
                 case MapType.Teleport:
+                case MapType.Treasure:
                     ProcessTeleportLink(agent, mapInfo);
                     break;
 
@@ -131,10 +133,8 @@ public unsafe class IntegrationsController : IDisposable
                 case MapType.Centered:
 
                 case MapType.AetherCurrent:
-                case MapType.Treasure:
-                case MapType.MobHunt:
                 default:
-                    Service.Log.Debug($"[OpenMap] Unknown MapType: {mapInfo->Type}");
+                    Service.Log.Debug($"[OpenMap] Ignoring MapType: {mapInfo->Type}");
                     break;
             }
 
