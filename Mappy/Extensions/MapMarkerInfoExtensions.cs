@@ -116,7 +116,8 @@ public static class MapMarkerInfoExtensions
 
     private static string GetTooltip(ref MapMarkerInfo marker)
     {
-        switch (marker.DataType) {
+        switch (marker.DataType)
+        {
             case 1: // MapLinkMarker
                 return GetMapLinkTooltip(ref marker);
 
@@ -154,8 +155,7 @@ public static class MapMarkerInfoExtensions
         if (marker.DataKey is 0) return string.Empty;
 
         var aetheryteTeleportCost = GetAetheryteTeleportGilCost(marker.DataKey);
-        if (aetheryteTeleportCost is null) return string.Empty;
-        if (aetheryteTeleportCost.Value is 0) return "Not attuned to aetheryte";
+        if (aetheryteTeleportCost is null) return "Not attuned to aetheryte";
 
         var aetheryte = Service.DataManager.GetExcelSheet<Aetheryte>().GetRow(marker.DataKey);
         var aetherytePlaceName = aetheryte.PlaceName.ValueNullable?.Name.ExtractText() ?? string.Empty;
